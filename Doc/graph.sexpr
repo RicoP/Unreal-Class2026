@@ -1,0 +1,1148 @@
+(blueprint "/Game/Characters/Mannequins/Anims/Unarmed/ABP_Unarmed"
+  (variables "Character" "Direction" "GroundSpeed" "IsFalling" "MovementComponent" "ShouldMove" "Velocity")
+  (graph "AnimGraph"
+    (node AnimGraphNode_ControlRig_0 "Misc.|ControlRig"
+      (link "Pose" AnimGraphNode_Root_0 "Result")
+      (set "Alpha" "1.000000"))
+    (node AnimGraphNode_Root_0 "Misc.|OutputPose")
+    (node AnimGraphNode_SaveCachedPose_0 "Animation|CachedPoses|Savecachedpose'Locomotion'")
+    (node AnimGraphNode_Slot_0 "Animation|Montage|Slot'DefaultSlot'"
+      (link "Pose" AnimGraphNode_ControlRig_0 "Source"))
+    (node AnimGraphNode_StateMachine_0 "Animation|StateMachines|Locomotion"
+      (link "Pose" AnimGraphNode_SaveCachedPose_0 "Pose"))
+    (node AnimGraphNode_StateMachine_1 "Animation|StateMachines|MainStates"
+      (link "Pose" AnimGraphNode_Slot_0 "Source"))
+    (node K2Node_CallFunction_0 "Math|Boolean|NOTBoolean"
+      (link "ReturnValue" AnimGraphNode_ControlRig_0 "ShouldDoIKTrace"))
+    (node K2Node_VariableGet_0 "|GetIsFalling"
+      (link "IsFalling" K2Node_CallFunction_0 "A")))
+  (graph "AnimGraph.AnimGraphNode_StateMachine_0.Locomotion")
+  (graph "AnimGraph.AnimGraphNode_StateMachine_0.Locomotion.AnimStateNode_1.Idle"
+    (node AnimGraphNode_SequencePlayer_1 "Animation|Sequences|SequencePlayer'MM_Idle'"
+      (link "Pose" AnimGraphNode_StateResult_0 "Result"))
+    (node AnimGraphNode_StateResult_0 "Misc.|OutputAnimationPose"))
+  (graph "AnimGraph.AnimGraphNode_StateMachine_0.Locomotion.AnimStateNode_2.Walk / Run"
+    (node AnimGraphNode_BlendSpacePlayer_0 "Animation|BlendSpaces|BlendspacePlayer'BS_Idle_Walk_Run'"
+      (link "Pose" AnimGraphNode_StateResult_0 "Result"))
+    (node AnimGraphNode_StateResult_0 "Misc.|OutputAnimationPose")
+    (node K2Node_VariableGet_1 "|GetGroundSpeed"
+      (link "GroundSpeed" AnimGraphNode_BlendSpacePlayer_0 "Y"))
+    (node K2Node_VariableGet_2 "|GetDirection"
+      (link "Direction" AnimGraphNode_BlendSpacePlayer_0 "X")))
+  (graph "AnimGraph.AnimGraphNode_StateMachine_0.Locomotion.AnimStateTransitionNode_0.Transition"
+    (node AnimGraphNode_TransitionResult_0 "Misc.|Result")
+    (node K2Node_VariableGet_0 "|GetShouldMove"
+      (link "ShouldMove" AnimGraphNode_TransitionResult_0 "bCanEnterTransition")))
+  (graph "AnimGraph.AnimGraphNode_StateMachine_0.Locomotion.AnimStateTransitionNode_2.Transition"
+    (node AnimGraphNode_TransitionResult_0 "Misc.|Result")
+    (node K2Node_CallFunction_0 "Math|Boolean|NOTBoolean"
+      (link "ReturnValue" AnimGraphNode_TransitionResult_0 "bCanEnterTransition"))
+    (node K2Node_VariableGet_0 "|GetShouldMove"
+      (link "ShouldMove" K2Node_CallFunction_0 "A")))
+  (graph "AnimGraph.AnimGraphNode_StateMachine_1.Main States")
+  (graph "AnimGraph.AnimGraphNode_StateMachine_1.Main States.AnimStateNode_0.Locomotion"
+    (node AnimGraphNode_StateResult_0 "Misc.|OutputAnimationPose")
+    (node AnimGraphNode_UseCachedPose_0 "Animation|CachedPoses|Usecachedpose'Locomotion'"
+      (link "Pose" AnimGraphNode_StateResult_0 "Result")))
+  (graph "AnimGraph.AnimGraphNode_StateMachine_1.Main States.AnimStateNode_1.Jump"
+    (node AnimGraphNode_SequencePlayer_1 "Animation|Sequences|SequencePlayer'MM_Jump'"
+      (link "Pose" AnimGraphNode_StateResult_0 "Result"))
+    (node AnimGraphNode_StateResult_0 "Misc.|OutputAnimationPose"))
+  (graph "AnimGraph.AnimGraphNode_StateMachine_1.Main States.AnimStateNode_2.Fall Loop"
+    (node AnimGraphNode_SequencePlayer_3 "Animation|Sequences|SequencePlayer'MM_Fall_Loop'"
+      (link "Pose" AnimGraphNode_StateResult_0 "Result"))
+    (node AnimGraphNode_StateResult_0 "Misc.|OutputAnimationPose"))
+  (graph "AnimGraph.AnimGraphNode_StateMachine_1.Main States.AnimStateNode_3.Land"
+    (node AnimGraphNode_SequencePlayer_4 "Animation|Sequences|SequencePlayer'MM_Land'"
+      (link "Pose" AnimGraphNode_StateResult_0 "Result"))
+    (node AnimGraphNode_StateResult_0 "Misc.|OutputAnimationPose"))
+  (graph "AnimGraph.AnimGraphNode_StateMachine_1.Main States.AnimStateTransitionNode_0.Transition"
+    (node AnimGraphNode_TransitionResult_0 "Misc.|Result")
+    (node K2Node_CommutativeAssociativeBinaryOperator_0 "Math|Boolean|ANDBoolean"
+      (link "ReturnValue" AnimGraphNode_TransitionResult_0 "bCanEnterTransition"))
+    (node K2Node_PromotableOperator_1 "Math|Float|float>float"
+      (link "ReturnValue" K2Node_CommutativeAssociativeBinaryOperator_0 "B")
+      (set "B" "100.000000"))
+    (node K2Node_VariableGet_0 "|GetIsFalling"
+      (link "IsFalling" K2Node_CommutativeAssociativeBinaryOperator_0 "A"))
+    (node K2Node_VariableGet_1 "|Get"
+      (link "Velocity_Z" K2Node_PromotableOperator_1 "A")))
+  (graph "AnimGraph.AnimGraphNode_StateMachine_1.Main States.AnimStateTransitionNode_1.Transition"
+    (node AnimGraphNode_TransitionResult_0 "Misc.|Result")
+    (node K2Node_VariableGet_0 "|GetIsFalling"
+      (link "IsFalling" AnimGraphNode_TransitionResult_0 "bCanEnterTransition")))
+  (graph "AnimGraph.AnimGraphNode_StateMachine_1.Main States.AnimStateTransitionNode_3.Transition"
+    (node AnimGraphNode_TransitionResult_0 "Misc.|Result"
+      (set "bCanEnterTransition" "False")))
+  (graph "AnimGraph.AnimGraphNode_StateMachine_1.Main States.AnimStateTransitionNode_5.Transition"
+    (node AnimGraphNode_TransitionResult_0 "Misc.|Result")
+    (node K2Node_CallFunction_0 "Math|Boolean|NOTBoolean"
+      (link "ReturnValue" AnimGraphNode_TransitionResult_0 "bCanEnterTransition"))
+    (node K2Node_VariableGet_0 "|GetIsFalling"
+      (link "IsFalling" K2Node_CallFunction_0 "A")))
+  (graph "AnimGraph.AnimGraphNode_StateMachine_1.Main States.AnimStateTransitionNode_6.Transition"
+    (node AnimGraphNode_TransitionResult_0 "Misc.|Result"
+      (set "bCanEnterTransition" "False")))
+  (graph "AnimGraph.AnimGraphNode_StateMachine_1.Main States.AnimStateTransitionNode_7.Transition"
+    (node AnimGraphNode_TransitionResult_0 "Misc.|Result")
+    (node K2Node_VariableGet_0 "|GetShouldMove"
+      (link "ShouldMove" AnimGraphNode_TransitionResult_0 "bCanEnterTransition")))
+  (graph "EventGraph"
+    (node K2Node_CallFunction_10 "Transformation|GetActorRotation"
+      (link "ReturnValue" K2Node_CallFunction_8 "BaseRotation"))
+    (node K2Node_CallFunction_12 "Math|Float|Clamp(Float)"
+      (link "ReturnValue" K2Node_Select_0 "Option 1")
+      (set "Max" "45.000000")
+      (set "Min" "-45.000000"))
+    (node K2Node_CallFunction_4 "Animation|GetOwningActor"
+      (link "ReturnValue" K2Node_DynamicCast_0 "Object"))
+    (node K2Node_CallFunction_5 "Math|Vector|VectorLengthXY"
+      (link "ReturnValue" K2Node_VariableSet_4 "GroundSpeed"))
+    (node K2Node_CallFunction_6 "Pawn|Components|CharacterMovement|GetCurrentAcceleration"
+      (link "ReturnValue" K2Node_PromotableOperator_2 "A"))
+    (node K2Node_CallFunction_7 "AI|Components|NavMovement|IsFalling"
+      (link "ReturnValue" K2Node_VariableSet_6 "IsFalling"))
+    (node K2Node_CallFunction_8 "Animation|CalculateDirection"
+      (link "ReturnValue" K2Node_CallFunction_12 "Value")
+      (link "ReturnValue" K2Node_Select_0 "Option 0"))
+    (node K2Node_CommutativeAssociativeBinaryOperator_0 "Math|Boolean|ANDBoolean"
+      (link "ReturnValue" K2Node_VariableSet_5 "ShouldMove"))
+    (node K2Node_DynamicCast_0 "Utilities|Casting|CastToCharacter"
+      (link "AsCharacter" K2Node_VariableSet_1 "Character")
+      (link "then" K2Node_VariableSet_1 "execute"))
+    (node K2Node_Event_0 "AddEvent|EventBlueprintUpdateAnimation"
+      (link "then" K2Node_VariableGet_0 "execute"))
+    (node K2Node_Event_1 "AddEvent|EventBlueprintInitializeAnimation"
+      (link "then" K2Node_DynamicCast_0 "execute"))
+    (node K2Node_ExecutionSequence_0 "Utilities|FlowControl|Sequence"
+      (link "then_0" K2Node_Knot_0 "InputPin")
+      (link "then_1" K2Node_Knot_1 "InputPin")
+      (link "then_2" K2Node_Knot_2 "InputPin"))
+    (node K2Node_Knot_0 "|RerouteNode"
+      (link "OutputPin" K2Node_VariableSet_3 "execute"))
+    (node K2Node_Knot_1 "|RerouteNode"
+      (link "OutputPin" K2Node_VariableSet_5 "execute"))
+    (node K2Node_Knot_2 "|RerouteNode"
+      (link "OutputPin" K2Node_VariableSet_6 "execute"))
+    (node K2Node_PromotableOperator_0 "Math|Float|float>float"
+      (link "ReturnValue" K2Node_CommutativeAssociativeBinaryOperator_0 "A")
+      (set "B" "0.010000"))
+    (node K2Node_PromotableOperator_2 "Math|Vector|NotEqual(Vector)"
+      (link "ReturnValue" K2Node_CommutativeAssociativeBinaryOperator_0 "B"))
+    (node K2Node_Select_0 "Utilities|Select"
+      (link "ReturnValue" K2Node_VariableSet_9 "Direction"))
+    (node K2Node_VariableGet_0 "|Get"
+      (link "then" K2Node_ExecutionSequence_0 "execute"))
+    (node K2Node_VariableGet_1 "|GetMovementComponent"
+      (link "MovementComponent" K2Node_VariableGet_8 "self"))
+    (node K2Node_VariableGet_12 "|GetVelocity"
+      (link "Velocity" K2Node_CallFunction_8 "Velocity"))
+    (node K2Node_VariableGet_13 "|GetCharacter"
+      (link "Character" K2Node_CallFunction_10 "self"))
+    (node K2Node_VariableGet_2 "|GetCharacterMovement"
+      (link "CharacterMovement" K2Node_VariableSet_2 "MovementComponent"))
+    (node K2Node_VariableGet_3 "|GetMovementComponent"
+      (link "MovementComponent" K2Node_CallFunction_7 "self"))
+    (node K2Node_VariableGet_4 "|GetVelocity"
+      (link "Velocity" K2Node_VariableSet_3 "Velocity"))
+    (node K2Node_VariableGet_5 "|GetGroundSpeed"
+      (link "GroundSpeed" K2Node_PromotableOperator_0 "A"))
+    (node K2Node_VariableGet_6 "|GetMovementComponent"
+      (link "MovementComponent" K2Node_VariableGet_4 "self"))
+    (node K2Node_VariableGet_7 "|GetMovementComponent"
+      (link "MovementComponent" K2Node_CallFunction_6 "self"))
+    (node K2Node_VariableGet_8 "|GetbOrientRotationToMovement"
+      (link "bOrientRotationToMovement" K2Node_Select_0 "Index"))
+    (node K2Node_VariableSet_1 "|SetCharacter"
+      (link "Output_Get" K2Node_VariableGet_2 "self")
+      (link "then" K2Node_VariableSet_2 "execute"))
+    (node K2Node_VariableSet_2 "|SetMovementComponent")
+    (node K2Node_VariableSet_3 "|SetVelocity"
+      (link "Output_Get" K2Node_CallFunction_5 "A")
+      (link "then" K2Node_VariableSet_4 "execute"))
+    (node K2Node_VariableSet_4 "|SetGroundSpeed"
+      (link "then" K2Node_VariableSet_9 "execute"))
+    (node K2Node_VariableSet_5 "|SetShouldMove")
+    (node K2Node_VariableSet_6 "|SetIsFalling")
+    (node K2Node_VariableSet_9 "|SetDirection")))
+
+(blueprint "/Game/Characters/Mannequins/Rigs/CR_Mannequin_Body"
+  (variables "L Arm IK Align" "L Arm IK Mode" "L Leg IK Mode " "Neck IK Mode" "Neck Length" "R Arm IK Align" "R Arm IK Mode" "R Leg IK Mode" "Spine IK Mode" "Spine Length" "Spine Offsets")
+  (graph "BSpline Passing thru 4 Points")
+  (graph "BSpline Passing thru 4 Points.Solve_SubGraph")
+  (graph "BSpline Passing thru 4 Points.b0t1_SubGraph")
+  (graph "BSpline Passing thru 4 Points.b0t2_SubGraph")
+  (graph "BSpline Passing thru 4 Points.b1t1_SubGraph")
+  (graph "BSpline Passing thru 4 Points.b1t2_SubGraph")
+  (graph "BSpline Passing thru 4 Points.b2t1_SubGraph")
+  (graph "BSpline Passing thru 4 Points.b2t2_SubGraph")
+  (graph "BSpline Passing thru 4 Points.b3t1_SubGraph")
+  (graph "BSpline Passing thru 4 Points.b3t2_SubGraph")
+  (graph "Backward Arm")
+  (graph "Backward Arm.SequenceExecution_SubGraph")
+  (graph "Backward Clavicle")
+  (graph "Backward Fingers")
+  (graph "Backward Foot")
+  (graph "Backward Foot.SequenceExecution_SubGraph")
+  (graph "Backward Leg")
+  (graph "Backward Leg.SequenceExecution_SubGraph")
+  (graph "Backward Neck")
+  (graph "Backward Neck.SequenceExecution_SubGraph")
+  (graph "Backward Spine")
+  (graph "Backward Spine.SequenceExecution_SubGraph")
+  (graph "Compute Pole Vector Parent")
+  (graph "FK Point At")
+  (graph "FK Point At.SequenceExecution_SubGraph")
+  (graph "Find Finger Controls")
+  (graph "Find Finger Controls.MathBoolAnd_SubGraph")
+  (graph "Forward Arm")
+  (graph "Forward Arm.SequenceExecution_1_SubGraph")
+  (graph "Forward Arm.SequenceExecution_SubGraph")
+  (graph "Forward Clavicle")
+  (graph "Forward Fingers")
+  (graph "Forward Fingers.SequenceAggregate_SubGraph")
+  (graph "Forward Foot")
+  (graph "Forward Foot.SequenceExecution_SubGraph")
+  (graph "Forward Leg")
+  (graph "Forward Leg.SequenceExecution_SubGraph")
+  (graph "Forward Neck")
+  (graph "Forward Neck.Neck IK Neck_SubGraph")
+  (graph "Forward Neck.Neck IK Neck_SubGraph.At and Next_SubGraph")
+  (graph "Forward Neck.Neck IK Neck_SubGraph.First Last Rotation_SubGraph")
+  (graph "Forward Neck.Neck IK Neck_SubGraph.Get Points on Spline_SubGraph")
+  (graph "Forward Neck.Neck IK Neck_SubGraph.Get Points on Spline_SubGraph.SequenceExecution_SubGraph")
+  (graph "Forward Neck.Neck IK Neck_SubGraph.Is Last_SubGraph")
+  (graph "Forward Neck.Neck IK Neck_SubGraph.SequenceExecution_1_SubGraph")
+  (graph "Forward Neck.SequenceExecution_SubGraph")
+  (graph "Forward Reverse Foot")
+  (graph "Forward Reverse Foot.SequenceExecution_1_SubGraph")
+  (graph "Forward Reverse Foot.SequenceExecution_SubGraph")
+  (graph "Forward Spine")
+  (graph "Forward Spine.SequenceExecution_1_SubGraph")
+  (graph "Forward Spine.SequenceExecution_SubGraph")
+  (graph "Forward Spine.Spine IK Solve_SubGraph")
+  (graph "Forward Spine.Spine IK Solve_SubGraph.Is First or Last_SubGraph")
+  (graph "Forward Spine.Spine IK Solve_SubGraph.SequenceExecution_SubGraph")
+  (graph "Forward Spine.Spine IK Solve_SubGraph.Spline From Element_SubGraph")
+  (graph "Forward Spine.Spine IK Solve_SubGraph.UpVector_SubGraph")
+  (graph "Get Negative Transform")
+  (graph "IK 2 Bones")
+  (graph "IK 2 Bones.MathBoolAnd_SubGraph")
+  (graph "IK 2 Bones.SequenceExecution_SubGraph")
+  (graph "IK 2 Bones.Softness_SubGraph")
+  (graph "IK 2 Bones.Softness_SubGraph.Exponential Softness_SubGraph")
+  (graph "Interpolate Interacting Controls")
+  (graph "Interpolate Interacting Controls.SequenceAggregate_3_SubGraph")
+  (graph "Interpolate Interacting Controls.SequenceAggregate_SubGraph")
+  (graph "Match 2 Bones IK onto FK")
+  (graph "Project to New Parents")
+  (graph "Rig Graph")
+  (graph "Rig Graph.SequenceExecution_1_SubGraph")
+  (graph "Rig Graph.SequenceExecution_3_SubGraph")
+  (graph "Rig Graph.SequenceExecution_SubGraph")
+  (graph "Set IKFK Keys")
+  (graph "Set IKFK Keys.SequenceExecution_1_SubGraph")
+  (graph "Set IKFK Keys.SequenceExecution_SubGraph")
+  (graph "Set IKFK Visibility")
+  (graph "Set IKFK Visibility.SequenceExecution_SubGraph")
+  (graph "Setup Arm")
+  (graph "Setup Arm.SequenceExecution_SubGraph")
+  (graph "Setup Clavicle")
+  (graph "Setup Fingers")
+  (graph "Setup Foot")
+  (graph "Setup Foot.SequenceExecution_SubGraph")
+  (graph "Setup Leg")
+  (graph "Setup Leg.SequenceExecution_SubGraph")
+  (graph "Setup Neck")
+  (graph "Setup Neck.SequenceExecution_SubGraph")
+  (graph "Setup Reverse Foot")
+  (graph "Setup Reverse Foot.SequenceExecution_SubGraph")
+  (graph "Setup Spine")
+  (graph "Setup Spine.SequenceExecution_SubGraph")
+  (graph "Setup Spine.Spline From Element Setup_SubGraph")
+  (graph "Spine Match IK onto FK")
+  (graph "Spine Match IK onto FK.SequenceExecution_SubGraph"))
+
+(blueprint "/Game/Characters/Mannequins/Rigs/CR_Mannequin_FootIK"
+  (variables "ShouldDoIKTrace" "ZOffset_L" "ZOffset_L_Target" "ZOffset_Pelvis" "ZOffset_R" "ZOffset_R_Target")
+  (graph "FootTrace_SubGraph")
+  (graph "Rig"))
+
+(blueprint "/Game/Characters/Mannequins/Rigs/CR_Mannequin_Procedural"
+  (variables)
+  (graph "Rig Graph"))
+
+(blueprint "/Game/Input/Touch/BPI_TouchInterface"
+  (variables)
+  (graph "Primary Thumbstick"
+    (node K2Node_FunctionEntry_0 "|PrimaryThumbstick"))
+  (graph "Secondary Thumbstick"
+    (node K2Node_FunctionEntry_0 "|SecondaryThumbstick"))
+  (graph "Touch Jump End"
+    (node K2Node_FunctionEntry_0 "|TouchJumpEnd"))
+  (graph "Touch Jump Start"
+    (node K2Node_FunctionEntry_0 "|TouchJumpStart")))
+
+(blueprint "/Game/Input/Touch/UI_Thumbstick"
+  (variables "Initial Touch Location" "Invert X" "Invert Y" "Position" "Scale Output" "Stick Input" "Thumbstick Size" "Touch Target" "TrackInput")
+  (graph "EventGraph"
+    (node K2Node_CallDelegate_0 "|CallStickInput")
+    (node K2Node_CallFunction_126 "UserInterface|Geometry|LocalToViewport"
+      (link "ViewportPosition" K2Node_PromotableOperator_56 "A"))
+    (node K2Node_CallFunction_129 "Viewport|GetViewportScale"
+      (link "ReturnValue" K2Node_PromotableOperator_56 "B"))
+    (node K2Node_CallFunction_2 "Game|Player|GetInputTouchState"
+      (link "LocationX" K2Node_PromotableOperator_1 "A")
+      (link "LocationY" K2Node_PromotableOperator_0 "A")
+      (link "bIsCurrentlyPressed" K2Node_VariableSet_3 "TrackInput"))
+    (node K2Node_CallFunction_34 "Math|Float|Clamp(Float)"
+      (link "ReturnValue" K2Node_CallFunction_48 "Translation_Y")
+      (link "ReturnValue" K2Node_PromotableOperator_8 "A"))
+    (node K2Node_CallFunction_35 "Math|Float|Clamp(Float)"
+      (link "ReturnValue" K2Node_CallFunction_48 "Translation_X")
+      (link "ReturnValue" K2Node_PromotableOperator_9 "A"))
+    (node K2Node_CallFunction_48 "Widget|Transform|SetRenderTranslation"
+      (link "then" K2Node_CallDelegate_0 "execute"))
+    (node K2Node_CallFunction_5 "Game|GetPlayerController"
+      (link "ReturnValue" K2Node_CallFunction_2 "self")
+      (set "PlayerIndex" "0"))
+    (node K2Node_CallFunction_55 "Math|Float|SelectFloat"
+      (link "ReturnValue" K2Node_PromotableOperator_23 "A"))
+    (node K2Node_CallFunction_56 "Math|Float|SelectFloat"
+      (link "ReturnValue" K2Node_PromotableOperator_22 "A"))
+    (node K2Node_CallFunction_57 "Math|Float|SelectFloat"
+      (link "ReturnValue" K2Node_CallDelegate_0 "NewParam_Y")
+      (set "B" "0.0"))
+    (node K2Node_CallFunction_58 "Math|Float|SelectFloat"
+      (link "ReturnValue" K2Node_CallDelegate_0 "NewParam_X")
+      (set "B" "0.0"))
+    (node K2Node_CallFunction_59 "Layout|SizeBox|SetHeightOverride"
+      (link "then" K2Node_CallFunction_60 "execute"))
+    (node K2Node_CallFunction_60 "Layout|SizeBox|SetWidthOverride")
+    (node K2Node_CallFunction_66 "|TouchInputCheck"
+      (set "FingerIndex" "Touch2"))
+    (node K2Node_CallFunction_67 "|TouchInputCheck"
+      (link "then" K2Node_IfThenElse_1 "execute")
+      (set "FingerIndex" "Touch1"))
+    (node K2Node_CallFunction_75 "Widget|Transform|SetRenderTranslation"
+      (link "then" K2Node_CallFunction_67 "execute")
+      (set "Translation_X" "0.0")
+      (set "Translation_Y" "0.0"))
+    (node K2Node_Event_2 "AddEvent|UserInterface|EventTick"
+      (link "MyGeometry" K2Node_CallFunction_126 "Geometry")
+      (link "then" K2Node_VariableSet_6 "execute"))
+    (node K2Node_Event_3 "AddEvent|UserInterface|EventPreConstruct"
+      (link "then" K2Node_CallFunction_59 "execute"))
+    (node K2Node_IfThenElse_1 "Utilities|FlowControl|Branch"
+      (link "else" K2Node_CallFunction_66 "execute"))
+    (node K2Node_IfThenElse_3 "Utilities|FlowControl|Branch"
+      (link "else" K2Node_CallFunction_75 "execute")
+      (link "then" K2Node_Knot_0 "InputPin"))
+    (node K2Node_Knot_0 "|RerouteNode"
+      (link "OutputPin" K2Node_VariableSet_3 "execute"))
+    (node K2Node_PromotableOperator_0 "Math|Float|float-float"
+      (link "ReturnValue" K2Node_CallFunction_34 "Value"))
+    (node K2Node_PromotableOperator_1 "Math|Float|float-float"
+      (link "ReturnValue" K2Node_CallFunction_35 "Value"))
+    (node K2Node_PromotableOperator_10 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_34 "Max")
+      (link "ReturnValue" K2Node_PromotableOperator_12 "A")
+      (link "ReturnValue" K2Node_PromotableOperator_8 "B")
+      (set "B" "2.000000"))
+    (node K2Node_PromotableOperator_11 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_35 "Max")
+      (link "ReturnValue" K2Node_PromotableOperator_13 "A")
+      (link "ReturnValue" K2Node_PromotableOperator_9 "B")
+      (set "B" "2.000000"))
+    (node K2Node_PromotableOperator_12 "Math|Float|float*float"
+      (link "ReturnValue" K2Node_CallFunction_34 "Min")
+      (set "B" "-1.000000"))
+    (node K2Node_PromotableOperator_13 "Math|Float|float*float"
+      (link "ReturnValue" K2Node_CallFunction_35 "Min")
+      (set "B" "-1.000000"))
+    (node K2Node_PromotableOperator_14 "Math|Float|float*float"
+      (link "ReturnValue" K2Node_CallFunction_55 "A")
+      (set "B" "-1.000000"))
+    (node K2Node_PromotableOperator_21 "Math|Float|float*float"
+      (link "ReturnValue" K2Node_CallFunction_56 "A")
+      (set "B" "-1.000000"))
+    (node K2Node_PromotableOperator_22 "Math|Float|float*float"
+      (link "ReturnValue" K2Node_CallFunction_58 "A"))
+    (node K2Node_PromotableOperator_23 "Math|Float|float*float"
+      (link "ReturnValue" K2Node_CallFunction_57 "A"))
+    (node K2Node_PromotableOperator_56 "Math|Vector2D|vector2d*vector2d"
+      (link "ReturnValue" K2Node_VariableSet_6 "Position"))
+    (node K2Node_PromotableOperator_57 "Math|Vector2D|vector2d/vector2d"
+      (link "ReturnValue" K2Node_CallFunction_126 "LocalCoordinate")
+      (set "B" "(X=2.000000,Y=2.000000)"))
+    (node K2Node_PromotableOperator_8 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_55 "B")
+      (link "ReturnValue" K2Node_PromotableOperator_14 "A"))
+    (node K2Node_PromotableOperator_9 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_56 "B")
+      (link "ReturnValue" K2Node_PromotableOperator_21 "A"))
+    (node K2Node_VariableGet_0 "|GetTrackInput"
+      (link "TrackInput" K2Node_CallFunction_57 "bPickA")
+      (link "TrackInput" K2Node_CallFunction_58 "bPickA"))
+    (node K2Node_VariableGet_1 "|Get"
+      (link "Initial Touch Location_X" K2Node_PromotableOperator_1 "B")
+      (link "Initial Touch Location_Y" K2Node_PromotableOperator_0 "B"))
+    (node K2Node_VariableGet_15 "|Get"
+      (link "Thumbstick Size_X" K2Node_CallFunction_60 "InWidthOverride")
+      (link "Thumbstick Size_Y" K2Node_CallFunction_59 "InHeightOverride"))
+    (node K2Node_VariableGet_18 "|GetInvertY"
+      (link "Invert Y" K2Node_CallFunction_55 "bPickA"))
+    (node K2Node_VariableGet_19 "|GetInvertX"
+      (link "Invert X" K2Node_CallFunction_56 "bPickA"))
+    (node K2Node_VariableGet_20 "|GetScaleOutput"
+      (link "Scale Output" K2Node_PromotableOperator_22 "B")
+      (link "Scale Output" K2Node_PromotableOperator_23 "B"))
+    (node K2Node_VariableGet_21 "|GetContainer"
+      (link "Container" K2Node_CallFunction_59 "self")
+      (link "Container" K2Node_CallFunction_60 "self"))
+    (node K2Node_VariableGet_22 "|GetTouchTarget"
+      (link "Touch Target" K2Node_CallFunction_2 "FingerIndex"))
+    (node K2Node_VariableGet_23 "|GetTrackInput"
+      (link "TrackInput" K2Node_IfThenElse_3 "Condition"))
+    (node K2Node_VariableGet_25 "|GetStick"
+      (link "Stick" K2Node_CallFunction_48 "self"))
+    (node K2Node_VariableGet_26 "|GetStick"
+      (link "Stick" K2Node_CallFunction_75 "self"))
+    (node K2Node_VariableGet_31 "|GetThumbstickSize"
+      (link "Thumbstick Size" K2Node_PromotableOperator_57 "A"))
+    (node K2Node_VariableGet_6 "|GetTrackInput"
+      (link "TrackInput" K2Node_IfThenElse_1 "Condition"))
+    (node K2Node_VariableGet_9 "|Get"
+      (link "Thumbstick Size_X" K2Node_PromotableOperator_11 "A")
+      (link "Thumbstick Size_Y" K2Node_PromotableOperator_10 "A"))
+    (node K2Node_VariableSet_3 "|SetTrackInput"
+      (link "then" K2Node_CallFunction_48 "execute"))
+    (node K2Node_VariableSet_6 "|SetPosition"
+      (link "then" K2Node_IfThenElse_3 "execute")))
+  (graph "Stick Input"
+    (node K2Node_FunctionEntry_0 "|StickInput"))
+  (graph "Touch Input Check"
+    (node K2Node_CallFunction_45 "Math|Vector2D|Distance2D"
+      (link "ReturnValue" K2Node_PromotableOperator_19 "A"))
+    (node K2Node_CallFunction_63 "Game|GetPlayerController"
+      (link "ReturnValue" K2Node_CallFunction_65 "self")
+      (set "PlayerIndex" "0"))
+    (node K2Node_CallFunction_65 "Game|Player|GetInputTouchState"
+      (link "LocationX" K2Node_CallFunction_45 "V1_X")
+      (link "LocationX" K2Node_VariableSet_2 "Initial Touch Location_X")
+      (link "LocationY" K2Node_CallFunction_45 "V1_Y")
+      (link "LocationY" K2Node_VariableSet_2 "Initial Touch Location_Y")
+      (link "bIsCurrentlyPressed" K2Node_CommutativeAssociativeBinaryOperator_1 "A"))
+    (node K2Node_CommutativeAssociativeBinaryOperator_1 "Math|Boolean|ANDBoolean"
+      (link "ReturnValue" K2Node_VariableSet_0 "TrackInput"))
+    (node K2Node_CommutativeAssociativeBinaryOperator_2 "Math|Float|Max(Float)"
+      (link "ReturnValue" K2Node_PromotableOperator_19 "B"))
+    (node K2Node_FunctionEntry_0 "|TouchInputCheck"
+      (link "FingerIndex" K2Node_CallFunction_65 "FingerIndex")
+      (link "FingerIndex" K2Node_VariableSet_1 "Touch Target")
+      (link "then" K2Node_VariableSet_2 "execute"))
+    (node K2Node_IfThenElse_0 "Utilities|FlowControl|Branch"
+      (link "then" K2Node_VariableSet_1 "execute"))
+    (node K2Node_PromotableOperator_19 "Math|Float|float<=float"
+      (link "ReturnValue" K2Node_CommutativeAssociativeBinaryOperator_1 "B"))
+    (node K2Node_VariableGet_10 "|GetPosition"
+      (link "Position" K2Node_CallFunction_45 "V2"))
+    (node K2Node_VariableGet_12 "|Get"
+      (link "Thumbstick Size_X" K2Node_CommutativeAssociativeBinaryOperator_2 "A")
+      (link "Thumbstick Size_Y" K2Node_CommutativeAssociativeBinaryOperator_2 "B"))
+    (node K2Node_VariableSet_0 "|SetTrackInput"
+      (link "Output_Get" K2Node_IfThenElse_0 "Condition")
+      (link "then" K2Node_IfThenElse_0 "execute"))
+    (node K2Node_VariableSet_1 "|SetTouchTarget")
+    (node K2Node_VariableSet_2 "|Set"
+      (link "then" K2Node_VariableSet_0 "execute"))))
+
+(blueprint "/Game/Input/Touch/UI_TouchSimple"
+  (variables "In String")
+  (graph "EventGraph"
+    (node K2Node_CallFunction_0 "Widget|GetOwningPlayer"
+      (link "ReturnValue" K2Node_CallFunction_6 "self"))
+    (node K2Node_CallFunction_2 "Widget|GetOwningPlayer"
+      (link "ReturnValue" K2Node_CallFunction_9 "PlayerController")
+      (link "ReturnValue" K2Node_VariableSet_0 "self"))
+    (node K2Node_CallFunction_5 "Widget|GetOwningPlayer"
+      (link "ReturnValue" K2Node_CallFunction_7 "self"))
+    (node K2Node_CallFunction_6 "Pawn|GetControlledPawn"
+      (link "ReturnValue" K2Node_Message_0 "self")
+      (link "ReturnValue" K2Node_Message_1 "self"))
+    (node K2Node_CallFunction_7 "Pawn|GetControlledPawn"
+      (link "ReturnValue" K2Node_Message_3 "self")
+      (link "ReturnValue" K2Node_Message_4 "self"))
+    (node K2Node_CallFunction_9 "Input|SetInputModeGameAndUI"
+      (set "InMouseLockMode" "DoNotLock")
+      (set "bFlushInput" "false")
+      (set "bHideCursorDuringCapture" "false"))
+    (node K2Node_ComponentBoundEvent_0 "AddEvent|StickInput(Thumbstick_Move)"
+      (link "NewParam" K2Node_Message_0 "Axis")
+      (link "then" K2Node_Message_0 "execute"))
+    (node K2Node_ComponentBoundEvent_1 "AddEvent|OnReleased(Btn_Jump)"
+      (link "then" K2Node_Message_4 "execute"))
+    (node K2Node_ComponentBoundEvent_2 "AddEvent|StickInput(Thumbstick_Aim)"
+      (link "NewParam" K2Node_Message_1 "Axis")
+      (link "then" K2Node_Message_1 "execute"))
+    (node K2Node_ComponentBoundEvent_3 "AddEvent|OnPressed(Btn_Jump)"
+      (link "then" K2Node_Message_3 "execute"))
+    (node K2Node_Event_1 "AddEvent|UserInterface|EventConstruct"
+      (link "then" K2Node_VariableSet_0 "execute"))
+    (node K2Node_Message_0 "Touch|PrimaryThumbstick")
+    (node K2Node_Message_1 "Touch|SecondaryThumbstick")
+    (node K2Node_Message_3 "Touch|TouchJumpStart")
+    (node K2Node_Message_4 "Touch|TouchJumpEnd")
+    (node K2Node_VariableSet_0 "|SetbShowMouseCursor"
+      (link "then" K2Node_CallFunction_9 "execute")
+      (set "bShowMouseCursor" "true"))))
+
+(blueprint "/Game/LevelPrototyping/Interactable/Door/BP_DoorFrame"
+  (variables "Add Door" "Closed Position" "Closed Position_0" "Door" "Door Detection Adjust" "Door Frame" "Door Frame Overide Material" "Door Frame Scale" "Door Size" "Door Thickness" "Door2" "Split Door")
+  (graph "EventGraph"
+    (node K2Node_CallArrayFunction_0 "Utilities|Array|Length"
+      (link "ReturnValue" K2Node_PromotableOperator_1 "A"))
+    (node K2Node_CallFunction_0 "Transformation|SetRelativeLocation"
+      (set "bSweep" "false")
+      (set "bTeleport" "false"))
+    (node K2Node_CallFunction_10 "Math|Float|SelectFloat"
+      (link "ReturnValue" K2Node_CallFunction_6 "NewLocation_Z"))
+    (node K2Node_CallFunction_12 "Math|Float|Lerp"
+      (link "ReturnValue" K2Node_CallFunction_8 "A"))
+    (node K2Node_CallFunction_13 "|OpenDoor")
+    (node K2Node_CallFunction_14 "Collision|GetOverlappingActors"
+      (link "OverlappingActors" K2Node_CallArrayFunction_0 "TargetArray")
+      (set "ClassFilter" "/Script/Engine.Character"))
+    (node K2Node_CallFunction_15 "|CloseDoor")
+    (node K2Node_CallFunction_3 "Math|Float|Lerp"
+      (link "ReturnValue" K2Node_CallFunction_0 "NewLocation_X"))
+    (node K2Node_CallFunction_6 "Transformation|SetRelativeLocation"
+      (link "then" K2Node_VariableGet_1 "execute")
+      (set "bSweep" "false")
+      (set "bTeleport" "false"))
+    (node K2Node_CallFunction_8 "Math|Float|SelectFloat"
+      (link "ReturnValue" K2Node_CallFunction_6 "NewLocation_X")
+      (set "B" "0.0"))
+    (node K2Node_CallFunction_9 "Math|Float|Lerp"
+      (link "ReturnValue" K2Node_CallFunction_10 "B"))
+    (node K2Node_CustomEvent_0 "AddEvent|Custom|OpenDoor"
+      (link "then" K2Node_Timeline_0 "Play"))
+    (node K2Node_CustomEvent_1 "AddEvent|Custom|CloseDoor"
+      (link "then" K2Node_Timeline_0 "Reverse"))
+    (node K2Node_Event_0 "AddEvent|EventBeginPlay"
+      (link "then" K2Node_VariableGet_0 "execute"))
+    (node K2Node_Event_1 "AddEvent|Collision|EventActorBeginOverlap"
+      (link "then" K2Node_CallFunction_13 "execute"))
+    (node K2Node_Event_3 "AddEvent|Collision|EventActorEndOverlap"
+      (link "then" K2Node_IfThenElse_0 "execute"))
+    (node K2Node_IfThenElse_0 "Utilities|FlowControl|Branch"
+      (link "then" K2Node_CallFunction_15 "execute"))
+    (node K2Node_Knot_0 "|RerouteNode"
+      (link "OutputPin" K2Node_CallFunction_3 "Alpha"))
+    (node K2Node_PromotableOperator_0 "Math|Float|float*float"
+      (link "ReturnValue" K2Node_PromotableOperator_5 "A")
+      (set "B" "-0.500000"))
+    (node K2Node_PromotableOperator_1 "Math|Integer|Equal(Integer)"
+      (link "ReturnValue" K2Node_IfThenElse_0 "Condition"))
+    (node K2Node_PromotableOperator_2 "Math|Float|float*float"
+      (link "ReturnValue" K2Node_CallFunction_3 "B")
+      (set "B" "-1.000000"))
+    (node K2Node_PromotableOperator_3 "Math|Float|float+float"
+      (link "ReturnValue" K2Node_CallFunction_12 "B")
+      (link "ReturnValue" K2Node_PromotableOperator_2 "A")
+      (set "B" "-10.000000"))
+    (node K2Node_PromotableOperator_4 "Math|Float|float*float"
+      (link "ReturnValue" K2Node_PromotableOperator_3 "A")
+      (set "B" "1.500000"))
+    (node K2Node_PromotableOperator_5 "Math|Float|float+float"
+      (link "ReturnValue" K2Node_CallFunction_9 "B")
+      (set "B" "5.000000"))
+    (node K2Node_Timeline_0 "|DoorControl"
+      (link "NewTrack_0" K2Node_CallFunction_12 "Alpha")
+      (link "NewTrack_0" K2Node_CallFunction_9 "Alpha")
+      (link "NewTrack_0" K2Node_Knot_0 "InputPin")
+      (link "Update" K2Node_CallFunction_6 "execute")
+      (set "NewTime" "0.0"))
+    (node K2Node_VariableGet_0 "|Get"
+      (link "Door" K2Node_VariableGet_2 "self")
+      (link "then" K2Node_VariableSet_0 "execute"))
+    (node K2Node_VariableGet_1 "|Get"
+      (link "Door2" K2Node_CallFunction_0 "self")
+      (link "then" K2Node_CallFunction_0 "execute"))
+    (node K2Node_VariableGet_10 "|Get"
+      (link "Closed Position_0_X" K2Node_CallFunction_3 "A"))
+    (node K2Node_VariableGet_11 "|GetBox"
+      (link "Box" K2Node_CallFunction_14 "self"))
+    (node K2Node_VariableGet_2 "|GetRelativeLocation"
+      (link "RelativeLocation" K2Node_VariableSet_0 "Closed Position"))
+    (node K2Node_VariableGet_3 "|Get"
+      (link "Closed Position_X" K2Node_CallFunction_12 "A")
+      (link "Closed Position_Y" K2Node_CallFunction_6 "NewLocation_Y")
+      (link "Closed Position_Z" K2Node_CallFunction_10 "A")
+      (link "Closed Position_Z" K2Node_CallFunction_9 "A"))
+    (node K2Node_VariableGet_4 "|Get"
+      (link "Door Size_X" K2Node_PromotableOperator_4 "A")
+      (link "Door Size_Z" K2Node_PromotableOperator_0 "A"))
+    (node K2Node_VariableGet_5 "|GetSplitDoor"
+      (link "Split Door" K2Node_CallFunction_10 "bPickA")
+      (link "Split Door" K2Node_CallFunction_8 "bPickA"))
+    (node K2Node_VariableGet_6 "|GetDoor"
+      (link "Door" K2Node_CallFunction_6 "self"))
+    (node K2Node_VariableGet_7 "|Get"
+      (link "Closed Position_Y" K2Node_CallFunction_0 "NewLocation_Y")
+      (link "Closed Position_Z" K2Node_CallFunction_0 "NewLocation_Z"))
+    (node K2Node_VariableGet_8 "|Get"
+      (link "Door2" K2Node_VariableGet_9 "self")
+      (link "then" K2Node_VariableSet_1 "execute"))
+    (node K2Node_VariableGet_9 "|GetRelativeLocation"
+      (link "RelativeLocation" K2Node_VariableSet_1 "Closed Position_0"))
+    (node K2Node_VariableSet_0 "|SetClosedPosition"
+      (link "then" K2Node_VariableGet_8 "execute"))
+    (node K2Node_VariableSet_1 "|SetClosedPosition_0"))
+  (graph "Set Mesh"
+    (node K2Node_AddComponent_2 "|AddStaticMeshComponent[StaticMeshSM_DoorFrame_Corner]"
+      (link "ReturnValue" K2Node_CallFunction_0 "self")
+      (link "ReturnValue" K2Node_CallFunction_1 "self")
+      (link "ReturnValue" K2Node_CallFunction_39 "self")
+      (link "then" K2Node_CallFunction_0 "execute")
+      (set "bManualAttachment" "false"))
+    (node K2Node_CallFunction_0 "Components|StaticMesh|SetStaticMesh"
+      (link "then" K2Node_CallFunction_1 "execute"))
+    (node K2Node_CallFunction_1 "Transformation|SetMobility")
+    (node K2Node_CallFunction_39 "Rendering|Material|SetMaterial"
+      (set "ElementIndex" "0"))
+    (node K2Node_ExecutionSequence_0 "Utilities|FlowControl|Sequence"
+      (link "then_0" K2Node_AddComponent_2 "execute")
+      (link "then_1" K2Node_MacroInstance_0 "exec"))
+    (node K2Node_FunctionEntry_0 "|SetMesh"
+      (link "RelativeTransform" K2Node_AddComponent_2 "RelativeTransform")
+      (link "then" K2Node_ExecutionSequence_0 "execute"))
+    (node K2Node_MacroInstance_0 "Utilities|IsValid"
+      (link "Is Valid" K2Node_CallFunction_39 "execute"))
+    (node K2Node_VariableGet_0 "|GetMaterial"
+      (link "Material" K2Node_CallFunction_39 "Material")
+      (link "Material" K2Node_MacroInstance_0 "InputObject"))
+    (node K2Node_VariableGet_1 "|GetNewMobility"
+      (link "NewMobility" K2Node_CallFunction_1 "NewMobility"))
+    (node K2Node_VariableGet_2 "|GetNewMesh"
+      (link "NewMesh" K2Node_CallFunction_0 "NewMesh")))
+  (graph "UserConstructionScript"
+    (node K2Node_AddComponent_0 "|AddStaticMeshComponent[StaticMeshSM_Door]"
+      (link "ReturnValue" K2Node_VariableSet_1 "Door")
+      (link "then" K2Node_VariableSet_1 "execute")
+      (set "bManualAttachment" "false"))
+    (node K2Node_AddComponent_1 "|AddStaticMeshComponent[StaticMeshSM_Door]"
+      (link "ReturnValue" K2Node_VariableSet_2 "Door")
+      (link "then" K2Node_VariableSet_2 "execute")
+      (set "bManualAttachment" "false"))
+    (node K2Node_AddComponent_5 "|AddStaticMeshComponent[StaticMeshSM_Door]"
+      (link "ReturnValue" K2Node_VariableSet_3 "Door2")
+      (link "then" K2Node_VariableSet_3 "execute")
+      (set "bManualAttachment" "false"))
+    (node K2Node_CallFunction_13 "Math|Float|Absolute(Float)"
+      (link "ReturnValue" K2Node_PromotableOperator_3 "A"))
+    (node K2Node_CallFunction_15 "Math|Transform|MakeTransform"
+      (link "ReturnValue" K2Node_CallFunction_41 "RelativeTransform")
+      (set "Location_X" "0.0")
+      (set "Location_Y" "0.0")
+      (set "Rotation" "0, 0, 0"))
+    (node K2Node_CallFunction_18 "Math|Float|Absolute(Float)"
+      (link "ReturnValue" K2Node_PromotableOperator_5 "A"))
+    (node K2Node_CallFunction_20 "Math|Transform|MakeTransform"
+      (link "ReturnValue" K2Node_CallFunction_45 "RelativeTransform")
+      (set "Location_Y" "0.0")
+      (set "Rotation" "-90.000000,0.000000,0.000000"))
+    (node K2Node_CallFunction_21 "Math|Float|Absolute(Float)"
+      (link "ReturnValue" K2Node_PromotableOperator_9 "A"))
+    (node K2Node_CallFunction_22 "Collision|SetCollisionEnabled"
+      (set "NewType" "NoCollision"))
+    (node K2Node_CallFunction_23 "Math|Vector|Vector_GetAbs"
+      (link "ReturnValue" K2Node_CallFunction_34 "InVec"))
+    (node K2Node_CallFunction_24 "Math|Transform|MakeTransform"
+      (link "ReturnValue" K2Node_AddComponent_0 "RelativeTransform")
+      (set "Location_X" "0.0")
+      (set "Location_Y" "0.0")
+      (set "Rotation" "0, 0, 0"))
+    (node K2Node_CallFunction_25 "Math|Vector|BreakVector"
+      (link "X" K2Node_PromotableOperator_19 "A")
+      (link "Z" K2Node_PromotableOperator_0 "A")
+      (link "Z" K2Node_PromotableOperator_6 "A"))
+    (node K2Node_CallFunction_26 "Math|Vector|BreakVector"
+      (link "X" K2Node_PromotableOperator_17 "A")
+      (link "X" K2Node_PromotableOperator_21 "A")
+      (link "Z" K2Node_PromotableOperator_16 "A")
+      (link "Z" K2Node_PromotableOperator_18 "A"))
+    (node K2Node_CallFunction_27 "Math|Vector|Vector_GetAbs"
+      (link "ReturnValue" K2Node_CallFunction_25 "InVec"))
+    (node K2Node_CallFunction_28 "Math|Vector|MakeVector"
+      (link "ReturnValue" K2Node_CallFunction_3 "Scale")
+      (link "ReturnValue" K2Node_CallFunction_6 "Scale"))
+    (node K2Node_CallFunction_29 "Math|Transform|MakeTransform"
+      (link "ReturnValue" K2Node_AddComponent_5 "RelativeTransform")
+      (set "Location_Y" "0.0")
+      (set "Rotation" "0, 0, 0"))
+    (node K2Node_CallFunction_3 "Math|Transform|MakeTransform"
+      (link "ReturnValue" K2Node_CallFunction_43 "RelativeTransform")
+      (set "Location_Y" "0.0")
+      (set "Rotation" "0, 0, 0"))
+    (node K2Node_CallFunction_30 "Math|Vector|BreakVector"
+      (link "X" K2Node_CallFunction_6 "Location_X")
+      (link "X" K2Node_PromotableOperator_11 "A")
+      (link "Y" K2Node_PromotableOperator_23 "A")
+      (link "Z" K2Node_CallFunction_6 "Location_Z")
+      (link "Z" K2Node_Knot_1 "InputPin"))
+    (node K2Node_CallFunction_33 "Components|Box|SetBoxExtent"
+      (link "then" K2Node_CallFunction_36 "execute")
+      (set "bUpdateOverlaps" "true"))
+    (node K2Node_CallFunction_34 "Math|Vector|BreakVector"
+      (link "X" K2Node_CallFunction_35 "X")
+      (link "Y" K2Node_CallFunction_35 "Y")
+      (link "Z" K2Node_PromotableOperator_20 "A"))
+    (node K2Node_CallFunction_35 "Math|Vector|MakeVector"
+      (link "ReturnValue" K2Node_PromotableOperator_22 "A"))
+    (node K2Node_CallFunction_36 "Transformation|SetRelativeLocation"
+      (link "then" K2Node_IfThenElse_0 "execute")
+      (set "NewLocation_X" "0.0")
+      (set "NewLocation_Y" "0.0")
+      (set "bSweep" "false")
+      (set "bTeleport" "false"))
+    (node K2Node_CallFunction_37 "Math|Transform|MakeTransform"
+      (link "ReturnValue" K2Node_AddComponent_1 "RelativeTransform")
+      (set "Location_Y" "0.0")
+      (set "Rotation" "0, 0, 0"))
+    (node K2Node_CallFunction_38 "Math|Vector|Vector_GetAbs"
+      (link "ReturnValue" K2Node_CallFunction_26 "InVec"))
+    (node K2Node_CallFunction_41 "|SetMesh"
+      (link "then" K2Node_CallFunction_45 "execute")
+      (set "NewMesh" "/Game/LevelPrototyping/Interactable/Door/Meshes/SM_DoorFrame_Edge.SM_DoorFrame_Edge")
+      (set "NewMobility" "Static"))
+    (node K2Node_CallFunction_42 "|SetMesh"
+      (set "NewMesh" "/Game/LevelPrototyping/Interactable/Door/Meshes/SM_DoorFrame_Edge.SM_DoorFrame_Edge")
+      (set "NewMobility" "Static"))
+    (node K2Node_CallFunction_43 "|SetMesh"
+      (link "then" K2Node_Knot_3 "InputPin")
+      (set "NewMesh" "/Game/LevelPrototyping/Interactable/Door/Meshes/SM_DoorFrame_Corner.SM_DoorFrame_Corner")
+      (set "NewMobility" "Static"))
+    (node K2Node_CallFunction_44 "|SetMesh"
+      (link "then" K2Node_CallFunction_43 "execute")
+      (set "NewMesh" "/Game/LevelPrototyping/Interactable/Door/Meshes/SM_DoorFrame_Corner.SM_DoorFrame_Corner")
+      (set "NewMobility" "Static"))
+    (node K2Node_CallFunction_45 "|SetMesh"
+      (link "then" K2Node_CallFunction_42 "execute")
+      (set "NewMesh" "/Game/LevelPrototyping/Interactable/Door/Meshes/SM_DoorFrame_Edge.SM_DoorFrame_Edge")
+      (set "NewMobility" "Static"))
+    (node K2Node_CallFunction_5 "Math|Vector|BreakVector"
+      (link "X" K2Node_CallFunction_18 "A")
+      (link "Y" K2Node_PromotableOperator_8 "A")
+      (link "Z" K2Node_CallFunction_15 "Location_Z"))
+    (node K2Node_CallFunction_6 "Math|Transform|MakeTransform"
+      (link "ReturnValue" K2Node_CallFunction_44 "RelativeTransform")
+      (set "Location_Y" "0.0")
+      (set "Rotation" "0.000000,180.000000,0.000000"))
+    (node K2Node_CallFunction_9 "Math|Transform|MakeTransform"
+      (link "ReturnValue" K2Node_CallFunction_42 "RelativeTransform")
+      (set "Location_Y" "0.0")
+      (set "Rotation" "90.000000,0.000000,0.000000"))
+    (node K2Node_ExecutionSequence_0 "Utilities|FlowControl|Sequence"
+      (link "then_0" K2Node_IfThenElse_1 "execute")
+      (link "then_1" K2Node_IfThenElse_2 "execute"))
+    (node K2Node_FunctionEntry_0 "|ConstructionScript"
+      (link "then" K2Node_ExecutionSequence_0 "execute"))
+    (node K2Node_IfThenElse_0 "Utilities|FlowControl|Branch"
+      (link "else" K2Node_Knot_7 "InputPin")
+      (link "then" K2Node_Knot_6 "InputPin"))
+    (node K2Node_IfThenElse_1 "Utilities|FlowControl|Branch"
+      (link "then" K2Node_Knot_0 "InputPin"))
+    (node K2Node_IfThenElse_2 "Utilities|FlowControl|Branch"
+      (link "else" K2Node_CallFunction_22 "execute")
+      (link "then" K2Node_CallFunction_33 "execute"))
+    (node K2Node_Knot_0 "|RerouteNode"
+      (link "OutputPin" K2Node_CallFunction_44 "execute"))
+    (node K2Node_Knot_1 "|RerouteNode"
+      (link "OutputPin" K2Node_CallFunction_3 "Location_Z"))
+    (node K2Node_Knot_2 "|RerouteNode"
+      (link "OutputPin" K2Node_AddComponent_0 "execute"))
+    (node K2Node_Knot_3 "|RerouteNode"
+      (link "OutputPin" K2Node_Knot_4 "InputPin"))
+    (node K2Node_Knot_4 "|RerouteNode"
+      (link "OutputPin" K2Node_CallFunction_41 "execute"))
+    (node K2Node_Knot_5 "|RerouteNode"
+      (link "OutputPin" K2Node_AddComponent_1 "execute"))
+    (node K2Node_Knot_6 "|RerouteNode"
+      (link "OutputPin" K2Node_Knot_5 "InputPin"))
+    (node K2Node_Knot_7 "|RerouteNode"
+      (link "OutputPin" K2Node_Knot_2 "InputPin"))
+    (node K2Node_PromotableOperator_0 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_24 "Location_Z")
+      (set "B" "2.000000"))
+    (node K2Node_PromotableOperator_1 "Math|Float|float*float"
+      (link "ReturnValue" K2Node_CallFunction_9 "Location_X")
+      (set "B" "-1.000000"))
+    (node K2Node_PromotableOperator_10 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_20 "Location_Z")
+      (set "B" "2.000000"))
+    (node K2Node_PromotableOperator_11 "Math|Float|float*float"
+      (link "ReturnValue" K2Node_CallFunction_3 "Location_X")
+      (set "B" "-1.000000"))
+    (node K2Node_PromotableOperator_12 "Math|Float|float*float"
+      (link "ReturnValue" K2Node_PromotableOperator_5 "B")
+      (set "B" "100.000000"))
+    (node K2Node_PromotableOperator_13 "Math|Float|float*float"
+      (link "ReturnValue" K2Node_PromotableOperator_3 "B")
+      (set "B" "100.000000"))
+    (node K2Node_PromotableOperator_14 "Math|Float|float*float"
+      (link "ReturnValue" K2Node_PromotableOperator_9 "B")
+      (set "B" "100.000000"))
+    (node K2Node_PromotableOperator_15 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_20 "Scale_X")
+      (set "B" "200.000000"))
+    (node K2Node_PromotableOperator_16 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_29 "Location_Z")
+      (link "ReturnValue" K2Node_CallFunction_37 "Location_Z")
+      (set "B" "2.000000"))
+    (node K2Node_PromotableOperator_17 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_29 "Scale_X")
+      (link "ReturnValue" K2Node_CallFunction_37 "Scale_X")
+      (set "B" "200.000000"))
+    (node K2Node_PromotableOperator_18 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_29 "Scale_Z")
+      (link "ReturnValue" K2Node_CallFunction_37 "Scale_Z")
+      (set "B" "200.000000"))
+    (node K2Node_PromotableOperator_19 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_24 "Scale_X")
+      (set "B" "100.000000"))
+    (node K2Node_PromotableOperator_2 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_9 "Location_Z")
+      (set "B" "2.000000"))
+    (node K2Node_PromotableOperator_20 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_35 "Z")
+      (link "ReturnValue" K2Node_CallFunction_36 "NewLocation_Z")
+      (set "B" "2.000000"))
+    (node K2Node_PromotableOperator_21 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_37 "Location_X")
+      (link "ReturnValue" K2Node_PromotableOperator_25 "A")
+      (set "B" "2.000000"))
+    (node K2Node_PromotableOperator_22 "Math|Vector|vector+vector"
+      (link "ReturnValue" K2Node_CallFunction_33 "InBoxExtent"))
+    (node K2Node_PromotableOperator_23 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_28 "Y")
+      (set "B" "100.000000"))
+    (node K2Node_PromotableOperator_24 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_9 "Scale_Y")
+      (set "B" "100.000000"))
+    (node K2Node_PromotableOperator_25 "Math|Float|float*float"
+      (link "ReturnValue" K2Node_CallFunction_29 "Location_X")
+      (set "B" "-1.000000"))
+    (node K2Node_PromotableOperator_26 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_20 "Scale_Y")
+      (set "B" "100.000000"))
+    (node K2Node_PromotableOperator_3 "Math|Float|float-float"
+      (link "ReturnValue" K2Node_PromotableOperator_2 "A")
+      (link "ReturnValue" K2Node_PromotableOperator_7 "A"))
+    (node K2Node_PromotableOperator_4 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_15 "Scale_X")
+      (set "B" "100.000000"))
+    (node K2Node_PromotableOperator_5 "Math|Float|float-float"
+      (link "ReturnValue" K2Node_PromotableOperator_4 "A"))
+    (node K2Node_PromotableOperator_6 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_24 "Scale_Z")
+      (set "B" "200.000000"))
+    (node K2Node_PromotableOperator_7 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_9 "Scale_X")
+      (set "B" "200.000000"))
+    (node K2Node_PromotableOperator_8 "Math|Float|float/float"
+      (link "ReturnValue" K2Node_CallFunction_15 "Scale_Y")
+      (set "B" "100.000000"))
+    (node K2Node_PromotableOperator_9 "Math|Float|float-float"
+      (link "ReturnValue" K2Node_PromotableOperator_10 "A")
+      (link "ReturnValue" K2Node_PromotableOperator_15 "A"))
+    (node K2Node_VariableGet_0 "|Get"
+      (link "Door Size_X" K2Node_PromotableOperator_1 "A")
+      (link "Door Size_Y" K2Node_PromotableOperator_24 "A")
+      (link "Door Size_Z" K2Node_CallFunction_13 "A"))
+    (node K2Node_VariableGet_1 "|GetDoorSize"
+      (link "Door Size" K2Node_CallFunction_5 "InVec"))
+    (node K2Node_VariableGet_10 "|GetAddDoor"
+      (link "Add Door" K2Node_IfThenElse_2 "Condition"))
+    (node K2Node_VariableGet_11 "|GetBox"
+      (link "Box" K2Node_CallFunction_22 "self"))
+    (node K2Node_VariableGet_12 "|GetDoorSize"
+      (link "Door Size" K2Node_CallFunction_30 "InVec"))
+    (node K2Node_VariableGet_13 "|GetDoorSize"
+      (link "Door Size" K2Node_CallFunction_38 "A"))
+    (node K2Node_VariableGet_14 "|GetBox"
+      (link "Box" K2Node_CallFunction_33 "self")
+      (link "Box" K2Node_CallFunction_36 "self"))
+    (node K2Node_VariableGet_15 "|GetDoorSize"
+      (link "Door Size" K2Node_CallFunction_23 "A"))
+    (node K2Node_VariableGet_16 "|GetDoorDetectionAdjust"
+      (link "Door Detection Adjust" K2Node_PromotableOperator_22 "B"))
+    (node K2Node_VariableGet_17 "|GetDoorThickness"
+      (link "Door Thickness" K2Node_CallFunction_29 "Scale_Y")
+      (link "Door Thickness" K2Node_CallFunction_37 "Scale_Y"))
+    (node K2Node_VariableGet_18 "|GetDoorFrame"
+      (link "Door Frame" K2Node_IfThenElse_1 "Condition"))
+    (node K2Node_VariableGet_19 "|GetSplitDoor"
+      (link "Split Door" K2Node_IfThenElse_0 "Condition"))
+    (node K2Node_VariableGet_2 "|Get"
+      (link "Door Size_X" K2Node_CallFunction_20 "Location_X")
+      (link "Door Size_Y" K2Node_PromotableOperator_26 "A")
+      (link "Door Size_Z" K2Node_CallFunction_21 "A"))
+    (node K2Node_VariableGet_20 "|GetDoorFrameOverideMaterial"
+      (link "Door Frame Overide Material" K2Node_CallFunction_41 "Material")
+      (link "Door Frame Overide Material" K2Node_CallFunction_42 "Material")
+      (link "Door Frame Overide Material" K2Node_CallFunction_45 "Material"))
+    (node K2Node_VariableGet_21 "|GetDoorFrameOverideMaterial"
+      (link "Door Frame Overide Material" K2Node_CallFunction_43 "Material")
+      (link "Door Frame Overide Material" K2Node_CallFunction_44 "Material"))
+    (node K2Node_VariableGet_22 "|GetDoorThickness"
+      (link "Door Thickness" K2Node_CallFunction_24 "Scale_Y"))
+    (node K2Node_VariableGet_23 "|GetDoorSize"
+      (link "Door Size" K2Node_CallFunction_27 "A"))
+    (node K2Node_VariableGet_3 "|GetDoorFrameScale"
+      (link "Door Frame Scale" K2Node_PromotableOperator_12 "A"))
+    (node K2Node_VariableGet_4 "|GetDoorFrameScale"
+      (link "Door Frame Scale" K2Node_CallFunction_28 "X")
+      (link "Door Frame Scale" K2Node_CallFunction_28 "Z"))
+    (node K2Node_VariableGet_5 "|GetDoorFrameScale"
+      (link "Door Frame Scale" K2Node_CallFunction_15 "Scale_Z"))
+    (node K2Node_VariableGet_6 "|GetDoorFrameScale"
+      (link "Door Frame Scale" K2Node_CallFunction_20 "Scale_Z"))
+    (node K2Node_VariableGet_7 "|GetDoorFrameScale"
+      (link "Door Frame Scale" K2Node_CallFunction_9 "Scale_Z"))
+    (node K2Node_VariableGet_8 "|GetDoorFrameScale"
+      (link "Door Frame Scale" K2Node_PromotableOperator_13 "A"))
+    (node K2Node_VariableGet_9 "|GetDoorFrameScale"
+      (link "Door Frame Scale" K2Node_PromotableOperator_14 "A"))
+    (node K2Node_VariableSet_1 "|SetDoor")
+    (node K2Node_VariableSet_2 "|SetDoor"
+      (link "then" K2Node_AddComponent_5 "execute"))
+    (node K2Node_VariableSet_3 "|SetDoor2")))
+
+(blueprint "/Game/LevelPrototyping/Interactable/JumpPad/BP_JumpPad"
+  (variables "Color Target" "Exclusion Tag" "Velocity")
+  (graph "EventGraph"
+    (node K2Node_CallFunction_0 "Actor|ActorHasTag"
+      (link "ReturnValue" K2Node_IfThenElse_0 "Condition"))
+    (node K2Node_CallFunction_2 "Character|LaunchCharacter"
+      (set "bXYOverride" "false")
+      (set "bZOverride" "true"))
+    (node K2Node_DynamicCast_0 "Utilities|Casting|CastToCharacter"
+      (link "AsCharacter" K2Node_CallFunction_2 "self")
+      (link "then" K2Node_CallFunction_2 "execute"))
+    (node K2Node_Event_1 "AddEvent|Collision|EventActorBeginOverlap"
+      (link "OtherActor" K2Node_Knot_0 "InputPin")
+      (link "then" K2Node_IfThenElse_0 "execute"))
+    (node K2Node_IfThenElse_0 "Utilities|FlowControl|Branch"
+      (link "else" K2Node_DynamicCast_0 "execute"))
+    (node K2Node_Knot_0 "|RerouteNode"
+      (link "OutputPin" K2Node_Knot_1 "InputPin"))
+    (node K2Node_Knot_1 "|RerouteNode"
+      (link "OutputPin" K2Node_CallFunction_0 "self")
+      (link "OutputPin" K2Node_Knot_2 "InputPin"))
+    (node K2Node_Knot_2 "|RerouteNode"
+      (link "OutputPin" K2Node_DynamicCast_0 "Object"))
+    (node K2Node_VariableGet_1 "|GetVelocity"
+      (link "Velocity" K2Node_CallFunction_2 "LaunchVelocity"))
+    (node K2Node_VariableGet_2 "|GetExclusionTag"
+      (link "Exclusion Tag" K2Node_CallFunction_0 "Tag")))
+  (graph "UserConstructionScript"
+    (node K2Node_CallFunction_0 "Niagara|SetNiagaraVariable(LinearColor)"
+      (link "then" K2Node_CallFunction_12 "execute")
+      (set "InVariableName" "Color"))
+    (node K2Node_CallFunction_12 "Rendering|Components|Light|SetLightColor"
+      (link "then" K2Node_CallFunction_13 "execute")
+      (set "bSRGB" "true"))
+    (node K2Node_CallFunction_13 "Rendering|Material|SetDefaultCustomPrimitiveDataFloat"
+      (link "then" K2Node_CallFunction_17 "execute")
+      (set "DataIndex" "0")
+      (set "Value" "1.000000"))
+    (node K2Node_CallFunction_15 "Math|Vector4|MakeVector4"
+      (link "ReturnValue" K2Node_CallFunction_17 "Value"))
+    (node K2Node_CallFunction_16 "Math|Color|BreakColor"
+      (link "A" K2Node_CallFunction_15 "W")
+      (link "B" K2Node_CallFunction_15 "Z")
+      (link "G" K2Node_CallFunction_15 "Y")
+      (link "R" K2Node_CallFunction_15 "X"))
+    (node K2Node_CallFunction_17 "Rendering|Material|SetDefaultCustomPrimitiveDataVector4"
+      (set "DataIndex" "1"))
+    (node K2Node_FunctionEntry_0 "|ConstructionScript"
+      (link "then" K2Node_CallFunction_0 "execute"))
+    (node K2Node_VariableGet_1 "|GetNS_JumpDemo"
+      (link "NS_JumpDemo" K2Node_CallFunction_0 "self"))
+    (node K2Node_VariableGet_5 "|GetColorTarget"
+      (link "Color Target" K2Node_CallFunction_0 "InValue")
+      (link "Color Target" K2Node_CallFunction_12 "NewLightColor")
+      (link "Color Target" K2Node_CallFunction_16 "InColor"))
+    (node K2Node_VariableGet_7 "|GetPointLight"
+      (link "PointLight" K2Node_CallFunction_12 "self"))
+    (node K2Node_VariableGet_8 "|GetCylinder1"
+      (link "Cylinder1" K2Node_CallFunction_13 "self")
+      (link "Cylinder1" K2Node_CallFunction_17 "self"))))
+
+(blueprint "/Game/LevelPrototyping/Interactable/Target/BP_WobbleTarget"
+  (variables)
+  (graph "EventGraph"
+    (node K2Node_Event_1 "AddEvent|Collision|EventActorBeginOverlap")
+    (node K2Node_Event_2 "AddEvent|EventTick"))
+  (graph "UserConstructionScript"
+    (node K2Node_CallFunction_0 "Physics|Components|PhysicsConstraint|SetConstrainedComponents"
+      (set "BoneName1" "None")
+      (set "BoneName2" "None"))
+    (node K2Node_FunctionEntry_0 "|ConstructionScript"
+      (link "then" K2Node_CallFunction_0 "execute"))
+    (node K2Node_VariableGet_0 "|GetPhysicsConstraint"
+      (link "PhysicsConstraint" K2Node_CallFunction_0 "self"))
+    (node K2Node_VariableGet_1 "|GetBasePlate"
+      (link "BasePlate" K2Node_CallFunction_0 "Component1"))
+    (node K2Node_VariableGet_2 "|GetDummy"
+      (link "Dummy" K2Node_CallFunction_0 "Component2"))))
+
+(blueprint "/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"
+  (variables)
+  (graph "Aim"
+    (node K2Node_CallFunction_18 "Pawn|Input|AddControllerPitchInput")
+    (node K2Node_CallFunction_19 "Pawn|Input|AddControllerYawInput"
+      (link "then" K2Node_CallFunction_18 "execute"))
+    (node K2Node_FunctionEntry_0 "|Aim"
+      (link "X Axis" K2Node_CallFunction_19 "Val")
+      (link "Y Axis" K2Node_Knot_7 "InputPin")
+      (link "then" K2Node_CallFunction_19 "execute"))
+    (node K2Node_Knot_5 "|RerouteNode"
+      (link "OutputPin" K2Node_CallFunction_18 "Val"))
+    (node K2Node_Knot_7 "|RerouteNode"
+      (link "OutputPin" K2Node_Knot_5 "InputPin")))
+  (graph "EventGraph"
+    (node K2Node_CallFunction_16 "Character|Jump")
+    (node K2Node_CallFunction_23 "Character|StopJumping")
+    (node K2Node_CallFunction_38 "|Move")
+    (node K2Node_CallFunction_39 "|Move")
+    (node K2Node_CallFunction_40 "|Aim")
+    (node K2Node_CallFunction_41 "|Aim")
+    (node K2Node_CallFunction_42 "|Aim")
+    (node K2Node_EnhancedInputAction_1 "Input|EnhancedActionEvents|EnhancedInputActionIA_Move"
+      (link "ActionValue_X" K2Node_CallFunction_38 "X Axis")
+      (link "ActionValue_Y" K2Node_CallFunction_38 "Y Axis")
+      (link "Triggered" K2Node_CallFunction_38 "execute"))
+    (node K2Node_EnhancedInputAction_4 "Input|EnhancedActionEvents|EnhancedInputActionIA_Look"
+      (link "ActionValue_X" K2Node_CallFunction_41 "X Axis")
+      (link "ActionValue_Y" K2Node_CallFunction_41 "Y Axis")
+      (link "Triggered" K2Node_CallFunction_41 "execute"))
+    (node K2Node_EnhancedInputAction_6 "Input|EnhancedActionEvents|EnhancedInputActionIA_Jump"
+      (link "Completed" K2Node_CallFunction_23 "execute")
+      (link "Started" K2Node_CallFunction_16 "execute"))
+    (node K2Node_EnhancedInputAction_7 "Input|EnhancedActionEvents|EnhancedInputActionIA_MouseLook"
+      (link "ActionValue_X" K2Node_CallFunction_40 "X Axis")
+      (link "ActionValue_Y" K2Node_CallFunction_40 "Y Axis")
+      (link "Triggered" K2Node_CallFunction_40 "execute"))
+    (node K2Node_Event_2 "AddEvent|Touch|EventPrimaryThumbstick"
+      (link "Axis_X" K2Node_CallFunction_39 "X Axis")
+      (link "Axis_Y" K2Node_CallFunction_39 "Y Axis")
+      (link "then" K2Node_CallFunction_39 "execute"))
+    (node K2Node_Event_4 "AddEvent|Touch|EventTouchJumpStart"
+      (link "then" K2Node_CallFunction_16 "execute"))
+    (node K2Node_Event_5 "AddEvent|Touch|EventTouchJumpEnd"
+      (link "then" K2Node_CallFunction_23 "execute"))
+    (node K2Node_Event_6 "AddEvent|Touch|EventSecondaryThumbstick"
+      (link "Axis_X" K2Node_CallFunction_42 "X Axis")
+      (link "Axis_Y" K2Node_CallFunction_42 "Y Axis")
+      (link "then" K2Node_CallFunction_42 "execute")))
+  (graph "Move"
+    (node K2Node_CallFunction_28 "Pawn|Input|AddMovementInput"
+      (set "bForce" "false"))
+    (node K2Node_CallFunction_29 "Pawn|Input|AddMovementInput"
+      (link "then" K2Node_CallFunction_28 "execute")
+      (set "bForce" "false"))
+    (node K2Node_CallFunction_30 "Pawn|GetControlRotation"
+      (link "ReturnValue_Yaw" K2Node_CallFunction_31 "InRot_Yaw"))
+    (node K2Node_CallFunction_31 "Math|Vector|GetForwardVector"
+      (link "ReturnValue" K2Node_CallFunction_28 "WorldDirection")
+      (set "InRot_Pitch" "0.0")
+      (set "InRot_Roll" "0.0"))
+    (node K2Node_CallFunction_32 "Math|Vector|GetRightVector"
+      (link "ReturnValue" K2Node_CallFunction_29 "WorldDirection")
+      (set "InRot_Pitch" "0.0"))
+    (node K2Node_CallFunction_33 "Pawn|GetControlRotation"
+      (link "ReturnValue_Roll" K2Node_CallFunction_32 "InRot_Roll")
+      (link "ReturnValue_Yaw" K2Node_CallFunction_32 "InRot_Yaw"))
+    (node K2Node_FunctionEntry_0 "|Move"
+      (link "X Axis" K2Node_Knot_11 "InputPin")
+      (link "Y Axis" K2Node_Knot_12 "InputPin")
+      (link "then" K2Node_CallFunction_29 "execute"))
+    (node K2Node_Knot_10 "|RerouteNode"
+      (link "OutputPin" K2Node_CallFunction_29 "ScaleValue"))
+    (node K2Node_Knot_11 "|RerouteNode"
+      (link "OutputPin" K2Node_Knot_10 "InputPin"))
+    (node K2Node_Knot_12 "|RerouteNode"
+      (link "OutputPin" K2Node_Knot_13 "InputPin"))
+    (node K2Node_Knot_13 "|RerouteNode"
+      (link "OutputPin" K2Node_CallFunction_28 "ScaleValue")))
+  (graph "UserConstructionScript"
+    (node K2Node_FunctionEntry_19 "|ConstructionScript")))
+
+(blueprint "/Game/ThirdPerson/Blueprints/BP_ThirdPersonGameMode"
+  (variables)
+  (graph "EventGraph")
+  (graph "UserConstructionScript"
+    (node K2Node_FunctionEntry_34 "|ConstructionScript")))
+
+(blueprint "/Game/ThirdPerson/Blueprints/BP_ThirdPersonPlayerController"
+  (variables "Force Touch Controls" "Touch Controls Widget Class")
+  (graph "EventGraph"
+    (node K2Node_CallFunction_0 "Utilities|FlowControl|DelayUntilNextTick"
+      (link "then" K2Node_IfThenElse_0 "execute"))
+    (node K2Node_CallFunction_1 "Pawn|IsLocalPlayerController"
+      (link "ReturnValue" K2Node_IfThenElse_0 "Condition"))
+    (node K2Node_CallFunction_15 "Input|AddMappingContext"
+      (set "MappingContext" "/Game/Input/IMC_MouseLook.IMC_MouseLook")
+      (set "Options" "(bIgnoreAllPressedKeysUntilRelease=True,bForceImmediately=False,bNotifyUserSettings=False)")
+      (set "Priority" "0"))
+    (node K2Node_CallFunction_2 "UserInterface|Viewport|AddToPlayerScreen"
+      (set "ZOrder" "0"))
+    (node K2Node_CallFunction_3 "Default|ShouldUseTouchControls"
+      (link "Use Mobile Controls" K2Node_IfThenElse_1 "Condition"))
+    (node K2Node_CallFunction_5 "Input|AddMappingContext"
+      (set "MappingContext" "/Game/Input/IMC_Default.IMC_Default")
+      (set "Options" "(bIgnoreAllPressedKeysUntilRelease=True,bForceImmediately=False,bNotifyUserSettings=False)")
+      (set "Priority" "0"))
+    (node K2Node_CreateWidget_0 "UserInterface|CreateWidget"
+      (link "ReturnValue" K2Node_CallFunction_2 "self")
+      (link "then" K2Node_CallFunction_2 "execute"))
+    (node K2Node_Event_0 "AddEvent|EventBeginPlay"
+      (link "then" K2Node_CallFunction_0 "execute"))
+    (node K2Node_ExecutionSequence_0 "Utilities|FlowControl|Sequence"
+      (link "then_0" K2Node_CallFunction_5 "execute")
+      (link "then_1" K2Node_IfThenElse_1 "execute"))
+    (node K2Node_GetSubsystem_0 "LocalPlayerSubsystems|GetEnhancedInputLocalPlayerSubsystem"
+      (link "ReturnValue" K2Node_CallFunction_5 "self"))
+    (node K2Node_GetSubsystem_2 "LocalPlayerSubsystems|GetEnhancedInputLocalPlayerSubsystem"
+      (link "ReturnValue" K2Node_CallFunction_15 "self"))
+    (node K2Node_IfThenElse_0 "Utilities|FlowControl|Branch"
+      (link "then" K2Node_ExecutionSequence_0 "execute"))
+    (node K2Node_IfThenElse_1 "Utilities|FlowControl|Branch"
+      (link "else" K2Node_Knot_2 "InputPin")
+      (link "then" K2Node_CreateWidget_0 "execute"))
+    (node K2Node_Knot_2 "|RerouteNode"
+      (link "OutputPin" K2Node_CallFunction_15 "execute"))
+    (node K2Node_Self_0 "Variables|Self-Reference"
+      (link "self" K2Node_CreateWidget_0 "OwningPlayer"))
+    (node K2Node_VariableGet_2 "|GetTouchControlsWidgetClass"
+      (link "Touch Controls Widget Class" K2Node_CreateWidget_0 "Class")))
+  (graph "Should Use Touch Controls"
+    (node K2Node_CallFunction_0 "Game|GetPlatformName"
+      (link "ReturnValue" K2Node_SwitchString_0 "Selection"))
+    (node K2Node_FunctionEntry_0 "|ShouldUseTouchControls"
+      (link "then" K2Node_SwitchString_0 "execute"))
+    (node K2Node_FunctionResult_0 "|ReturnNode")
+    (node K2Node_FunctionResult_1 "|ReturnNode"
+      (set "Use Mobile Controls" "true"))
+    (node K2Node_Knot_0 "|RerouteNode"
+      (link "OutputPin" K2Node_FunctionResult_0 "execute"))
+    (node K2Node_SwitchString_0 "Utilities|FlowControl|Switch|SwitchonString"
+      (link "Android" K2Node_FunctionResult_1 "execute")
+      (link "Default" K2Node_Knot_0 "InputPin")
+      (link "iOS" K2Node_FunctionResult_1 "execute"))
+    (node K2Node_VariableGet_0 "|GetForceTouchControls"
+      (link "Force Touch Controls" K2Node_FunctionResult_0 "Use Mobile Controls")))
+  (graph "UserConstructionScript"
+    (node K2Node_FunctionEntry_0 "|ConstructionScript")))
