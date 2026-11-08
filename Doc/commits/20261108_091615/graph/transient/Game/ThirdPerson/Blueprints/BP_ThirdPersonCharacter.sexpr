@@ -1,0 +1,50 @@
+(blueprint-diff "/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"
+  (old (revision "5fa87844") (date "2026-11-08T07:49:26.000Z") (description "Add mouse wheel camera zoom\n\nRe-create the IA_Zoom input action (Axis1D), map it to MouseWheelAxis\nin IMC_Default, and add the zoom logic to BP_ThirdPersonCharacter: on\nIA_Zoom Triggered, add the action value to the camera boom's Target\nArm Length.\n\nInclude the exported diffs in Doc/graph and the documentation export\nDoc/commits/20261108_082750.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (parent "/Script/Engine.Character")
+  (defaults
+    (added "NewVar" (old none) (new "False")))
+  (graph "EventGraph"
+    (pin-relinked-node modification
+      (text "Link Moved  'ReturnValue' ['Set TargetArmLength' -> 'Clamp (Float)']")
+      (old (node "K2Node_VariableSet_0" "Set TargetArmLength" (pos -768 -336)))
+      (new (node "K2Node_CallFunction_5" "Clamp (Float)" (pos -800 -160)))
+      (old-pin (pin "K2Node_PromotableOperator_0" "ReturnValue") (links (pin "K2Node_VariableSet_0" "TargetArmLength")) (default ""))
+      (new-pin (pin "K2Node_PromotableOperator_0" "ReturnValue") (links (pin "K2Node_CallFunction_5" "Value")) (default "")))
+    (node-moved minor
+      (text "Moved Node 'Set TargetArmLength'")
+      (old (node "K2Node_VariableSet_0" "Set TargetArmLength" (pos -768 -336)))
+      (new (node "K2Node_VariableSet_0" "Set TargetArmLength" (pos -464 -336))))
+    (pin-relinked-node modification
+      (text "Link Moved  'TargetArmLength' ['float + float' -> 'Clamp (Float)']")
+      (old (node "K2Node_PromotableOperator_0" "float + float" (pos -1104 -176)))
+      (new (node "K2Node_CallFunction_5" "Clamp (Float)" (pos -800 -160)))
+      (old-pin (pin "K2Node_VariableSet_0" "TargetArmLength") (links (pin "K2Node_PromotableOperator_0" "ReturnValue")) (default "0.0"))
+      (new-pin (pin "K2Node_VariableSet_0" "TargetArmLength") (links (pin "K2Node_CallFunction_5" "ReturnValue")) (default "0.0")))
+    (pin-type-category modification
+      (text "Pin Category 'Output_Get' ['object' -> 'real']")
+      (old-pin (pin "K2Node_VariableSet_0" "self") (links (pin "K2Node_Knot_0" "OutputPin")) (default ""))
+      (new-pin (pin "K2Node_VariableSet_0" "Output_Get") (links) (default "0.0")))
+    (pin-links-removed subtraction
+      (text "Removed Link to 'self'")
+      (old-pin (pin "K2Node_VariableSet_0" "self") (links (pin "K2Node_Knot_0" "OutputPin")) (default ""))
+      (new-pin (pin "K2Node_VariableSet_0" "Output_Get") (links) (default "0.0")))
+    (pin-default-value modification
+      (text "Pin Default 'Output_Get' ['' -> '0.0']")
+      (old-pin (pin "K2Node_VariableSet_0" "self") (links (pin "K2Node_Knot_0" "OutputPin")) (default ""))
+      (new-pin (pin "K2Node_VariableSet_0" "Output_Get") (links) (default "0.0")))
+    (pin-type-category modification
+      (text "Pin Category 'self' ['real' -> 'object']")
+      (old-pin (pin "K2Node_VariableSet_0" "Output_Get") (links) (default "0.0"))
+      (new-pin (pin "K2Node_VariableSet_0" "self") (links (pin "K2Node_Knot_0" "OutputPin")) (default "")))
+    (pin-links-added addition
+      (text "Added Link to 'Output_Get'")
+      (old-pin (pin "K2Node_VariableSet_0" "Output_Get") (links) (default "0.0"))
+      (new-pin (pin "K2Node_VariableSet_0" "self") (links (pin "K2Node_Knot_0" "OutputPin")) (default "")))
+    (node-added addition
+      (text "Added Node 'Clamp (Float)'")
+      (node "K2Node_CallFunction_5" "Clamp (Float)" (pos -800 -160))
+      (pin in "Value" "Float (double-precision)" (links (pin "K2Node_PromotableOperator_0" "ReturnValue")))
+      (pin in "Min" "Float (double-precision)" (default "50.000000"))
+      (pin in "Max" "Float (double-precision)" (default "1500.000000"))
+      (pin out "ReturnValue" "Float (double-precision)" (links (pin "K2Node_VariableSet_0" "TargetArmLength"))))))

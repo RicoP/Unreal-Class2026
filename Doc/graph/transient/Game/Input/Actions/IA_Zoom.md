@@ -1,8 +1,8 @@
 ### IA_Zoom (Input Action)
 
-Create a new Input Action named `IA_Zoom` in `/Game/Input/Actions`, then set:
+Open `IA_Zoom` in `/Game/Input/Actions` and change:
 
-| Setting | Value |
-|---|---|
-| Action Description | Zoom |
-| Value Type | Axis1D |
+| Setting | Before | After |
+|---|---|---|
+| Modifiers: add | — | Negate |
+| Modifiers: add | — | Scalar |

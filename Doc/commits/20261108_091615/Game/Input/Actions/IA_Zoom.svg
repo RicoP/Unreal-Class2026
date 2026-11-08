@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="253" height="120" viewBox="-1 -1 253 120">
+  <metadata>
+    <bde:asset xmlns:bde="urn:blueprint-diff-export" package="/Game/Input/Actions/IA_Zoom" kind="asset" class="InputAction" type="Input Action" new="false" revision="5fa87844" source="Doc/graph/transient/Game/Input/Actions/IA_Zoom.sexpr"/>
+  </metadata>
+  <style>
+    :where(svg){--node-body:#151515;--text:#f2f2f2;--text-muted:#999999;--border-event:#b3261e;--border-setter:#2b5d8f;--border-neutral:#3a3a3a;--border-function:#8a8a8a;--border-context:#555555;--table-header:#262626;--table-stripe:#1c1c1c;--pin-exec:#ffffff;--pin-boolean:#950000;--pin-byte:#006f65;--pin-integer:#1fe3af;--pin-integer64:#ace3af;--pin-float:#38d500;--pin-name:#cd82ff;--pin-string:#ff00d4;--pin-text:#e77caa;--pin-vector:#ffca23;--pin-rotator:#a0b4ff;--pin-transform:#ff7300;--pin-object:#00aaf5;--pin-other:#777777;--text-dim:color-mix(in srgb, var(--text) 45%, var(--node-body));--border-event-dim:color-mix(in srgb, var(--border-event) 45%, var(--node-body));--border-setter-dim:color-mix(in srgb, var(--border-setter) 45%, var(--node-body));--border-function-dim:color-mix(in srgb, var(--border-function) 45%, var(--node-body));--pin-exec-dim:color-mix(in srgb, var(--pin-exec) 45%, var(--node-body));--pin-boolean-dim:color-mix(in srgb, var(--pin-boolean) 45%, var(--node-body));--pin-byte-dim:color-mix(in srgb, var(--pin-byte) 45%, var(--node-body));--pin-integer-dim:color-mix(in srgb, var(--pin-integer) 45%, var(--node-body));--pin-integer64-dim:color-mix(in srgb, var(--pin-integer64) 45%, var(--node-body));--pin-float-dim:color-mix(in srgb, var(--pin-float) 45%, var(--node-body));--pin-name-dim:color-mix(in srgb, var(--pin-name) 45%, var(--node-body));--pin-string-dim:color-mix(in srgb, var(--pin-string) 45%, var(--node-body));--pin-text-dim:color-mix(in srgb, var(--pin-text) 45%, var(--node-body));--pin-vector-dim:color-mix(in srgb, var(--pin-vector) 45%, var(--node-body));--pin-rotator-dim:color-mix(in srgb, var(--pin-rotator) 45%, var(--node-body));--pin-transform-dim:color-mix(in srgb, var(--pin-transform) 45%, var(--node-body));--pin-object-dim:color-mix(in srgb, var(--pin-object) 45%, var(--node-body));--pin-other-dim:color-mix(in srgb, var(--pin-other) 45%, var(--node-body));}
+  </style>
+  <style>
+    text{font-family:trebuchet ms, verdana, arial, sans-serif;font-size:14px;dominant-baseline:central}
+  </style>
+  <rect x="0" y="0" width="251" height="118" rx="6" style="fill:var(--node-body);stroke:var(--border-neutral);stroke-width:2"/>
+  <text x="12" y="17" style="fill:var(--text)" font-weight="bold">IA_Zoom (Input Action)</text>
+  <rect x="1" y="34" width="249" height="28" style="fill:var(--table-header)"/>
+  <line x1="0" y1="34" x2="251" y2="34" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="48" style="fill:var(--text)" font-weight="bold">Setting</text>
+  <line x1="115" y1="34" x2="115" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="127" y="48" style="fill:var(--text)" font-weight="bold">Before</text>
+  <line x1="182" y1="34" x2="182" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="194" y="48" style="fill:var(--text)" font-weight="bold">After</text>
+  <rect x="1" y="62" width="249" height="28" style="fill:var(--node-body)"/>
+  <line x1="0" y1="62" x2="251" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="76" style="fill:var(--text)">Modifiers: add</text>
+  <line x1="115" y1="62" x2="115" y2="90" style="stroke:var(--border-neutral)"/>
+  <text x="127" y="76" style="fill:var(--text-muted)">—</text>
+  <line x1="182" y1="62" x2="182" y2="90" style="stroke:var(--border-neutral)"/>
+  <text x="194" y="76" style="fill:var(--text)">Negate</text>
+  <rect x="1" y="90" width="249" height="28" style="fill:var(--table-stripe)"/>
+  <line x1="0" y1="90" x2="251" y2="90" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="104" style="fill:var(--text)">Modifiers: add</text>
+  <line x1="115" y1="90" x2="115" y2="118" style="stroke:var(--border-neutral)"/>
+  <text x="127" y="104" style="fill:var(--text-muted)">—</text>
+  <line x1="182" y1="90" x2="182" y2="118" style="stroke:var(--border-neutral)"/>
+  <text x="194" y="104" style="fill:var(--text)">Scalar</text>
+</svg>

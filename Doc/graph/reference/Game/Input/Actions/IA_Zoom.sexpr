@@ -3,4 +3,5 @@
   (revision working-copy)
   (properties
     (set "ActionDescription" "NSLOCTEXT(\"[C166679B4F5717448B9698AA2CD7E51F]\", \"6C70A8E644B9C062A2DD13A3EF0C3C9B\", \"Zoom\")")
-    (set "ValueType" "Axis1D")))
+    (set "ValueType" "Axis1D")
+    (set "Modifiers" "(\"/Script/EnhancedInput.InputModifierNegate'/Game/Input/Actions/IA_Zoom.IA_Zoom:InputModifierNegate_0'\",\"/Script/EnhancedInput.InputModifierScalar'/Game/Input/Actions/IA_Zoom.IA_Zoom:InputModifierScalar_0'\")")))
