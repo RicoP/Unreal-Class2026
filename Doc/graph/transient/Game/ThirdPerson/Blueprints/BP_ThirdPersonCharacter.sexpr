@@ -1,0 +1,49 @@
+(blueprint-diff "/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"
+  (old (revision "e2d79cdf") (date "2026-11-07T05:20:47.000Z") (description "Remove zoom input and add Blueprint graph snapshot\n\nRemove the IA_Zoom action, its input mapping and the zoom logic from\nthe character Blueprint. Enable AllToolsets for MCP access.\n\nAdd Doc/update_graph.py, which writes all project Blueprint graphs to\nDoc/graph.sexpr so changes can be compared between commits.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (parent "/Script/Engine.Character")
+  (variables
+    (added "NewVar" (type "Boolean") (category "Default") (default "") (instance-editable false)))
+  (defaults
+    (added "NewVar" (old none) (new "False")))
+  (graph "EventGraph"
+    (node-added addition
+      (text "Added Node 'EnhancedInputAction IA_Zoom'")
+      (node "K2Node_EnhancedInputAction_0" "EnhancedInputAction IA_Zoom" (pos -1776 -352))
+      (pin out "Triggered" "Exec" (links (pin "K2Node_VariableSet_0" "execute")))
+      (pin out "Started" "Exec")
+      (pin out "Ongoing" "Exec")
+      (pin out "Canceled" "Exec")
+      (pin out "Completed" "Exec")
+      (pin out "ActionValue" "Float (double-precision)" (links (pin "K2Node_PromotableOperator_0" "A")))
+      (pin out "ElapsedSeconds" "Float (double-precision)")
+      (pin out "TriggeredSeconds" "Float (double-precision)")
+      (pin out "InputAction" "Input Action Object Reference" (default "IA_Zoom")))
+    (node-added addition
+      (text "Added Node 'Get CameraBoom'")
+      (node "K2Node_VariableGet_0" "Get CameraBoom" (pos -1584 -147))
+      (pin out "CameraBoom" "Spring Arm Component Object Reference" (links (pin "K2Node_VariableGet_1" "self") (pin "K2Node_Knot_0" "InputPin"))))
+    (node-added addition
+      (text "Added Node 'Get TargetArmLength'")
+      (node "K2Node_VariableGet_1" "Get TargetArmLength" (pos -1392 -147))
+      (pin out "TargetArmLength" "Float (single-precision)" (links (pin "K2Node_PromotableOperator_0" "B")))
+      (pin in "self" "Spring Arm Component Object Reference" (links (pin "K2Node_VariableGet_0" "CameraBoom"))))
+    (node-added addition
+      (text "Added Node 'float + float'")
+      (node "K2Node_PromotableOperator_0" "float + float" (pos -1104 -176))
+      (pin in "A" "Float (double-precision)" (links (pin "K2Node_EnhancedInputAction_0" "ActionValue")))
+      (pin in "B" "Float (double-precision)" (links (pin "K2Node_VariableGet_1" "TargetArmLength")))
+      (pin out "ReturnValue" "Float (double-precision)" (links (pin "K2Node_VariableSet_0" "TargetArmLength"))))
+    (node-added addition
+      (text "Added Node 'Set TargetArmLength'")
+      (node "K2Node_VariableSet_0" "Set TargetArmLength" (pos -768 -336))
+      (pin in "execute" "Exec" (links (pin "K2Node_EnhancedInputAction_0" "Triggered")))
+      (pin out "then" "Exec")
+      (pin in "TargetArmLength" "Float (single-precision)" (links (pin "K2Node_PromotableOperator_0" "ReturnValue")))
+      (pin out "Output_Get" "Float (single-precision)" (default "0.0"))
+      (pin in "self" "Spring Arm Component Object Reference" (links (pin "K2Node_Knot_0" "OutputPin"))))
+    (node-added addition
+      (text "Added Node 'Reroute Node'")
+      (node "K2Node_Knot_0" "Reroute Node" (pos -1392 -256))
+      (pin in "InputPin" "Spring Arm Component Object Reference" (links (pin "K2Node_VariableGet_0" "CameraBoom")))
+      (pin out "OutputPin" "Spring Arm Component Object Reference" (links (pin "K2Node_VariableSet_0" "self"))))))

@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Documentation export 20261108_082750</title>
+    <style>
+      body { margin: 0; padding: 24px; background: #2b2b2b; color: #e6e6e6;
+             font-family: "trebuchet ms", verdana, arial, sans-serif; }
+      header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px; }
+      h1 { margin: 0 0 24px; font-size: 22px; }
+      h2 { margin: 32px 0 12px; font-size: 17px; font-weight: normal; color: #ffffff; }
+      label { font-size: 14px; }
+      select { margin-left: 6px; font: inherit; }
+      .figure svg { display: block; max-width: 100%; height: auto; }
+      /* Palettes from Doc/palette.json. Each SVG carries the default palette at zero specificity. */
+      body[data-palette="default"] svg { --node-body: #151515; --text: #f2f2f2; --text-muted: #999999; --border-event: #b3261e; --border-setter: #2b5d8f; --border-neutral: #3a3a3a; --border-context: #555555; --table-header: #262626; --table-stripe: #1c1c1c; --pin-exec: #ffffff; --pin-boolean: #950000; --pin-byte: #006f65; --pin-integer: #1fe3af; --pin-integer64: #ace3af; --pin-float: #38d500; --pin-name: #cd82ff; --pin-string: #ff00d4; --pin-text: #e77caa; --pin-vector: #ffca23; --pin-rotator: #a0b4ff; --pin-transform: #ff7300; --pin-object: #00aaf5; --pin-other: #777777; }
+      body[data-palette="red-green-safe"] svg { --border-event: #cc79a7; --border-setter: #0072b2; --pin-boolean: #cc79a7; --pin-byte: #66d9c2; --pin-integer: #009e73; --pin-integer64: #c8f0e0; --pin-float: #e69f00; --pin-name: #b39ddb; --pin-string: #bbbbbb; --pin-text: #f5b8d6; --pin-vector: #f0e442; --pin-rotator: #9fb6ff; --pin-transform: #a6761d; --pin-object: #56b4e9; --pin-other: #888888; }
+      body[data-palette="blue-yellow-safe"] svg { --border-event: #ff7043; --border-setter: #9fb6ff; --pin-boolean: #ff4f6d; --pin-byte: #b0b0b0; --pin-integer: #888888; --pin-integer64: #c8c8c8; --pin-float: #7dff4d; --pin-name: #ce93d8; --pin-string: #009e73; --pin-text: #ff9de2; --pin-vector: #ffb000; --pin-rotator: #d070ff; --pin-transform: #ff8c1a; --pin-object: #ab47bc; --pin-other: #777777; }
+      body[data-palette="high-contrast"] svg { --node-body: #000000; --text: #ffffff; --text-muted: #d0d0d0; --border-event: #ff8c1a; --border-setter: #5aa9ff; --border-neutral: #bfbfbf; --border-context: #a0a0a0; --table-header: #262626; --table-stripe: #101010; --pin-exec: #ffffff; --pin-boolean: #ff6680; --pin-byte: #00e0d0; --pin-integer: #00ffc8; --pin-integer64: #b8ffe0; --pin-float: #7dff4d; --pin-name: #e0a3ff; --pin-string: #ff66ff; --pin-text: #ffb3d1; --pin-vector: #ffe14d; --pin-rotator: #c0ccff; --pin-transform: #ffad5c; --pin-object: #33d1ff; --pin-other: #c8c8c8; }
+      body[data-palette="greyscale"] svg { --node-body: #000000; --text: #ffffff; --text-muted: #bdbdbd; --border-event: #ffffff; --border-setter: #808080; --border-neutral: #6e6e6e; --border-context: #5a5a5a; --table-header: #262626; --table-stripe: #141414; --pin-exec: #ffffff; --pin-boolean: #5c5c5c; --pin-byte: #8e8e8e; --pin-integer: #c6c6c6; --pin-integer64: #c6c6c6; --pin-float: #c6c6c6; --pin-name: #8e8e8e; --pin-string: #8e8e8e; --pin-text: #8e8e8e; --pin-vector: #ffffff; --pin-rotator: #c6c6c6; --pin-transform: #8e8e8e; --pin-object: #8e8e8e; --pin-other: #6e6e6e; }
+    </style>
+  </head>
+  <body data-palette="default">
+    <header>
+      <h1>Documentation export 20261108_082750</h1>
+      <label>Colours <select id="palette"><option value="default">Unreal editor</option><option value="red-green-safe">Red-green safe (protanopia, deuteranopia)</option><option value="blue-yellow-safe">Blue-yellow safe (tritanopia)</option><option value="high-contrast">High contrast</option><option value="greyscale">Greyscale (achromatopsia, print)</option></select></label>
+    </header>
+    <section>
+      <h2>Create Input Action at All/Content/Input/Actions/IA_Zoom</h2>
+      <div class="figure" role="img" aria-label="All/Content/Input/Actions/IA_Zoom">
+<svg xmlns="http://www.w3.org/2000/svg" width="211" height="120" viewBox="-1 -1 211 120">
+  <metadata>
+    <bde:asset xmlns:bde="urn:blueprint-diff-export" package="/Game/Input/Actions/IA_Zoom" kind="asset" class="InputAction" type="Input Action" new="true" revision="none" deleted-in="e2d79cdf" source="Doc/graph/transient/Game/Input/Actions/IA_Zoom.sexpr"/>
+  </metadata>
+  <style>
+    :where(svg){--node-body:#151515;--text:#f2f2f2;--text-muted:#999999;--border-event:#b3261e;--border-setter:#2b5d8f;--border-neutral:#3a3a3a;--border-context:#555555;--table-header:#262626;--table-stripe:#1c1c1c;--pin-exec:#ffffff;--pin-boolean:#950000;--pin-byte:#006f65;--pin-integer:#1fe3af;--pin-integer64:#ace3af;--pin-float:#38d500;--pin-name:#cd82ff;--pin-string:#ff00d4;--pin-text:#e77caa;--pin-vector:#ffca23;--pin-rotator:#a0b4ff;--pin-transform:#ff7300;--pin-object:#00aaf5;--pin-other:#777777;}
+  </style>
+  <style>
+    text{font-family:trebuchet ms, verdana, arial, sans-serif;font-size:14px;dominant-baseline:central}
+  </style>
+  <rect x="0" y="0" width="209" height="118" rx="6" style="fill:var(--node-body);stroke:var(--border-neutral);stroke-width:2"/>
+  <text x="12" y="17" style="fill:var(--text)" font-weight="bold">IA_Zoom (Input Action)</text>
+  <rect x="1" y="34" width="207" height="28" style="fill:var(--table-header)"/>
+  <line x1="0" y1="34" x2="209" y2="34" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="48" style="fill:var(--text)" font-weight="bold">Setting</text>
+  <line x1="143" y1="34" x2="143" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="155" y="48" style="fill:var(--text)" font-weight="bold">Value</text>
+  <rect x="1" y="62" width="207" height="28" style="fill:var(--node-body)"/>
+  <line x1="0" y1="62" x2="209" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="76" style="fill:var(--text)">Action Description</text>
+  <line x1="143" y1="62" x2="143" y2="90" style="stroke:var(--border-neutral)"/>
+  <text x="155" y="76" style="fill:var(--text)">Zoom</text>
+  <rect x="1" y="90" width="207" height="28" style="fill:var(--table-stripe)"/>
+  <line x1="0" y1="90" x2="209" y2="90" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="104" style="fill:var(--text)">Value Type</text>
+  <line x1="143" y1="90" x2="143" y2="118" style="stroke:var(--border-neutral)"/>
+  <text x="155" y="104" style="fill:var(--text)">Axis1D</text>
+</svg>
+      </div>
+    </section>
+    <section>
+      <h2>All/Content/Input/IMC_Default</h2>
+      <div class="figure" role="img" aria-label="All/Content/Input/IMC_Default">
+<svg xmlns="http://www.w3.org/2000/svg" width="610" height="92" viewBox="-1 -1 610 92">
+  <metadata>
+    <bde:asset xmlns:bde="urn:blueprint-diff-export" package="/Game/Input/IMC_Default" kind="asset" class="InputMappingContext" type="Input Mapping Context" new="false" revision="e2d79cdf" source="Doc/graph/transient/Game/Input/IMC_Default.sexpr"/>
+  </metadata>
+  <style>
+    :where(svg){--node-body:#151515;--text:#f2f2f2;--text-muted:#999999;--border-event:#b3261e;--border-setter:#2b5d8f;--border-neutral:#3a3a3a;--border-context:#555555;--table-header:#262626;--table-stripe:#1c1c1c;--pin-exec:#ffffff;--pin-boolean:#950000;--pin-byte:#006f65;--pin-integer:#1fe3af;--pin-integer64:#ace3af;--pin-float:#38d500;--pin-name:#cd82ff;--pin-string:#ff00d4;--pin-text:#e77caa;--pin-vector:#ffca23;--pin-rotator:#a0b4ff;--pin-transform:#ff7300;--pin-object:#00aaf5;--pin-other:#777777;}
+  </style>
+  <style>
+    text{font-family:trebuchet ms, verdana, arial, sans-serif;font-size:14px;dominant-baseline:central}
+  </style>
+  <rect x="0" y="0" width="608" height="90" rx="6" style="fill:var(--node-body);stroke:var(--border-neutral);stroke-width:2"/>
+  <text x="12" y="17" style="fill:var(--text)" font-weight="bold">IMC_Default (Input Mapping Context)</text>
+  <rect x="1" y="34" width="606" height="28" style="fill:var(--table-header)"/>
+  <line x1="0" y1="34" x2="608" y2="34" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="48" style="fill:var(--text)" font-weight="bold">Setting</text>
+  <line x1="264" y1="34" x2="264" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="276" y="48" style="fill:var(--text)" font-weight="bold">Before</text>
+  <line x1="331" y1="34" x2="331" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="343" y="48" style="fill:var(--text)" font-weight="bold">After</text>
+  <rect x="1" y="62" width="606" height="28" style="fill:var(--node-body)"/>
+  <line x1="0" y1="62" x2="608" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="76" style="fill:var(--text)">Default Key Mappings › Mappings: add</text>
+  <line x1="264" y1="62" x2="264" y2="90" style="stroke:var(--border-neutral)"/>
+  <text x="276" y="76" style="fill:var(--text-muted)">—</text>
+  <line x1="331" y1="62" x2="331" y2="90" style="stroke:var(--border-neutral)"/>
+  <text x="343" y="76" style="fill:var(--text)">Action: IA_Zoom, Key: MouseWheelAxis</text>
+</svg>
+      </div>
+    </section>
+    <section>
+      <h2>All/Content/ThirdPerson/Blueprints/BP_ThirdPersonCharacter</h2>
+      <div class="figure" role="img" aria-label="All/Content/ThirdPerson/Blueprints/BP_ThirdPersonCharacter">
+<svg id="s3-my-svg" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="max-width: 900px; background-color: transparent;" viewBox="-8 -12 900 284.25" role="graphics-document document" aria-roledescription="flowchart-v2">
+  <metadata>
+    <bde:asset xmlns:bde="urn:blueprint-diff-export" package="/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter" kind="blueprint" class="Blueprint" type="Blueprint Class" new="false" revision="e2d79cdf" parent="/Script/Engine.Character" source="Doc/graph/transient/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.sexpr"/>
+  </metadata>
+  <style>
+    :where(svg){--node-body:#151515;--text:#f2f2f2;--text-muted:#999999;--border-event:#b3261e;--border-setter:#2b5d8f;--border-neutral:#3a3a3a;--border-context:#555555;--table-header:#262626;--table-stripe:#1c1c1c;--pin-exec:#ffffff;--pin-boolean:#950000;--pin-byte:#006f65;--pin-integer:#1fe3af;--pin-integer64:#ace3af;--pin-float:#38d500;--pin-name:#cd82ff;--pin-string:#ff00d4;--pin-text:#e77caa;--pin-vector:#ffca23;--pin-rotator:#a0b4ff;--pin-transform:#ff7300;--pin-object:#00aaf5;--pin-other:#777777;}
+  </style>
+  <style>
+    #s3-my-svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#333;}
+    #s3-my-svg .error-icon{fill:#552222;}
+    #s3-my-svg .error-text{fill:#552222;stroke:#552222;}
+    #s3-my-svg .edge-thickness-normal{stroke-width:2px;}
+    #s3-my-svg .edge-thickness-thick{stroke-width:3.5px;}
+    #s3-my-svg .edge-pattern-solid{stroke-dasharray:0;}
+    #s3-my-svg .edge-pattern-dashed{stroke-dasharray:3;}
+    #s3-my-svg .edge-pattern-dotted{stroke-dasharray:2;}
+    #s3-my-svg .marker{fill:#333333;stroke:#333333;}
+    #s3-my-svg .marker.cross{stroke:#333333;}
+    #s3-my-svg svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}
+    #s3-my-svg .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#333;}
+    #s3-my-svg .cluster-label text{fill:#333;}
+    #s3-my-svg .cluster-label span,#s3-my-svg p{color:#333;}
+    #s3-my-svg .label text,#s3-my-svg span,#s3-my-svg p{fill:#333;color:#333;}
+    #s3-my-svg .node rect,#s3-my-svg .node circle,#s3-my-svg .node ellipse,#s3-my-svg .node polygon,#s3-my-svg .node path{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}
+    #s3-my-svg .flowchart-label text{text-anchor:middle;}
+    #s3-my-svg .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}
+    #s3-my-svg .node .label{text-align:center;}
+    #s3-my-svg .node.clickable{cursor:pointer;}
+    #s3-my-svg .arrowheadPath{fill:#333333;}
+    #s3-my-svg .edgePath .path{stroke:#333333;stroke-width:2.0px;}
+    #s3-my-svg .flowchart-link{stroke:#333333;fill:none;}
+    #s3-my-svg .edgeLabel{background-color:#e8e8e8;text-align:center;}
+    #s3-my-svg .edgeLabel rect{opacity:0.5;background-color:#e8e8e8;fill:#e8e8e8;}
+    #s3-my-svg .labelBkg{background-color:rgba(232, 232, 232, 0.5);}
+    #s3-my-svg .cluster rect{fill:#ffffde;stroke:#aaaa33;stroke-width:1px;}
+    #s3-my-svg .cluster text{fill:#333;}
+    #s3-my-svg .cluster span,#s3-my-svg p{color:#333;}
+    #s3-my-svg div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(80, 100%, 96.2745098039%);border:1px solid #aaaa33;border-radius:2px;pointer-events:none;z-index:100;}
+    #s3-my-svg .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#333;}
+    #s3-my-svg :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}
+    #s3-my-svg .pin_exec&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-exec)!important;}
+    #s3-my-svg .pin_exec span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-exec)!important;}
+    #s3-my-svg .pin_exec tspan{fill:var(--pin-exec)!important;}
+    #s3-my-svg .pin_float&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-float)!important;}
+    #s3-my-svg .pin_float span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-float)!important;}
+    #s3-my-svg .pin_float tspan{fill:var(--pin-float)!important;}
+    #s3-my-svg .pin_object&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-object)!important;}
+    #s3-my-svg .pin_object span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-object)!important;}
+    #s3-my-svg .pin_object tspan{fill:var(--pin-object)!important;}
+  </style>
+  <g>
+    <marker id="s3-my-svg_flowchart-pointEnd" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="s3-my-svg_flowchart-pointEnd-38d500" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-float);stroke:var(--pin-float);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="s3-my-svg_flowchart-pointEnd-ffffff" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-exec);stroke:var(--pin-exec);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="s3-my-svg_flowchart-pointEnd-00aaf5" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-object);stroke:var(--pin-object);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="s3-my-svg_flowchart-pointStart" class="marker flowchart" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="s3-my-svg_flowchart-circleEnd" class="marker flowchart" viewBox="0 0 10 10" refX="11" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto">
+      <circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="s3-my-svg_flowchart-circleStart" class="marker flowchart" viewBox="0 0 10 10" refX="-1" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto">
+      <circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="s3-my-svg_flowchart-crossEnd" class="marker cross flowchart" viewBox="0 0 11 11" refX="12" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto">
+      <path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="s3-my-svg_flowchart-crossStart" class="marker cross flowchart" viewBox="0 0 11 11" refX="-1" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto">
+      <path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <g class="root">
+      <g class="clusters">
+        <g class="cluster default flowchart-label" id="s3-N_EventGraph_K2Node_VariableSet_0">
+          <rect style="fill:var(--node-body);stroke:var(--border-setter);stroke-width:3px;" rx="0" ry="0" x="665" y="-4" width="219" height="268.25"/>
+          <g class="cluster-label" transform="translate(694.5, 0)">
+            <foreignObject width="160" height="22"><div style="color: var(--text); display: inline-block; white-space: nowrap;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel" style="color:var(--text);">SET Target Arm Length</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="cluster default flowchart-label" id="s3-N_EventGraph_K2Node_EnhancedInputAction_0">
+          <rect style="fill:var(--node-body);stroke:var(--border-event);stroke-width:3px;" rx="0" ry="0" x="208" y="-4" width="238" height="143.5"/>
+          <g class="cluster-label" transform="translate(211, 0)">
+            <foreignObject width="232" height="23"><div style="color: var(--text); display: inline-block; white-space: nowrap;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel" style="color:var(--text);">◆ EnhancedInputAction IA_Zoom</span></div></foreignObject>
+          </g>
+        </g>
+      </g>
+      <g class="edgePaths">
+        <path d="M385.5,101L415.75,101L415.75,101L461,101L461,101L494.264,101L494.264,118.69L512.529,118.69" id="s3-L-N_EventGraph_K2Node_EnhancedInputAction_0_ActionValue-N_EventGraph_K2Node_PromotableOperator_0-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_EnhancedInputAction_0_ActionValue LE-N_EventGraph_K2Node_PromotableOperator_0" style="stroke:var(--pin-float);stroke-width:2px;fill:none;" marker-end="url(#s3-my-svg_flowchart-pointEnd-38d500)"/>
+        <path d="M378,44.5L412,44.5L412,44L461,44L461,44L515.75,44L515.75,44L595.25,44L595.25,44L650,44L650,44L710.1,44L710.1,44.472L755.2,44.472" id="s3-L-N_EventGraph_K2Node_EnhancedInputAction_0_Triggered-N_EventGraph_K2Node_VariableSet_0_execute-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_EnhancedInputAction_0_Triggered LE-N_EventGraph_K2Node_VariableSet_0_execute" style="stroke-width: 3.5px;fill:none;stroke:var(--pin-exec);stroke-width:3px;fill:none;" marker-end="url(#s3-my-svg_flowchart-pointEnd-ffffff)"/>
+        <path d="M141.509,188L159.754,188L159.754,178L193,178L193,178L220.35,178L220.35,178L232.7,178" id="s3-L-N_EventGraph_K2Node_VariableGet_0-N_EventGraph_K2Node_VariableGet_1-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_VariableGet_0 LE-N_EventGraph_K2Node_VariableGet_1" style="stroke:var(--pin-object);stroke-width:2px;fill:none;" marker-end="url(#s3-my-svg_flowchart-pointEnd-00aaf5)"/>
+        <path d="M148,220.197L163,220.197L163,225.75L193,225.75L193,225.75L267.5,225.75L267.5,225.75L386.5,225.75L386.5,225.75L461,225.75L461,225.75L515.75,225.75L515.75,225.75L595.25,225.75L595.25,225.75L650,225.75L650,225.75L698.6,225.75L698.6,225.75L732.2,225.75" id="s3-L-N_EventGraph_K2Node_VariableGet_0-N_EventGraph_K2Node_VariableSet_0_self-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_VariableGet_0 LE-N_EventGraph_K2Node_VariableSet_0_self" style="stroke:var(--pin-object);stroke-width:2px;fill:none;" marker-end="url(#s3-my-svg_flowchart-pointEnd-00aaf5)"/>
+        <path d="M416,178L431,178L431,178L461,178L461,178L494.264,178L494.264,160.31L512.529,160.31" id="s3-L-N_EventGraph_K2Node_VariableGet_1-N_EventGraph_K2Node_PromotableOperator_0-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_VariableGet_1 LE-N_EventGraph_K2Node_PromotableOperator_0" style="stroke:var(--pin-float);stroke-width:2px;fill:none;" marker-end="url(#s3-my-svg_flowchart-pointEnd-38d500)"/>
+        <path d="M605,139.5L620,139.5L620,139.5L650,139.5L650,139.5L677.35,139.5L677.35,139.5L689.7,139.5" id="s3-L-N_EventGraph_K2Node_PromotableOperator_0-N_EventGraph_K2Node_VariableSet_0_TargetArmLength-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_PromotableOperator_0 LE-N_EventGraph_K2Node_VariableSet_0_TargetArmLength" style="stroke:var(--pin-float);stroke-width:2px;fill:none;" marker-end="url(#s3-my-svg_flowchart-pointEnd-38d500)"/>
+      </g>
+      <g class="edgeLabels">
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+      </g>
+      <g class="nodes">
+        <g class="node default pin_exec flowchart-label" id="s3-flowchart-N_EventGraph_K2Node_VariableSet_0_execute-2" data-node="true" data-id="s3-N_EventGraph_K2Node_VariableSet_0_execute" transform="translate(774.5, 44)">
+          <polygon points="-18.5,0 29,0 29,-37 -18.5,-37 0,-18.5" class="label-container" transform="translate(-14.5,18.5)" style=""/>
+          <g class="label" style="" transform="translate(-7, -11)">
+            <rect/>
+            <foreignObject width="14" height="22"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">▶</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_float flowchart-label" id="s3-flowchart-N_EventGraph_K2Node_VariableSet_0_TargetArmLength-3" data-node="true" data-id="s3-N_EventGraph_K2Node_VariableSet_0_TargetArmLength" transform="translate(774.5, 139.5)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-79.5" y="-18.5" width="159" height="37"/>
+          <g class="label" style="" transform="translate(-72, -11)">
+            <rect/>
+            <foreignObject width="144" height="22"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">● Target Arm Length</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_object flowchart-label" id="s3-flowchart-N_EventGraph_K2Node_VariableSet_0_self-4" data-node="true" data-id="s3-N_EventGraph_K2Node_VariableSet_0_self" transform="translate(774.5, 225.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-37" y="-18.5" width="74" height="37"/>
+          <g class="label" style="" transform="translate(-29.5, -11)">
+            <rect/>
+            <foreignObject width="59" height="22"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">● Target</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_exec flowchart-label" id="s3-flowchart-N_EventGraph_K2Node_EnhancedInputAction_0_Triggered-0" data-node="true" data-id="s3-N_EventGraph_K2Node_EnhancedInputAction_0_Triggered" transform="translate(327, 44)">
+          <polygon points="-18.5,0 101,0 101,-37 -18.5,-37 0,-18.5" class="label-container" transform="translate(-50.5,18.5)" style=""/>
+          <g class="label" style="" transform="translate(-43, -11)">
+            <rect/>
+            <foreignObject width="86" height="22"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Triggered ▶</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_float flowchart-label" id="s3-flowchart-N_EventGraph_K2Node_EnhancedInputAction_0_ActionValue-1" data-node="true" data-id="s3-N_EventGraph_K2Node_EnhancedInputAction_0_ActionValue" transform="translate(327, 101)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-58.5" y="-18.5" width="117" height="37"/>
+          <g class="label" style="" transform="translate(-51, -11)">
+            <rect/>
+            <foreignObject width="102" height="22"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel">Action Value ●</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="s3-flowchart-N_EventGraph_K2Node_PromotableOperator_0-6" data-node="true" data-id="s3-N_EventGraph_K2Node_PromotableOperator_0" transform="translate(555.5, 139.5)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-float);stroke-width:2px;" rx="0" ry="0" x="-49.5" y="-18.5" width="99" height="37"/>
+          <g class="label" style="color:var(--pin-float);" transform="translate(-42, -11)">
+            <rect/>
+            <foreignObject width="84" height="22"><div style="color: var(--pin-float); display: inline-block; white-space: nowrap;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel" style="color:var(--pin-float);">float + float</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="s3-flowchart-N_EventGraph_K2Node_VariableGet_0-9" data-node="true" data-id="s3-N_EventGraph_K2Node_VariableGet_0" transform="translate(74, 206.5)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-object);stroke-width:2px;rx:16px;ry:16px;" rx="0" ry="0" x="-74" y="-18.5" width="148" height="37"/>
+          <g class="label" style="color:var(--pin-object);" transform="translate(-66.5, -11)">
+            <rect/>
+            <foreignObject width="133" height="22"><div style="color: var(--pin-object); display: inline-block; white-space: nowrap;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel" style="color:var(--pin-object);">GET Camera Boom</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="s3-flowchart-N_EventGraph_K2Node_VariableGet_1-10" data-node="true" data-id="s3-N_EventGraph_K2Node_VariableGet_1" transform="translate(327, 178)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-float);stroke-width:2px;rx:16px;ry:16px;" rx="0" ry="0" x="-89" y="-18.5" width="178" height="37"/>
+          <g class="label" style="color:var(--pin-float);" transform="translate(-81.5, -11)">
+            <rect/>
+            <foreignObject width="163" height="22"><div style="color: var(--pin-float); display: inline-block; white-space: nowrap;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel" style="color:var(--pin-float);">GET Target Arm Length</span></div></foreignObject>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
+      </div>
+    </section>
+    <script>
+      const select = document.getElementById("palette");
+      const apply = (name) => {
+        document.body.dataset.palette = name;
+        select.value = name;
+        try { localStorage.setItem("doc-palette", name); } catch (error) { /* storage unavailable */ }
+      };
+      let saved = null;
+      try { saved = localStorage.getItem("doc-palette"); } catch (error) { /* storage unavailable */ }
+      const requested = new URLSearchParams(location.search).get("palette") || saved;
+      const known = [...select.options].map((option) => option.value);
+      apply(known.includes(requested) ? requested : "default");
+      select.addEventListener("change", () => apply(select.value));
+    </script>
+  </body>
+</html>

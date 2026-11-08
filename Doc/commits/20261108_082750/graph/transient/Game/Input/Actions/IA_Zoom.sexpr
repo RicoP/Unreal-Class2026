@@ -1,0 +1,8 @@
+(asset-diff "/Game/Input/Actions/IA_Zoom"
+  (class "InputAction")
+  (old none (deleted-in "e2d79cdf"))
+  (baseline class-default)
+  (new working-copy)
+  (properties
+    (changed "ActionDescription" (old "") (new "NSLOCTEXT(\"[C166679B4F5717448B9698AA2CD7E51F]\", \"6C70A8E644B9C062A2DD13A3EF0C3C9B\", \"Zoom\")"))
+    (changed "ValueType" (old "Boolean") (new "Axis1D"))))
