@@ -39,6 +39,14 @@ to rebuild it themselves.
   a reference with all their non-default properties. A new asset (no committed
   revision) is compared against its class defaults, so the diff lists exactly
   what was set after creating it. Levels aren't supported yet.
+- **Tools → Export Diffs of Changed Assets** (editor main menu, "Documentation"
+  section) does the same for every project asset that revision control
+  reports as new, added or modified, skipping levels and their `__External…`
+  files. It refuses to run during a Play session, shows progress, and lists
+  failures in the notification and the Output Log. If any assets or levels
+  have unsaved changes, it first lists them in a message box and asks whether
+  to export anyway (default: No), because revision control only sees saved
+  files.
 - Non-Blueprint assets have no graph, so the lesson shows them as tables.
   Generate one with `python Doc/sexpr_to_table.py <file>.sexpr`; it writes a
   `.md` file next to the diff.
@@ -57,7 +65,9 @@ to rebuild it themselves.
 - `node Doc/export_svg.mjs` renders every `.mmd`, and every `.md` table under
   `Doc/graph/`, that git reports as untracked or changed to
   `Doc/commits/Transient/<package path>.svg`, overwriting earlier exports of
-  the same file. SVGs are pretty-printed. Tables are drawn as SVG in the same
+  the same file. With file arguments (`node Doc/export_svg.mjs a.mmd b.md`) it
+  renders exactly those files instead and writes each SVG next to its source.
+  SVGs are pretty-printed. Tables are drawn as SVG in the same
   dark style as diagrams. In every exported SVG, palette colours are CSS
   variables (`var(--pin-float)`), and the SVG carries the default palette at
   zero specificity (`:where(svg)`), so it looks the same on its own and a page
@@ -100,23 +110,59 @@ what they see on screen.
 
 ### Layout
 
-- Use `flowchart LR` with `curve: step` in the front matter config, so wires
-  are drawn with horizontal and vertical segments only.
+- Use `flowchart LR` with `curve: monotoneX` in the front matter config: soft
+  curves that don't overshoot horizontally. (Other options in Mermaid 10:
+  `basis`, `linear`, `step`, `stepBefore`, `stepAfter`, `bumpX`, `bumpY`,
+  `monotoneY`, `cardinal`, `catmullRom`, `natural`, `bundle`.)
 - Don't give the diagram a title.
+- No drop shadows: the front matter sets `look: classic` and a `themeCSS`
+  rule `filter: none` on nodes and clusters, because newer Mermaid
+  previewers add shadows that Mermaid 10 (used for the SVGs) never draws.
 - Each Blueprint node is a `subgraph`. Its title is the node header.
 - Each connected pin is a row inside its node's subgraph. Inputs go on the left, outputs
-  on the right; use invisible links (`~~~`) from inputs to outputs to keep that
-  order.
+  on the right; an invisible link (`~~~`) from every input to every output keeps
+  that order.
+- Every pin label is at least `PIN_COLUMN_WIDTH` (150 px, in
+  `sexpr_to_mermaid.py`) wide, inputs aligned left and outputs right, so nodes
+  with pin rows come out the same width. Mermaid has no subgraph width
+  setting; this is the workaround. Longer labels still widen their node, and
+  collapsed nodes stay compact.
+- When a diagram has several graph boxes, each gets `direction LR`; otherwise
+  Mermaid lays out a box whose nodes only link inside it top to bottom.
+- Loops (a wire back to an earlier node, such as AI MoveTo's On Fail into a
+  Delay) would make the layout reverse links and scramble pins. Loop wires are
+  found by following wires from the leftmost node (a wire to a node still on
+  the current path closes a loop), declared backwards without arrowhead
+  (`target === source`), and marked with `%% back-edge <target> <source>`.
+  `export_svg.mjs` reads those comments and puts the arrowhead on the target
+  end. A plain `.mmd` preview shows loop wires without arrowhead, and the wire
+  meets its output pin from the left.
 - Wires connect pin rows, not whole nodes, except for pure getters (below).
 - Leave out reroute nodes completely. Draw the wire directly from the pin
   feeding the reroute node to the pins it leads to.
+- Don't draw wires from an event's delegate pin (for example a Custom Event
+  wired into Set Timer by Event's `Delegate`). The pin it leads to reads
+  `● Connect to Event <event name>` instead, and the event's delegate pin is
+  left out. The event stays if it has other wires.
+- Leave out event nodes and function entry nodes with nothing connected, such
+  as the unused BeginPlay, ActorBeginOverlap, Tick and Construction Script of a
+  new Blueprint. A graph left empty gets no box; if nothing is left at all, no
+  `.mmd` is written (and an old one is removed). The exported diffs keep these
+  nodes; only the diagrams skip them.
 
 ### Node titles
 
-- Getter nodes always start with `GET`, for example `GET Target Arm Length`.
-- Setter nodes always start with `SET`, for example `SET Target Arm Length`.
+- Getter nodes start with `GET`, for example `GET Target Arm Length`, unless
+  their name already starts with `Get` or `Is` (`Get Camera Boom`,
+  `Is Jumping`): no second prefix.
+- Setter nodes start with `SET`, for example `SET Target Arm Length`, unless
+  their name already starts with `Set`.
 - Math nodes use their full name from the diff, not the short symbol shown on
   the node, for example `float + float` instead of `+`.
+- Function names exported without spaces get them back
+  (`GetPlayerCharacter` -> `Get Player Character`).
+- The Self node is titled `Self` and collapsed like a pure getter (rounded, in
+  the object colour). Only an input `self` pin is labelled `Target`.
 - Draw every node connected to the change, according to the reference graph:
   start from the nodes the diff touches and follow wires in both directions
   (through reroutes) to the whole connected chain. All drawn nodes follow the
@@ -133,6 +179,12 @@ what they see on screen.
 
 ### Pure getters
 
+- Pure nodes (any node without exec pins except events, function entries and
+  result nodes, such as Get Player Character, Get Actor Location or Get
+  Enhanced Input Local Player Subsystem) count as pure getters when they have
+  one output and at most one shown input. They keep their editor title (no `GET`
+  prefix). Pure functions with more inputs, such as Clamp, keep their pin rows
+  and the `border-function` colour.
 - A pure getter with one output pin and at most one input pin has no pin rows,
   for example `GET Camera Boom` (no input) or `GET Target Arm Length`
   (one input). Wires connect to its subgraph directly.
@@ -147,19 +199,36 @@ what they see on screen.
 ### Pins
 
 - Use the pin's display name from the editor: `Target` for `self`,
-  `Return Value`, `Action Value`.
+  `Return Value`, `Action Value`. Boolean pins drop their code prefix `b`
+  (`bLooping` -> `Looping`).
 - Leave out every pin that isn't connected, inputs and outputs alike, except
   unconnected input pins with a value typed in. Those show the value in a box
   instead of the dot (`[50] Min`), framed in the pin's colour via
   `currentColor` (Mermaid mangles `#` in label HTML). "Typed in" means not
   empty, zero, `false` or `None`; the diff has no engine defaults, so a value
   deliberately set to 0 isn't shown. Numbers drop trailing zeros
-  (`50.000000` -> `50`).
+  (`50.000000` -> `50`), and asset or class paths become names
+  (`/Game/Input/IMC_Default.IMC_Default` -> `IMC_Default`).
+- Names are split into words before a capital that starts a word
+  (`ActionValue` -> `Action Value`, `XAxis` -> `X Axis`); runs of capitals stay
+  together (`iOS`).
 - A node with such a value keeps its pin rows even if it would otherwise be
   collapsed (pure getter or operator), so the value stays visible.
 - Pins are marked `▶` (exec) or `●` (data). Input pins put the marker before
   the name (`● A`); output pins put it after (`Return Value ●`).
 - Exec pins use the flag shape (`>"Triggered ▶"]`). Data pins use rectangles.
+- A node with at most one exec input pin (counting all exec inputs it has, not
+  only connected ones) gets no row for it; the same applies separately to exec
+  outputs. Such wires connect to the node's box itself (the subgraph). Raw
+  Mermaid renders draw their arrowheads in dark grey, nearly invisible on the
+  dark background; the SVG export colours them, so always judge diagrams from
+  the exported SVG. Nodes with several exec outputs (Enhanced Input events,
+  Branch, Sequence, Switch, AI MoveTo) keep their exec output rows, so the
+  diagram shows which one is used.
+- An exec pin shown as a row always has a name, even if only one of the
+  node's exec pins is used. Names start with a capital (`Then 0`), `then` and
+  `execute` become `Then` and `Execute`, and Branch's `then`/`else` are shown
+  as `True`/`False` like in the editor.
 
 ### Colours
 
@@ -173,10 +242,10 @@ blindness doesn't matter for `.mmd` files:
 
 | Palette | For | Notes |
 |---|---|---|
-| `red-green-safe` | protanopia, deuteranopia | Okabe-Ito based; float orange, object blue, boolean reddish purple |
-| `blue-yellow-safe` | tritanopia | Float green and boolean red stay; object purple |
-| `high-contrast` | low vision | Black node body, all key colours at least 7:1 contrast |
-| `greyscale` | achromatopsia, print | 4 brightness levels: exec, float, object, boolean; rarer types share them |
+| `red-green-safe` | protanopia, deuteranopia | Okabe-Ito based; float orange, object blue, boolean reddish purple; function calls sand `#b8a868` |
+| `blue-yellow-safe` | tritanopia | Float green and boolean red stay; object purple; function calls `#4f7f8f` |
+| `high-contrast` | low vision | Black node body, all key colours at least 7:1 contrast; function calls `#a8c8e8` |
+| `greyscale` | achromatopsia, print | 4 brightness levels: exec, float, object, boolean; rarer types share them; function calls `#b8b8b8` |
 
 Check palette changes with `node Doc/check_palette.mjs`, which simulates each
 colour blindness (Machado 2009) and prints the closest pairs of key colours
@@ -188,7 +257,8 @@ vision), and visually with Chrome's vision deficiency emulation.
 | Node body | `#151515` |
 | Input event header border | `#b3261e` |
 | Setter header border | `#2b5d8f` |
-| Operator border (mixed pin types), function calls and other nodes (`border-function`) | `#8a8a8a` |
+| Function calls (`border-call`): function, parent and array calls, AI MoveTo, Create Widget, Spawn Actor and other async/latent call nodes (`CALL_CLASSES` in `sexpr_to_mermaid.py`) | `#456980` |
+| Operator border (mixed pin types) and other nodes (`border-function`) | `#8a8a8a` |
 | Operator border and title (single pin type) | Colour of that pin type |
 | Pure getter border and title | Colour of the output pin type |
 | Table grid lines (`border-neutral`) | `#3a3a3a` |
@@ -219,6 +289,7 @@ diagrams match what students see. Exec wires are 3px wide; data wires 2px.
 | Rotator | `#a0b4ff` |
 | Transform | `#ff7300` |
 | Object reference | `#00aaf5` |
+| Delegate (event dispatcher, timer delegates) | `#ff3838` |
 | Other types | `#777777` until their editor colour is added |
 
 These come from `UGraphEditorSettings` in the engine
@@ -229,8 +300,47 @@ and Byte `#006f65`, have low contrast on the dark node body, and several are
 hard to tell apart with red-green colour blindness (Float green vs Boolean
 red or the event border); the `red-green-safe` palette addresses this.
 
-Give pin rows the same fill and stroke as the node body so they read as rows,
-not separate boxes. Colour pin rows with `classDef` and wires with `linkStyle`.
+Pin rows have the node body colour as background and border, so their borders
+are invisible while their size (and so where wires attach) stays the same. Only
+change how pin rows look, never their geometry: a smaller Mermaid `padding`
+shrinks the rows to their text and moves wire anchor points. Colour pin rows with `classDef` and wires with `linkStyle`.
+
+Node boxes with pin rows have no inner margin in exported SVGs. Mermaid can't
+set this (dagre spaces pins away from the border), so `export_svg.mjs`
+(`tightenNodeBoxes`) does it after rendering: each box shrinks to its title
+and pin rows, the title is re-centred, wires ending on the box border are
+extended to the new border, and the borders are drawn again on top, because
+the pin rows' body-coloured fill would cover them. Titles keep at least
+16 px (`TITLE_SIDE`) to each side. Plain `.mmd` previews still show the margin.
+
+Wires attach like Blueprint wires, also done by `export_svg.mjs` because dagre
+has no port sides: input rows sit flush with the left border and output rows
+with the right one (their wires bend along); wires arrive at the left side
+of what they lead to (an input row's middle, a box's title band, a collapsed
+node's middle) and leave from the right side, curving in horizontally from
+the last point of the route that is 40 px clear of that side. A forward wire
+becomes a single editor-like curve unless that curve would cross another node
+box; only then does it keep the layout's route. A wire that can't get to the
+left side (it comes from further right) keeps the layout's route. Loop wires
+are left alone.
+
+Exec output rows (Sequence's `Then 0`, `Then 1`, Branch, Switch) are stacked
+in pin order, top to bottom, like in the editor. Dagre sorts rows to reduce
+crossings, so `sexpr_to_mermaid.py` writes `%% pin-order <row ids>` inside the
+node's subgraph, and `export_svg.mjs` swaps the rows back into that order and
+bends the first 60 px of their wires to the new position (wires may cross,
+as in the editor). Plain `.mmd` previews may still show another order.
+
+Events come before (left of) the nodes they trigger. Mermaid attaches a wire
+to a node box to an arbitrary row of it, which could put an event right of
+its node or spread a node's rows sideways. So nodes with pin rows get
+invisible anchor rows (class `pin_anchor`): `<node>_anchor_in` in the input
+column takes the wires of an omitted exec input, `<node>_anchor_out` in the
+output column the wires of an omitted exec output, and a node with rows on one
+side only gets an anchor on the other side. Anchors are linked with `~~~`
+like rows. `export_svg.mjs` removes them and draws their wires to the box
+border; plain `.mmd` previews show such exec arrows ending just inside the
+box's left edge.
 List the visible wires first and the invisible `~~~` links last, because
 `linkStyle` indices count both.
 

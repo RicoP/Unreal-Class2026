@@ -14,7 +14,7 @@
 import { execFileSync, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import puppeteer from "puppeteer";
 
 // Colours live in Doc/palette.json. Exported SVGs refer to them as CSS variables
@@ -95,6 +95,347 @@ function withPalette(svg) {
       .map((name) => `--${name}-dim:color-mix(in srgb, var(--${name}) ${percent}%, var(--node-body));`)
       .join("");
   return svg.replace(/<svg\b[^>]*>/, (tag) => `${tag}<style>:where(svg){${variables}}</style>`);
+}
+
+/**
+ * Remove the inner margin of Blueprint node boxes (subgraphs N_...) that have pin rows.
+ * Mermaid has no setting for it (dagre spaces the pins away from the border), so this
+ * runs on the rendered SVG: each box shrinks to its title and pin rows, the title is
+ * re-centred, and wires that end on the box border are extended to the new border.
+ * Pin rows don't move, so wires attached to pins keep their anchor points.
+ */
+async function tightenNodeBoxes(page, svgFile, mmdSource) {
+  // "%% pin-order a b c" (from sexpr_to_mermaid.py): rows that must be stacked in this order.
+  const pinOrders = [...mmdSource.matchAll(/^\s*%% pin-order (.+)$/gm)].map((m) => m[1].trim().split(/\s+/));
+  await page.goto(pathToFileURL(svgFile).href);
+  return page.evaluate((pinOrders) => {
+    const svg = document.documentElement;
+    const pairPattern = /(-?[\d.]+(?:e-?\d+)?),(-?[\d.]+(?:e-?\d+)?)/g;
+    const TITLE_SIDE = 16; // px between a node's title and its left and right border, at least
+
+    // Shift the end of a wire by (dx, dy), fading to nothing over the first <= 60 px of the wire,
+    // so only the part next to the moved row bends. atStart: the wire's start (else its end).
+    const bendWire = (path, dx, dy, atStart) => {
+      const d = path.getAttribute("d");
+      const points = [...d.matchAll(pairPattern)].map((m) => [Number(m[1]), Number(m[2])]);
+      if (!atStart) points.reverse();
+      const distance = [0];
+      for (let i = 1; i < points.length; i++) {
+        distance.push(distance[i - 1] + Math.hypot(points[i][0] - points[i - 1][0], points[i][1] - points[i - 1][1]));
+      }
+      const fade = Math.max(1, Math.min(60, distance[distance.length - 1] / 2));
+      const weights = distance.map((s) => {
+        const t = Math.min(1, s / fade);
+        return 1 - t * t * (3 - 2 * t);
+      });
+      if (!atStart) weights.reverse();
+      let i = 0;
+      path.setAttribute(
+        "d",
+        d.replace(pairPattern, (_, x, y) => {
+          const w = weights[i++];
+          return `${Number(x) + dx * w},${Number(y) + dy * w}`;
+        }),
+      );
+    };
+
+    // Put rows back in pin order: the rows keep their slots (y positions) and swap who sits where.
+    for (const ids of pinOrders) {
+      const rows = ids.map((id) => svg.querySelector(`g.node[data-id="${id}"]`));
+      if (rows.some((r) => !r)) continue;
+      const position = (row) => row.getAttribute("transform").match(/translate\(\s*([-\d.e]+)[ ,]+([-\d.e]+)/);
+      const slots = rows.map((r) => Number(position(r)[2])).sort((a, b) => a - b);
+      rows.forEach((row, i) => {
+        const [, x, y] = position(row);
+        const dy = slots[i] - Number(y);
+        if (Math.abs(dy) < 0.01) return;
+        row.setAttribute("transform", `translate(${x}, ${slots[i]})`);
+        for (const path of svg.querySelectorAll(`path.flowchart-link.LS-${CSS.escape(ids[i])}`)) bendWire(path, 0, dy, true);
+        for (const path of svg.querySelectorAll(`path.flowchart-link.LE-${CSS.escape(ids[i])}`)) bendWire(path, 0, dy, false);
+      });
+    }
+
+    // Anchor rows only steer the layout (see sexpr_to_mermaid.py); they aren't drawn.
+    for (const anchor of svg.querySelectorAll("g.node.pin_anchor")) anchor.remove();
+    const toLocal = (el, x, y) => {
+      const p = new DOMPoint(x, y).matrixTransform(el.getScreenCTM().inverse());
+      return [p.x, p.y];
+    };
+    const toScreen = (el, x, y) => {
+      const p = new DOMPoint(x, y).matrixTransform(el.getScreenCTM());
+      return [p.x, p.y];
+    };
+    const localBox = (frame, el) => {
+      const r = el.getBoundingClientRect();
+      const [left, top] = toLocal(frame, r.left, r.top);
+      const [right, bottom] = toLocal(frame, r.right, r.bottom);
+      return { left, top, right, bottom };
+    };
+
+    const clusters = [...svg.querySelectorAll("g.cluster")].filter((c) => c.id.startsWith("N_"));
+    const ids = clusters.map((c) => c.id).sort((a, b) => b.length - a.length);
+    const members = new Map(ids.map((id) => [id, []]));
+    for (const node of svg.querySelectorAll("g.node[data-id]")) {
+      if (node.classList.contains("pin_anchor")) continue; // invisible layout helper, not a pin row
+      const owner = ids.find((id) => node.dataset.id.startsWith(id + "_"));
+      if (owner) members.get(owner).push(node);
+    }
+
+    // How far mermaid stops wires short of a pin row (room for the arrowhead), measured on wires
+    // that end on input rows; wires rerouted to a box border below keep the same gap.
+    const rowGaps = [];
+    for (const path of svg.querySelectorAll("path.flowchart-link[marker-end]")) {
+      const end = [...path.classList].find((c) => c.startsWith("LE-"))?.slice(3);
+      const row = end && svg.querySelector(`g.node[data-id="${CSS.escape(end)}"]`);
+      if (!row) continue;
+      const total = path.getTotalLength();
+      const p = path.getPointAtLength(total);
+      const [sx, sy] = toScreen(path, p.x, p.y);
+      const gap = row.getBoundingClientRect().left - sx;
+      if (gap > -1 && gap < 20) rowGaps.push(gap);
+    }
+    rowGaps.sort((a, b) => a - b);
+    const arrowGap = rowGaps.length ? rowGaps[Math.floor(rowGaps.length / 2)] : 0;
+
+    const boxes = new Map(); // cluster id -> { rect, old, now, wireY }
+    for (const cluster of clusters) {
+      const pins = members.get(cluster.id);
+      const rect = cluster.querySelector(":scope > rect");
+      const label = cluster.querySelector(":scope > g.cluster-label");
+      if (!rect) continue;
+      if (!pins.length || !label) {
+        // Collapsed nodes keep their shape; wires to them attach at the middle of a side.
+        const r = { left: rect.x.baseVal.value, top: rect.y.baseVal.value };
+        r.right = r.left + rect.width.baseVal.value;
+        r.bottom = r.top + rect.height.baseVal.value;
+        boxes.set(cluster.id, { rect, old: r, now: r, wireY: (r.top + r.bottom) / 2, collapsed: true });
+        continue;
+      }
+      const pinBoxes = pins.map((p) => localBox(rect, p));
+      const pin = {
+        left: Math.min(...pinBoxes.map((b) => b.left)),
+        right: Math.max(...pinBoxes.map((b) => b.right)),
+        top: Math.min(...pinBoxes.map((b) => b.top)),
+        bottom: Math.max(...pinBoxes.map((b) => b.bottom)),
+      };
+      const old = {
+        left: rect.x.baseVal.value,
+        top: rect.y.baseVal.value,
+        right: rect.x.baseVal.value + rect.width.baseVal.value,
+        bottom: rect.y.baseVal.value + rect.height.baseVal.value,
+      };
+      const title = localBox(rect, label);
+      const titleMargin = title.top - old.top; // subGraphTitleMargin.top
+      // Some room beside the title, where wires to the box itself arrive and leave.
+      const width = Math.max(pin.right - pin.left, title.right - title.left + 2 * TITLE_SIDE);
+      const centre = (pin.left + pin.right) / 2;
+      const now = {
+        left: centre - width / 2,
+        right: centre + width / 2,
+        top: pin.top - 2 * titleMargin - (title.bottom - title.top),
+        bottom: pin.bottom,
+      };
+      rect.setAttribute("x", now.left);
+      rect.setAttribute("y", now.top);
+      rect.setAttribute("width", now.right - now.left);
+      rect.setAttribute("height", now.bottom - now.top);
+      const [, tx, ty] = label.getAttribute("transform").match(/translate\(\s*([-\d.e]+)[ ,]+([-\d.e]+)/);
+      const dx = centre - (title.left + title.right) / 2;
+      const dy = now.top + titleMargin - title.top;
+      label.setAttribute("transform", `translate(${Number(tx) + dx}, ${Number(ty) + dy})`);
+      // Wires to the box itself (omitted exec pins) attach beside the title, where the editor
+      // has a node's exec pins.
+      boxes.set(cluster.id, { rect, old, now, wireY: (now.top + pin.top) / 2 });
+
+      // Input rows sit flush with the left border, output rows with the right one, so wires
+      // reach their pins from outside the node. Their wires bend along.
+      pins.forEach((row, i) => {
+        const output = /text-align:\s*right/.test(row.innerHTML);
+        const shift = output ? now.right - pinBoxes[i].right : now.left - pinBoxes[i].left;
+        if (Math.abs(shift) < 0.5) return;
+        const [, x, y] = row.getAttribute("transform").match(/translate\(\s*([-\d.e]+)[ ,]+([-\d.e]+)/);
+        row.setAttribute("transform", `translate(${Number(x) + shift}, ${y})`);
+        const id = CSS.escape(row.dataset.id);
+        for (const path of svg.querySelectorAll(`path.flowchart-link.LS-${id}`)) bendWire(path, shift, 0, true);
+        for (const path of svg.querySelectorAll(`path.flowchart-link.LE-${id}`)) bendWire(path, shift, 0, false);
+      });
+    }
+    // Pin rows now touch the border and their body-coloured fill would cover it, so draw the
+    // borders once more on top of everything.
+    for (const { rect, collapsed } of boxes.values()) {
+      if (collapsed) continue;
+      const border = rect.cloneNode();
+      border.removeAttribute("id");
+      border.style.fill = "none";
+      border.style.pointerEvents = "none";
+      const m = svg.getScreenCTM().inverse().multiply(rect.getScreenCTM());
+      border.setAttribute("transform", `matrix(${m.a},${m.b},${m.c},${m.d},${m.e},${m.f})`);
+      svg.appendChild(border);
+    }
+
+    // Move a wire end that lies on a box's old border onto the same side of the new border,
+    // keeping its small gap (room for the arrowhead).
+    const moved = (box, x, y) => {
+      const { old, now } = box;
+      const sides = [
+        ["left", Math.abs(x - old.left)],
+        ["right", Math.abs(x - old.right)],
+        ["top", Math.abs(y - old.top)],
+        ["bottom", Math.abs(y - old.bottom)],
+      ].sort((a, b) => a[1] - b[1]);
+      const side = sides[0][0];
+      const clamp = (v, lo, hi) => Math.min(Math.max(v, lo + 2), hi - 2);
+      if (side === "left" || side === "right") {
+        return [x - old[side] + now[side], clamp(y, now.top, now.bottom)];
+      }
+      return [clamp(x, now.left, now.right), y - old[side] + now[side]];
+    };
+    const number = "([-\\d.e]+)";
+    // Split a path into its commands; each command's last pair is the point it ends at.
+    const segments = (d) =>
+      [...d.matchAll(/([MLC])([^MLC]*)/g)].map((m) => {
+        const pairs = [...m[2].matchAll(pairPattern)].map((p) => [Number(p[1]), Number(p[2])]);
+        return { text: m[0], end: pairs[pairs.length - 1] };
+      });
+    const curve = (from, to) => {
+      const h = Math.max(20, Math.abs(to[0] - from[0]) / 2);
+      return `C${from[0] + h},${from[1]},${to[0] - h},${to[1]},${to[0]},${to[1]}`;
+    };
+    const RUN = 40; // the new curve needs at least this much horizontal room
+    // Incoming wires enter a box from the left, outgoing ones leave it to the right, like
+    // Blueprint wires. The wire keeps its route up to where it is still RUN px clear of that
+    // side, then curves in horizontally. Returns null if the route never gets clear (a wire
+    // coming from the far side): those keep the old behaviour.
+    // (screenX, screenY): the point on the border where the wire should arrive or leave.
+    const enterFromLeft = (path, screenX, screenY) => {
+      const parts = segments(path.getAttribute("d"));
+      const [tx, ty] = toLocal(path, screenX, screenY);
+      const target = [tx - arrowGap, ty];
+      const last = parts[parts.length - 1].end;
+      if (Math.abs(last[0] - target[0]) < 1.5 && Math.abs(last[1] - target[1]) < 4) return null; // already there
+      let k = parts.length - 1;
+      while (k >= 0 && parts[k].end[0] > target[0] - RUN) k--;
+      if (k < 0) return null;
+      return parts.slice(0, k + 1).map((p) => p.text).join("") + curve(parts[k].end, target);
+    };
+    const leaveToRight = (path, screenX, screenY) => {
+      const parts = segments(path.getAttribute("d"));
+      const [sx, sy] = toLocal(path, screenX, screenY);
+      const first = parts[0].end;
+      if (Math.abs(first[0] - sx) < 1.5 && Math.abs(first[1] - sy) < 4) return null; // already there
+      let k = 0;
+      while (k < parts.length && parts[k].end[0] < sx + RUN) k++;
+      if (k >= parts.length) return null;
+      return `M${sx},${sy}` + curve([sx, sy], parts[k].end) + parts.slice(k + 1).map((p) => p.text).join("");
+    };
+
+    // Wires of omitted exec pins end at the node's anchor rows (removed above); they belong to the box.
+    const boxId = (id) => id?.replace(/_anchor_(in|out)$/, "");
+    // The node (cluster id) a wire end belongs to: the box itself, or the node owning a pin row.
+    const ownerBox = (id) => (id && (boxes.has(id) ? id : ids.find((c) => id.startsWith(c + "_")))) || null;
+    // Does curve d (in path's coordinates) pass through any node box other than the skipped ones?
+    const nodeRects = clusters.map((c) => [c.id, c.querySelector(":scope > rect")]).filter(([, r]) => r);
+    const probe = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    const crossesNode = (path, d, skip) => {
+      probe.setAttribute("d", d);
+      path.parentNode.appendChild(probe);
+      const total = probe.getTotalLength();
+      const ctm = probe.getScreenCTM();
+      const points = [];
+      for (let s = 0; s <= total; s += 4) points.push(new DOMPoint(probe.getPointAtLength(s).x, probe.getPointAtLength(s).y).matrixTransform(ctm));
+      probe.remove();
+      return nodeRects.some(([id, rect]) => {
+        if (skip.includes(id)) return false;
+        const r = rect.getBoundingClientRect();
+        return points.some((p) => p.x > r.left + 1 && p.x < r.right - 1 && p.y > r.top + 1 && p.y < r.bottom - 1);
+      });
+    };
+    for (const path of svg.querySelectorAll("path.flowchart-link")) {
+      const end = boxId([...path.classList].find((c) => c.startsWith("LE-"))?.slice(3));
+      const start = boxId([...path.classList].find((c) => c.startsWith("LS-"))?.slice(3));
+      const toAnchor = /_anchor_in$/.test([...path.classList].find((c) => c.startsWith("LE-")) ?? "");
+      const fromAnchor = /_anchor_out$/.test([...path.classList].find((c) => c.startsWith("LS-")) ?? "");
+      // Loop wires are drawn backwards without arrowhead (see back-edge comments); leave them.
+      const forward = path.hasAttribute("marker-end");
+      let endDone = false;
+      let startDone = false;
+      // A pin row: wires arrive at the middle of its left side and leave from its right side.
+      const rowSide = (id, side) => {
+        const row = id && svg.querySelector(`g.node[data-id="${CSS.escape(id)}"]`);
+        if (!row) return null;
+        const r = row.querySelector("rect, polygon")?.getBoundingClientRect() ?? row.getBoundingClientRect();
+        return [side === "left" ? r.left : r.right, r.top + r.height / 2];
+      };
+      if (forward) {
+        const box = boxes.get(end);
+        const at = box ? toScreen(box.rect, box.now.left, box.wireY) : rowSide(end, "left");
+        const rerouted = at && enterFromLeft(path, ...at);
+        if (rerouted) path.setAttribute("d", rerouted);
+        endDone = !!rerouted;
+      }
+      if (forward) {
+        const box = boxes.get(start);
+        const at = box ? toScreen(box.rect, box.now.right, box.wireY) : rowSide(start, "right");
+        const rerouted = at && leaveToRight(path, ...at);
+        if (rerouted) path.setAttribute("d", rerouted);
+        startDone = !!rerouted;
+      }
+      // A wire to or from an anchor that can't be rerouted (it comes from the far side) would
+      // end inside the box, where the anchor was: draw it as one curve between the borders.
+      if ((toAnchor && !endDone) || (fromAnchor && !startDone)) {
+        const parts = segments(path.getAttribute("d"));
+        let first = parts[0].end;
+        let last = parts[parts.length - 1].end;
+        if (toAnchor && !endDone) {
+          const box = boxes.get(end);
+          const [x, y] = toLocal(path, ...toScreen(box.rect, box.now.left, box.wireY));
+          last = [x - arrowGap, y];
+        }
+        if (fromAnchor && !startDone) {
+          const box = boxes.get(start);
+          first = toLocal(path, ...toScreen(box.rect, box.now.right, box.wireY));
+        }
+        path.setAttribute("d", `M${first[0]},${first[1]}` + curve(first, last));
+        endDone = startDone = true;
+      }
+
+      // A wire is one curve, like in the editor, unless that curve would cross another node:
+      // only then does it keep the layout's route around it.
+      if (forward) {
+        const parts = segments(path.getAttribute("d"));
+        const first = parts[0].end;
+        const last = parts[parts.length - 1].end;
+        if (last[0] - first[0] > 20) {
+          const direct = `M${first[0]},${first[1]}` + curve(first, last);
+          if (!crossesNode(path, direct, [ownerBox(start), ownerBox(end)])) {
+            path.setAttribute("d", direct);
+            endDone = startDone = true;
+          }
+        }
+      }
+
+      // Otherwise extend a wire that ended on the box's old border to the new border.
+      let d = path.getAttribute("d");
+      if (!endDone && boxes.has(end) && !boxes.get(end).collapsed) {
+        const box = boxes.get(end);
+        const m = d.match(new RegExp(`${number}[ ,]${number}\\s*$`));
+        const [sx, sy] = toScreen(path, Number(m[1]), Number(m[2]));
+        const [lx, ly] = toLocal(box.rect, sx, sy);
+        const [nx, ny] = toLocal(path, ...toScreen(box.rect, ...moved(box, lx, ly)));
+        d += `L${nx},${ny}`;
+      }
+      if (!startDone && boxes.has(start) && !boxes.get(start).collapsed) {
+        const box = boxes.get(start);
+        const m = d.match(new RegExp(`^\\s*M\\s*${number}[ ,]${number}`));
+        const [sx, sy] = toScreen(path, Number(m[1]), Number(m[2]));
+        const [lx, ly] = toLocal(box.rect, sx, sy);
+        const [nx, ny] = toLocal(path, ...toScreen(box.rect, ...moved(box, lx, ly)));
+        d = d.replace(m[0], `M${nx},${ny}L${m[1]},${m[2]}`);
+      }
+      path.setAttribute("d", d);
+    }
+    return new XMLSerializer().serializeToString(svg);
+  }, pinOrders);
 }
 
 const docDir = path.dirname(fileURLToPath(import.meta.url));
@@ -227,6 +568,30 @@ async function tableSvg(page, { title, rows }) {
   });
   parts.push("</svg>");
   return parts.join("\n") + "\n";
+}
+
+/**
+ * Loop wires are declared backwards and without an arrowhead in the .mmd (marked with
+ * "%% back-edge <from> <to>" comments), so the layout sees no cycle. Give them their
+ * arrowhead at the start, which is where the wire really ends.
+ */
+function arrowheadsOnBackEdges(svg, mmdSource) {
+  const pairs = [...mmdSource.matchAll(/^\s*%% back-edge (\S+) (\S+)\s*$/gm)].map((m) => [m[1], m[2]]);
+  const svgId = /<svg\b[^>]*\bid="([^"]+)"/.exec(svg)?.[1];
+  if (!pairs.length || !svgId) {
+    return svg;
+  }
+  const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  let result = svg;
+  for (const [from, to] of pairs) {
+    const tag = new RegExp(`<path\\b[^>]*\\bid="L-${escape(from)}-${escape(to)}-\\d+"[^>]*?(\\/?)>`, "g");
+    result = result.replace(tag, (match, selfClosing) =>
+      match.includes("marker-start=")
+        ? match
+        : match.slice(0, match.length - (selfClosing ? 2 : 1)) + ` marker-start="url(#${svgId}_flowchart-pointStart)"` + (selfClosing ? "/>" : ">"),
+    );
+  }
+  return result;
 }
 
 /**
@@ -371,7 +736,12 @@ function prettySvg(svg) {
   return lines.join("\n") + "\n";
 }
 
-const sources = changedSources();
+// With file arguments (node Doc/export_svg.mjs a.mmd b.md), render exactly those files and
+// write each SVG next to its source. Without arguments, render what git reports as changed.
+const explicitFiles = process.argv.slice(2).map((file) =>
+  path.relative(repoRoot, path.resolve(process.cwd(), file)).split(path.sep).join("/"),
+);
+const sources = explicitFiles.length ? explicitFiles : changedSources();
 if (sources.length === 0) {
   console.log("No untracked or changed .mmd or Doc/graph .md files.");
   process.exit(0);
@@ -383,6 +753,9 @@ let failures = 0;
 let browser = null;
 
 function claimOutput(file) {
+  if (explicitFiles.length) {
+    return path.join(repoRoot, file).replace(/\.(mmd|md)$/i, ".svg");
+  }
   const relative = packageRelativeSvg(file);
   if (written.has(relative)) {
     console.warn(`Skipped ${file}: ${written.get(relative)} already renders to ${relative}`);
@@ -411,7 +784,6 @@ for (const file of sources.filter((f) => f.toLowerCase().endsWith(".md"))) {
   await page.close();
   console.log(`${file} -> ${path.relative(repoRoot, output)}`);
 }
-await browser?.close();
 
 for (const file of sources.filter((f) => f.toLowerCase().endsWith(".mmd"))) {
   const output = claimOutput(file);
@@ -426,7 +798,13 @@ for (const file of sources.filter((f) => f.toLowerCase().endsWith(".mmd"))) {
   );
   if (result.status === 0) {
     const metadata = assetMetadata(path.join(repoRoot, file));
-    const svg = withPalette(useColourVariables(colourArrowheads(readFileSync(output, "utf8"))));
+    browser ??= await puppeteer.launch(JSON.parse(readFileSync(puppeteerConfig, "utf8")));
+    const page = await browser.newPage();
+    const mmdSource = readFileSync(path.join(repoRoot, file), "utf8");
+    const tightened = await tightenNodeBoxes(page, output, mmdSource);
+    await page.close();
+    const rendered = arrowheadsOnBackEdges(tightened, mmdSource);
+    const svg = withPalette(useColourVariables(colourArrowheads(rendered)));
     writeFileSync(output, prettySvg(withMetadata(svg, metadata)), "utf8");
     console.log(`${file} -> ${path.relative(repoRoot, output)}`);
   } else {
@@ -434,5 +812,6 @@ for (const file of sources.filter((f) => f.toLowerCase().endsWith(".mmd"))) {
     console.error(`Failed to render ${file}:\n${result.stderr || result.stdout}`);
   }
 }
+await browser?.close();
 
 process.exit(failures ? 1 : 0);

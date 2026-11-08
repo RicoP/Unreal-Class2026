@@ -8,6 +8,7 @@
       "border-event",
       "border-setter",
       "border-function",
+      "border-call",
       "pin-exec",
       "pin-boolean",
       "pin-byte",
@@ -21,6 +22,7 @@
       "pin-rotator",
       "pin-transform",
       "pin-object",
+      "pin-delegate",
       "pin-other"
     ]
   },
@@ -35,6 +37,7 @@
         "border-setter": "#2b5d8f",
         "border-neutral": "#3a3a3a",
         "border-function": "#8a8a8a",
+        "border-call": "#456980",
         "border-context": "#555555",
         "table-header": "#262626",
         "table-stripe": "#1c1c1c",
@@ -51,6 +54,7 @@
         "pin-rotator": "#a0b4ff",
         "pin-transform": "#ff7300",
         "pin-object": "#00aaf5",
+        "pin-delegate": "#ff3838",
         "pin-other": "#777777"
       }
     },
@@ -59,6 +63,7 @@
       "colors": {
         "border-event": "#cc79a7",
         "border-setter": "#0072b2",
+        "border-call": "#b8a868",
         "pin-boolean": "#cc79a7",
         "pin-byte": "#66d9c2",
         "pin-integer": "#009e73",
@@ -71,6 +76,7 @@
         "pin-rotator": "#9fb6ff",
         "pin-transform": "#a6761d",
         "pin-object": "#56b4e9",
+        "pin-delegate": "#d55e00",
         "pin-other": "#888888"
       }
     },
@@ -79,6 +85,7 @@
       "colors": {
         "border-event": "#ff7043",
         "border-setter": "#9fb6ff",
+        "border-call": "#4f7f8f",
         "pin-boolean": "#ff4f6d",
         "pin-byte": "#b0b0b0",
         "pin-integer": "#888888",
@@ -91,6 +98,7 @@
         "pin-rotator": "#d070ff",
         "pin-transform": "#ff8c1a",
         "pin-object": "#ab47bc",
+        "pin-delegate": "#e53935",
         "pin-other": "#777777"
       }
     },
@@ -102,6 +110,7 @@
         "text-muted": "#d0d0d0",
         "border-event": "#ff8c1a",
         "border-setter": "#5aa9ff",
+        "border-call": "#a8c8e8",
         "border-neutral": "#bfbfbf",
         "border-function": "#e0e0e0",
         "border-context": "#808080",
@@ -120,6 +129,7 @@
         "pin-rotator": "#c0ccff",
         "pin-transform": "#ffad5c",
         "pin-object": "#33d1ff",
+        "pin-delegate": "#ff5c5c",
         "pin-other": "#c8c8c8"
       }
     },
@@ -131,6 +141,7 @@
         "text-muted": "#bdbdbd",
         "border-event": "#ffffff",
         "border-setter": "#808080",
+        "border-call": "#b8b8b8",
         "border-neutral": "#6e6e6e",
         "border-function": "#bdbdbd",
         "border-context": "#4a4a4a",
@@ -149,6 +160,7 @@
         "pin-rotator": "#c6c6c6",
         "pin-transform": "#8e8e8e",
         "pin-object": "#8e8e8e",
+        "pin-delegate": "#5c5c5c",
         "pin-other": "#6e6e6e"
       }
     }

@@ -39,7 +39,20 @@ TEXT = _COLOURS["text"]
 MUTED = _COLOURS["text-muted"]
 EVENT_BORDER = _COLOURS["border-event"]
 SETTER_BORDER = _COLOURS["border-setter"]
-NEUTRAL_BORDER = _COLOURS["border-function"]  # function calls and mixed-type operators
+NEUTRAL_BORDER = _COLOURS["border-function"]  # mixed-type operators and other nodes
+CALL_BORDER = _COLOURS["border-call"]  # function calls
+
+# Node classes the editor shows as function calls (blue header): regular, parent and array
+# function calls, and async/latent call nodes such as AI MoveTo, Create Widget, Spawn Actor.
+CALL_CLASSES = (
+    "K2Node_Call",
+    "K2Node_AIMoveTo",
+    "K2Node_AsyncAction",
+    "K2Node_BaseAsyncTask",
+    "K2Node_LatentGameplayTaskCall",
+    "K2Node_CreateWidget",
+    "K2Node_SpawnActor",
+)
 CONTEXT_BORDER = _COLOURS["border-context"]
 
 # Blueprint editor pin type colours, keyed by pin kind ("float" -> "pin-float").
@@ -47,8 +60,10 @@ PIN_COLOURS = {name[len("pin-"):]: value for name, value in _COLOURS.items() if 
 
 HEADER = """---
 config:
+  look: classic
+  themeCSS: "g.node *, g.cluster * { filter: none !important; }"
   flowchart:
-    curve: step
+    curve: monotoneX
     nodeSpacing: 20
     rankSpacing: 60
     subGraphTitleMargin:
@@ -140,6 +155,8 @@ def pin_kind(type_text):
         return "object"
     if text.startswith("float"):
         return "float"
+    if "delegate" in text:
+        return "delegate"
     if text.startswith("integer64"):
         return "integer64"
     for kind in ("boolean", "byte", "integer", "name", "string", "text", "vector", "rotator", "transform"):
@@ -151,7 +168,12 @@ def pin_kind(type_text):
 def display_name(name):
     if name == "self":
         return "Target"
-    return re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", name).replace("_", " ")
+    # Boolean names carry a "b" prefix in code ("bLooping") that the editor hides.
+    name = re.sub(r"^b(?=[A-Z])", "", name)
+    # Split before a capital that starts a word ("ActionValue", "XAxis"), but keep
+    # runs of capitals together ("iOS" stays "iOS").
+    name = re.sub(r"(?<=[a-z0-9])(?=[A-Z][a-z])|(?<=[A-Z])(?=[A-Z][a-z])", " ", name)
+    return name.replace("_", " ")
 
 
 def node_role(name, title):
@@ -161,6 +183,8 @@ def node_role(name, title):
         return "event"
     if name.startswith("K2Node_VariableGet"):
         return "getter"
+    if name.startswith("K2Node_Self"):
+        return "self"
     if name.startswith("K2Node_VariableSet"):
         return "setter"
     if name.startswith(OPERATOR_CLASSES) or OPERATOR_TITLE.match(title):
@@ -172,9 +196,17 @@ def node_title(role, title):
     if role == "event":
         return "◆ " + title
     if role in ("getter", "setter"):
-        prefix = "GET " if role == "getter" else "SET "
-        rest = re.sub(r"^(Get|Set)\s+", "", title)
-        return prefix + display_name(rest)
+        # A name that already says what it does ("Get Camera Boom", "Is Jumping",
+        # "Set Target Arm Length") gets no second GET or SET.
+        name = display_name(title)
+        if role == "getter":
+            return name if re.match(r"(Get|Is)\b", name) else "GET " + name
+        return name if re.match(r"Set\b", name) else "SET " + name
+    if role == "self":
+        return "Self"
+    # Function names come without spaces ("GetPlayerCharacter"); the editor shows "Get Player Character".
+    if re.fullmatch(r"[A-Z][A-Za-z0-9]*", title):
+        return display_name(title)
     return title
 
 
@@ -188,6 +220,7 @@ class Node:
         self.role = node_role(name, title)
         self.pins = {}  # pin name -> (direction, type)
         self.defaults = {}  # pin name -> value typed into the pin
+        self.event_links = {}  # pin name -> "Connect to Event <name>", replacing a delegate wire
 
     @property
     def title(self):
@@ -400,8 +433,23 @@ def is_explicit(value):
 
 
 def format_value(value):
-    """'50.000000' -> '50', '0.500000' -> '0.5', also inside structs like '(X=1.000000,...)'."""
-    return NUMBER.sub(lambda m: m.group(0).rstrip("0").rstrip("."), str(value))
+    """
+    '50.000000' -> '50', '0.500000' -> '0.5', also inside structs like '(X=1.000000,...)'.
+    Asset and class paths become names: '/Game/Input/IMC_Default.IMC_Default' -> 'IMC_Default'.
+    """
+    text = str(value)
+    text = re.sub(r"/Script/[\w.]+'(/[\w/]+)\.(\w+)'", r"\2", text)  # /Script/Class'/Game/Path.Name'
+    text = re.sub(r"/(?:Game|Script)/[\w/]*\.(\w+)(?::[\w.]+)?", r"\1", text)
+    return NUMBER.sub(lambda m: m.group(0).rstrip("0").rstrip("."), text)
+
+
+PIN_COLUMN_WIDTH = 150  # px; every pin label is at least this wide, so nodes line up in width
+
+
+def pin_label(text, direction):
+    """A pin label with a minimum width: inputs aligned left, outputs right, like in the editor."""
+    align = "left" if direction == "in" else "right"
+    return f"<span style='display:inline-block;min-width:{PIN_COLUMN_WIDTH}px;text-align:{align}'>{text}</span>"
 
 
 def value_box(value):
@@ -441,37 +489,96 @@ def render_graph(graph_name, nodes, wires, lines, styles, classes, edges, indent
             and pin_kind(pin_type) != "exec"
             and is_explicit(node.defaults.get(pin_name, ""))
         }
-        pins = [(p, *node.pins[p]) for p in node.pins if p in linked or p in values]
-        inputs = [p for p in pins if p[1] == "in"]
-        outputs = [p for p in pins if p[1] == "out"]
+        # A node with at most one exec input has no row for it; wires connect to the node itself.
+        # The same goes for exec outputs. Counted over all exec pins the node has, so an Enhanced
+        # Input event (Triggered, Started, ...) or a Branch keeps showing which pin is used.
+        exec_pins = {d: [p for p, (dd, t) in node.pins.items() if dd == d and pin_kind(t) == "exec"] for d in ("in", "out")}
+        node_level_exec = {p for d, names in exec_pins.items() if len(names) <= 1 for p in names}
+        pins = [
+            (p, *node.pins[p])
+            for p in node.pins
+            if (p in linked or p in values or p in node.event_links) and p not in node_level_exec
+        ]
+        # Exec pins come first (on top), then data pins, each in the editor's order.
+        exec_first = lambda p: pin_kind(p[2]) != "exec"  # noqa: E731 - sort key, False sorts first
+        inputs = sorted((p for p in pins if p[1] == "in"), key=exec_first)
+        outputs = sorted((p for p in pins if p[1] == "out"), key=exec_first)
         kinds = {pin_kind(p[2]) for p in pins}
 
         # Nodes with typed-in values keep their pin rows, otherwise the values would be hidden.
-        collapsible = (node.role == "getter" and len(outputs) == 1 and len(inputs) <= 1) or node.role == "operator"
-        collapsed = collapsible and not values
+        # Pure nodes (no exec pins, e.g. Get Player Character or Get Enhanced Input Local Player
+        # Subsystem) count as pure getters when they have one output and at most one input; they
+        # keep their editor title. Events, function entries and result nodes are never pure getters.
+        pure_function = (
+            node.role not in ("event", "reroute")
+            and not node.name.startswith(("K2Node_FunctionEntry", "K2Node_FunctionResult"))
+            and not any(pin_kind(pin_type) == "exec" for _, pin_type in node.pins.values())
+        )
+        getter_like = (node.role in ("getter", "self") or pure_function) and len(outputs) == 1 and len(inputs) <= 1
+        collapsible = getter_like or node.role == "operator"
+        collapsed = collapsible and not values and not node.event_links
 
         lines.append(f"{pad}subgraph {node_id}[{label(node.title)}]")
+        # Invisible anchor rows: Mermaid attaches a wire to a node box to an arbitrary row of it,
+        # so the layout could put an event right of the node it triggers, or spread the node's
+        # rows sideways. Instead, wires of omitted exec pins go to an anchor in the input column
+        # (anchor_in) or come from one in the output column (anchor_out). A node with rows on one
+        # side only also gets an anchor on the other side, so those rows stay in one column.
+        # export_svg.mjs removes the anchors and draws these wires to the box border.
+        rows = [] if collapsed else inputs + outputs
+        wired = lambda d: any(  # noqa: E731
+            p in linked and node.pins[p][0] == d for p in node_level_exec
+        )
+        anchor_in = ident(node_id, "anchor_in") if rows and (wired("in") or not inputs) else None
+        anchor_out = ident(node_id, "anchor_out") if rows and (wired("out") or not outputs) else None
+        for anchor in (anchor_in, anchor_out):
+            if anchor:
+                lines.append(f'{pad}    {anchor}[" "]')
+                classes.setdefault("anchor", []).append(anchor)
         for pin_name, direction, pin_type in [] if collapsed else inputs + outputs:
             pin_id = ident(node_id, pin_name)
             endpoint[(node.name, pin_name)] = pin_id
             kind = pin_kind(pin_type)
             marker = "▶" if kind == "exec" else "●"
-            name = "" if pin_name in ("execute", "then") else display_name(pin_name)
-            if pin_name in values:
+            if kind == "exec" and node.name.startswith("K2Node_IfThenElse") and pin_name in ("then", "else"):
+                # Branch: the editor shows "True" and "False" for its "then" and "else" pins.
+                name = "True" if pin_name == "then" else "False"
+            elif kind == "exec":
+                # An exec pin shown as a row always gets a name, so it's clear which one to use.
+                name = display_name(pin_name)
+                name = name[:1].upper() + name[1:]  # "then 0" -> "Then 0", like the editor
+            elif pin_name == "self" and direction == "out":
+                name = "Self"  # only an input "self" pin is the editor's "Target"
+            else:
+                name = display_name(pin_name)
+            if pin_name in node.event_links:
+                text = f"{marker} {node.event_links[pin_name]}"
+            elif pin_name in values:
                 text = f"{value_box(values[pin_name])} {name}"
             else:
                 text = f"{marker} {name}" if direction == "in" else f"{name} {marker}"
             shape = (">", "]") if kind == "exec" else ("[", "]")
-            lines.append(f"{pad}    {pin_id}{shape[0]}{label(text.strip())}{shape[1]}")
+            lines.append(f"{pad}    {pin_id}{shape[0]}{label(pin_label(text.strip(), direction))}{shape[1]}")
             classes.setdefault(f"{kind}_dim" if node.context else kind, []).append(pin_id)
+
+        # The layout may stack exec output rows in any order (it sorts rows to reduce crossings);
+        # export_svg.mjs puts the rows listed here back in this order, top to bottom.
+        exec_rows = [ident(node_id, p) for p, _, t in outputs if pin_kind(t) == "exec"]
+        if not collapsed and len(exec_rows) >= 2:
+            lines.append(f"{pad}    %% pin-order {' '.join(exec_rows)}")
         lines.append(f"{pad}end")
+        # Exec wires of omitted exec pins connect to the node box itself.
+        for pin_name in node_level_exec:
+            anchor = anchor_in if node.pins[pin_name][0] == "in" else anchor_out
+            endpoint[(node.name, pin_name)] = anchor or node_id
         if collapsed:
             for pin_name, _, _ in pins:
                 endpoint[(node.name, pin_name)] = node_id
-        elif inputs and outputs:
-            # Keep every input left of the outputs.
-            for pin_name, _, _ in inputs:
-                invisible.append((ident(node_id, pin_name), ident(node_id, outputs[0][0])))
+        else:
+            # Keep every input left of every output.
+            left = [ident(node_id, p) for p, _, _ in inputs] + ([anchor_in] if anchor_in else [])
+            right = [ident(node_id, p) for p, _, _ in outputs] + ([anchor_out] if anchor_out else [])
+            invisible.extend((a, b) for a in left for b in right)
 
         # Border and title colours by role.
         extra = ""
@@ -479,12 +586,14 @@ def render_graph(graph_name, nodes, wires, lines, styles, classes, edges, indent
             stroke, width, title = EVENT_BORDER, "3px", TEXT
         elif node.role == "setter":
             stroke, width, title = SETTER_BORDER, "3px", TEXT
-        elif node.role == "getter":
+        elif node.role in ("getter", "self") or getter_like:
             stroke = PIN_COLOURS[pin_kind(outputs[0][2])] if outputs else NEUTRAL_BORDER
             width, title, extra = "2px", stroke, ",rx:16px,ry:16px"
         elif node.role == "operator":
             stroke = PIN_COLOURS[kinds.pop()] if len(kinds) == 1 else NEUTRAL_BORDER
             width, title = "2px", stroke if stroke != NEUTRAL_BORDER else TEXT
+        elif node.name.startswith(CALL_CLASSES):
+            stroke, width, title = CALL_BORDER, "2px", TEXT
         else:
             stroke, width, title = NEUTRAL_BORDER, "2px", TEXT
         if node.context:
@@ -493,6 +602,7 @@ def render_graph(graph_name, nodes, wires, lines, styles, classes, edges, indent
             extra = ",stroke-dasharray:5 5" + extra
         styles.append(f"style {node_id} fill:{BODY},stroke:{stroke},stroke-width:{width},color:{title}{extra}")
 
+    loops = loop_wires(order, wires)
     rank = {node.name: i for i, node in enumerate(order)}
     drawn = set()
     for source, target, pin_type in sorted(wires, key=lambda w: (rank[w[0][0]], w[0][1], rank[w[1][0]], w[1][1])):
@@ -502,15 +612,56 @@ def render_graph(graph_name, nodes, wires, lines, styles, classes, edges, indent
             drawn.add(pair)
             # A wire between two nodes that aren't part of the change is dimmed and dashed.
             old = nodes[source[0]].context and nodes[target[0]].context
-            edges.append((*pair, pin_kind(pin_type), old))
+            edges.append((*pair, pin_kind(pin_type), old, (source, target) in loops))
     return invisible
+
+
+def loop_wires(order, wires):
+    """
+    Wires that lead back to an earlier node and close a loop (e.g. On Fail -> Delay).
+    Found by following wires from the leftmost nodes in the editor; a wire to a node
+    that is still on the current path closes a loop.
+    """
+    outgoing = {}
+    for source, target, _ in wires:
+        outgoing.setdefault(source[0], []).append((source, target))
+    position = {node.name: index for index, node in enumerate(order)}
+    for edges in outgoing.values():
+        edges.sort(key=lambda e: (position.get(e[1][0], 0), e[1][1]))
+
+    loops, done, on_path = set(), set(), set()
+    for start in (node.name for node in order):
+        if start in done:
+            continue
+        stack = [(start, iter(outgoing.get(start, [])))]
+        on_path.add(start)
+        while stack:
+            name, edges = stack[-1]
+            edge = next(edges, None)
+            if edge is None:
+                stack.pop()
+                on_path.discard(name)
+                done.add(name)
+                continue
+            target = edge[1][0]
+            if target in on_path:
+                loops.add(edge)
+            elif target not in done:
+                on_path.add(target)
+                stack.append((target, iter(outgoing.get(target, []))))
+    return loops
+
+
+def is_entry(node):
+    """Event nodes and function entry nodes, which start execution."""
+    return node.role == "event" or node.name.startswith("K2Node_FunctionEntry")
 
 
 def to_mermaid(diff, warnings, reference=None):
     graphs = lists(diff, "graph")
     lines, styles, classes, edges, invisible = [], [], {}, [], []
 
-    nested = len(graphs) > 1
+    drawable = []  # (graph name, nodes, wires) for graphs with something left to draw
     for graph in graphs:
         graph_name = graph[1]
         if reference is not None:
@@ -525,10 +676,34 @@ def to_mermaid(diff, warnings, reference=None):
             nodes, wires, known = read_graph(graph, warnings)
             wires = remove_reroutes(nodes, wires)
             add_context_nodes(nodes, wires, known)
-        if not nodes:
-            continue
+        # Wires from an event's delegate pin aren't drawn; the pin they lead to says
+        # "Connect to Event <name>" instead.
+        for wire in list(wires):
+            source, target, pin_type = wire
+            event = nodes.get(source[0])
+            if pin_kind(pin_type) == "delegate" and event and event.role == "event" and target[0] in nodes:
+                wires.discard(wire)
+                nodes[target[0]].event_links[target[1]] = f"Connect to Event {event.raw_title}"
+        # Event and function entry nodes with nothing connected (such as the default
+        # BeginPlay, Tick or Construction Script of a new Blueprint) aren't drawn.
+        wired = {end[0] for source, target, _ in wires for end in (source, target)}
+        for name in [n for n, node in nodes.items() if is_entry(node) and n not in wired]:
+            del nodes[name]
+        if nodes:
+            drawable.append((graph_name, nodes, wires))
+
+    if not drawable:
+        return None
+
+    nested = len(drawable) > 1
+    for graph_name, nodes, wires in drawable:
         if nested:
-            lines.append(f"    subgraph {ident('G', graph_name)}[{label(graph_name)}]")
+            group_id = ident("G", graph_name)
+            lines.append(f"    subgraph {group_id}[{label(graph_name)}]")
+            # A graph box only linked inside itself uses its own direction, which defaults to top-down.
+            lines.append("        direction LR")
+            # A box around each graph when several graphs changed: transparent, subtle border.
+            styles.append(f"style {group_id} fill:none,stroke:{_COLOURS['border-neutral']},stroke-width:1px,color:{TEXT}")
         invisible += render_graph(graph_name, nodes, wires, lines, styles, classes, edges, 2 if nested else 1)
         if nested:
             lines.append("    end")
@@ -537,9 +712,18 @@ def to_mermaid(diff, warnings, reference=None):
     out = [HEADER, ""]
     out += lines
     out += ["    %% Wires"]
-    for source, target, kind, _ in edges:
-        arrow = "==>" if kind == "exec" else "-->"
-        out.append(f"    {source} {arrow} {target}")
+    back = []
+    for source, target, kind, _, loop in edges:
+        if loop:
+            # Declared backwards and without arrowhead, so the layout sees no cycle;
+            # export_svg.mjs puts the arrowhead on the target end (see the back-edge comments).
+            line = "===" if kind == "exec" else "---"
+            out.append(f"    {target} {line} {source}")
+            back.append(f"    %% back-edge {target} {source}")
+        else:
+            arrow = "==>" if kind == "exec" else "-->"
+            out.append(f"    {source} {arrow} {target}")
+    out += back
     if invisible:
         out += ["", "    %% Keep inputs left of outputs inside each node"]
         out += [f"    {a} ~~~ {b}" for a, b in invisible]
@@ -547,15 +731,20 @@ def to_mermaid(diff, warnings, reference=None):
     out += [f"    {s}" for s in styles]
     out += ["", "    %% Pins"]
     for kind in sorted(classes):
+        if kind == "anchor":
+            # Invisible layout helper rows (see render_graph); export_svg.mjs ignores them.
+            out.append(f"    classDef pin_anchor fill:{BODY},stroke:{BODY},color:{BODY}")
+            continue
         base = kind.removesuffix("_dim")
         colour = dim(PIN_COLOURS[base]) if kind.endswith("_dim") else PIN_COLOURS[base]
+        # Pin rows: background and border in the node body colour, so they read as rows of the node.
         out.append(f"    classDef pin_{kind} fill:{BODY},stroke:{BODY},color:{colour}")
     for kind in sorted(classes):
         out.append(f"    class {','.join(classes[kind])} pin_{kind}")
     if edges:
         out += ["", "    %% Wire colours (dimmed and dashed between two nodes that aren't part of the change)"]
         groups = {}
-        for index, (_, _, kind, old) in enumerate(edges):
+        for index, (_, _, kind, old, _) in enumerate(edges):
             groups.setdefault((kind, old), []).append(str(index))
         for (kind, old), indices in sorted(groups.items()):
             width = 3 if kind == "exec" else 2
@@ -589,9 +778,15 @@ def main():
         if reference is None:
             warnings.append("no reference file; only added nodes and their direct neighbours are drawn")
         output = path.with_suffix(".mmd")
-        output.write_text(to_mermaid(diff, warnings, reference), encoding="utf-8", newline="\n")
+        text = to_mermaid(diff, warnings, reference)
         for warning in warnings:
             print(f"{path.name}: {warning}", file=sys.stderr)
+        if text is None:
+            # Nothing to draw, e.g. a new Blueprint with only its default, unconnected events.
+            output.unlink(missing_ok=True)
+            print(f"{path}: nothing to draw, no diagram written")
+            continue
+        output.write_text(text, encoding="utf-8", newline="\n")
         print(f"Wrote {output}")
 
 

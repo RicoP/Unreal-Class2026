@@ -12,7 +12,7 @@ import { fileURLToPath } from "node:url";
 
 const paletteFile = process.argv[2] ?? path.join(path.dirname(fileURLToPath(import.meta.url)), "palette.json");
 const palettes = JSON.parse(readFileSync(paletteFile, "utf8")).palettes;
-const KEY = ["pin-exec", "pin-float", "pin-object", "pin-boolean", "pin-integer", "pin-vector", "pin-string", "border-event", "border-setter"];
+const KEY = ["pin-exec", "pin-float", "pin-object", "pin-boolean", "pin-integer", "pin-vector", "pin-string", "border-event", "border-setter", "border-call"];
 const MATRICES = {
   none: [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
   protanopia: [[0.152286, 1.052583, -0.204868], [0.114503, 0.786281, 0.099216], [-0.003882, -0.048116, 1.051998]],
