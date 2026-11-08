@@ -26,6 +26,9 @@ Plugins/**/Saved/
 # Compiled artifacts
 *.pdb
 
+# Node packages for the documentation tools
+node_modules/
+
 # Local Claude Code settings
 .claude/settings.local.json
 

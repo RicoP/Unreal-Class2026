@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "description": "Tools for rendering the Blueprint documentation.",
+  "scripts": {
+    "export-svg": "node export_svg.mjs"
+  },
+  "devDependencies": {
+    "@mermaid-js/mermaid-cli": "10.9.1"
+  }
+}

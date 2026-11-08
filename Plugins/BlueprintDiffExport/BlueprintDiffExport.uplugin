@@ -1,0 +1,19 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "0.1",
+	"FriendlyName": "Blueprint Diff Export",
+	"Description": "Right-click a Blueprint to write its changes against revision control to Doc/graph/transient/<package path>.sexpr, and its full graph to Doc/graph/reference/<package path>.sexpr.",
+	"Category": "Editor",
+	"CreatedBy": "",
+	"CanContainContent": false,
+	"EnabledByDefault": true,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "BlueprintDiffExport",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}

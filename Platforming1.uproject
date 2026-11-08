@@ -3,6 +3,13 @@
 	"EngineAssociation": "{F74C27FE-41D7-21F6-C1C2-299DE88080D7}",
 	"Category": "",
 	"Description": "",
+	"Modules": [
+		{
+			"Name": "Platforming1",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	],
 	"Plugins": [
 		{
 			"Name": "ModelingToolsEditorMode",
@@ -21,6 +28,10 @@
 		},
 		{
 			"Name": "AllToolsets",
+			"Enabled": true
+		},
+		{
+			"Name": "LiveCodingToolset",
 			"Enabled": true
 		}
 	]
