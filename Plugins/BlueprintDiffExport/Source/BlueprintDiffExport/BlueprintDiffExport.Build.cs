@@ -8,6 +8,7 @@ public class BlueprintDiffExport : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
+			"AssetRegistry",
 			"Core",
 			"CoreUObject",
 			"Engine",
