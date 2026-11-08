@@ -1,0 +1,129 @@
+{
+  "description": "Colours for Blueprint diagrams and settings tables. Exported SVGs use them as CSS variables (var(--<name>)); 'default' is built into every SVG, other palettes are offered in doc.html and only need the colours they change. Each default colour must be unique, because export_svg.mjs maps rendered colours back to their names. Check changes with: node Doc/check_palette.mjs",
+  "palettes": {
+    "default": {
+      "label": "Unreal editor",
+      "colors": {
+        "node-body": "#151515",
+        "text": "#f2f2f2",
+        "text-muted": "#999999",
+        "border-event": "#b3261e",
+        "border-setter": "#2b5d8f",
+        "border-neutral": "#3a3a3a",
+        "border-context": "#555555",
+        "table-header": "#262626",
+        "table-stripe": "#1c1c1c",
+        "pin-exec": "#ffffff",
+        "pin-boolean": "#950000",
+        "pin-byte": "#006f65",
+        "pin-integer": "#1fe3af",
+        "pin-integer64": "#ace3af",
+        "pin-float": "#38d500",
+        "pin-name": "#cd82ff",
+        "pin-string": "#ff00d4",
+        "pin-text": "#e77caa",
+        "pin-vector": "#ffca23",
+        "pin-rotator": "#a0b4ff",
+        "pin-transform": "#ff7300",
+        "pin-object": "#00aaf5",
+        "pin-other": "#777777"
+      }
+    },
+    "red-green-safe": {
+      "label": "Red-green safe (protanopia, deuteranopia)",
+      "colors": {
+        "border-event": "#cc79a7",
+        "border-setter": "#0072b2",
+        "pin-boolean": "#cc79a7",
+        "pin-byte": "#66d9c2",
+        "pin-integer": "#009e73",
+        "pin-integer64": "#c8f0e0",
+        "pin-float": "#e69f00",
+        "pin-name": "#b39ddb",
+        "pin-string": "#bbbbbb",
+        "pin-text": "#f5b8d6",
+        "pin-vector": "#f0e442",
+        "pin-rotator": "#9fb6ff",
+        "pin-transform": "#a6761d",
+        "pin-object": "#56b4e9",
+        "pin-other": "#888888"
+      }
+    },
+    "blue-yellow-safe": {
+      "label": "Blue-yellow safe (tritanopia)",
+      "colors": {
+        "border-event": "#ff7043",
+        "border-setter": "#9fb6ff",
+        "pin-boolean": "#ff4f6d",
+        "pin-byte": "#b0b0b0",
+        "pin-integer": "#888888",
+        "pin-integer64": "#c8c8c8",
+        "pin-float": "#7dff4d",
+        "pin-name": "#ce93d8",
+        "pin-string": "#009e73",
+        "pin-text": "#ff9de2",
+        "pin-vector": "#ffb000",
+        "pin-rotator": "#d070ff",
+        "pin-transform": "#ff8c1a",
+        "pin-object": "#ab47bc",
+        "pin-other": "#777777"
+      }
+    },
+    "high-contrast": {
+      "label": "High contrast",
+      "colors": {
+        "node-body": "#000000",
+        "text": "#ffffff",
+        "text-muted": "#d0d0d0",
+        "border-event": "#ff8c1a",
+        "border-setter": "#5aa9ff",
+        "border-neutral": "#bfbfbf",
+        "border-context": "#a0a0a0",
+        "table-header": "#262626",
+        "table-stripe": "#101010",
+        "pin-exec": "#ffffff",
+        "pin-boolean": "#ff6680",
+        "pin-byte": "#00e0d0",
+        "pin-integer": "#00ffc8",
+        "pin-integer64": "#b8ffe0",
+        "pin-float": "#7dff4d",
+        "pin-name": "#e0a3ff",
+        "pin-string": "#ff66ff",
+        "pin-text": "#ffb3d1",
+        "pin-vector": "#ffe14d",
+        "pin-rotator": "#c0ccff",
+        "pin-transform": "#ffad5c",
+        "pin-object": "#33d1ff",
+        "pin-other": "#c8c8c8"
+      }
+    },
+    "greyscale": {
+      "label": "Greyscale (achromatopsia, print)",
+      "colors": {
+        "node-body": "#000000",
+        "text": "#ffffff",
+        "text-muted": "#bdbdbd",
+        "border-event": "#ffffff",
+        "border-setter": "#808080",
+        "border-neutral": "#6e6e6e",
+        "border-context": "#5a5a5a",
+        "table-header": "#262626",
+        "table-stripe": "#141414",
+        "pin-exec": "#ffffff",
+        "pin-boolean": "#5c5c5c",
+        "pin-byte": "#8e8e8e",
+        "pin-integer": "#c6c6c6",
+        "pin-integer64": "#c6c6c6",
+        "pin-float": "#c6c6c6",
+        "pin-name": "#8e8e8e",
+        "pin-string": "#8e8e8e",
+        "pin-text": "#8e8e8e",
+        "pin-vector": "#ffffff",
+        "pin-rotator": "#c6c6c6",
+        "pin-transform": "#8e8e8e",
+        "pin-object": "#8e8e8e",
+        "pin-other": "#6e6e6e"
+      }
+    }
+  }
+}

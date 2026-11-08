@@ -29,6 +29,9 @@ Plugins/**/Saved/
 # Node packages for the documentation tools
 node_modules/
 
+# Working folder of the SVG export; doc exports copy it to dated folders
+Doc/commits/Transient/
+
 # Local Claude Code settings
 .claude/settings.local.json
 

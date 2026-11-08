@@ -17,18 +17,58 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import puppeteer from "puppeteer";
 
-// Table colours, matching the diagram style in AGENTS.md.
+// Colours live in Doc/palette.json. Exported SVGs refer to them as CSS variables
+// (var(--pin-float)) and carry the default palette, so a page can switch palettes.
+const docDirEarly = path.dirname(fileURLToPath(import.meta.url));
+const palettes = JSON.parse(readFileSync(path.join(docDirEarly, "palette.json"), "utf8")).palettes;
+const defaultColours = palettes.default.colors;
+
+const colourNames = new Map(); // "#38d500" -> "pin-float"
+for (const [name, value] of Object.entries(defaultColours)) {
+  const key = value.toLowerCase();
+  if (colourNames.has(key)) {
+    console.error(`palette.json: default colours of ${colourNames.get(key)} and ${name} are both ${value}; they must differ.`);
+    process.exit(1);
+  }
+  colourNames.set(key, name);
+}
+
 const TABLE = {
   font: "trebuchet ms, verdana, arial, sans-serif",
   fontSize: 14,
-  body: "#151515",
-  stripe: "#1c1c1c",
-  header: "#262626",
-  border: "#3a3a3a",
-  text: "#ffffff",
-  muted: "#777777",
-  title: "#ffffff",
+  body: "var(--node-body)",
+  stripe: "var(--table-stripe)",
+  header: "var(--table-header)",
+  border: "var(--border-neutral)",
+  text: "var(--text)",
+  muted: "var(--text-muted)",
+  title: "var(--text)",
 };
+
+/** Replace default palette colours (hex or rgb()) in a rendered SVG with their CSS variables. */
+function useColourVariables(svg) {
+  const toVariable = (hex) => {
+    const name = colourNames.get(hex.toLowerCase());
+    return name ? `var(--${name})` : null;
+  };
+  return svg
+    .replace(/#[0-9a-fA-F]{6}(?![0-9a-fA-F])/g, (hex) => toVariable(hex) ?? hex)
+    .replace(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*1(?:\.0+)?\s*)?\)/g, (match, r, g, b) => {
+      const hex = "#" + [r, g, b].map((v) => Number(v).toString(16).padStart(2, "0")).join("");
+      return toVariable(hex) ?? match;
+    });
+}
+
+/**
+ * Add the default palette to an SVG. :where() gives it zero specificity, so a page that
+ * shows the SVG inline can override any colour with its own CSS.
+ */
+function withPalette(svg) {
+  const variables = Object.entries(defaultColours)
+    .map(([name, value]) => `--${name}:${value};`)
+    .join("");
+  return svg.replace(/<svg\b[^>]*>/, (tag) => `${tag}<style>:where(svg){${variables}}</style>`);
+}
 
 const docDir = path.dirname(fileURLToPath(import.meta.url));
 const cli = path.join(docDir, "node_modules", "@mermaid-js", "mermaid-cli", "src", "cli.js");
@@ -136,24 +176,25 @@ async function tableSvg(page, { title, rows }) {
   const parts = [
     `<svg xmlns="http://www.w3.org/2000/svg" width="${width + 2}" height="${height + 2}" viewBox="-1 -1 ${width + 2} ${height + 2}">`,
     `<style>text{font-family:${TABLE.font};font-size:${TABLE.fontSize}px;dominant-baseline:central}</style>`,
-    `<rect x="0" y="0" width="${width}" height="${height}" rx="6" fill="${TABLE.body}" stroke="${TABLE.border}" stroke-width="2"/>`,
+    // Colours go in style attributes: presentation attributes like fill="" don't accept var().
+    `<rect x="0" y="0" width="${width}" height="${height}" rx="6" style="fill:${TABLE.body};stroke:${TABLE.border};stroke-width:2"/>`,
   ];
   if (title) {
-    parts.push(`<text x="${padX}" y="${titleHeight / 2}" fill="${TABLE.title}" font-weight="bold">${xml(title)}</text>`);
+    parts.push(`<text x="${padX}" y="${titleHeight / 2}" style="fill:${TABLE.title}" font-weight="bold">${xml(title)}</text>`);
   }
   rows.forEach((row, rowIndex) => {
     const top = titleHeight + rowIndex * rowHeight;
     const fill = rowIndex === 0 ? TABLE.header : rowIndex % 2 === 0 ? TABLE.stripe : TABLE.body;
-    parts.push(`<rect x="1" y="${top}" width="${width - 2}" height="${rowHeight}" fill="${fill}"/>`);
-    parts.push(`<line x1="0" y1="${top}" x2="${width}" y2="${top}" stroke="${TABLE.border}"/>`);
+    parts.push(`<rect x="1" y="${top}" width="${width - 2}" height="${rowHeight}" style="fill:${fill}"/>`);
+    parts.push(`<line x1="0" y1="${top}" x2="${width}" y2="${top}" style="stroke:${TABLE.border}"/>`);
     let left = 0;
     row.forEach((value, column) => {
       const colour = value === "—" ? TABLE.muted : TABLE.text;
       const weight = rowIndex === 0 ? ` font-weight="bold"` : "";
-      parts.push(`<text x="${left + padX}" y="${top + rowHeight / 2}" fill="${colour}"${weight}>${xml(value)}</text>`);
+      parts.push(`<text x="${left + padX}" y="${top + rowHeight / 2}" style="fill:${colour}"${weight}>${xml(value)}</text>`);
       left += columnWidths[column];
       if (column < columns - 1) {
-        parts.push(`<line x1="${left}" y1="${top}" x2="${left}" y2="${top + rowHeight}" stroke="${TABLE.border}"/>`);
+        parts.push(`<line x1="${left}" y1="${top}" x2="${left}" y2="${top + rowHeight}" style="stroke:${TABLE.border}"/>`);
       }
     });
   });
@@ -339,7 +380,7 @@ for (const file of sources.filter((f) => f.toLowerCase().endsWith(".md"))) {
   browser ??= await puppeteer.launch(JSON.parse(readFileSync(puppeteerConfig, "utf8")));
   const page = await browser.newPage();
   const metadata = assetMetadata(path.join(repoRoot, file));
-  writeFileSync(output, prettySvg(withMetadata(await tableSvg(page, table), metadata)), "utf8");
+  writeFileSync(output, prettySvg(withMetadata(withPalette(await tableSvg(page, table)), metadata)), "utf8");
   await page.close();
   console.log(`${file} -> ${path.relative(repoRoot, output)}`);
 }
@@ -358,7 +399,7 @@ for (const file of sources.filter((f) => f.toLowerCase().endsWith(".mmd"))) {
   );
   if (result.status === 0) {
     const metadata = assetMetadata(path.join(repoRoot, file));
-    const svg = colourArrowheads(readFileSync(output, "utf8"));
+    const svg = withPalette(useColourVariables(colourArrowheads(readFileSync(output, "utf8"))));
     writeFileSync(output, prettySvg(withMetadata(svg, metadata)), "utf8");
     console.log(`${file} -> ${path.relative(repoRoot, output)}`);
   } else {

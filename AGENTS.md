@@ -10,12 +10,19 @@ to rebuild it themselves.
   local memory, so they live in the repo.
 - Don't write lesson documentation until the user says documentation has
   started. Until then, diffs and diagrams are experiments.
-- Open decision: `Doc/graph.sexpr` and `Doc/update_graph.py` are an earlier
-  approach that snapshots the whole project for comparison. The
-  `BlueprintDiffExport` plugin replaced it for Blueprints, so don't refresh the
-  snapshot on commit, and ask the user before removing or reusing it. If it is
-  used again, never fill it from `read_graph_dsl`: that tool drops Enhanced
-  Input wiring and animation graphs, and appears to mark Blueprints as unsaved.
+- Open decision: `Doc/update_graph.py` is an earlier approach that wrote a
+  snapshot of the whole project (`Doc/graph.sexpr`, now deleted). The
+  `BlueprintDiffExport` plugin replaced it for Blueprints, so don't run it on
+  commit, and ask the user before removing or reusing the script. Never read
+  Blueprints with `read_graph_dsl`: that tool drops Enhanced Input wiring and
+  animation graphs, and appears to mark Blueprints as unsaved.
+
+- Live Coding (Ctrl+Alt+F11, or `CompileLiveCoding` through the MCP) only
+  patches the running editor. It doesn't update the plugin DLL on disk, so its
+  changes are lost on restart, and it doesn't rerun startup code such as menu
+  registration. After changing plugin code, close the editor and build
+  (`Build.bat Platforming1Editor Win64 Development -Project=<uproject>`)
+  before the next restart, and tell the user when a change needs that.
 
 ## Blueprint diffs
 
@@ -27,20 +34,59 @@ to rebuild it themselves.
   `Doc/graph/transient/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.sexpr`.
   The same export also writes the full current Blueprint, with all variables,
   graphs, nodes, pins and links, to `Doc/graph/reference/<package path>.sexpr`.
+- The same menu entry works on other assets, such as Input Actions and Input
+  Mapping Contexts. It writes an `asset-diff` of their changed properties, and
+  a reference with all their non-default properties. A new asset (no committed
+  revision) is compared against its class defaults, so the diff lists exactly
+  what was set after creating it. Levels aren't supported yet.
+- Non-Blueprint assets have no graph, so the lesson shows them as tables.
+  Generate one with `python Doc/sexpr_to_table.py <file>.sexpr`; it writes a
+  `.md` file next to the diff.
 - Diagrams for a change go next to its diff, with the same base name and the
   `.mmd` extension. Generate them with
   `python Doc/sexpr_to_mermaid.py <file>.sexpr` instead of writing them by
-  hand. The script applies the style rules below, and its palette constants
-  are the one place to change colours. When a style rule changes, update the
-  script too.
+  hand. The script applies the style rules below and takes its colours from
+  the default palette in `Doc/palette.json`. When a style rule changes, update
+  the script too.
 - The script draws added nodes. Changes it can't draw yet (removed or moved
   nodes, changed pin values) are printed on stderr.
-- `node Doc/export_svg.mjs` renders every `.mmd` that git reports as
-  untracked or changed to `Doc/commits/<YYYYMMDD_HHmmss>/<package path>.svg`,
-  using the current local date and time. It needs `npm install` in `Doc/` once.
-  It uses the Mermaid CLI pinned in `Doc/package.json` (10.9.1, the last
-  version that supports Node 16) and the Chrome set in `Doc/puppeteer.json`
-  instead of downloading Chromium.
+- `node Doc/export_svg.mjs` renders every `.mmd`, and every `.md` table under
+  `Doc/graph/`, that git reports as untracked or changed to
+  `Doc/commits/Transient/<package path>.svg`, overwriting earlier exports of
+  the same file. SVGs are pretty-printed. Tables are drawn as SVG in the same
+  dark style as diagrams. In every exported SVG, palette colours are CSS
+  variables (`var(--pin-float)`), and the SVG carries the default palette at
+  zero specificity (`:where(svg)`), so it looks the same on its own and a page
+  can restyle it. It needs `npm install` in `Doc/` once. It uses the Mermaid
+  CLI pinned in `Doc/package.json` (10.9.1, the last version that supports
+  Node 16) and the Chrome set in `Doc/puppeteer.json` instead of downloading
+  Chromium.
+- Doc export: `node Doc/export_doc.mjs` copies `Doc/commits/Transient` to
+  `Doc/commits/<YYYYMMDD_HHmmss>` (current local date and time; `Transient`
+  stays) and writes `doc.html` there, a standalone dark page that embeds every
+  SVG inline under a heading with its path. The SVG files stay next to it,
+  named by package path (`Game/Input/Actions/IA_Zoom.svg` for
+  `/Game/Input/Actions/IA_Zoom`). Inline SVGs get their IDs prefixed (`s1-`,
+  `s2-`, ...) because every Mermaid diagram uses `my-svg`. The page has a
+  colour palette switch (also `?palette=<name>`, remembered per browser).
+  In headings and labels, paths starting with
+  `/Game/` are shown as the Content Browser shows them:
+  `All/Content/Input/Actions/IA_Zoom`. For a new asset (no previous revision)
+  the heading is `Create <asset type> at <path>`, for example
+  `Create Input Action at All/Content/Input/Actions/IA_Zoom`.
+  The doc export also copies all of `Doc/graph/` (diffs, references, `.mmd`
+  diagrams, `.md` tables) to `<export>/graph/`, so each export keeps the
+  source data it was made from, in case its documents need regenerating.
+  `--regenerate <export folder>` rewrites `doc.html` of an existing export and
+  removes an outdated `doc.md` from before the switch to HTML.
+- Every exported SVG carries a `<metadata>` block with a
+  `<bde:asset xmlns:bde="urn:blueprint-diff-export" .../>` element, written by
+  `export_svg.mjs` from the SVG's diff: `package`, `kind` (`blueprint` or
+  `asset`), `class`, `type` (display name such as `Input Action`; Blueprints
+  are `Blueprint Class`), `new`, `revision`, `source`, and for Blueprints
+  `parent`. `export_doc.mjs` reads only this metadata, so each export folder
+  describes itself without the diffs. Put any further per-asset facts the docs
+  need into this block.
 - Never check out old binary assets to compare versions. Use the exported diff.
 
 ## Mermaid diagram style
@@ -96,6 +142,26 @@ what they see on screen.
 
 ### Colours
 
+All colours live in `Doc/palette.json`, the one place to change them. Its
+`default` palette is the Unreal editor look below, used by `.mmd` files and
+built into every SVG. Each default colour must be unique, because
+`export_svg.mjs` maps rendered colours back to their names; text is
+`#f2f2f2` rather than white so it differs from exec pins. Other palettes
+only apply in `doc.html` and only list the colours they change; colour
+blindness doesn't matter for `.mmd` files:
+
+| Palette | For | Notes |
+|---|---|---|
+| `red-green-safe` | protanopia, deuteranopia | Okabe-Ito based; float orange, object blue, boolean reddish purple |
+| `blue-yellow-safe` | tritanopia | Float green and boolean red stay; object purple |
+| `high-contrast` | low vision | Black node body, all key colours at least 7:1 contrast |
+| `greyscale` | achromatopsia, print | 4 brightness levels: exec, float, object, boolean; rarer types share them |
+
+Check palette changes with `node Doc/check_palette.mjs`, which simulates each
+colour blindness (Machado 2009) and prints the closest pairs of key colours
+(aim for 25+ for exec, float, object and boolean in the palette's target
+vision), and visually with Chrome's vision deficiency emulation.
+
 | Element | Colour |
 |---|---|
 | Node body | `#151515` |
@@ -129,8 +195,10 @@ diagrams match what students see. Exec wires are 3px wide; data wires 2px.
 These come from `UGraphEditorSettings` in the engine
 (`Engine/Source/Editor/GraphEditor/Private/GraphEditorSettings.cpp`),
 converted from linear to sRGB. Float pins use `RealPinTypeColor`, as the editor
-does for both precisions. Some of these colours, such as Boolean, have low
-contrast on the dark node body; see Planned.
+does for both precisions. Some of these colours, such as Boolean `#950000`
+and Byte `#006f65`, have low contrast on the dark node body, and several are
+hard to tell apart with red-green colour blindness (Float green vs Boolean
+red or the event border); the `red-green-safe` palette addresses this.
 
 Give pin rows the same fill and stroke as the node body so they read as rows,
 not separate boxes. Colour pin rows with `classDef` and wires with `linkStyle`.
@@ -139,17 +207,6 @@ List the visible wires first and the invisible `~~~` links last, because
 
 ## Planned
 
-When we start exporting the documentation, raise this before writing the
-exporter. The colours above are currently hard-coded in each diagram.
-
-- One central place for colour configuration, used by every exported diagram.
-  Mermaid can't import a shared stylesheet, so this needs a generator that
-  writes the same `classDef` block into each file, or renderer config such as
-  `mmdc --cssFile`.
-- Colour-blind support, such as alternative palettes. The editor palette
-  above relies on hues that are hard to tell apart with colour blindness,
-  for example Float green vs Boolean red, or Integer vs Integer64. It also has
-  low-contrast colours on the dark body, such as Boolean `#950000` and Byte
-  `#006f65`.
 - Ways to tell node types apart besides colour, such as outline thickness and
-  dashed or dotted borders.
+  dashed or dotted borders. These could become CSS variables in
+  `palette.json` like the colours, so `doc.html` can switch them too.

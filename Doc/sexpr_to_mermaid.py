@@ -9,35 +9,27 @@ nodes, changed values) are listed on stderr instead of drawn.
 """
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
 
-# --- Palette (single place for all colours) ---------------------------------
+# --- Palette ----------------------------------------------------------------
+# Colours come from the default palette in Doc/palette.json, the one place to change them.
+# export_svg.mjs turns them into CSS variables so other palettes can be applied.
 
-BODY = "#151515"
-EVENT_BORDER = "#b3261e"
-SETTER_BORDER = "#2b5d8f"
-NEUTRAL_BORDER = "#3a3a3a"
-CONTEXT_BORDER = "#555555"
+_COLOURS = json.loads(Path(__file__).with_name("palette.json").read_text(encoding="utf-8"))["palettes"]["default"]["colors"]
 
-# Blueprint editor defaults for pin types, see AGENTS.md.
-PIN_COLOURS = {
-    "exec": "#ffffff",
-    "boolean": "#950000",
-    "byte": "#006f65",
-    "integer": "#1fe3af",
-    "integer64": "#ace3af",
-    "float": "#38d500",
-    "name": "#cd82ff",
-    "string": "#ff00d4",
-    "text": "#e77caa",
-    "vector": "#ffca23",
-    "rotator": "#a0b4ff",
-    "transform": "#ff7300",
-    "object": "#00aaf5",
-    "other": "#777777",
-}
+BODY = _COLOURS["node-body"]
+TEXT = _COLOURS["text"]
+MUTED = _COLOURS["text-muted"]
+EVENT_BORDER = _COLOURS["border-event"]
+SETTER_BORDER = _COLOURS["border-setter"]
+NEUTRAL_BORDER = _COLOURS["border-neutral"]
+CONTEXT_BORDER = _COLOURS["border-context"]
+
+# Blueprint editor pin type colours, keyed by pin kind ("float" -> "pin-float").
+PIN_COLOURS = {name[len("pin-"):]: value for name, value in _COLOURS.items() if name.startswith("pin-")}
 
 HEADER = """---
 config:
@@ -315,20 +307,20 @@ def render_graph(graph_name, nodes, wires, lines, styles, classes, edges, indent
             invisible.append((ident(node_id, inputs[0][0]), ident(node_id, outputs[0][0])))
 
         if node.role == "event":
-            styles.append(f"style {node_id} fill:{BODY},stroke:{EVENT_BORDER},stroke-width:3px,color:#ffffff")
+            styles.append(f"style {node_id} fill:{BODY},stroke:{EVENT_BORDER},stroke-width:3px,color:{TEXT}")
         elif node.role == "setter":
-            styles.append(f"style {node_id} fill:{BODY},stroke:{SETTER_BORDER},stroke-width:3px,color:#ffffff")
+            styles.append(f"style {node_id} fill:{BODY},stroke:{SETTER_BORDER},stroke-width:3px,color:{TEXT}")
         elif node.role == "getter":
             colour = PIN_COLOURS[pin_kind(outputs[0][2])] if outputs else NEUTRAL_BORDER
             styles.append(f"style {node_id} fill:{BODY},stroke:{colour},stroke-width:2px,color:{colour},rx:16px,ry:16px")
         elif node.role == "operator":
             colour = PIN_COLOURS[kinds.pop()] if len(kinds) == 1 else NEUTRAL_BORDER
-            title = colour if colour != NEUTRAL_BORDER else "#ffffff"
+            title = colour if colour != NEUTRAL_BORDER else TEXT
             styles.append(f"style {node_id} fill:{BODY},stroke:{colour},stroke-width:2px,color:{title}")
         elif node.role == "context":
-            styles.append(f"style {node_id} fill:{BODY},stroke:{CONTEXT_BORDER},stroke-width:2px,stroke-dasharray:5 5,color:#999999")
+            styles.append(f"style {node_id} fill:{BODY},stroke:{CONTEXT_BORDER},stroke-width:2px,stroke-dasharray:5 5,color:{MUTED}")
         else:
-            styles.append(f"style {node_id} fill:{BODY},stroke:{NEUTRAL_BORDER},stroke-width:2px,color:#ffffff")
+            styles.append(f"style {node_id} fill:{BODY},stroke:{NEUTRAL_BORDER},stroke-width:2px,color:{TEXT}")
 
     rank = {node.name: i for i, node in enumerate(order)}
     drawn = set()
