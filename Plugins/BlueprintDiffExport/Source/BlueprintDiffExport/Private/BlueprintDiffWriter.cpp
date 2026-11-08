@@ -427,8 +427,8 @@ namespace
 		return Lines;
 	}
 
-	/** Loads the latest revision of the Blueprint from revision control, or returns null if there is none. */
-	UBlueprint* LoadDepotRevision(const UBlueprint* Blueprint, FString& OutRevisionLine, FString& OutError)
+	/** Loads the latest revision of an asset from revision control, or returns null if there is none. */
+	UObject* LoadDepotRevision(const UObject* Blueprint, FString& OutRevisionLine, FString& OutError)
 	{
 		ISourceControlModule& SourceControl = ISourceControlModule::Get();
 		if (!SourceControl.IsEnabled() || !SourceControl.GetProvider().IsAvailable())
@@ -453,6 +453,14 @@ namespace
 		}
 
 		const TSharedPtr<ISourceControlRevision, ESPMode::ThreadSafe> Revision = State->GetHistoryItem(0);
+
+		// If the latest revision deleted the file, the asset was re-created since: treat it as new.
+		if (Revision.IsValid() && Revision->GetAction() == TEXT("delete"))
+		{
+			OutRevisionLine = FString::Printf(TEXT("(old none (deleted-in %s))"), *Quote(Revision->GetRevision()));
+			return nullptr;
+		}
+
 		UPackage* TempPackage = Revision.IsValid() ? DiffUtils::LoadPackageForDiff(Revision) : nullptr;
 		if (!TempPackage)
 		{
@@ -470,8 +478,83 @@ namespace
 			*Quote(Revision->GetRevision()),
 			*Quote(Revision->GetDate().ToIso8601()),
 			*Quote(Revision->GetDescription().TrimStartAndEnd()));
-		return Cast<UBlueprint>(OldObject);
+		return OldObject;
 	}
+
+	/**
+	 * Property differences between two objects of the same kind. In a diff each entry shows
+	 * the old and new value; in a reference (compared against the class default) only the value.
+	 */
+	void AddPropertyDiffs(const UObject* Old, const UObject* New, bool bReference, TArray<FString>& Lines)
+	{
+		TArray<FSingleObjectDiffEntry> Differences;
+		DiffUtils::CompareUnrelatedObjects(Old, New, Differences);
+
+		const FString OldPackage = Old->GetOutermost() != New->GetOutermost() && !Old->HasAnyFlags(RF_ClassDefaultObject)
+			? Old->GetOutermost()->GetName() : FString();
+		const FString NewPackage = New->GetOutermost()->GetName();
+
+		Lines.Add(Indent(1) + TEXT("(properties"));
+		for (const FSingleObjectDiffEntry& Difference : Differences)
+		{
+			const FString Name = Quote(Difference.Identifier.ToDisplayName());
+			const FString NewValue = PropertyValueText(Difference.Identifier, New, OldPackage, NewPackage);
+			if (bReference)
+			{
+				Lines.Add(FString::Printf(TEXT("%s(set %s %s)"), *Indent(2), *Name, *NewValue));
+				continue;
+			}
+			const TCHAR* Kind =
+				Difference.DiffType == EPropertyDiffType::PropertyAddedToA ? TEXT("removed") :
+				Difference.DiffType == EPropertyDiffType::PropertyAddedToB ? TEXT("added") : TEXT("changed");
+			Lines.Add(FString::Printf(TEXT("%s(%s %s (old %s) (new %s))"), *Indent(2), Kind, *Name,
+				*PropertyValueText(Difference.Identifier, Old, OldPackage, NewPackage), *NewValue));
+		}
+		Lines.Last() += TEXT(")");
+	}
+}
+
+bool ExportAssetDiff(UObject* Asset, FString& OutPath, FString& OutError)
+{
+	if (!Asset)
+	{
+		OutError = TEXT("No asset selected.");
+		return false;
+	}
+
+	const FString PackageName = Asset->GetOutermost()->GetName();
+	const UObject* ClassDefault = Asset->GetClass()->GetDefaultObject();
+	OutPath = OutputPathFor(PackageName, TEXT("Doc/graph/transient"));
+
+	FString RevisionLine;
+	const UObject* Old = LoadDepotRevision(Asset, RevisionLine, OutError);
+	if (!OutError.IsEmpty())
+	{
+		return false;
+	}
+
+	// A new asset is compared against the defaults of its class, so the diff lists what was set.
+	TArray<FString> Lines;
+	Lines.Add(TEXT("(asset-diff ") + Quote(PackageName));
+	Lines.Add(Indent(1) + TEXT("(class ") + Quote(Asset->GetClass()->GetName()) + TEXT(")"));
+	Lines.Add(Indent(1) + RevisionLine);
+	if (!Old)
+	{
+		Lines.Add(Indent(1) + TEXT("(baseline class-default)"));
+	}
+	Lines.Add(Indent(1) + TEXT("(new working-copy)"));
+	AddPropertyDiffs(Old ? Old : ClassDefault, Asset, false, Lines);
+	Lines.Last() += TEXT(")");
+
+	TArray<FString> Reference;
+	Reference.Add(TEXT("(asset ") + Quote(PackageName));
+	Reference.Add(Indent(1) + TEXT("(class ") + Quote(Asset->GetClass()->GetName()) + TEXT(")"));
+	Reference.Add(Indent(1) + TEXT("(revision working-copy)"));
+	AddPropertyDiffs(ClassDefault, Asset, true, Reference);
+	Reference.Last() += TEXT(")");
+
+	return WriteLines(Lines, OutPath, OutError)
+		&& WriteLines(Reference, OutputPathFor(PackageName, TEXT("Doc/graph/reference")), OutError);
 }
 
 bool ExportDiff(UBlueprint* Blueprint, FString& OutPath, FString& OutError)
@@ -486,7 +569,7 @@ bool ExportDiff(UBlueprint* Blueprint, FString& OutPath, FString& OutError)
 	OutPath = OutputPathFor(PackageName, TEXT("Doc/graph/transient"));
 
 	FString RevisionLine;
-	UBlueprint* OldBlueprint = LoadDepotRevision(Blueprint, RevisionLine, OutError);
+	UBlueprint* OldBlueprint = Cast<UBlueprint>(LoadDepotRevision(Blueprint, RevisionLine, OutError));
 	if (!OutError.IsEmpty())
 	{
 		return false;

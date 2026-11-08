@@ -1,6 +1,7 @@
 #include "BlueprintDiffWriter.h"
 #include "ContentBrowserMenuContexts.h"
 #include "Engine/Blueprint.h"
+#include "Engine/World.h"
 #include "Framework/Notifications/NotificationManager.h"
 #include "HAL/PlatformProcess.h"
 #include "Modules/ModuleManager.h"
@@ -38,17 +39,31 @@ namespace
 			return;
 		}
 
-		for (UBlueprint* Blueprint : Context->LoadSelectedObjects<UBlueprint>())
+		for (UObject* Asset : Context->LoadSelectedObjects<UObject>())
 		{
 			FString OutputPath;
 			FString Error;
-			if (BlueprintDiffExport::ExportDiff(Blueprint, OutputPath, Error))
+			bool bExported = false;
+			if (Asset->IsA<UWorld>())
 			{
-				Notify(FText::Format(LOCTEXT("Exported", "Wrote Blueprint diff to {0} and the full graph to Doc/graph/reference"), FText::FromString(OutputPath)), true, OutputPath);
+				Error = TEXT("Levels aren't supported yet.");
+			}
+			else if (UBlueprint* Blueprint = Cast<UBlueprint>(Asset))
+			{
+				bExported = BlueprintDiffExport::ExportDiff(Blueprint, OutputPath, Error);
 			}
 			else
 			{
-				Notify(FText::Format(LOCTEXT("Failed", "Blueprint diff for {0} failed: {1}"), FText::FromString(Blueprint->GetName()), FText::FromString(Error)), false, OutputPath);
+				bExported = BlueprintDiffExport::ExportAssetDiff(Asset, OutputPath, Error);
+			}
+
+			if (bExported)
+			{
+				Notify(FText::Format(LOCTEXT("Exported", "Wrote diff to {0} and the full version to Doc/graph/reference"), FText::FromString(OutputPath)), true, OutputPath);
+			}
+			else
+			{
+				Notify(FText::Format(LOCTEXT("Failed", "Diff for {0} failed: {1}"), FText::FromString(Asset->GetName()), FText::FromString(Error)), false, OutputPath);
 			}
 		}
 	}
@@ -72,12 +87,14 @@ private:
 	void RegisterMenus()
 	{
 		FToolMenuOwnerScoped OwnerScoped(this);
-		UToolMenu* Menu = UE::ContentBrowser::ExtendToolMenu_AssetContextMenu(UBlueprint::StaticClass());
+		// Every asset type's context menu inherits from this base menu (there is no ".Object" level),
+		// so registering here adds the entry for all assets. Blueprints get a graph diff.
+		UToolMenu* Menu = UToolMenus::Get()->ExtendMenu("ContentBrowser.AssetContextMenu");
 		FToolMenuSection& Section = Menu->FindOrAddSection("GetAssetActions");
 		Section.AddMenuEntry(
 			"ExportBlueprintDiff",
 			LOCTEXT("ExportLabel", "Export Diff Against Depot"),
-			LOCTEXT("ExportTooltip", "Write the variable and node changes since the last revision to Doc/graph/transient/<package path>.sexpr, and the full Blueprint graph to Doc/graph/reference/<package path>.sexpr."),
+			LOCTEXT("ExportTooltip", "Write the changes since the last revision to Doc/graph/transient/<package path>.sexpr, and the full current version to Doc/graph/reference/<package path>.sexpr. New assets are compared against their class defaults."),
 			FSlateIcon(),
 			FToolUIAction(FToolMenuExecuteAction::CreateStatic(&ExportSelected)));
 	}
