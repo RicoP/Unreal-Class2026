@@ -1,5 +1,29 @@
 {
   "description": "Colours for Blueprint diagrams and settings tables. Exported SVGs use them as CSS variables (var(--<name>)); 'default' is built into every SVG, other palettes are offered in doc.html and only need the colours they change. Each default colour must be unique, because export_svg.mjs maps rendered colours back to their names. Check changes with: node Doc/check_palette.mjs",
+  "dim": {
+    "description": "Nodes and wires that aren't part of a change use dimmed colours: <amount> of the colour mixed with node-body. Each listed colour <name> gets a <name>-dim variable, defined with color-mix() in SVGs so every palette dims automatically.",
+    "amount": 0.45,
+    "colors": [
+      "text",
+      "border-event",
+      "border-setter",
+      "border-function",
+      "pin-exec",
+      "pin-boolean",
+      "pin-byte",
+      "pin-integer",
+      "pin-integer64",
+      "pin-float",
+      "pin-name",
+      "pin-string",
+      "pin-text",
+      "pin-vector",
+      "pin-rotator",
+      "pin-transform",
+      "pin-object",
+      "pin-other"
+    ]
+  },
   "palettes": {
     "default": {
       "label": "Unreal editor",
@@ -10,6 +34,7 @@
         "border-event": "#b3261e",
         "border-setter": "#2b5d8f",
         "border-neutral": "#3a3a3a",
+        "border-function": "#8a8a8a",
         "border-context": "#555555",
         "table-header": "#262626",
         "table-stripe": "#1c1c1c",
@@ -78,7 +103,8 @@
         "border-event": "#ff8c1a",
         "border-setter": "#5aa9ff",
         "border-neutral": "#bfbfbf",
-        "border-context": "#a0a0a0",
+        "border-function": "#e0e0e0",
+        "border-context": "#808080",
         "table-header": "#262626",
         "table-stripe": "#101010",
         "pin-exec": "#ffffff",
@@ -106,7 +132,8 @@
         "border-event": "#ffffff",
         "border-setter": "#808080",
         "border-neutral": "#6e6e6e",
-        "border-context": "#5a5a5a",
+        "border-function": "#bdbdbd",
+        "border-context": "#4a4a4a",
         "table-header": "#262626",
         "table-stripe": "#141414",
         "pin-exec": "#ffffff",

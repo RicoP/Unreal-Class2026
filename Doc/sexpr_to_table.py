@@ -60,10 +60,17 @@ def split_top_level(text):
 
 
 def list_items(value):
-    """Elements of an exported Unreal array of structs, or None if it isn't one."""
-    if not isinstance(value, str) or not value.startswith("((") or not value.endswith("))"):
+    """Elements of an exported Unreal array, e.g. '((A=1),(A=2))' or '("x","y")', or None."""
+    if not isinstance(value, str) or not value.startswith("(") or not value.endswith(")"):
         return None
+    if not value.startswith("((") and "=" in split_top_level(value[1:-1])[0]:
+        return None  # a single struct such as '(X=1,Y=2)', not a list
     return split_top_level(value[1:-1])
+
+
+def describe(item):
+    """A list element: a struct gets 'Field: value' pairs, anything else its short name."""
+    return describe_item(item) if item.startswith("(") else shorten(item).strip('"')
 
 
 def describe_item(item):
@@ -89,6 +96,11 @@ def cell(value):
 def change_rows(name, old, new):
     """Table rows for one changed setting; lists of structs are compared item by item."""
     old_items, new_items = list_items(old), list_items(new)
+    # An empty array is exported as "", so treat it as an empty list next to a real one.
+    if old_items is None and old in ("", None) and new_items is not None:
+        old_items = []
+    if new_items is None and new in ("", None) and old_items is not None:
+        new_items = []
     if old_items is None or new_items is None:
         return [f"| {setting_name(name)} | {cell(old)} | {cell(new)} |"]
     rows = []
@@ -97,9 +109,9 @@ def change_rows(name, old, new):
         if item in remaining:
             remaining.remove(item)
         else:
-            rows.append(f"| {setting_name(name)}: remove | {cell(describe_item(item))} | — |")
+            rows.append(f"| {setting_name(name)}: remove | {cell(describe(item))} | — |")
     for item in remaining:
-        rows.append(f"| {setting_name(name)}: add | — | {cell(describe_item(item))} |")
+        rows.append(f"| {setting_name(name)}: add | — | {cell(describe(item))} |")
     return rows
 
 
@@ -128,7 +140,7 @@ def to_markdown(diff):
             if items is None:
                 lines.append(f"| {setting_name(entry[1])} | {cell(new)} |")
             else:
-                lines += [f"| {setting_name(entry[1])}: add | {cell(describe_item(item))} |" for item in items]
+                lines += [f"| {setting_name(entry[1])}: add | {cell(describe(item))} |" for item in items]
     else:
         lines += [
             f"Open `{name}` in `{package.rsplit('/', 1)[0]}` and change:",

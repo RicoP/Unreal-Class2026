@@ -20,17 +20,38 @@ import puppeteer from "puppeteer";
 // Colours live in Doc/palette.json. Exported SVGs refer to them as CSS variables
 // (var(--pin-float)) and carry the default palette, so a page can switch palettes.
 const docDirEarly = path.dirname(fileURLToPath(import.meta.url));
-const palettes = JSON.parse(readFileSync(path.join(docDirEarly, "palette.json"), "utf8")).palettes;
+const paletteConfig = JSON.parse(readFileSync(path.join(docDirEarly, "palette.json"), "utf8"));
+const palettes = paletteConfig.palettes;
 const defaultColours = palettes.default.colors;
+const dimConfig = paletteConfig.dim;
 
-const colourNames = new Map(); // "#38d500" -> "pin-float"
-for (const [name, value] of Object.entries(defaultColours)) {
+/** Same mix as dim() in sexpr_to_mermaid.py: <amount> of the colour, the rest node-body. */
+function dimmed(hex) {
+  const body = defaultColours["node-body"];
+  const channel = (colour, i) => parseInt(colour.slice(i, i + 2), 16);
+  return (
+    "#" +
+    [1, 3, 5]
+      .map((i) => Math.floor(channel(hex, i) * dimConfig.amount + channel(body, i) * (1 - dimConfig.amount) + 0.5))
+      .map((v) => v.toString(16).padStart(2, "0"))
+      .join("")
+  );
+}
+
+const colourNames = new Map(); // "#38d500" -> "pin-float", "#256b0c" -> "pin-float-dim"
+const nameColour = (name, value) => {
   const key = value.toLowerCase();
   if (colourNames.has(key)) {
-    console.error(`palette.json: default colours of ${colourNames.get(key)} and ${name} are both ${value}; they must differ.`);
+    console.error(`palette.json: ${colourNames.get(key)} and ${name} are both ${value} in the default palette; they must differ.`);
     process.exit(1);
   }
   colourNames.set(key, name);
+};
+for (const [name, value] of Object.entries(defaultColours)) {
+  nameColour(name, value);
+}
+for (const name of dimConfig.colors) {
+  nameColour(`${name}-dim`, dimmed(defaultColours[name]));
 }
 
 const TABLE = {
@@ -64,9 +85,15 @@ function useColourVariables(svg) {
  * shows the SVG inline can override any colour with its own CSS.
  */
 function withPalette(svg) {
-  const variables = Object.entries(defaultColours)
-    .map(([name, value]) => `--${name}:${value};`)
-    .join("");
+  // Dimmed colours are derived from the current ones, so every palette dims automatically.
+  const percent = Math.round(dimConfig.amount * 100);
+  const variables =
+    Object.entries(defaultColours)
+      .map(([name, value]) => `--${name}:${value};`)
+      .join("") +
+    dimConfig.colors
+      .map((name) => `--${name}-dim:color-mix(in srgb, var(--${name}) ${percent}%, var(--node-body));`)
+      .join("");
   return svg.replace(/<svg\b[^>]*>/, (tag) => `${tag}<style>:where(svg){${variables}}</style>`);
 }
 

@@ -48,8 +48,12 @@ to rebuild it themselves.
   hand. The script applies the style rules below and takes its colours from
   the default palette in `Doc/palette.json`. When a style rule changes, update
   the script too.
-- The script draws added nodes. Changes it can't draw yet (removed or moved
-  nodes, changed pin values) are printed on stderr.
+- The script merges the diff with the matching reference file
+  (`Doc/graph/transient/...` -> `Doc/graph/reference/...`), the full current
+  Blueprint, so it can draw everything connected to the change (see the style
+  rules). Without a reference file it falls back to added nodes and their
+  direct neighbours. Changes it can't draw (such as removed nodes) are printed
+  on stderr.
 - `node Doc/export_svg.mjs` renders every `.mmd`, and every `.md` table under
   `Doc/graph/`, that git reports as untracked or changed to
   `Doc/commits/Transient/<package path>.svg`, overwriting earlier exports of
@@ -113,8 +117,17 @@ what they see on screen.
 - Setter nodes always start with `SET`, for example `SET Target Arm Length`.
 - Math nodes use their full name from the diff, not the short symbol shown on
   the node, for example `float + float` instead of `+`.
-- A node that existed before the change but is wired to a new node is drawn as
-  a dashed grey placeholder titled `<node name> (existing)`.
+- Draw every node connected to the change, according to the reference graph:
+  start from the nodes the diff touches and follow wires in both directions
+  (through reroutes) to the whole connected chain. All drawn nodes follow the
+  usual rules (title, collapsing, pins, typed-in values).
+- Nodes that are part of the diff are drawn normally: added nodes, and nodes
+  with a real change such as a pin value or pin count. Rewiring changes the
+  wire, not the nodes at its ends, and the engine's pin-matching noise (pin
+  type changes between different pins of one node) doesn't count. All other
+  nodes keep their usual colours (border, title, pin labels) but dimmed, with
+  a dashed outline. Wires between two such nodes are dimmed and dashed too;
+  wires that touch a changed node keep full colour.
 - Other nodes use their editor title, for example
   `◆ EnhancedInputAction IA_Zoom` for an input event.
 
@@ -135,7 +148,15 @@ what they see on screen.
 
 - Use the pin's display name from the editor: `Target` for `self`,
   `Return Value`, `Action Value`.
-- Leave out every pin that isn't connected, inputs and outputs alike.
+- Leave out every pin that isn't connected, inputs and outputs alike, except
+  unconnected input pins with a value typed in. Those show the value in a box
+  instead of the dot (`[50] Min`), framed in the pin's colour via
+  `currentColor` (Mermaid mangles `#` in label HTML). "Typed in" means not
+  empty, zero, `false` or `None`; the diff has no engine defaults, so a value
+  deliberately set to 0 isn't shown. Numbers drop trailing zeros
+  (`50.000000` -> `50`).
+- A node with such a value keeps its pin rows even if it would otherwise be
+  collapsed (pure getter or operator), so the value stays visible.
 - Pins are marked `▶` (exec) or `●` (data). Input pins put the marker before
   the name (`● A`); output pins put it after (`Return Value ●`).
 - Exec pins use the flag shape (`>"Triggered ▶"]`). Data pins use rectangles.
@@ -167,10 +188,18 @@ vision), and visually with Chrome's vision deficiency emulation.
 | Node body | `#151515` |
 | Input event header border | `#b3261e` |
 | Setter header border | `#2b5d8f` |
-| Operator border (mixed pin types) and other nodes | `#3a3a3a` |
-| Existing node placeholder | `#555555`, dashed |
+| Operator border (mixed pin types), function calls and other nodes (`border-function`) | `#8a8a8a` |
 | Operator border and title (single pin type) | Colour of that pin type |
 | Pure getter border and title | Colour of the output pin type |
+| Table grid lines (`border-neutral`) | `#3a3a3a` |
+| Nodes and wires not part of the diff | Their usual colour, dimmed (`<name>-dim`), dashed |
+
+Dimming is set in `palette.json` under `dim`: `amount` of the colour mixed
+with `node-body` (currently 0.45), for the listed colours. `sexpr_to_mermaid.py`
+writes the dimmed hex values; `export_svg.mjs` computes the same values (same
+rounding), maps them to `var(--<name>-dim)` and defines those with
+`color-mix()`, so every palette in `doc.html` dims automatically. Dimmed
+default colours must also be unique.
 
 Pins and wires use the Blueprint editor's default pin type colours, so
 diagrams match what students see. Exec wires are 3px wide; data wires 2px.
