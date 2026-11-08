@@ -394,6 +394,9 @@ def main():
 
     for path in args.files:
         diff = parse(path.read_text(encoding="utf-8"))
+        if isinstance(diff, list) and diff[0] == "asset-diff":
+            print(f"{path}: skipped, asset diffs have no graph (use sexpr_to_table.py)", file=sys.stderr)
+            continue
         if not isinstance(diff, list) or diff[0] != "blueprint-diff":
             sys.exit(f"{path}: not a blueprint-diff file")
         warnings = []
