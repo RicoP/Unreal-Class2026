@@ -1,6 +1,6 @@
 """Turn a Blueprint diff exported by the BlueprintDiffExport plugin into a Mermaid diagram.
 
-    python Doc/sexpr_to_mermaid.py Doc/graph/transient/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.sexpr
+    python Tools/sexpr_to_mermaid.py Doc/graph/transient/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.sexpr
 
 Writes the diagram next to the input with the .mmd extension, following the
 style rules in AGENTS.md. The diff is merged with the matching reference file
@@ -16,7 +16,7 @@ import sys
 from pathlib import Path
 
 # --- Palette ----------------------------------------------------------------
-# Colours come from the default palette in Doc/palette.json, the one place to change them.
+# Colours come from the default palette in Tools/palette.json, the one place to change them.
 # export_svg.mjs turns them into CSS variables so other palettes can be applied.
 
 _PALETTE = json.loads(Path(__file__).with_name("palette.json").read_text(encoding="utf-8"))

@@ -1,5 +1,5 @@
 {
-  "description": "Colours for Blueprint diagrams and settings tables. Exported SVGs use them as CSS variables (var(--<name>)); 'default' is built into every SVG, other palettes are offered in doc.html and only need the colours they change. Each default colour must be unique, because export_svg.mjs maps rendered colours back to their names. Check changes with: node Doc/check_palette.mjs",
+  "description": "Colours for Blueprint diagrams and settings tables. Exported SVGs use them as CSS variables (var(--<name>)); 'default' is built into every SVG, other palettes are offered in doc.html and only need the colours they change. Each default colour must be unique, because export_svg.mjs maps rendered colours back to their names. Check changes with: node Tools/check_palette.mjs",
   "dim": {
     "description": "Nodes and wires that aren't part of a change use dimmed colours: <amount> of the colour mixed with node-body. Each listed colour <name> gets a <name>-dim variable, defined with color-mix() in SVGs so every palette dims automatically.",
     "amount": 0.45,

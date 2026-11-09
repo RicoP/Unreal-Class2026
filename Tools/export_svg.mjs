@@ -1,7 +1,7 @@
 // Render every Mermaid diagram (.mmd) and settings table (.md) of the documentation being
 // worked on, in Doc/commits/Transient/graph/transient/, to SVG.
 //
-//   node Doc/export_svg.mjs        (or: npm run export-svg, inside Doc/)
+//   node Tools/export_svg.mjs        (or: npm run export-svg, inside Tools/)
 //
 // Output goes to Doc/commits/Transient/<package path>.svg. An SVG newer than its source, its
 // diff, this script and palette.json is skipped (--force renders all), and SVGs whose source
@@ -12,7 +12,7 @@
 //   -> Doc/commits/Transient/Game/Input/Actions/IA_Zoom.svg
 // With file arguments, renders exactly those files, each SVG next to its source.
 //
-// Needs `npm install` in Doc/ once. Rendering uses the Chrome set in Doc/puppeteer.json.
+// Needs `npm install` in Tools/ once. Rendering uses the Chrome set in Tools/puppeteer.json.
 
 import { execFileSync, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
@@ -20,7 +20,7 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import puppeteer from "puppeteer";
 
-// Colours live in Doc/palette.json. Exported SVGs refer to them as CSS variables
+// Colours live in Tools/palette.json. Exported SVGs refer to them as CSS variables
 // (var(--pin-float)) and carry the default palette, so a page can switch palettes.
 const docDirEarly = path.dirname(fileURLToPath(import.meta.url));
 const paletteConfig = JSON.parse(readFileSync(path.join(docDirEarly, "palette.json"), "utf8"));
@@ -441,20 +441,21 @@ async function tightenNodeBoxes(page, svgFile, mmdSource) {
   }, pinOrders);
 }
 
-const docDir = path.dirname(fileURLToPath(import.meta.url));
-const cli = path.join(docDir, "node_modules", "@mermaid-js", "mermaid-cli", "src", "cli.js");
-const puppeteerConfig = path.join(docDir, "puppeteer.json");
+// This script and its helpers live in Tools/; the documentation it renders in Doc/.
+const toolsDir = path.dirname(fileURLToPath(import.meta.url));
+const cli = path.join(toolsDir, "node_modules", "@mermaid-js", "mermaid-cli", "src", "cli.js");
+const puppeteerConfig = path.join(toolsDir, "puppeteer.json");
 
 if (!existsSync(cli)) {
-  console.error("Mermaid CLI is missing. Run `npm install` in Doc/ first.");
+  console.error("Mermaid CLI is missing. Run `npm install` in Tools/ first.");
   process.exit(1);
 }
 
-const repoRoot = execFileSync("git", ["rev-parse", "--show-toplevel"], { cwd: docDir, encoding: "utf8" }).trim();
+const repoRoot = execFileSync("git", ["rev-parse", "--show-toplevel"], { cwd: toolsDir, encoding: "utf8" }).trim();
 
 // The documentation being worked on: diffs, diagrams and tables in Transient/graph/transient,
 // SVGs and doc.html directly in Transient.
-const outputRoot = path.join(docDir, "commits", "Transient");
+const outputRoot = path.join(repoRoot, "Doc", "commits", "Transient");
 const graphRoot = path.join(outputRoot, "graph", "transient");
 
 /** Files below a folder (absolute paths), recursively. */
@@ -772,7 +773,7 @@ function prettySvg(svg) {
   return lines.join("\n") + "\n";
 }
 
-// With file arguments (node Doc/export_svg.mjs a.mmd b.md), render exactly those files and
+// With file arguments (node Tools/export_svg.mjs a.mmd b.md), render exactly those files and
 // write each SVG next to its source. Without arguments, render everything in Transient.
 // Up-to-date SVGs (newer than their source, diff, this script and palette.json) are skipped;
 // --force renders everything again.
@@ -804,7 +805,7 @@ let browser = null;
 
 const modified = (file) => (existsSync(file) ? statSync(file).mtimeMs : 0);
 // An SVG depends on its source, the diff its metadata comes from, this script and the palette.
-const toolsModified = Math.max(modified(fileURLToPath(import.meta.url)), modified(path.join(docDir, "palette.json")));
+const toolsModified = Math.max(modified(fileURLToPath(import.meta.url)), modified(path.join(toolsDir, "palette.json")));
 let upToDate = 0;
 
 /** The SVG to write for a source, or null if it's up to date (or another source claims it). */

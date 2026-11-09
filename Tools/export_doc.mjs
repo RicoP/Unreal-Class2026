@@ -1,14 +1,18 @@
 // Build the documentation of the work in progress, and turn it into a dated snapshot when done.
 //
-//   node Doc/export_doc.mjs            (or: npm run export-doc, inside Doc/)
-//   node Doc/export_doc.mjs --finish   (or: npm run finish-doc)
+//   node Tools/export_doc.mjs            (or: npm run export-doc, inside Tools/)
+//   node Tools/export_doc.mjs --finish   (or: npm run finish-doc)
 //
-// Everything happens in Doc/commits/Transient. The editor plugin writes diffs to
-// Transient/graph/transient (and full versions to Transient/graph/reference). Without options,
-// this script writes a diagram (.mmd, sexpr_to_mermaid.py) or table (.md, sexpr_to_table.py)
-// next to every diff, renders them all to SVG (export_svg.mjs), and writes Transient/doc.html,
-// which embeds every SVG inline (IDs prefixed per SVG so their styles don't clash) and offers
-// the colour palettes from Doc/palette.json.
+// The tools live in Tools/; Doc/ is the documentation website itself. Work in progress happens
+// in Doc/commits/Transient. The editor plugin writes diffs to Transient/graph/transient (and
+// full versions to Transient/graph/reference). Without options, this script writes a diagram
+// (.mmd, sexpr_to_mermaid.py) or table (.md, sexpr_to_table.py) next to every diff, renders
+// them all to SVG (export_svg.mjs), and writes Transient/doc.html, which embeds every SVG
+// inline (IDs prefixed per SVG so their styles don't clash) and offers the colour palettes
+// from Tools/palette.json.
+// Every run also writes the website's shared files: Doc/index.html (the finished steps as
+// Step 1, Step 2, ...), Doc/doc.js (copied from Tools/doc.js: palette switch and step
+// navigation, loaded by every doc.html as ../../doc.js) and Doc/steps.json (the step order).
 // Only what is out of date is regenerated (by file timestamps), so diagrams and tables edited
 // by hand survive until their diff is exported again; --force regenerates everything.
 // --finish renames Transient to Doc/commits/<YYYYMMDD_HHmmss>, ready to commit; the next
@@ -26,13 +30,15 @@
 // --regenerate <export folder> to rewrite doc.html of an existing export without rebuilding.
 
 import { spawnSync } from "node:child_process";
-import { existsSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const docDir = path.dirname(fileURLToPath(import.meta.url));
+const toolsDir = path.dirname(fileURLToPath(import.meta.url));
 const argIndex = process.argv.indexOf("--commits");
-const commitsDir = argIndex > 0 ? path.resolve(process.argv[argIndex + 1]) : path.join(docDir, "commits");
+const commitsDir = argIndex > 0 ? path.resolve(process.argv[argIndex + 1]) : path.join(toolsDir, "..", "Doc", "commits");
+// The website root: index.html, doc.js and steps.json next to the commits folder.
+const siteDir = path.dirname(commitsDir);
 const transient = path.join(commitsDir, "Transient");
 
 function timestamp(date) {
@@ -138,7 +144,7 @@ function uniqueIds(svg, prefix) {
 
 /** CSS that applies a palette when doc.html's <body data-palette="..."> selects it. */
 function paletteCss() {
-  const palettes = JSON.parse(readFileSync(path.join(docDir, "palette.json"), "utf8")).palettes;
+  const palettes = JSON.parse(readFileSync(path.join(toolsDir, "palette.json"), "utf8")).palettes;
   return Object.entries(palettes)
     .map(([name, palette]) => {
       const variables = Object.entries(palette.colors)
@@ -150,7 +156,7 @@ function paletteCss() {
 }
 
 function paletteOptions() {
-  const palettes = JSON.parse(readFileSync(path.join(docDir, "palette.json"), "utf8")).palettes;
+  const palettes = JSON.parse(readFileSync(path.join(toolsDir, "palette.json"), "utf8")).palettes;
   return Object.entries(palettes)
     .map(([name, palette]) => `<option value="${html(name)}">${html(palette.label ?? name)}</option>`)
     .join("");
@@ -202,7 +208,7 @@ function writeDoc(folder) {
       label { font-size: 14px; }
       select { margin-left: 6px; font: inherit; }
       .figure svg, .figure img { display: block; max-width: 100%; height: auto; }
-      /* Palettes from Doc/palette.json. Each SVG carries the default palette at zero specificity. */
+      /* Palettes from Tools/palette.json. Each SVG carries the default palette at zero specificity. */
 ${paletteCss()}
     </style>
   </head>
@@ -211,22 +217,8 @@ ${paletteCss()}
       <label>Colours <select id="palette">${paletteOptions()}</select></label>
     </header>
 ${sections.join("\n")}
-    <script>
-      const select = document.getElementById("palette");
-      const apply = (name) => {
-        document.body.dataset.palette = name;
-        select.value = name;
-        try { localStorage.setItem("doc-palette", name); } catch (error) { /* storage unavailable */ }
-      };
-      let saved = null;
-      try { saved = localStorage.getItem("doc-palette"); } catch (error) { /* storage unavailable */ }
-      const requested = new URLSearchParams(location.search).get("palette") || saved;
-      const known = [...select.options].map((option) => option.value);
-      apply(known.includes(requested) ? requested : "default");
-      select.addEventListener("change", () => apply(select.value));
-    </script>
-    <!-- Step navigation of the documentation website (Doc/site/nav.js); missing when viewed locally. -->
-    <script src="../nav.js"></script>
+    <!-- Palette switch and step navigation: Doc/doc.js (from Tools/doc.js) -->
+    <script src="../../doc.js"></script>
   </body>
 </html>
 `;
@@ -296,21 +288,74 @@ function build(force) {
   // In batches, so the command line stays short (Windows allows about 32,000 characters).
   const batches = (files) => Array.from({ length: Math.ceil(files.length / 40) }, (_, i) => files.slice(i * 40, i * 40 + 40));
   for (const batch of batches(blueprints)) {
-    run(python, [path.join(docDir, "sexpr_to_mermaid.py"), ...batch]);
+    run(python, [path.join(toolsDir, "sexpr_to_mermaid.py"), ...batch]);
   }
   // Tables for assets and actors, and each Blueprint's class defaults and components. Imported
   // assets are grouped into one table per import step, which needs to see every diff.
   for (const batch of outdated.length ? batches(outdated) : [[]]) {
-    run(python, [path.join(docDir, "sexpr_to_table.py"), ...batch, "--all-in", path.join(transient, "graph", "transient")]);
+    run(python, [path.join(toolsDir, "sexpr_to_table.py"), ...batch, "--all-in", path.join(transient, "graph", "transient")]);
   }
-  run(process.execPath, [path.join(docDir, "export_svg.mjs"), ...(force ? ["--force"] : [])]);
+  run(process.execPath, [path.join(toolsDir, "export_svg.mjs"), ...(force ? ["--force"] : [])]);
   writeDoc(transient);
+}
+
+/**
+ * Write the website's shared files into the site root (Doc/): index.html listing the finished
+ * steps in order as Step 1, Step 2, ... with their section headings (the dated folder names
+ * only give the order), doc.js (Tools/doc.js) and steps.json (the step folders in order).
+ */
+function writeSite() {
+  const steps = readdirSync(commitsDir)
+    .filter((name) => /^\d{8}_\d{6}$/.test(name) && existsSync(path.join(commitsDir, name, "doc.html")))
+    .sort();
+  const unescape = (text) =>
+    text.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&amp;/g, "&");
+  const entries = steps.map((folder, index) => {
+    const page = readFileSync(path.join(commitsDir, folder, "doc.html"), "utf8");
+    const items = [...page.matchAll(/<h2>([\s\S]*?)<\/h2>/g)]
+      .map((m) => `          <li>${html(unescape(m[1].trim()))}</li>`)
+      .join("\n");
+    return [
+      "      <article>",
+      `        <h2><a href="commits/${folder}/doc.html">Step ${index + 1}</a></h2>`,
+      `        <ul>\n${items}\n        </ul>`,
+      "      </article>",
+    ].join("\n");
+  });
+  const index = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Unreal Class 2026</title>
+    <style>
+      body { margin: 0; padding: 24px 16px; background: #2b2b2b; color: #e6e6e6;
+             font-family: "trebuchet ms", verdana, arial, sans-serif; }
+      main { max-width: 900px; margin: 0 auto; }
+      h1 { margin: 0 0 24px; font-size: 24px; color: #ffffff; }
+      h2 { margin: 24px 0 8px; font-size: 18px; font-weight: normal; }
+      a { color: #7cc4ff; }
+      ul { margin: 0; padding-left: 20px; color: #bdbdbd; font-size: 14px; line-height: 1.6; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Unreal Class 2026</h1>
+${entries.join("\n")}
+    </main>
+  </body>
+</html>
+`;
+  writeFileSync(path.join(siteDir, "index.html"), index, "utf8");
+  copyFileSync(path.join(toolsDir, "doc.js"), path.join(siteDir, "doc.js"));
+  writeFileSync(path.join(siteDir, "steps.json"), JSON.stringify(steps, null, 2) + "\n", "utf8");
+  console.log(`Wrote ${path.relative(process.cwd(), siteDir)}: index.html, doc.js, steps.json (${steps.length} steps)`);
 }
 
 /** Rename Transient to Doc/commits/<YYYYMMDD_HHmmss>, ready to commit. */
 function finish() {
   if (!existsSync(path.join(transient, "doc.html"))) {
-    console.error(`${path.relative(process.cwd(), transient)} has no doc.html. Run node Doc/export_doc.mjs first.`);
+    console.error(`${path.relative(process.cwd(), transient)} has no doc.html. Run node Tools/export_doc.mjs first.`);
     process.exit(1);
   }
   const target = path.join(commitsDir, timestamp(new Date()));
@@ -328,6 +373,9 @@ if (regenerateIndex > 0) {
   writeDoc(path.resolve(process.argv[regenerateIndex + 1]));
 } else if (process.argv.includes("--finish")) {
   finish();
+} else if (process.argv.includes("--site")) {
+  // Only the website's shared files (index.html, doc.js, steps.json).
 } else {
   build(process.argv.includes("--force"));
 }
+writeSite();

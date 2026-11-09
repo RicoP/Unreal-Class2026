@@ -1,22 +1,47 @@
-// Step navigation for the documentation website: "‹ Step 2 | Step 3 of 4 | Step 4 ›".
-// Each doc page (<step folder>/doc.html) loads ../nav.js, which Doc/build_pages.mjs copies to
-// the site root unchanged. The list of step folders is steps.json next to it, written by the same
-// build. The whole bar is created here and inserted into the page's <header>, so doc pages
-// need nothing but the <script> tag. Left and right arrow keys go to the previous and next step.
-(async function () {
+// Shared script of the documentation pages. Tools/export_doc.mjs copies it to Doc/doc.js, the
+// website root; every Doc/commits/<step>/doc.html loads it as ../../doc.js, on disk and online.
+//
+// 1. Colour palette switch: applies the palette picked in the page's <select id="palette">
+//    (palette CSS and options are written into each page from Tools/palette.json), remembers it
+//    per browser (localStorage "doc-palette") and accepts ?palette=<name> in the address.
+// 2. Step navigation: "‹ Step 2 · Step 3 of 4 · Step 4 ›" in the page's <header>, with
+//    left/right arrow keys. The order of the steps comes from steps.json next to this script
+//    (Doc/steps.json). Browsers don't let pages opened from disk load it, so there the page
+//    shows no bar; on the website it does.
+
+// Where this script was loaded from; only known while it first runs.
+const docScriptUrl = document.currentScript?.src ?? new URL("../../doc.js", location.href).href;
+
+(function palette() {
+  const select = document.getElementById("palette");
+  if (!select) {
+    return;
+  }
+  const apply = (name) => {
+    document.body.dataset.palette = name;
+    select.value = name;
+    try { localStorage.setItem("doc-palette", name); } catch { /* storage unavailable */ }
+  };
+  let saved = null;
+  try { saved = localStorage.getItem("doc-palette"); } catch { /* storage unavailable */ }
+  const requested = new URLSearchParams(location.search).get("palette") || saved;
+  const known = [...select.options].map((option) => option.value);
+  apply(known.includes(requested) ? requested : "default");
+  select.addEventListener("change", () => apply(select.value));
+})();
+
+(async function stepNavigation() {
   let steps;
   try {
-    // steps.json sits next to this script, at the site root.
-    const script = document.currentScript?.src ?? new URL("../nav.js", location.href).href;
-    const response = await fetch(new URL("steps.json", script));
+    const response = await fetch(new URL("steps.json", docScriptUrl));
     steps = await response.json();
   } catch {
-    return; // no step list (e.g. a page opened from disk)
+    return; // no step list: a page opened from disk
   }
   const parts = location.pathname.split("/").filter(Boolean);
   const index = steps.indexOf(decodeURIComponent(parts[parts.length - 2] || ""));
   if (index < 0) {
-    return; // not a step page of this site (e.g. a local export)
+    return; // not one of the website's steps
   }
 
   const style = document.createElement("style");
@@ -46,7 +71,7 @@
   nav.className = "step-nav";
   nav.setAttribute("aria-label", "Steps");
   const here = document.createElement("a");
-  here.href = "../index.html";
+  here.href = "../../index.html";
   here.className = "step-here";
   here.textContent = `Step ${index + 1} of ${steps.length}`;
   here.title = "All steps";

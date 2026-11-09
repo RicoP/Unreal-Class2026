@@ -1,6 +1,6 @@
 // How distinguishable are the key colours of each palette under colour blindness?
 //
-//   node Doc/check_palette.mjs [palette.json] [palette name]
+//   node Tools/check_palette.mjs [palette.json] [palette name]
 //
 // For each palette and each vision type, prints the three closest pairs of key colours
 // (pins with pins, event border with setter border) and any key colour with less than 3:1

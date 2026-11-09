@@ -1,7 +1,7 @@
 """Turn an asset diff (non-Blueprint assets) or an actor diff exported by BlueprintDiffExport
 into a Markdown table.
 
-    python Doc/sexpr_to_table.py Doc/graph/transient/Game/Input/Actions/IA_Zoom.sexpr
+    python Tools/sexpr_to_table.py Doc/graph/transient/Game/Input/Actions/IA_Zoom.sexpr
 
 Writes the table next to the input with the .md extension. A new asset gets a
 "Setting | Value" table of everything set after creating it; a changed asset

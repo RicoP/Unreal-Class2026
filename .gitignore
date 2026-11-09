@@ -31,10 +31,6 @@ node_modules/
 
 # Documentation work in progress; "node Doc/export_doc.mjs --finish" renames it to a dated folder
 Doc/commits/Transient/
-
-# Local build of the documentation website (node Doc/build_pages.mjs)
-_site/
-
 # Local Claude Code settings
 .claude/settings.local.json
 

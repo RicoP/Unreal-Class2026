@@ -10,7 +10,7 @@ to rebuild it themselves.
   local memory, so they live in the repo.
 - Don't write lesson documentation until the user says documentation has
   started. Until then, diffs and diagrams are experiments.
-- Open decision: `Doc/update_graph.py` is an earlier approach that wrote a
+- Open decision: `Tools/update_graph.py` is an earlier approach that wrote a
   snapshot of the whole project (`Doc/graph.sexpr`, now deleted). The
   `BlueprintDiffExport` plugin replaced it for Blueprints, so don't run it on
   commit, and ask the user before removing or reusing the script. Never read
@@ -29,12 +29,12 @@ to rebuild it themselves.
 - Workflow: all documentation work in progress lives in `Doc/commits/Transient/`
   (ignored by git). The editor plugin writes diffs to
   `Transient/graph/transient/` and full versions to `Transient/graph/reference/`;
-  `node Doc/export_doc.mjs` generates diagrams, tables, SVGs and `doc.html`
+  `node Tools/export_doc.mjs` generates diagrams, tables, SVGs and `doc.html`
   inside `Transient`. When the user says the step is done,
-  `node Doc/export_doc.mjs --finish` renames `Transient` to
+  `node Tools/export_doc.mjs --finish` renames `Transient` to
   `Doc/commits/<YYYYMMDD_HHmmss>`, which gets committed; the next step starts
   with a new `Transient`. "Commit the doc" means exactly that: build
-  (`node Doc/export_doc.mjs`), finish (`--finish`), and commit the dated folder
+  (`node Tools/export_doc.mjs`), finish (`--finish`), and commit the dated folder
   together with the assets it documents.
 - Right-click a Blueprint in the Content Browser and choose
   **Export Diff Against Depot**. The `BlueprintDiffExport` plugin
@@ -135,13 +135,13 @@ to rebuild it themselves.
   to export anyway (default: No), because revision control only sees saved
   files.
 - Non-Blueprint assets have no graph, so the lesson shows them as tables.
-  Generate one with `python Doc/sexpr_to_table.py <file>.sexpr`; it writes a
+  Generate one with `python Tools/sexpr_to_table.py <file>.sexpr`; it writes a
   `.md` file next to the diff.
 - Diagrams for a change go next to its diff, with the same base name and the
   `.mmd` extension. Generate them with
-  `python Doc/sexpr_to_mermaid.py <file>.sexpr` instead of writing them by
+  `python Tools/sexpr_to_mermaid.py <file>.sexpr` instead of writing them by
   hand. The script applies the style rules below and takes its colours from
-  the default palette in `Doc/palette.json`. When a style rule changes, update
+  the default palette in `Tools/palette.json`. When a style rule changes, update
   the script too.
 - The script merges the diff with the matching reference file
   (`Doc/commits/Transient/graph/transient/...` -> `Doc/commits/Transient/graph/reference/...`), the full current
@@ -149,22 +149,22 @@ to rebuild it themselves.
   rules). Without a reference file it falls back to added nodes and their
   direct neighbours. Changes it can't draw (such as removed nodes) are printed
   on stderr.
-- `node Doc/export_svg.mjs` renders every `.mmd` and `.md` table under
+- `node Tools/export_svg.mjs` renders every `.mmd` and `.md` table under
   `Doc/commits/Transient/graph/transient/` to
   `Doc/commits/Transient/<package path>.svg`. An SVG newer than its source,
   its diff, `export_svg.mjs` and `palette.json` is skipped (`--force` renders
   all), and SVGs whose source is gone are removed. With file arguments
-  (`node Doc/export_svg.mjs a.mmd b.md`) it renders exactly those files instead
+  (`node Tools/export_svg.mjs a.mmd b.md`) it renders exactly those files instead
   and writes each SVG next to its source.
   SVGs are pretty-printed. Tables are drawn as SVG in the same
   dark style as diagrams. In every exported SVG, palette colours are CSS
   variables (`var(--pin-float)`), and the SVG carries the default palette at
   zero specificity (`:where(svg)`), so it looks the same on its own and a page
-  can restyle it. It needs `npm install` in `Doc/` once. It uses the Mermaid
-  CLI pinned in `Doc/package.json` (10.9.1, the last version that supports
-  Node 16) and the Chrome set in `Doc/puppeteer.json` instead of downloading
+  can restyle it. It needs `npm install` in `Tools/` once. It uses the Mermaid
+  CLI pinned in `Tools/package.json` (10.9.1, the last version that supports
+  Node 16) and the Chrome set in `Tools/puppeteer.json` instead of downloading
   Chromium.
-- Doc export: `node Doc/export_doc.mjs` builds everything in
+- Doc export: `node Tools/export_doc.mjs` builds everything in
   `Doc/commits/Transient`: it runs `sexpr_to_mermaid.py` on every
   `blueprint-diff` and `sexpr_to_table.py` on every other diff in
   `Transient/graph/transient`, then `export_svg.mjs`, and writes
@@ -172,7 +172,7 @@ to rebuild it themselves.
   `.mmd` or `.md` only when its diff (or reference) is newer or it doesn't
   exist yet, so diagrams and tables the user edited by hand survive until the
   asset is exported again. Generator script changes don't count; after a style
-  rule changes, run `node Doc/export_doc.mjs --force` (regenerates and
+  rule changes, run `node Tools/export_doc.mjs --force` (regenerates and
   re-renders everything, overwriting hand edits; ask the user first if they
   edited files). `doc.html` is always rewritten. It is a standalone dark page that embeds every
   SVG inline under a heading with its path. The SVG files stay next to it,
@@ -185,29 +185,37 @@ to rebuild it themselves.
   `All/Content/Input/Actions/IA_Zoom`. For a new asset (no previous revision)
   the heading is `Create <asset type> at <path>`, for example
   `Create Input Action at All/Content/Input/Actions/IA_Zoom`.
-  `node Doc/export_doc.mjs --finish` renames `Transient` to
+  `node Tools/export_doc.mjs --finish` renames `Transient` to
   `Doc/commits/<YYYYMMDD_HHmmss>` (current local date and time) and rewrites
   its `doc.html` title; run it only when the user says the step is done. The
   dated folder keeps its `graph/` source data, in case its documents need
   regenerating. `--regenerate <export folder>` rewrites `doc.html` of an
   existing export and removes an outdated `doc.md` from before the switch to
   HTML.
-- Website: `.github/workflows/pages.yml` publishes the exports on GitHub
-  Pages on every push to `main` that touches `Doc/commits/` (or by hand,
-  "Run workflow"). `node Doc/build_pages.mjs [out]` builds the site: each
-  dated export's `doc.html` plus the files it links (level screenshots; SVGs
-  are embedded), no `graph/` data, no `Transient`, and an `index.html` of all
-  exports in order, oldest first, titled `Step 1`, `Step 2`, ... (the folder
-  dates only give the order and aren't shown), with their section headings.
-  Every `doc.html` ends with `<script src="../nav.js"></script>`
-  (`export_doc.mjs` writes it; older exports got it added by hand). The site's
-  `nav.js` is `Doc/site/nav.js`, copied unchanged; `build_pages.mjs` writes
-  the step folders in order to `steps.json` next to it, which `nav.js` fetches
-  (no globals). It creates a "‹ Step 2 · Step 3 of 4 · Step 4 ›" bar inside
-  the page's `<header>` (left/right arrow keys work too). Viewed locally the
-  script is missing and the page shows no bar. The workflow fetches
-  only `Doc/commits/**` from Git LFS. The repository's Pages source must be
-  "GitHub Actions" (Settings → Pages).
+- Layout: `Tools/` holds every documentation tool (Python and Node scripts,
+  `palette.json`, `package.json`, `node_modules`, `doc.js`); `Doc/` is the
+  documentation website itself and contains only generated files:
+  `Doc/index.html`, `Doc/doc.js`, `Doc/steps.json` and the steps in
+  `Doc/commits/<YYYYMMDD_HHmmss>/` (plus `Doc/commits/Transient`, ignored by
+  git). `export_doc.mjs` rewrites the three root files on every run (`--site`
+  writes only them): `index.html` lists the finished steps in order, oldest
+  first, as `Step 1`, `Step 2`, ... (the folder dates only give the order and
+  aren't shown) with their section headings; `doc.js` is copied from
+  `Tools/doc.js`; `steps.json` is the step folders in order.
+- Every `doc.html` ends with `<script src="../../doc.js"></script>` and has
+  no inline script (`export_doc.mjs` writes it; older exports were changed by
+  hand). `doc.js`: (1) the colour palette switch (applies the page's
+  `<select id="palette">`, remembers the choice in localStorage
+  `doc-palette`, accepts `?palette=<name>`), on disk and online; (2) step
+  navigation: fetches `steps.json` next to itself (no globals) and puts a
+  "‹ Step 2 · Step 3 of 4 · Step 4 ›" bar into the page's `<header>`
+  (left/right arrow keys work too). Pages opened from disk can't fetch, so
+  they show no bar.
+- Website: `.github/workflows/pages.yml` publishes `Doc/` on GitHub Pages on
+  every push to `main` that touches `Doc/` (or by hand, "Run workflow"),
+  without `commits/Transient`, `graph/` folders and separate SVG files (the
+  pages embed them). It fetches only `Doc/**` from Git LFS. The repository's
+  Pages source must be "GitHub Actions" (Settings → Pages).
 - Every exported SVG carries a `<metadata>` block with a
   `<bde:asset xmlns:bde="urn:blueprint-diff-export" .../>` element, written by
   `export_svg.mjs` from the SVG's diff: `package`, `kind` (`blueprint` or
@@ -353,7 +361,7 @@ what they see on screen.
 
 ### Colours
 
-All colours live in `Doc/palette.json`, the one place to change them. Its
+All colours live in `Tools/palette.json`, the one place to change them. Its
 `default` palette is the Unreal editor look below, used by `.mmd` files and
 built into every SVG. Each default colour must be unique, because
 `export_svg.mjs` maps rendered colours back to their names; text is
@@ -368,7 +376,7 @@ blindness doesn't matter for `.mmd` files:
 | `high-contrast` | low vision | Black node body, all key colours at least 7:1 contrast; function calls `#a8c8e8` |
 | `greyscale` | achromatopsia, print | 4 brightness levels: exec, float, object, boolean; rarer types share them; function calls `#b8b8b8` |
 
-Check palette changes with `node Doc/check_palette.mjs`, which simulates each
+Check palette changes with `node Tools/check_palette.mjs`, which simulates each
 colour blindness (Machado 2009) and prints the closest pairs of key colours
 (aim for 25+ for exec, float, object and boolean in the palette's target
 vision), and visually with Chrome's vision deficiency emulation.

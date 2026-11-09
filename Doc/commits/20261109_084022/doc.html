@@ -406,21 +406,7 @@
 </svg>
       </div>
     </section>
-    <script>
-      const select = document.getElementById("palette");
-      const apply = (name) => {
-        document.body.dataset.palette = name;
-        select.value = name;
-        try { localStorage.setItem("doc-palette", name); } catch (error) { /* storage unavailable */ }
-      };
-      let saved = null;
-      try { saved = localStorage.getItem("doc-palette"); } catch (error) { /* storage unavailable */ }
-      const requested = new URLSearchParams(location.search).get("palette") || saved;
-      const known = [...select.options].map((option) => option.value);
-      apply(known.includes(requested) ? requested : "default");
-      select.addEventListener("change", () => apply(select.value));
-    </script>
-    <!-- Step navigation of the documentation website (Doc/site/nav.js); missing when viewed locally. -->
-    <script src="../nav.js"></script>
+    <!-- Palette switch and step navigation: Doc/doc.js (from Tools/doc.js) -->
+    <script src="../../doc.js"></script>
   </body>
 </html>

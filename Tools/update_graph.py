@@ -2,7 +2,7 @@
 
 Run with the Unreal editor open and all assets saved:
 
-    python Doc/update_graph.py
+    python Tools/update_graph.py
 
 The file is a text record of each commit, so two commits can be compared
 without checking out binary assets:

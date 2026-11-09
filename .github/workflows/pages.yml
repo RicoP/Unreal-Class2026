@@ -1,15 +1,14 @@
-# Publish the documentation exports (Doc/commits/<YYYYMMDD_HHmmss>/doc.html) on GitHub Pages.
-# Doc/build_pages.mjs copies each doc.html and the images it links, leaves out the graph/
-# source data and the work in progress, and writes an index of all exports.
+# Publish Doc/ on GitHub Pages. Doc/ is the documentation website as Tools/export_doc.mjs
+# writes it: index.html, doc.js, steps.json and the steps in Doc/commits/<YYYYMMDD_HHmmss>/.
+# Left out: the work in progress (commits/Transient), the source data (graph/) and the separate
+# SVG files, which every doc.html already embeds.
 name: Documentation website
 
 on:
   push:
     branches: [main]
     paths:
-      - "Doc/commits/**"
-      - "Doc/build_pages.mjs"
-      - "Doc/site/**"
+      - "Doc/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -32,9 +31,11 @@ jobs:
           lfs: false
       # Only the documentation's images, not the Unreal assets.
       - name: Fetch documentation images from Git LFS
-        run: git lfs pull --include="Doc/commits/**"
-      - name: Build the site
-        run: node Doc/build_pages.mjs _site
+        run: git lfs pull --include="Doc/**"
+      - name: Collect the website
+        run: |
+          rsync -a --exclude 'commits/Transient/' --exclude 'graph/' --exclude '*.svg' Doc/ _site/
+          touch _site/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
