@@ -5,7 +5,8 @@
 // Copies every dated export (Doc/commits/<YYYYMMDD_HHmmss>/) with only what its doc.html
 // shows: doc.html, SVGs and images. The graph/ source data (diffs, diagrams, tables) and the
 // work in progress (Doc/commits/Transient) are left out. Writes an index.html listing the
-// exports, newest first, with the section headings of each.
+// exports in order as Step 1, Step 2, ... (the dated folder names only give the order), with
+// the section headings of each.
 // Used by .github/workflows/pages.yml.
 
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
@@ -43,12 +44,6 @@ function copyDocFiles(from, to) {
   return count;
 }
 
-/** "20261109_105725" -> "2026-11-09 10:57" */
-function readableDate(folder) {
-  const m = /^(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})$/.exec(folder);
-  return m ? `${m[1]}-${m[2]}-${m[3]} ${m[4]}:${m[5]}` : folder;
-}
-
 /** The section headings of a doc.html, as plain text. */
 function headings(docFile) {
   const page = readFileSync(docFile, "utf8");
@@ -60,12 +55,12 @@ function headings(docFile) {
 rmSync(outDir, { recursive: true, force: true });
 mkdirSync(outDir, { recursive: true });
 
+// Oldest first: the folder names (dates) only give the order; the index calls them Step 1, 2, ...
 const exports = readdirSync(commitsDir)
   .filter((name) => /^\d{8}_\d{6}$/.test(name) && existsSync(path.join(commitsDir, name, "doc.html")))
-  .sort()
-  .reverse();
+  .sort();
 
-const entries = exports.map((folder) => {
+const entries = exports.map((folder, index) => {
   const count = copyDocFiles(path.join(commitsDir, folder), path.join(outDir, folder));
   console.log(`${folder}: ${count} files`);
   const items = headings(path.join(commitsDir, folder, "doc.html"))
@@ -73,7 +68,7 @@ const entries = exports.map((folder) => {
     .join("\n");
   return [
     "      <article>",
-    `        <h2><a href="${folder}/doc.html">${html(readableDate(folder))}</a></h2>`,
+    `        <h2><a href="${folder}/doc.html">Step ${index + 1}</a></h2>`,
     `        <ul>\n${items}\n        </ul>`,
     "      </article>",
   ].join("\n");

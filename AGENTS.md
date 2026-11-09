@@ -197,7 +197,8 @@ to rebuild it themselves.
   "Run workflow"). `node Doc/build_pages.mjs [out]` builds the site: each
   dated export's `doc.html` plus the files it links (level screenshots; SVGs
   are embedded), no `graph/` data, no `Transient`, and an `index.html` of all
-  exports, newest first, with their section headings. The workflow fetches
+  exports in order, oldest first, titled `Step 1`, `Step 2`, ... (the folder
+  dates only give the order and aren't shown), with their section headings. The workflow fetches
   only `Doc/commits/**` from Git LFS. The repository's Pages source must be
   "GitHub Actions" (Settings → Pages).
 - Every exported SVG carries a `<metadata>` block with a
