@@ -6,9 +6,14 @@
 #include "EdGraph/EdGraphNode.h"
 #include "EdGraph/EdGraphPin.h"
 #include "EdGraphSchema_K2.h"
+#include "Components/ActorComponent.h"
 #include "Components/SceneComponent.h"
 #include "Engine/Blueprint.h"
+#include "Engine/InheritableComponentHandler.h"
 #include "Engine/Level.h"
+#include "Engine/SCS_Node.h"
+#include "Engine/SimpleConstructionScript.h"
+#include "Misc/PackageName.h"
 #include "GameFramework/Actor.h"
 #include "GraphDiffControl.h"
 #include "ISourceControlModule.h"
@@ -308,37 +313,268 @@ namespace
 		return Quote(Value);
 	}
 
-	void AddDefaultsDiffs(const UBlueprint* OldBlueprint, const UBlueprint* NewBlueprint, TArray<FString>& Lines)
+	/**
+	 * Whether a property only points at one of the object's own sub-objects (an actor's or class
+	 * default's components, a volume's brush builder). Those aren't set by hand: the editor
+	 * creates them with the object, so they are left out of diffs.
+	 */
+	bool IsOwnSubobjectReference(const FPropertySoftPath& Path, const UObject* Object)
 	{
-		const UObject* OldDefaults = OldBlueprint ? DiffUtils::GetCDO(OldBlueprint) : nullptr;
+		if (!Object)
+		{
+			return false;
+		}
+		const FResolvedProperty Resolved = Path.Resolve(Object);
+		const FObjectPropertyBase* Property = CastField<FObjectPropertyBase>(Resolved.Property);
+		if (!Property || !Resolved.Object)
+		{
+			return false;
+		}
+		const UObject* Value = Property->GetObjectPropertyValue(Property->ContainerPtrToValuePtr<void>(const_cast<void*>(Resolved.Object)));
+		return Value && Value->IsIn(Object);
+	}
+
+	/**
+	 * Property differences between two objects, one line each at the given depth. In a diff each
+	 * entry shows the old and new value; in a reference (bReference) only the new value.
+	 * bChangedOnly skips properties that only one side has (comparing a Blueprint's class
+	 * defaults with its parent's: the extra ones are its variables, listed elsewhere).
+	 */
+	TArray<FString> PropertyEntries(const UObject* Old, const UObject* New, bool bReference, bool bChangedOnly, int32 Depth,
+		const FString& OldPackage, const FString& NewPackage)
+	{
+		TArray<FString> Entries;
+		if (!Old || !New)
+		{
+			return Entries;
+		}
+		TArray<FSingleObjectDiffEntry> Differences;
+		DiffUtils::CompareUnrelatedObjects(Old, New, Differences);
+		for (const FSingleObjectDiffEntry& Difference : Differences)
+		{
+			if (bChangedOnly && Difference.DiffType != EPropertyDiffType::PropertyValueChanged)
+			{
+				continue;
+			}
+			if (IsOwnSubobjectReference(Difference.Identifier, Old) || IsOwnSubobjectReference(Difference.Identifier, New))
+			{
+				continue;
+			}
+			const FString Name = Quote(Difference.Identifier.ToDisplayName());
+			const FString NewValue = PropertyValueText(Difference.Identifier, New, OldPackage, NewPackage);
+			if (bReference)
+			{
+				Entries.Add(FString::Printf(TEXT("%s(set %s %s)"), *Indent(Depth), *Name, *NewValue));
+				continue;
+			}
+			const TCHAR* Kind =
+				Difference.DiffType == EPropertyDiffType::PropertyAddedToA ? TEXT("removed") :
+				Difference.DiffType == EPropertyDiffType::PropertyAddedToB ? TEXT("added") : TEXT("changed");
+			Entries.Add(FString::Printf(TEXT("%s(%s %s (old %s) (new %s))"), *Indent(Depth), Kind, *Name,
+				*PropertyValueText(Difference.Identifier, Old, OldPackage, NewPackage), *NewValue));
+		}
+		return Entries;
+	}
+
+	/**
+	 * The package name to replace in values of an older revision: the temporary package it was
+	 * loaded into for diffing, so its references read like the real asset's. "" otherwise (for
+	 * example when comparing against class defaults).
+	 */
+	FString OldPackageOf(const UObject* Old, const UObject* New)
+	{
+		if (!Old || !New || Old->GetPackage() == New->GetPackage())
+		{
+			return FString();
+		}
+		const FString Name = Old->GetPackage()->GetName();
+		return FPackageName::IsTempPackage(Name) ? Name : FString();
+	}
+
+	/**
+	 * Class defaults (Class Defaults panel) that differ from the previous revision, or for a new
+	 * Blueprint (OldBlueprint null) from the parent class: (defaults ...). In a reference
+	 * (bReference), everything that differs from the parent class.
+	 */
+	void AddDefaultsDiffs(const UBlueprint* OldBlueprint, const UBlueprint* NewBlueprint, bool bReference, TArray<FString>& Lines)
+	{
 		const UObject* NewDefaults = DiffUtils::GetCDO(NewBlueprint);
+		const UObject* OldDefaults = OldBlueprint ? DiffUtils::GetCDO(OldBlueprint)
+			: NewBlueprint->ParentClass ? NewBlueprint->ParentClass->GetDefaultObject() : nullptr;
 		if (!OldDefaults || !NewDefaults)
 		{
 			return;
 		}
-
-		TArray<FSingleObjectDiffEntry> Differences;
-		DiffUtils::CompareUnrelatedObjects(OldDefaults, NewDefaults, Differences);
-
-		const FString OldPackage = OldBlueprint->GetOutermost()->GetName();
-		const FString NewPackage = NewBlueprint->GetOutermost()->GetName();
-
-		TArray<FString> Entries;
-		for (const FSingleObjectDiffEntry& Difference : Differences)
-		{
-			const TCHAR* Kind =
-				Difference.DiffType == EPropertyDiffType::PropertyAddedToA ? TEXT("removed") :
-				Difference.DiffType == EPropertyDiffType::PropertyAddedToB ? TEXT("added") : TEXT("changed");
-			Entries.Add(FString::Printf(TEXT("%s(%s %s (old %s) (new %s))"),
-				*Indent(2), Kind,
-				*Quote(Difference.Identifier.ToDisplayName()),
-				*PropertyValueText(Difference.Identifier, OldDefaults, OldPackage, NewPackage),
-				*PropertyValueText(Difference.Identifier, NewDefaults, OldPackage, NewPackage)));
-		}
-
+		const FString OldPackage = OldBlueprint ? OldBlueprint->GetPackage()->GetName() : FString();
+		const FString NewPackage = NewBlueprint->GetPackage()->GetName();
+		const TArray<FString> Entries = PropertyEntries(OldDefaults, NewDefaults, bReference, !OldBlueprint, 2, OldPackage, NewPackage);
 		if (!Entries.IsEmpty())
 		{
-			Lines.Add(Indent(1) + TEXT("(defaults"));
+			Lines.Add(Indent(1) + (OldBlueprint ? TEXT("(defaults") : TEXT("(defaults (baseline parent-class)")));
+			Lines.Append(Entries);
+			Lines.Last() += TEXT(")");
+		}
+	}
+
+	/** A component of a Blueprint, as the Components panel shows it. */
+	struct FComponentEntry
+	{
+		const UActorComponent* Template = nullptr;
+		/** native (from the C++ parent, e.g. a Character's Mesh), added (in this Blueprint), inherited (from a parent Blueprint). */
+		const TCHAR* Kind = TEXT("native");
+		FString AttachTo;
+		/** The component as it would be without this Blueprint's changes. */
+		const UActorComponent* Original = nullptr;
+	};
+
+	TMap<FString, FComponentEntry> ComponentsOf(const UBlueprint* Blueprint)
+	{
+		TMap<FString, FComponentEntry> Result;
+		if (!Blueprint)
+		{
+			return Result;
+		}
+		const UObject* ParentDefaults = Blueprint->ParentClass ? Blueprint->ParentClass->GetDefaultObject() : nullptr;
+
+		// Components of the C++ parent class: sub-objects of the class defaults.
+		if (UObject* Defaults = const_cast<UObject*>(DiffUtils::GetCDO(Blueprint)))
+		{
+			TArray<UObject*> Subobjects;
+			Defaults->GetDefaultSubobjects(Subobjects);
+			for (const UObject* Subobject : Subobjects)
+			{
+				if (const UActorComponent* Component = Cast<UActorComponent>(Subobject))
+				{
+					FComponentEntry Entry;
+					Entry.Template = Component;
+					Entry.Original = ParentDefaults
+						? Cast<UActorComponent>(const_cast<UObject*>(ParentDefaults)->GetDefaultSubobjectByName(Component->GetFName()))
+						: nullptr;
+					// The Components panel names it after the property that holds it (a Character's
+					// "Mesh"), not after its object name ("CharacterMesh0").
+					FString PanelName = Component->GetName();
+					for (TFieldIterator<FObjectPropertyBase> Property(Defaults->GetClass()); Property; ++Property)
+					{
+						if (Property->GetObjectPropertyValue_InContainer(Defaults) == Component)
+						{
+							PanelName = Property->GetName();
+							break;
+						}
+					}
+					Result.Add(PanelName, Entry);
+				}
+			}
+		}
+
+		// Components added in this Blueprint's Components panel.
+		if (const USimpleConstructionScript* Construction = Blueprint->SimpleConstructionScript)
+		{
+			for (USCS_Node* Node : Construction->GetAllNodes())
+			{
+				if (!Node || !Node->ComponentTemplate)
+				{
+					continue;
+				}
+				FComponentEntry Entry;
+				Entry.Template = Node->ComponentTemplate;
+				Entry.Kind = TEXT("added");
+				Entry.Original = Node->ComponentTemplate->GetClass()->GetDefaultObject<UActorComponent>();
+				if (const USCS_Node* Parent = Construction->FindParentNode(Node))
+				{
+					Entry.AttachTo = Parent->GetVariableName().ToString();
+				}
+				else if (Node->ParentComponentOrVariableName != NAME_None)
+				{
+					Entry.AttachTo = Node->ParentComponentOrVariableName.ToString();
+				}
+				Result.Add(Node->GetVariableName().ToString(), Entry);
+			}
+		}
+
+		// Components of a parent Blueprint that this Blueprint changes.
+		if (UInheritableComponentHandler* Handler = const_cast<UBlueprint*>(Blueprint)->InheritableComponentHandler)
+		{
+			for (auto Record = Handler->CreateRecordIterator(); Record; ++Record)
+			{
+				if (!Record->ComponentTemplate)
+				{
+					continue;
+				}
+				FComponentEntry Entry;
+				Entry.Template = Record->ComponentTemplate;
+				Entry.Kind = TEXT("inherited");
+				Entry.Original = Record->ComponentKey.GetOriginalTemplate();
+				Result.Add(Record->ComponentKey.GetSCSVariableName().ToString(), Entry);
+			}
+		}
+		return Result;
+	}
+
+	/**
+	 * Components that were added, removed or changed since the previous revision, or for a new
+	 * Blueprint (OldBlueprint null) those it adds or changes compared to its parent:
+	 * (components (component "Mesh" (class ...) (kind native) (properties (changed ...))) ...).
+	 * In a reference (bReference), every component with its non-default properties.
+	 */
+	void AddComponentDiffs(const UBlueprint* OldBlueprint, const UBlueprint* NewBlueprint, bool bReference, TArray<FString>& Lines)
+	{
+		const TMap<FString, FComponentEntry> NewComponents = ComponentsOf(NewBlueprint);
+		const TMap<FString, FComponentEntry> OldComponents = ComponentsOf(OldBlueprint);
+		const FString NewPackage = NewBlueprint->GetPackage()->GetName();
+
+		TArray<FString> Names;
+		NewComponents.GetKeys(Names);
+		Names.Sort();
+
+		TArray<FString> Entries;
+		for (const FString& Name : Names)
+		{
+			const FComponentEntry& Entry = NewComponents[Name];
+			const FComponentEntry* OldEntry = OldBlueprint ? OldComponents.Find(Name) : nullptr;
+			// A component is new if this Blueprint adds it (and it wasn't there before).
+			const bool bNew = FCString::Strcmp(Entry.Kind, TEXT("added")) == 0 && !OldEntry;
+			const UActorComponent* Baseline = OldEntry ? OldEntry->Template : Entry.Original;
+			if (!Baseline)
+			{
+				Baseline = Entry.Template->GetClass()->GetDefaultObject<UActorComponent>();
+			}
+			const TArray<FString> Properties = PropertyEntries(Baseline, Entry.Template, bReference, false, 4,
+				OldPackageOf(Baseline, Entry.Template), NewPackage);
+			if (!bNew && Properties.IsEmpty())
+			{
+				continue;
+			}
+			FString Header = FString::Printf(TEXT("%s(component %s (class %s) (kind %s)"),
+				*Indent(2), *Quote(Name), *Quote(Entry.Template->GetClass()->GetName()), Entry.Kind);
+			if (!Entry.AttachTo.IsEmpty())
+			{
+				Header += TEXT(" (attach-to ") + Quote(Entry.AttachTo) + TEXT(")");
+			}
+			if (bNew && !bReference)
+			{
+				Header += TEXT(" (new)");
+			}
+			Entries.Add(Header);
+			Entries.Add(Indent(3) + TEXT("(properties"));
+			Entries.Append(Properties);
+			Entries.Last() += TEXT("))");
+		}
+		if (OldBlueprint && !bReference)
+		{
+			TArray<FString> OldNames;
+			OldComponents.GetKeys(OldNames);
+			OldNames.Sort();
+			for (const FString& Name : OldNames)
+			{
+				if (!NewComponents.Contains(Name))
+				{
+					Entries.Add(Indent(2) + TEXT("(component-removed ") + Quote(Name) + TEXT(")"));
+				}
+			}
+		}
+		if (!Entries.IsEmpty())
+		{
+			Lines.Add(Indent(1) + TEXT("(components"));
 			Lines.Append(Entries);
 			Lines.Last() += TEXT(")");
 		}
@@ -418,6 +654,10 @@ namespace
 		}
 		Lines.Last() += TEXT(")");
 
+		// Class defaults and components that differ from the parent class.
+		AddDefaultsDiffs(nullptr, Blueprint, true, Lines);
+		AddComponentDiffs(nullptr, Blueprint, true, Lines);
+
 		const TMap<FString, UEdGraph*> Graphs = GraphsByPath(Blueprint);
 		TArray<FString> Paths;
 		Graphs.GetKeys(Paths);
@@ -491,29 +731,8 @@ namespace
 	 */
 	void AddPropertyDiffs(const UObject* Old, const UObject* New, bool bReference, TArray<FString>& Lines)
 	{
-		TArray<FSingleObjectDiffEntry> Differences;
-		DiffUtils::CompareUnrelatedObjects(Old, New, Differences);
-
-		const FString OldPackage = Old->GetPackage() != New->GetPackage() && !Old->HasAnyFlags(RF_ClassDefaultObject)
-			? Old->GetPackage()->GetName() : FString();
-		const FString NewPackage = New->GetPackage()->GetName();
-
 		Lines.Add(Indent(1) + TEXT("(properties"));
-		for (const FSingleObjectDiffEntry& Difference : Differences)
-		{
-			const FString Name = Quote(Difference.Identifier.ToDisplayName());
-			const FString NewValue = PropertyValueText(Difference.Identifier, New, OldPackage, NewPackage);
-			if (bReference)
-			{
-				Lines.Add(FString::Printf(TEXT("%s(set %s %s)"), *Indent(2), *Name, *NewValue));
-				continue;
-			}
-			const TCHAR* Kind =
-				Difference.DiffType == EPropertyDiffType::PropertyAddedToA ? TEXT("removed") :
-				Difference.DiffType == EPropertyDiffType::PropertyAddedToB ? TEXT("added") : TEXT("changed");
-			Lines.Add(FString::Printf(TEXT("%s(%s %s (old %s) (new %s))"), *Indent(2), Kind, *Name,
-				*PropertyValueText(Difference.Identifier, Old, OldPackage, NewPackage), *NewValue));
-		}
+		Lines.Append(PropertyEntries(Old, New, bReference, false, 2, OldPackageOf(Old, New), New->GetPackage()->GetName()));
 		Lines.Last() += TEXT(")");
 	}
 }
@@ -695,7 +914,8 @@ bool ExportDiff(UBlueprint* Blueprint, FString& OutPath, FString& OutError)
 	Lines.Add(Indent(1) + TEXT("(parent ") + Quote(Blueprint->ParentClass ? Blueprint->ParentClass->GetPathName() : FString()) + TEXT(")"));
 
 	AddVariableDiffs(OldBlueprint, Blueprint, Lines);
-	AddDefaultsDiffs(OldBlueprint, Blueprint, Lines);
+	AddDefaultsDiffs(OldBlueprint, Blueprint, false, Lines);
+	AddComponentDiffs(OldBlueprint, Blueprint, false, Lines);
 
 	const TMap<FString, UEdGraph*> OldGraphs = GraphsByPath(OldBlueprint);
 	const TMap<FString, UEdGraph*> NewGraphs = GraphsByPath(Blueprint);

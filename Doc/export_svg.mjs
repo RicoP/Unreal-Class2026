@@ -653,8 +653,13 @@ function sourcePath(diffFile) {
  * Facts about the asset an SVG shows, taken from the diff (.sexpr) next to its source file:
  * package path, kind, class, display type, whether it's new, and the compared revision.
  */
+/** X.mmd, X.md and X.settings.md (a Blueprint's class defaults and components) -> X.sexpr */
+function diffFileOf(sourceFile) {
+  return sourceFile.replace(/(\.settings)?\.(mmd|md)$/i, ".sexpr");
+}
+
 function assetMetadata(sourceFile) {
-  const diffFile = sourceFile.replace(/\.(mmd|md)$/i, ".sexpr");
+  const diffFile = diffFileOf(sourceFile);
   if (!existsSync(diffFile)) {
     return null;
   }
@@ -692,6 +697,8 @@ function assetMetadata(sourceFile) {
   };
   if (isBlueprint) {
     fields.parent = /\(parent "([^"]*)"\)/.exec(diff)?.[1] ?? "";
+    // A Blueprint can have two SVGs: its class defaults and components, and its graph.
+    fields.part = /\.settings\.md$/i.test(sourceFile) ? "settings" : "graph";
   }
   const deletedIn = /\(deleted-in "([^"]+)"\)/.exec(diff)?.[1];
   if (deletedIn) {
@@ -807,7 +814,7 @@ function claimOutput(file) {
   written.set(relative, file);
   const output = path.join(outputRoot, relative);
   const source = path.join(repoRoot, file);
-  const inputs = Math.max(modified(source), modified(source.replace(/\.(mmd|md)$/i, ".sexpr")), toolsModified);
+  const inputs = Math.max(modified(source), modified(diffFileOf(source)), toolsModified);
   if (!force && modified(output) >= inputs) {
     upToDate++;
     return null;

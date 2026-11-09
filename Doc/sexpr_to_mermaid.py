@@ -797,39 +797,16 @@ def main():
         text = to_mermaid(diff, warnings, reference)
         for warning in warnings:
             print(f"{path.name}: {warning}", file=sys.stderr)
-        table = path.with_suffix(".md")
+        # A Blueprint's parent class, class defaults and components are a table written by
+        # sexpr_to_table.py (<name>.settings.md); an older version of this script wrote <name>.md.
+        path.with_suffix(".md").unlink(missing_ok=True)
         if text is None:
-            # Nothing to draw, e.g. a new Blueprint with only its default events. A new Blueprint
-            # still has to be created, so it gets a small table with its parent class instead.
+            # Nothing to draw, e.g. a new Blueprint with only its default events.
             output.unlink(missing_ok=True)
-            if first(diff, "old") == ["old", "none"]:
-                table.write_text(creation_table(diff), encoding="utf-8", newline="\n")
-                print(f"{path}: nothing to draw, wrote {table}")
-            else:
-                table.unlink(missing_ok=True)
-                print(f"{path}: nothing to draw, no diagram written")
+            print(f"{path}: nothing to draw, no diagram written")
             continue
-        table.unlink(missing_ok=True)
         output.write_text(text, encoding="utf-8", newline="\n")
         print(f"Wrote {output}")
-
-
-def creation_table(diff):
-    """Markdown table for a new Blueprint without anything to draw: just its parent class."""
-    package = diff[1]
-    name = package.rsplit("/", 1)[-1]
-    parent_path = (first(diff, "parent") or ["parent", ""])[1]
-    parent = parent_path.rsplit(".", 1)[-1].removesuffix("_C") or "Actor"
-    return "\n".join([
-        f"### {name} (Blueprint Class)",
-        "",
-        f"Create a new Blueprint Class named `{name}` in `{package.rsplit('/', 1)[0]}` with the parent class `{parent}`.",
-        "",
-        "| Setting | Value |",
-        "|---|---|",
-        f"| Parent Class | {parent} |",
-        "",
-    ])
 
 
 if __name__ == "__main__":

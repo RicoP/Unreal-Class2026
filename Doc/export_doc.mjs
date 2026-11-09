@@ -74,7 +74,31 @@ function browserPath(packagePath) {
  * Section heading: "Create <type> at <path>" for a new asset; for an actor (package = its level)
  * "Place <type> in <level>" or "Change <label> in <level>"; otherwise just the path.
  */
-function headingFor(meta, shownPath) {
+/**
+ * Heading for creating a Blueprint: "Create New Character Blueprint at <path>", or, when the
+ * parent is a Blueprint of this project (/Game/...), "Create Child Blueprint of BP_Enemy_Base
+ * with the name BP_Enemy_Variant1" (children are assumed to sit in their parent's folder).
+ */
+function createBlueprintHeading(meta, shownPath) {
+  const parentPath = meta.parent ?? "";
+  const parent = parentPath.split(/[./]/).pop().replace(/_C$/, "") || "Actor";
+  if (parentPath.startsWith("/Game/")) {
+    return `Create Child Blueprint of ${parent} with the name ${meta.package.split("/").pop()}`;
+  }
+  return `Create New ${parent} Blueprint at ${shownPath}`;
+}
+
+function headingFor(meta, shownPath, hasSettings) {
+  if (meta.kind === "blueprint" && meta.new === "true" && (meta.part === "settings" || !hasSettings)) {
+    return createBlueprintHeading(meta, shownPath);
+  }
+  if (meta.kind === "blueprint" && meta.part === "settings") {
+    return `${shownPath}: Class Defaults and Components`;
+  }
+  if (meta.kind === "blueprint" && hasSettings) {
+    // The settings section above already says what to create; this one shows the graph.
+    return `${shownPath}: Graph`;
+  }
   if (meta.kind === "actor") {
     const named = meta.label && meta.label.replace(/\s/g, "") !== meta.type.replace(/\s/g, "") ? ` named ${meta.label}` : "";
     return meta.new === "true" ? `Place ${meta.type}${named} in ${shownPath}` : `Change ${meta.label || meta.type} in ${shownPath}`;
@@ -124,10 +148,13 @@ function paletteOptions() {
 
 function writeDoc(folder) {
   const title = `Documentation export ${path.basename(folder)}`;
-  const sections = svgFiles(folder).map((file, index) => {
-    const meta = svgMetadata(path.join(folder, file));
+  const files = svgFiles(folder);
+  const metas = new Map(files.map((file) => [file, svgMetadata(path.join(folder, file))]));
+  const withSettings = new Set([...metas.values()].filter((meta) => meta.part === "settings").map((meta) => meta.package));
+  const sections = files.map((file, index) => {
+    const meta = metas.get(file);
     const shownPath = browserPath(meta.package || "/" + file.replace(/\.svg$/i, ""));
-    const heading = headingFor(meta, shownPath);
+    const heading = headingFor(meta, shownPath, withSettings.has(meta.package));
     const svg = uniqueIds(readFileSync(path.join(folder, file), "utf8").replace(/<\?xml[^>]*\?>\s*/, ""), `s${index + 1}`);
     return [
       "    <section>",
@@ -148,8 +175,7 @@ function writeDoc(folder) {
     <style>
       body { margin: 0; padding: 24px; background: #2b2b2b; color: #e6e6e6;
              font-family: "trebuchet ms", verdana, arial, sans-serif; }
-      header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px; }
-      h1 { margin: 0 0 24px; font-size: 22px; }
+      header { display: flex; justify-content: flex-end; }
       h2 { margin: 32px 0 12px; font-size: 17px; font-weight: normal; color: #ffffff; }
       label { font-size: 14px; }
       select { margin-left: 6px; font: inherit; }
@@ -160,7 +186,6 @@ ${paletteCss()}
   </head>
   <body data-palette="default">
     <header>
-      <h1>${html(title)}</h1>
       <label>Colours <select id="palette">${paletteOptions()}</select></label>
     </header>
 ${sections.join("\n")}
@@ -218,7 +243,7 @@ const modified = (file) => (existsSync(file) ? statSync(file).mtimeMs : 0);
  * use --force after a style rule changes.
  */
 function needsGenerating(diff) {
-  const outputs = [".mmd", ".md"].map((ext) => modified(diff.replace(/\.sexpr$/, ext))).filter(Boolean);
+  const outputs = [".mmd", ".md", ".settings.md"].map((ext) => modified(diff.replace(/\.sexpr$/, ext))).filter(Boolean);
   if (outputs.length === 0) {
     return true;
   }
@@ -244,12 +269,12 @@ function build(force) {
   const python = process.env.PYTHON ?? "python";
   const isBlueprint = (file) => /^\s*\(blueprint-diff\b/.test(readFileSync(file, "utf8"));
   const blueprints = outdated.filter(isBlueprint);
-  const others = outdated.filter((file) => !isBlueprint(file));
   if (blueprints.length) {
     run(python, [path.join(docDir, "sexpr_to_mermaid.py"), ...blueprints]);
   }
-  if (others.length) {
-    run(python, [path.join(docDir, "sexpr_to_table.py"), ...others]);
+  // Tables for assets and actors, and each Blueprint's class defaults and components.
+  if (outdated.length) {
+    run(python, [path.join(docDir, "sexpr_to_table.py"), ...outdated]);
   }
   run(process.execPath, [path.join(docDir, "export_svg.mjs"), ...(force ? ["--force"] : [])]);
   writeDoc(transient);

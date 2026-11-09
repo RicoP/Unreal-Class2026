@@ -24,8 +24,14 @@ def words(name):
 
 
 def setting_name(name):
-    """'DefaultKeyMappings Mappings' -> 'Default Key Mappings › Mappings'."""
-    return " › ".join(words(part) for part in name.split())
+    """'DefaultKeyMappings Mappings' -> 'Default Key Mappings › Mappings'; booleans lose their
+    code prefix like in the editor ('bOrientRotationToMovement' -> 'Orient Rotation To Movement')."""
+    return " › ".join(words(re.sub(r"^b(?=[A-Z])", "", part)) for part in name.split())
+
+
+# Older properties that the engine keeps next to their replacement, with the same value.
+# Only the replacement is shown, as in the editor.
+SUPERSEDED = {"SkeletalMesh": "SkeletalMeshAsset"}
 
 
 def shorten(text):
@@ -239,6 +245,77 @@ def actor_to_markdown(diff):
     return "\n".join(lines) + "\n"
 
 
+def trim_numbers(text):
+    """'(Pitch=0.000000,Yaw=-90.000000)' -> '(Pitch=0,Yaw=-90)'."""
+    return re.sub(r"(-?\d+)\.(\d*?)0+(?![\d])", lambda m: m.group(1) + ("." + m.group(2) if m.group(2) else ""), text)
+
+
+def value_cell(value):
+    """A property value for a table: struct fields as 'Pitch: 0, Yaw: -90', numbers trimmed."""
+    if isinstance(value, str) and value.startswith("(") and value.endswith(")") and list_items(value) is None:
+        value = describe_item(value)
+    # Enum values such as PlacedInWorldOrSpawned read as words, like in the editor. Only plain
+    # CamelCase words: asset names (TutorialTPP, SM_Cube) stay as they are.
+    if isinstance(value, str) and re.fullmatch(r"(?:[A-Z][a-z]+){2,}", value):
+        value = words(value)
+    return trim_numbers(cell(value))
+
+
+def blueprint_settings_markdown(diff):
+    """Class defaults and components of a Blueprint diff, or None if it has neither and isn't new."""
+    package = diff[1]
+    name = package.rsplit("/", 1)[-1]
+    is_new = first(diff, "old") == ["old", "none"]
+    defaults = (first(diff, "defaults") or ["defaults"])[1:]
+    defaults = [entry for entry in defaults if isinstance(entry, list) and entry[0] != "baseline"]
+    components = (first(diff, "components") or ["components"])[1:]
+    if not (is_new or defaults or components):
+        return None
+
+    rows = []  # (setting, old, new)
+    if is_new:
+        parent = (first(diff, "parent") or ["parent", ""])[1].rsplit(".", 1)[-1].removesuffix("_C") or "Actor"
+        rows.append(("Parent Class", None, parent))
+    for entry in defaults:
+        old = first(entry, "old")
+        rows.append((f"Class Defaults › {setting_name(entry[1])}", old[1] if old else None, first(entry, "new")[1]))
+    for component in components:
+        if component[0] == "component-removed":
+            rows.append((f"Component {component[1]}", component[1], "remove"))
+            continue
+        label = words(component[1])
+        if first(component, "new"):
+            kind = words(first(component, "class")[1].removesuffix("Component")) + " Component"
+            attach = first(component, "attach-to")
+            rows.append(("Add Component", None, f"{label} ({kind}" + (f", attached to {words(attach[1])})" if attach else ")")))
+        entries = (first(component, "properties") or ["properties"])[1:]
+        names = {entry[1] for entry in entries}
+        for entry in entries:
+            if SUPERSEDED.get(entry[1]) in names:
+                continue
+            old = first(entry, "old")
+            rows.append((f"{label} › {setting_name(entry[1])}", old[1] if old else None, first(entry, "new")[1]))
+
+    lines = [f"### {name} (Blueprint Class)", ""]
+    if is_new:
+        lines += [
+            f"Create a new Blueprint Class named `{name}` in `{package.rsplit('/', 1)[0]}`, then set:",
+            "",
+            "| Setting | Value |",
+            "|---|---|",
+        ]
+        lines += [f"| {setting} | {value_cell(new)} |" for setting, _, new in rows]
+    else:
+        lines += [
+            f"Open `{name}` and change its class defaults and components:",
+            "",
+            "| Setting | Before | After |",
+            "|---|---|---|",
+        ]
+        lines += [f"| {setting} | {value_cell(old)} | {value_cell(new)} |" for setting, old, new in rows]
+    return "\n".join(lines) + "\n"
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("files", nargs="+", type=Path, help="asset or actor diff .sexpr files")
@@ -246,6 +323,18 @@ def main():
 
     for path in args.files:
         diff = parse(path.read_text(encoding="utf-8"))
+        if isinstance(diff, list) and diff[0] == "blueprint-diff":
+            # The graph is a diagram (sexpr_to_mermaid.py); class defaults and components go into
+            # a table next to it, <name>.settings.md.
+            output = path.with_suffix(".settings.md")
+            markdown = blueprint_settings_markdown(diff)
+            if markdown is None:
+                output.unlink(missing_ok=True)
+                print(f"{path}: no class default or component changes, no table")
+            else:
+                output.write_text(markdown, encoding="utf-8", newline="\n")
+                print(f"Wrote {output}")
+            continue
         if isinstance(diff, list) and diff[0] == "actor-diff":
             markdown = actor_to_markdown(diff)
         elif isinstance(diff, list) and diff[0] == "asset-diff":

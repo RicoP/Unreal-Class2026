@@ -33,7 +33,9 @@ to rebuild it themselves.
   inside `Transient`. When the user says the step is done,
   `node Doc/export_doc.mjs --finish` renames `Transient` to
   `Doc/commits/<YYYYMMDD_HHmmss>`, which gets committed; the next step starts
-  with a new `Transient`.
+  with a new `Transient`. "Commit the doc" means exactly that: build
+  (`node Doc/export_doc.mjs`), finish (`--finish`), and commit the dated folder
+  together with the assets it documents.
 - Right-click a Blueprint in the Content Browser and choose
   **Export Diff Against Depot**. The `BlueprintDiffExport` plugin
   (`Plugins/BlueprintDiffExport`) compares the Blueprint in the editor with its
@@ -42,6 +44,35 @@ to rebuild it themselves.
   `Doc/commits/Transient/graph/transient/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.sexpr`.
   The same export also writes the full current Blueprint, with all variables,
   graphs, nodes, pins and links, to `Doc/commits/Transient/graph/reference/<package path>.sexpr`.
+- A Blueprint diff also has `(defaults ...)`, the Class Defaults that changed
+  (for a new Blueprint: those that differ from the parent class, marked
+  `(baseline parent-class)`), and `(components ...)`: components of the C++
+  parent (`kind native`, e.g. a Character's `Mesh` with a mesh assigned and
+  rotated), components added in the Components panel (`kind added`, with
+  `attach-to`, and `(new)` when added since the last revision) and components
+  of a parent Blueprint changed here (`kind inherited`), each with its changed
+  properties, plus `component-removed`. References to the Blueprint's own
+  sub-objects (component pointers) are left out. The reference file lists all
+  defaults and components that differ from the parent class.
+  `sexpr_to_table.py` turns these into `<name>.settings.md` next to the
+  diagram ("Create a new Blueprint Class ..., then set:" with the parent class
+  first, or "change its class defaults and components" with Before/After);
+  rows read `Class Defaults › <setting>` and `<component> › <setting>`.
+  A new Blueprint's heading is `Create New <parent class> Blueprint at <path>`
+  (e.g. `Create New Character Blueprint at All/Content/App/Enemy/BP_Enemy_Base`),
+  or, when the parent is a Blueprint of this project (`/Game/...`),
+  `Create Child Blueprint of <parent> with the name <name>` (no folder: children
+  are assumed to sit in their parent's folder). `doc.html` has no page heading,
+  only the palette switch.
+  Components are named as the Components panel shows them: a C++ parent's
+  component by the property that holds it (`Mesh`, `CharacterMovement`, not
+  `CharacterMesh0`, `CharMoveComp`). Tables drop the boolean `b` prefix, show
+  CamelCase enum values as words (`Placed In World Or Spawned`), and skip
+  older properties that sit next to their replacement (`SkeletalMesh` next to
+  `SkeletalMeshAsset`, see `SUPERSEDED` in `sexpr_to_table.py`). In
+  `doc.html` this table comes before the graph: the create heading below (or
+  "<path>: Class Defaults and Components"), then "<path>: Graph".
+  SVG metadata has `part="settings"` or `part="graph"` for Blueprints.
 - The same menu entry works on other assets, such as Input Actions and Input
   Mapping Contexts. It writes an `asset-diff` of their changed properties, and
   a reference with all their non-default properties. A new asset (no committed
