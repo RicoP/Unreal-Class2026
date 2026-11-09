@@ -5,6 +5,8 @@
 #include "Engine/Blueprint.h"
 #include "Engine/World.h"
 #include "FileHelpers.h"
+#include "GameFramework/Actor.h"
+#include "Selection.h"
 #include "Framework/Notifications/NotificationManager.h"
 #include "HAL/PlatformProcess.h"
 #include "ISourceControlModule.h"
@@ -70,11 +72,61 @@ namespace
 			FString Error;
 			if (ExportAsset(Asset, OutputPath, Error))
 			{
-				Notify(FText::Format(LOCTEXT("Exported", "Wrote diff to {0} and the full version to Doc/graph/reference"), FText::FromString(OutputPath)), true, OutputPath);
+				Notify(FText::Format(LOCTEXT("Exported", "Wrote diff to {0} and the full version to Doc/commits/Transient/graph/reference"), FText::FromString(OutputPath)), true, OutputPath);
 			}
 			else
 			{
 				Notify(FText::Format(LOCTEXT("Failed", "Diff for {0} failed: {1}"), FText::FromString(Asset->GetName()), FText::FromString(Error)), false, FString());
+			}
+		}
+	}
+
+	/** Actors selected in the level editor (Outliner or viewport). */
+	TArray<AActor*> SelectedActors()
+	{
+		TArray<AActor*> Actors;
+		if (GEditor)
+		{
+			GEditor->GetSelectedActors()->GetSelectedObjects<AActor>(Actors);
+		}
+		return Actors;
+	}
+
+	/** The menu entry only shows when an actor stored in its own file is selected. */
+	bool AnyExternalActorSelected()
+	{
+		for (const AActor* Actor : SelectedActors())
+		{
+			if (Actor && Actor->IsPackageExternal())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void ExportSelectedActors()
+	{
+		if (GEditor && GEditor->PlayWorld)
+		{
+			Notify(LOCTEXT("StopPlayActors", "Stop the Play session before exporting actor diffs."), false, FString());
+			return;
+		}
+		for (AActor* Actor : SelectedActors())
+		{
+			if (!Actor || !Actor->IsPackageExternal())
+			{
+				continue;
+			}
+			FString OutputPath;
+			FString Error;
+			if (BlueprintDiffExport::ExportActorDiff(Actor, OutputPath, Error))
+			{
+				Notify(FText::Format(LOCTEXT("ExportedActor", "Wrote diff to {0} and the full version to Doc/commits/Transient/graph/reference"), FText::FromString(OutputPath)), true, OutputPath);
+			}
+			else
+			{
+				Notify(FText::Format(LOCTEXT("FailedActor", "Diff for {0} failed: {1}"), FText::FromString(Actor->GetActorLabel()), FText::FromString(Error)), false, FString());
 			}
 		}
 	}
@@ -207,7 +259,7 @@ namespace
 		{
 			UE_LOG(LogTemp, Warning, TEXT("BlueprintDiffExport: %s"), *Failure);
 		}
-		const FString TransientFolder = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Doc/graph/transient")));
+		const FString TransientFolder = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Doc/commits/Transient/graph/transient")));
 		Notify(
 			Failures.IsEmpty()
 				? FText::Format(LOCTEXT("ExportedChanged", "Exported diffs of {0} changed assets."), Exported)
@@ -244,9 +296,23 @@ private:
 		AssetSection.AddMenuEntry(
 			"ExportBlueprintDiff",
 			LOCTEXT("ExportLabel", "Export Diff Against Depot"),
-			LOCTEXT("ExportTooltip", "Write the changes since the last revision to Doc/graph/transient/<package path>.sexpr, and the full current version to Doc/graph/reference/<package path>.sexpr. New assets are compared against their class defaults."),
+			LOCTEXT("ExportTooltip", "Write the changes since the last revision to Doc/commits/Transient/graph/transient/<package path>.sexpr, and the full current version to Doc/commits/Transient/graph/reference/<package path>.sexpr. New assets are compared against their class defaults."),
 			FSlateIcon(),
 			FToolUIAction(FToolMenuExecuteAction::CreateStatic(&ExportSelected)));
+
+		// Right-click on actors, in the viewport and in the Outliner (whose menu includes this one).
+		UToolMenu* ActorMenu = UToolMenus::Get()->ExtendMenu("LevelEditor.ActorContextMenu");
+		FToolMenuSection& ActorSection = ActorMenu->FindOrAddSection("BlueprintDiffExport", LOCTEXT("ActorSection", "Documentation"));
+		ActorSection.AddMenuEntry(
+			"ExportActorDiff",
+			LOCTEXT("ExportActorLabel", "Export Diff Against Depot"),
+			LOCTEXT("ExportActorTooltip", "For each selected actor stored in its own file: write the changes since its last revision to Doc/commits/Transient/graph/transient/<level path>/<actor label>.sexpr, and the full current version to Doc/commits/Transient/graph/reference. New actors are compared against their class defaults."),
+			FSlateIcon(),
+			FUIAction(
+				FExecuteAction::CreateStatic(&ExportSelectedActors),
+				FCanExecuteAction(),
+				FIsActionChecked(),
+				FIsActionButtonVisible::CreateStatic(&AnyExternalActorSelected)));
 
 		UToolMenu* ToolsMenu = UToolMenus::Get()->ExtendMenu("LevelEditor.MainMenu.Tools");
 		FToolMenuSection& ToolsSection = ToolsMenu->FindOrAddSection("BlueprintDiffExport", LOCTEXT("ToolsSection", "Documentation"));

@@ -6,7 +6,10 @@
 #include "EdGraph/EdGraphNode.h"
 #include "EdGraph/EdGraphPin.h"
 #include "EdGraphSchema_K2.h"
+#include "Components/SceneComponent.h"
 #include "Engine/Blueprint.h"
+#include "Engine/Level.h"
+#include "GameFramework/Actor.h"
 #include "GraphDiffControl.h"
 #include "ISourceControlModule.h"
 #include "ISourceControlProvider.h"
@@ -438,7 +441,8 @@ namespace
 		}
 
 		ISourceControlProvider& Provider = SourceControl.GetProvider();
-		const FString PackageName = Blueprint->GetOutermost()->GetName();
+		// GetPackage, not GetOutermost: an external actor's file is its own package, not the level's.
+		const FString PackageName = Blueprint->GetPackage()->GetName();
 		const FString Filename = SourceControlHelpers::PackageFilename(PackageName);
 
 		TSharedRef<FUpdateStatus, ESPMode::ThreadSafe> UpdateStatus = ISourceControlOperation::Create<FUpdateStatus>();
@@ -490,9 +494,9 @@ namespace
 		TArray<FSingleObjectDiffEntry> Differences;
 		DiffUtils::CompareUnrelatedObjects(Old, New, Differences);
 
-		const FString OldPackage = Old->GetOutermost() != New->GetOutermost() && !Old->HasAnyFlags(RF_ClassDefaultObject)
-			? Old->GetOutermost()->GetName() : FString();
-		const FString NewPackage = New->GetOutermost()->GetName();
+		const FString OldPackage = Old->GetPackage() != New->GetPackage() && !Old->HasAnyFlags(RF_ClassDefaultObject)
+			? Old->GetPackage()->GetName() : FString();
+		const FString NewPackage = New->GetPackage()->GetName();
 
 		Lines.Add(Indent(1) + TEXT("(properties"));
 		for (const FSingleObjectDiffEntry& Difference : Differences)
@@ -524,7 +528,7 @@ bool ExportAssetDiff(UObject* Asset, FString& OutPath, FString& OutError)
 
 	const FString PackageName = Asset->GetOutermost()->GetName();
 	const UObject* ClassDefault = Asset->GetClass()->GetDefaultObject();
-	OutPath = OutputPathFor(PackageName, TEXT("Doc/graph/transient"));
+	OutPath = OutputPathFor(PackageName, TEXT("Doc/commits/Transient/graph/transient"));
 
 	FString RevisionLine;
 	const UObject* Old = LoadDepotRevision(Asset, RevisionLine, OutError);
@@ -554,7 +558,116 @@ bool ExportAssetDiff(UObject* Asset, FString& OutPath, FString& OutError)
 	Reference.Last() += TEXT(")");
 
 	return WriteLines(Lines, OutPath, OutError)
-		&& WriteLines(Reference, OutputPathFor(PackageName, TEXT("Doc/graph/reference")), OutError);
+		&& WriteLines(Reference, OutputPathFor(PackageName, TEXT("Doc/commits/Transient/graph/reference")), OutError);
+}
+
+namespace
+{
+	FString NumberText(double Value)
+	{
+		return FString::SanitizeFloat(FMath::RoundToDouble(Value * 1000.0) / 1000.0);
+	}
+
+	FString VectorText(const FVector& Vector)
+	{
+		return NumberText(Vector.X) + TEXT(" ") + NumberText(Vector.Y) + TEXT(" ") + NumberText(Vector.Z);
+	}
+
+	/**
+	 * Where the actor is placed: its root component's relative transform (the world transform
+	 * unless the actor is attached). Relative values also work for a revision loaded for diffing,
+	 * whose components are never registered.
+	 */
+	FString TransformExpr(const TCHAR* Name, const AActor* Actor)
+	{
+		const USceneComponent* Root = Actor ? Actor->GetRootComponent() : nullptr;
+		if (!Root)
+		{
+			return FString::Printf(TEXT("(%s none)"), Name);
+		}
+		const FRotator Rotation = Root->GetRelativeRotation();
+		return FString::Printf(TEXT("(%s (location %s) (rotation %s %s %s) (scale %s))"), Name,
+			*VectorText(Root->GetRelativeLocation()),
+			*NumberText(Rotation.Pitch), *NumberText(Rotation.Yaw), *NumberText(Rotation.Roll),
+			*VectorText(Root->GetRelativeScale3D()));
+	}
+}
+
+bool ExportActorDiff(AActor* Actor, FString& OutPath, FString& OutError)
+{
+	if (!Actor)
+	{
+		OutError = TEXT("No actor selected.");
+		return false;
+	}
+	if (!Actor->IsPackageExternal())
+	{
+		OutError = TEXT("This actor isn't stored in its own file (its level doesn't use external actors).");
+		return false;
+	}
+
+	// Files are named after the level and the actor's label, not the hashed actor file name:
+	// Doc/commits/Transient/graph/transient/Game/ThirdPerson/Lvl_ThirdPerson/BP_Enemy_Variant1.sexpr
+	const ULevel* Level = Actor->GetLevel();
+	const FString LevelPackage = Level ? Level->GetOutermost()->GetName() : Actor->GetOutermost()->GetName();
+	const FString Label = Actor->GetActorLabel();
+	const FString FileName = LevelPackage + TEXT("/") + FPaths::MakeValidFileName(Label, TEXT('_'));
+	OutPath = OutputPathFor(FileName, TEXT("Doc/commits/Transient/graph/transient"));
+
+	FString RevisionLine;
+	const UObject* OldObject = LoadDepotRevision(Actor, RevisionLine, OutError);
+	if (!OutError.IsEmpty())
+	{
+		return false;
+	}
+	const AActor* Old = Cast<AActor>(OldObject);
+	if (OldObject && !Old)
+	{
+		OutError = TEXT("The committed revision of this actor's file holds no actor.");
+		return false;
+	}
+	const UObject* ClassDefault = Actor->GetClass()->GetDefaultObject();
+
+	const auto AddHeader = [&](const TCHAR* Kind, TArray<FString>& Lines)
+	{
+		Lines.Add(FString::Printf(TEXT("(%s %s"), Kind, *Quote(LevelPackage)));
+		Lines.Add(Indent(1) + TEXT("(label ") + Quote(Label) + TEXT(")"));
+		Lines.Add(Indent(1) + TEXT("(class ") + Quote(Actor->GetClass()->GetName()) + TEXT(")"));
+		Lines.Add(Indent(1) + TEXT("(class-path ") + Quote(Actor->GetClass()->GetPathName()) + TEXT(")"));
+		Lines.Add(Indent(1) + TEXT("(package ") + Quote(Actor->GetPackage()->GetName()) + TEXT(")"));
+		if (!Actor->GetFolderPath().IsNone())
+		{
+			Lines.Add(Indent(1) + TEXT("(folder ") + Quote(Actor->GetFolderPath().ToString()) + TEXT(")"));
+		}
+	};
+
+	// A new actor is compared against the defaults of its class, so the diff lists what was set
+	// after placing it.
+	TArray<FString> Lines;
+	AddHeader(TEXT("actor-diff"), Lines);
+	Lines.Add(Indent(1) + RevisionLine);
+	if (!Old)
+	{
+		Lines.Add(Indent(1) + TEXT("(baseline class-default)"));
+	}
+	Lines.Add(Indent(1) + TEXT("(new working-copy)"));
+	if (Old)
+	{
+		Lines.Add(Indent(1) + TransformExpr(TEXT("old-transform"), Old));
+	}
+	Lines.Add(Indent(1) + TransformExpr(TEXT("transform"), Actor));
+	AddPropertyDiffs(Old ? Old : ClassDefault, Actor, false, Lines);
+	Lines.Last() += TEXT(")");
+
+	TArray<FString> Reference;
+	AddHeader(TEXT("actor"), Reference);
+	Reference.Add(Indent(1) + TEXT("(revision working-copy)"));
+	Reference.Add(Indent(1) + TransformExpr(TEXT("transform"), Actor));
+	AddPropertyDiffs(ClassDefault, Actor, true, Reference);
+	Reference.Last() += TEXT(")");
+
+	return WriteLines(Lines, OutPath, OutError)
+		&& WriteLines(Reference, OutputPathFor(FileName, TEXT("Doc/commits/Transient/graph/reference")), OutError);
 }
 
 bool ExportDiff(UBlueprint* Blueprint, FString& OutPath, FString& OutError)
@@ -566,7 +679,7 @@ bool ExportDiff(UBlueprint* Blueprint, FString& OutPath, FString& OutError)
 	}
 
 	const FString PackageName = Blueprint->GetOutermost()->GetName();
-	OutPath = OutputPathFor(PackageName, TEXT("Doc/graph/transient"));
+	OutPath = OutputPathFor(PackageName, TEXT("Doc/commits/Transient/graph/transient"));
 
 	FString RevisionLine;
 	UBlueprint* OldBlueprint = Cast<UBlueprint>(LoadDepotRevision(Blueprint, RevisionLine, OutError));
@@ -601,6 +714,6 @@ bool ExportDiff(UBlueprint* Blueprint, FString& OutPath, FString& OutError)
 	Lines.Last() += TEXT(")");
 
 	return WriteLines(Lines, OutPath, OutError)
-		&& WriteLines(ReferenceLines(Blueprint), OutputPathFor(PackageName, TEXT("Doc/graph/reference")), OutError);
+		&& WriteLines(ReferenceLines(Blueprint), OutputPathFor(PackageName, TEXT("Doc/commits/Transient/graph/reference")), OutError);
 }
 }
