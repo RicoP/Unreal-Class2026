@@ -684,6 +684,22 @@ def to_mermaid(diff, warnings, reference=None):
             if pin_kind(pin_type) == "delegate" and event and event.role == "event" and target[0] in nodes:
                 wires.discard(wire)
                 nodes[target[0]].event_links[target[1]] = f"Connect to Event {event.raw_title}"
+        # An event or function entry that only calls its parent (the default events of a child
+        # Blueprint: Event Tick -> Parent: Tick) isn't drawn, and neither is that Parent call.
+        for name, node in list(nodes.items()):
+            if not is_entry(node):
+                continue
+            own = {w for w in wires if name in (w[0][0], w[1][0])}
+            partners = {end[0] for w in own for end in (w[0], w[1])} - {name}
+            if len(partners) != 1:
+                continue
+            parent = partners.pop()
+            if not parent.startswith("K2Node_CallParentFunction") or parent not in nodes:
+                continue
+            if any(parent in (w[0][0], w[1][0]) and name not in (w[0][0], w[1][0]) for w in wires):
+                continue  # the Parent call is wired to something else too
+            wires -= own
+            del nodes[name], nodes[parent]
         # Event and function entry nodes with nothing connected (such as the default
         # BeginPlay, Tick or Construction Script of a new Blueprint) aren't drawn.
         wired = {end[0] for source, target, _ in wires for end in (source, target)}
@@ -781,13 +797,39 @@ def main():
         text = to_mermaid(diff, warnings, reference)
         for warning in warnings:
             print(f"{path.name}: {warning}", file=sys.stderr)
+        table = path.with_suffix(".md")
         if text is None:
-            # Nothing to draw, e.g. a new Blueprint with only its default, unconnected events.
+            # Nothing to draw, e.g. a new Blueprint with only its default events. A new Blueprint
+            # still has to be created, so it gets a small table with its parent class instead.
             output.unlink(missing_ok=True)
-            print(f"{path}: nothing to draw, no diagram written")
+            if first(diff, "old") == ["old", "none"]:
+                table.write_text(creation_table(diff), encoding="utf-8", newline="\n")
+                print(f"{path}: nothing to draw, wrote {table}")
+            else:
+                table.unlink(missing_ok=True)
+                print(f"{path}: nothing to draw, no diagram written")
             continue
+        table.unlink(missing_ok=True)
         output.write_text(text, encoding="utf-8", newline="\n")
         print(f"Wrote {output}")
+
+
+def creation_table(diff):
+    """Markdown table for a new Blueprint without anything to draw: just its parent class."""
+    package = diff[1]
+    name = package.rsplit("/", 1)[-1]
+    parent_path = (first(diff, "parent") or ["parent", ""])[1]
+    parent = parent_path.rsplit(".", 1)[-1].removesuffix("_C") or "Actor"
+    return "\n".join([
+        f"### {name} (Blueprint Class)",
+        "",
+        f"Create a new Blueprint Class named `{name}` in `{package.rsplit('/', 1)[0]}` with the parent class `{parent}`.",
+        "",
+        "| Setting | Value |",
+        "|---|---|",
+        f"| Parent Class | {parent} |",
+        "",
+    ])
 
 
 if __name__ == "__main__":

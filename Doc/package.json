@@ -3,7 +3,8 @@
   "description": "Tools for rendering the Blueprint documentation.",
   "scripts": {
     "export-svg": "node export_svg.mjs",
-    "export-doc": "node export_doc.mjs"
+    "export-doc": "node export_doc.mjs",
+    "finish-doc": "node export_doc.mjs --finish"
   },
   "devDependencies": {
     "@mermaid-js/mermaid-cli": "10.9.1"

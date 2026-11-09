@@ -1,10 +1,13 @@
-"""Turn an asset diff (non-Blueprint assets) exported by BlueprintDiffExport into a Markdown table.
+"""Turn an asset diff (non-Blueprint assets) or an actor diff exported by BlueprintDiffExport
+into a Markdown table.
 
     python Doc/sexpr_to_table.py Doc/graph/transient/Game/Input/Actions/IA_Zoom.sexpr
 
 Writes the table next to the input with the .md extension. A new asset gets a
 "Setting | Value" table of everything set after creating it; a changed asset
-gets a "Setting | Before | After" table.
+gets a "Setting | Before | After" table. Actors placed in a level get the same
+two kinds of table ("Place ... in the level", "Select ... and change"), with
+their transform first.
 """
 
 import argparse
@@ -154,18 +157,104 @@ def to_markdown(diff):
     return "\n".join(lines) + "\n"
 
 
+def number(text):
+    """'90.0' -> '90', '-36.523' -> '-36.523'."""
+    value = float(text)
+    return str(int(value)) if value == int(value) else f"{value:g}"
+
+
+def transform_rows(expr):
+    """{'Location': '90, -160, 0', ...} from (transform (location x y z) (rotation p y r) (scale x y z))."""
+    if expr is None or len(expr) < 2 or expr[1] == "none":
+        return {}
+    rows = {}
+    for name, label in (("location", "Location"), ("rotation", "Rotation (pitch, yaw, roll)"), ("scale", "Scale")):
+        part = first(expr, name)
+        if part:
+            rows[label] = ", ".join(number(v) for v in part[1:])
+    return rows
+
+
+# A property that only points at one of the actor's own sub-objects (its components, a volume's
+# brush builder) isn't something to set by hand: the editor creates those with the actor.
+OWN_SUBOBJECT = re.compile(r":PersistentLevel\.[^.'\"]+\.|Default__")
+
+
+def actor_properties(diff):
+    """Property entries of an actor diff, without references to the actor's own sub-objects."""
+    entries = first(diff, "properties")[1:]
+    kept = []
+    for entry in entries:
+        values = [str(part[1]) for part in entry[2:] if isinstance(part, list) and len(part) > 1]
+        if any(OWN_SUBOBJECT.search(value) for value in values):
+            continue
+        kept.append(entry)
+    return kept
+
+
+def actor_to_markdown(diff):
+    level = diff[1].rsplit("/", 1)[-1]
+    label = first(diff, "label")[1]
+    actor_class = words(first(diff, "class")[1].removesuffix("_C"))
+    folder = first(diff, "folder")
+    is_new = first(diff, "baseline") is not None
+    properties = actor_properties(diff)
+    new_transform = transform_rows(first(diff, "transform"))
+
+    lines = [f"### {label} ({actor_class})", ""]
+    if is_new:
+        place = f"Place a **{actor_class}** in the level `{level}`"
+        if label != first(diff, "class")[1] and label != actor_class.replace(" ", ""):
+            place += f" and name it `{label}`"
+        if folder:
+            place += f" in the Outliner folder `{folder[1]}`"
+        lines += [place + ", then set:", "", "| Setting | Value |", "|---|---|"]
+        for name, value in new_transform.items():
+            if name.startswith("Rotation") and value == "0, 0, 0":
+                continue  # unrotated: nothing to do
+            lines.append(f"| {name} | {value} |")
+        for entry in properties:
+            lines.append(f"| {setting_name(entry[1])} | {cell(first(entry, 'new')[1])} |")
+        return "\n".join(lines) + "\n"
+
+    old_transform = transform_rows(first(diff, "old-transform"))
+    rows = [
+        f"| {name} | {old_transform.get(name, '—')} | {value} |"
+        for name, value in new_transform.items()
+        if old_transform.get(name) != value
+    ]
+    for entry in properties:
+        old, new = first(entry, "old"), first(entry, "new")
+        rows += change_rows(entry[1], old[1] if old else None, new[1] if new else None)
+    if not rows:
+        lines.append("No changes.")
+        return "\n".join(lines) + "\n"
+    lines += [
+        f"Select `{label}` in the level `{level}` and change:",
+        "",
+        "| Setting | Before | After |",
+        "|---|---|---|",
+        *rows,
+    ]
+    return "\n".join(lines) + "\n"
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("files", nargs="+", type=Path, help="asset diff .sexpr files")
+    parser.add_argument("files", nargs="+", type=Path, help="asset or actor diff .sexpr files")
     args = parser.parse_args()
 
     for path in args.files:
         diff = parse(path.read_text(encoding="utf-8"))
-        if not isinstance(diff, list) or diff[0] != "asset-diff":
-            print(f"{path}: skipped, not an asset diff (use sexpr_to_mermaid.py for Blueprints)", file=sys.stderr)
+        if isinstance(diff, list) and diff[0] == "actor-diff":
+            markdown = actor_to_markdown(diff)
+        elif isinstance(diff, list) and diff[0] == "asset-diff":
+            markdown = to_markdown(diff)
+        else:
+            print(f"{path}: skipped, not an asset or actor diff (use sexpr_to_mermaid.py for Blueprints)", file=sys.stderr)
             continue
         output = path.with_suffix(".md")
-        output.write_text(to_markdown(diff), encoding="utf-8", newline="\n")
+        output.write_text(markdown, encoding="utf-8", newline="\n")
         print(f"Wrote {output}")
 
 

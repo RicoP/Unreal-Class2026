@@ -1,12 +1,19 @@
-// Turn the current SVG export into a dated documentation snapshot.
+// Build the documentation of the work in progress, and turn it into a dated snapshot when done.
 //
-//   node Doc/export_doc.mjs        (or: npm run export-doc, inside Doc/)
+//   node Doc/export_doc.mjs            (or: npm run export-doc, inside Doc/)
+//   node Doc/export_doc.mjs --finish   (or: npm run finish-doc)
 //
-// Copies Doc/commits/Transient to Doc/commits/<YYYYMMDD_HHmmss> and writes doc.html there,
+// Everything happens in Doc/commits/Transient. The editor plugin writes diffs to
+// Transient/graph/transient (and full versions to Transient/graph/reference). Without options,
+// this script writes a diagram (.mmd, sexpr_to_mermaid.py) or table (.md, sexpr_to_table.py)
+// next to every diff, renders them all to SVG (export_svg.mjs), and writes Transient/doc.html,
 // which embeds every SVG inline (IDs prefixed per SVG so their styles don't clash) and offers
-// the colour palettes from Doc/palette.json. The SVG files stay next to doc.html.
-// Also copies Doc/graph (diffs, references, diagrams, tables) to <export>/graph, so the export
-// keeps the source data it was made from. That path is the asset's package path, e.g.
+// the colour palettes from Doc/palette.json.
+// Only what is out of date is regenerated (by file timestamps), so diagrams and tables edited
+// by hand survive until their diff is exported again; --force regenerates everything.
+// --finish renames Transient to Doc/commits/<YYYYMMDD_HHmmss>, ready to commit; the next
+// lesson step starts with a new, empty Transient.
+// SVGs are named by package path, e.g.
 //   Game/Input/Actions/IA_Zoom.svg  ->  /Game/Input/Actions/IA_Zoom
 // In doc.html text, package paths are shown as the Content Browser shows them:
 //   /Game/Input/Actions/IA_Zoom     ->  All/Content/Input/Actions/IA_Zoom
@@ -16,9 +23,10 @@
 // export_svg.mjs writes into each SVG, so every export folder describes itself.
 //
 // Pass --commits <dir> to use another commits folder (for testing), or
-// --regenerate <export folder> to rewrite doc.html of an existing export without copying anything.
+// --regenerate <export folder> to rewrite doc.html of an existing export without rebuilding.
 
-import { cpSync, existsSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { existsSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -60,6 +68,18 @@ function svgMetadata(svgFile) {
 /** "/Game/Input/IA_Zoom" -> "All/Content/Input/IA_Zoom", the path the Content Browser shows. */
 function browserPath(packagePath) {
   return packagePath.startsWith("/Game/") ? "All/Content/" + packagePath.slice("/Game/".length) : packagePath;
+}
+
+/**
+ * Section heading: "Create <type> at <path>" for a new asset; for an actor (package = its level)
+ * "Place <type> in <level>" or "Change <label> in <level>"; otherwise just the path.
+ */
+function headingFor(meta, shownPath) {
+  if (meta.kind === "actor") {
+    const named = meta.label && meta.label.replace(/\s/g, "") !== meta.type.replace(/\s/g, "") ? ` named ${meta.label}` : "";
+    return meta.new === "true" ? `Place ${meta.type}${named} in ${shownPath}` : `Change ${meta.label || meta.type} in ${shownPath}`;
+  }
+  return meta.new === "true" ? `Create ${meta.type} at ${shownPath}` : shownPath;
 }
 
 function html(text) {
@@ -107,7 +127,7 @@ function writeDoc(folder) {
   const sections = svgFiles(folder).map((file, index) => {
     const meta = svgMetadata(path.join(folder, file));
     const shownPath = browserPath(meta.package || "/" + file.replace(/\.svg$/i, ""));
-    const heading = meta.new === "true" ? `Create ${meta.type} at ${shownPath}` : shownPath;
+    const heading = headingFor(meta, shownPath);
     const svg = uniqueIds(readFileSync(path.join(folder, file), "utf8").replace(/<\?xml[^>]*\?>\s*/, ""), `s${index + 1}`);
     return [
       "    <section>",
@@ -168,30 +188,94 @@ ${sections.join("\n")}
   console.log(`Wrote ${path.relative(process.cwd(), docFile)}`);
 }
 
+/** All .sexpr diffs below a folder (absolute paths), sorted. */
+function diffFiles(folder) {
+  if (!existsSync(folder)) {
+    return [];
+  }
+  return readdirSync(folder, { withFileTypes: true })
+    .flatMap((entry) => {
+      const full = path.join(folder, entry.name);
+      return entry.isDirectory() ? diffFiles(full) : entry.name.endsWith(".sexpr") ? [full] : [];
+    })
+    .sort();
+}
+
+function run(command, args) {
+  const result = spawnSync(command, args, { stdio: "inherit" });
+  if (result.status !== 0) {
+    console.error(`${command} ${path.basename(args[0])} failed${result.error ? `: ${result.error.message}` : ""}.`);
+    process.exit(1);
+  }
+}
+
+const modified = (file) => (existsSync(file) ? statSync(file).mtimeMs : 0);
+
+/**
+ * Whether a diff's diagram or table must be (re)generated: it doesn't exist yet, or the diff
+ * or its reference file (Transient/graph/reference/...) is newer. A diagram or table edited by
+ * hand is kept until the diff is exported again. Changes to the generator scripts don't count;
+ * use --force after a style rule changes.
+ */
+function needsGenerating(diff) {
+  const outputs = [".mmd", ".md"].map((ext) => modified(diff.replace(/\.sexpr$/, ext))).filter(Boolean);
+  if (outputs.length === 0) {
+    return true;
+  }
+  const reference = diff.replace(/([\\/])graph\1transient\1/, "$1graph$1reference$1");
+  return Math.max(modified(diff), modified(reference)) > Math.max(...outputs);
+}
+
+/**
+ * Build the documentation in Transient: a diagram (.mmd) or table (.md) next to every diff
+ * in Transient/graph/transient, every SVG in Transient, and Transient/doc.html. Only what is
+ * out of date is regenerated; --force regenerates everything (and overwrites hand edits).
+ */
+function build(force) {
+  const diffs = diffFiles(path.join(transient, "graph", "transient"));
+  if (diffs.length === 0) {
+    console.error(`Nothing to export: ${path.relative(process.cwd(), transient)}/graph/transient has no diffs. Export some from the editor first.`);
+    process.exit(1);
+  }
+  const outdated = force ? diffs : diffs.filter(needsGenerating);
+  if (outdated.length < diffs.length) {
+    console.log(`${diffs.length - outdated.length} diagram(s)/table(s) up to date, kept as they are.`);
+  }
+  const python = process.env.PYTHON ?? "python";
+  const isBlueprint = (file) => /^\s*\(blueprint-diff\b/.test(readFileSync(file, "utf8"));
+  const blueprints = outdated.filter(isBlueprint);
+  const others = outdated.filter((file) => !isBlueprint(file));
+  if (blueprints.length) {
+    run(python, [path.join(docDir, "sexpr_to_mermaid.py"), ...blueprints]);
+  }
+  if (others.length) {
+    run(python, [path.join(docDir, "sexpr_to_table.py"), ...others]);
+  }
+  run(process.execPath, [path.join(docDir, "export_svg.mjs"), ...(force ? ["--force"] : [])]);
+  writeDoc(transient);
+}
+
+/** Rename Transient to Doc/commits/<YYYYMMDD_HHmmss>, ready to commit. */
+function finish() {
+  if (!existsSync(path.join(transient, "doc.html"))) {
+    console.error(`${path.relative(process.cwd(), transient)} has no doc.html. Run node Doc/export_doc.mjs first.`);
+    process.exit(1);
+  }
+  const target = path.join(commitsDir, timestamp(new Date()));
+  if (existsSync(target)) {
+    console.error(`${target} already exists.`);
+    process.exit(1);
+  }
+  renameSync(transient, target);
+  console.log(`Renamed ${path.relative(process.cwd(), transient)} -> ${path.relative(process.cwd(), target)}`);
+  writeDoc(target); // the page title names the folder
+}
+
 const regenerateIndex = process.argv.indexOf("--regenerate");
 if (regenerateIndex > 0) {
   writeDoc(path.resolve(process.argv[regenerateIndex + 1]));
-  process.exit(0);
-}
-
-if (!existsSync(transient) || svgFiles(transient).length === 0) {
-  console.error(`Nothing to export: ${path.relative(process.cwd(), transient)} has no SVGs. Run export_svg.mjs first.`);
-  process.exit(1);
-}
-
-const target = path.join(commitsDir, timestamp(new Date()));
-if (existsSync(target)) {
-  console.error(`${target} already exists.`);
-  process.exit(1);
-}
-cpSync(transient, target, { recursive: true });
-console.log(`Copied ${path.relative(process.cwd(), transient)} -> ${path.relative(process.cwd(), target)}`);
-
-const graphDir = path.join(docDir, "graph");
-if (existsSync(graphDir)) {
-  cpSync(graphDir, path.join(target, "graph"), { recursive: true });
-  console.log(`Copied ${path.relative(process.cwd(), graphDir)} -> ${path.relative(process.cwd(), path.join(target, "graph"))}`);
+} else if (process.argv.includes("--finish")) {
+  finish();
 } else {
-  console.warn(`No ${path.relative(process.cwd(), graphDir)} folder; the export has no source data.`);
+  build(process.argv.includes("--force"));
 }
-writeDoc(target);

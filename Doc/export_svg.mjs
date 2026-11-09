@@ -1,18 +1,21 @@
-// Render every Mermaid diagram (.mmd) and settings table (.md under Doc/graph/) that git
-// reports as untracked or changed to SVG.
+// Render every Mermaid diagram (.mmd) and settings table (.md) of the documentation being
+// worked on, in Doc/commits/Transient/graph/transient/, to SVG.
 //
 //   node Doc/export_svg.mjs        (or: npm run export-svg, inside Doc/)
 //
-// Output goes to Doc/commits/Transient/<package path>.svg, overwriting earlier exports, e.g.
-//   Doc/graph/transient/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.mmd
+// Output goes to Doc/commits/Transient/<package path>.svg. An SVG newer than its source, its
+// diff, this script and palette.json is skipped (--force renders all), and SVGs whose source
+// is gone are removed. e.g.
+//   Doc/commits/Transient/graph/transient/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.mmd
 //   -> Doc/commits/Transient/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.svg
-//   Doc/graph/transient/Game/Input/Actions/IA_Zoom.md
+//   Doc/commits/Transient/graph/transient/Game/Input/Actions/IA_Zoom.md
 //   -> Doc/commits/Transient/Game/Input/Actions/IA_Zoom.svg
+// With file arguments, renders exactly those files, each SVG next to its source.
 //
 // Needs `npm install` in Doc/ once. Rendering uses the Chrome set in Doc/puppeteer.json.
 
 import { execFileSync, spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import puppeteer from "puppeteer";
@@ -449,41 +452,33 @@ if (!existsSync(cli)) {
 
 const repoRoot = execFileSync("git", ["rev-parse", "--show-toplevel"], { cwd: docDir, encoding: "utf8" }).trim();
 
-/** Paths (relative to the repo) of diagrams and tables that are untracked or changed, not deleted. */
-function changedSources() {
-  const output = execFileSync("git", ["status", "--porcelain=v1", "-z", "--untracked-files=all"], {
-    cwd: repoRoot,
-    encoding: "utf8",
-  });
-  const entries = output.split("\0").filter(Boolean);
-  const files = [];
-  for (let i = 0; i < entries.length; i++) {
-    const status = entries[i].slice(0, 2);
-    const file = entries[i].slice(3);
-    if (status[0] === "R" || status[0] === "C") {
-      i++; // the next entry is the original path of a rename or copy
-    }
-    const lower = file.toLowerCase();
-    const isDiagram = lower.endsWith(".mmd");
-    const isTable = lower.endsWith(".md") && lower.startsWith("doc/graph/");
-    if (status.includes("D") || !(isDiagram || isTable)) {
-      continue;
-    }
-    files.push(file);
+// The documentation being worked on: diffs, diagrams and tables in Transient/graph/transient,
+// SVGs and doc.html directly in Transient.
+const outputRoot = path.join(docDir, "commits", "Transient");
+const graphRoot = path.join(outputRoot, "graph", "transient");
+
+/** Files below a folder (absolute paths), recursively. */
+function filesBelow(folder) {
+  if (!existsSync(folder)) {
+    return [];
   }
-  return files.sort();
+  return readdirSync(folder, { withFileTypes: true }).flatMap((entry) => {
+    const full = path.join(folder, entry.name);
+    return entry.isDirectory() ? filesBelow(full) : [full];
+  });
 }
 
-/** Doc/graph/<kind>/Game/X.mmd -> Game/X.svg; anything else keeps its path below Doc/. */
+/** Paths (relative to the repo) of every diagram and table in Transient/graph/transient. */
+function transientSources() {
+  return filesBelow(graphRoot)
+    .filter((file) => /\.(mmd|md)$/i.test(file))
+    .map((file) => path.relative(repoRoot, file).split(path.sep).join("/"))
+    .sort();
+}
+
+/** Transient/graph/transient/Game/X.mmd -> Game/X.svg */
 function packageRelativeSvg(file) {
-  const parts = file.split("/");
-  let rest = parts;
-  if (parts[0] === "Doc" && parts[1] === "graph" && parts.length > 3) {
-    rest = parts.slice(3);
-  } else if (parts[0] === "Doc") {
-    rest = parts.slice(1);
-  }
-  return path.join(...rest).replace(/\.(mmd|md)$/i, ".svg");
+  return path.relative(graphRoot, path.join(repoRoot, file)).replace(/\.(mmd|md)$/i, ".svg");
 }
 
 /** Title and rows of a table written by sexpr_to_table.py. */
@@ -643,6 +638,18 @@ function colourArrowheads(svg) {
 const METADATA_NS = "urn:blueprint-diff-export";
 
 /**
+ * Where a diff lives, relative to its export folder (graph/transient/Game/X.sexpr), so the
+ * path stays right when Transient is renamed to a dated folder. Outside an export folder:
+ * relative to the repo.
+ */
+function sourcePath(diffFile) {
+  const parts = path.resolve(diffFile).split(path.sep);
+  const graph = parts.lastIndexOf("graph");
+  const relative = graph > 0 ? parts.slice(graph) : path.relative(repoRoot, diffFile).split(path.sep);
+  return relative.join("/");
+}
+
+/**
  * Facts about the asset an SVG shows, taken from the diff (.sexpr) next to its source file:
  * package path, kind, class, display type, whether it's new, and the compared revision.
  */
@@ -652,11 +659,27 @@ function assetMetadata(sourceFile) {
     return null;
   }
   const diff = readFileSync(diffFile, "utf8");
-  const kind = /^\s*\((asset-diff|blueprint-diff)\b/.exec(diff)?.[1];
+  const kind = /^\s*\((asset-diff|blueprint-diff|actor-diff)\b/.exec(diff)?.[1];
   if (!kind) {
     return null;
   }
   const words = (name) => name.replace(/(?<=[a-z0-9])(?=[A-Z])/g, " ");
+  if (kind === "actor-diff") {
+    // An actor placed in a level: package is the level, label the actor's name in the Outliner.
+    const className = /\(class "([^"]+)"\)/.exec(diff)?.[1] ?? "Actor";
+    const actorFields = {
+      package: /^\s*\(\S+ "([^"]+)"/.exec(diff)?.[1] ?? "",
+      kind: "actor",
+      class: className,
+      type: words(className.replace(/_C$/, "")),
+      label: /\(label "([^"]*)"\)/.exec(diff)?.[1] ?? "",
+      new: String(/^\s*\(old none\b/m.test(diff)),
+      revision: /\(old \(revision "([^"]+)"\)/.exec(diff)?.[1] ?? "none",
+      "actor-package": /\(package "([^"]*)"\)/.exec(diff)?.[1] ?? "",
+    };
+    actorFields.source = sourcePath(diffFile);
+    return actorFields;
+  }
   const isBlueprint = kind === "blueprint-diff";
   const className = isBlueprint ? "Blueprint" : /\(class "([^"]+)"\)/.exec(diff)?.[1] ?? "Object";
   const fields = {
@@ -674,7 +697,7 @@ function assetMetadata(sourceFile) {
   if (deletedIn) {
     fields["deleted-in"] = deletedIn;
   }
-  fields.source = path.relative(repoRoot, diffFile).split(path.sep).join("/");
+  fields.source = sourcePath(diffFile);
   return fields;
 }
 
@@ -737,21 +760,41 @@ function prettySvg(svg) {
 }
 
 // With file arguments (node Doc/export_svg.mjs a.mmd b.md), render exactly those files and
-// write each SVG next to its source. Without arguments, render what git reports as changed.
-const explicitFiles = process.argv.slice(2).map((file) =>
-  path.relative(repoRoot, path.resolve(process.cwd(), file)).split(path.sep).join("/"),
-);
-const sources = explicitFiles.length ? explicitFiles : changedSources();
+// write each SVG next to its source. Without arguments, render everything in Transient.
+// Up-to-date SVGs (newer than their source, diff, this script and palette.json) are skipped;
+// --force renders everything again.
+const force = process.argv.includes("--force");
+const explicitFiles = process.argv
+  .slice(2)
+  .filter((arg) => !arg.startsWith("--"))
+  .map((file) => path.relative(repoRoot, path.resolve(process.cwd(), file)).split(path.sep).join("/"));
+const sources = explicitFiles.length ? explicitFiles : transientSources();
 if (sources.length === 0) {
-  console.log("No untracked or changed .mmd or Doc/graph .md files.");
+  console.log(`No .mmd or .md files in ${path.relative(process.cwd(), graphRoot)}.`);
   process.exit(0);
 }
+if (!explicitFiles.length) {
+  // Remove SVGs whose diagram or table is gone, so nothing outdated stays in the doc.
+  const expected = new Set(sources.map((file) => path.join(outputRoot, packageRelativeSvg(file)).toLowerCase()));
+  for (const file of filesBelow(outputRoot)) {
+    const isSvg = file.toLowerCase().endsWith(".svg") && !file.startsWith(path.join(outputRoot, "graph") + path.sep);
+    if (isSvg && !expected.has(file.toLowerCase())) {
+      rmSync(file);
+      console.log(`Removed ${path.relative(repoRoot, file)} (its source is gone)`);
+    }
+  }
+}
 
-const outputRoot = path.join(docDir, "commits", "Transient");
 const written = new Map();
 let failures = 0;
 let browser = null;
 
+const modified = (file) => (existsSync(file) ? statSync(file).mtimeMs : 0);
+// An SVG depends on its source, the diff its metadata comes from, this script and the palette.
+const toolsModified = Math.max(modified(fileURLToPath(import.meta.url)), modified(path.join(docDir, "palette.json")));
+let upToDate = 0;
+
+/** The SVG to write for a source, or null if it's up to date (or another source claims it). */
 function claimOutput(file) {
   if (explicitFiles.length) {
     return path.join(repoRoot, file).replace(/\.(mmd|md)$/i, ".svg");
@@ -763,6 +806,12 @@ function claimOutput(file) {
   }
   written.set(relative, file);
   const output = path.join(outputRoot, relative);
+  const source = path.join(repoRoot, file);
+  const inputs = Math.max(modified(source), modified(source.replace(/\.(mmd|md)$/i, ".sexpr")), toolsModified);
+  if (!force && modified(output) >= inputs) {
+    upToDate++;
+    return null;
+  }
   mkdirSync(path.dirname(output), { recursive: true });
   return output;
 }
@@ -813,5 +862,8 @@ for (const file of sources.filter((f) => f.toLowerCase().endsWith(".mmd"))) {
   }
 }
 await browser?.close();
+if (upToDate) {
+  console.log(`${upToDate} SVG(s) up to date, not rendered again.`);
+}
 
 process.exit(failures ? 1 : 0);

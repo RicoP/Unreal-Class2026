@@ -26,19 +26,46 @@ to rebuild it themselves.
 
 ## Blueprint diffs
 
+- Workflow: all documentation work in progress lives in `Doc/commits/Transient/`
+  (ignored by git). The editor plugin writes diffs to
+  `Transient/graph/transient/` and full versions to `Transient/graph/reference/`;
+  `node Doc/export_doc.mjs` generates diagrams, tables, SVGs and `doc.html`
+  inside `Transient`. When the user says the step is done,
+  `node Doc/export_doc.mjs --finish` renames `Transient` to
+  `Doc/commits/<YYYYMMDD_HHmmss>`, which gets committed; the next step starts
+  with a new `Transient`.
 - Right-click a Blueprint in the Content Browser and choose
   **Export Diff Against Depot**. The `BlueprintDiffExport` plugin
   (`Plugins/BlueprintDiffExport`) compares the Blueprint in the editor with its
-  last committed revision and writes `Doc/graph/transient/<package path>.sexpr`,
+  last committed revision and writes `Doc/commits/Transient/graph/transient/<package path>.sexpr`,
   for example
-  `Doc/graph/transient/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.sexpr`.
+  `Doc/commits/Transient/graph/transient/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.sexpr`.
   The same export also writes the full current Blueprint, with all variables,
-  graphs, nodes, pins and links, to `Doc/graph/reference/<package path>.sexpr`.
+  graphs, nodes, pins and links, to `Doc/commits/Transient/graph/reference/<package path>.sexpr`.
 - The same menu entry works on other assets, such as Input Actions and Input
   Mapping Contexts. It writes an `asset-diff` of their changed properties, and
   a reference with all their non-default properties. A new asset (no committed
   revision) is compared against its class defaults, so the diff lists exactly
   what was set after creating it. Levels aren't supported yet.
+- Actors placed in a level that stores each actor in its own file (the
+  `__ExternalActors__` files of a World Partition level) can be exported one
+  by one: right-click them in the Outliner or the viewport and choose
+  **Export Diff Against Depot** (shown only for such actors). It writes an
+  `actor-diff` to `Doc/commits/Transient/graph/transient/<level package path>/<actor label>.sexpr`,
+  for example `Doc/commits/Transient/graph/transient/Game/ThirdPerson/Lvl_ThirdPerson/BP_Enemy_Variant1.sexpr`,
+  with label, class, level, actor file and transform, plus an `actor` reference
+  under `Doc/commits/Transient/graph/reference/`. A new actor is compared against its class
+  defaults; a changed one against the last committed version of its file
+  (loaded the way the editor's own changelist diff does). Whole-level export
+  isn't planned: only the actors that matter for a lesson get exported.
+  `sexpr_to_table.py` turns an actor diff into a table: a new actor gets
+  "Place a <type> in the level <level>" with Location, Rotation (left out when
+  zero) and Scale, then its set properties; a changed actor gets
+  "Select <label> ... and change" with Before/After rows. Properties that only
+  point at the actor's own sub-objects (its components, a volume's brush
+  builder, `Default__…` values) are left out. In SVG metadata actors have
+  `kind="actor"`, `package` = the level, and `label`; `doc.html` headings read
+  "Place <type> [named <label>] in <level>" or "Change <label> in <level>".
 - **Tools → Export Diffs of Changed Assets** (editor main menu, "Documentation"
   section) does the same for every project asset that revision control
   reports as new, added or modified, skipping levels and their `__External…`
@@ -57,16 +84,18 @@ to rebuild it themselves.
   the default palette in `Doc/palette.json`. When a style rule changes, update
   the script too.
 - The script merges the diff with the matching reference file
-  (`Doc/graph/transient/...` -> `Doc/graph/reference/...`), the full current
+  (`Doc/commits/Transient/graph/transient/...` -> `Doc/commits/Transient/graph/reference/...`), the full current
   Blueprint, so it can draw everything connected to the change (see the style
   rules). Without a reference file it falls back to added nodes and their
   direct neighbours. Changes it can't draw (such as removed nodes) are printed
   on stderr.
-- `node Doc/export_svg.mjs` renders every `.mmd`, and every `.md` table under
-  `Doc/graph/`, that git reports as untracked or changed to
-  `Doc/commits/Transient/<package path>.svg`, overwriting earlier exports of
-  the same file. With file arguments (`node Doc/export_svg.mjs a.mmd b.md`) it
-  renders exactly those files instead and writes each SVG next to its source.
+- `node Doc/export_svg.mjs` renders every `.mmd` and `.md` table under
+  `Doc/commits/Transient/graph/transient/` to
+  `Doc/commits/Transient/<package path>.svg`. An SVG newer than its source,
+  its diff, `export_svg.mjs` and `palette.json` is skipped (`--force` renders
+  all), and SVGs whose source is gone are removed. With file arguments
+  (`node Doc/export_svg.mjs a.mmd b.md`) it renders exactly those files instead
+  and writes each SVG next to its source.
   SVGs are pretty-printed. Tables are drawn as SVG in the same
   dark style as diagrams. In every exported SVG, palette colours are CSS
   variables (`var(--pin-float)`), and the SVG carries the default palette at
@@ -75,9 +104,17 @@ to rebuild it themselves.
   CLI pinned in `Doc/package.json` (10.9.1, the last version that supports
   Node 16) and the Chrome set in `Doc/puppeteer.json` instead of downloading
   Chromium.
-- Doc export: `node Doc/export_doc.mjs` copies `Doc/commits/Transient` to
-  `Doc/commits/<YYYYMMDD_HHmmss>` (current local date and time; `Transient`
-  stays) and writes `doc.html` there, a standalone dark page that embeds every
+- Doc export: `node Doc/export_doc.mjs` builds everything in
+  `Doc/commits/Transient`: it runs `sexpr_to_mermaid.py` on every
+  `blueprint-diff` and `sexpr_to_table.py` on every other diff in
+  `Transient/graph/transient`, then `export_svg.mjs`, and writes
+  `Transient/doc.html`. It decides by file timestamps what to regenerate: a
+  `.mmd` or `.md` only when its diff (or reference) is newer or it doesn't
+  exist yet, so diagrams and tables the user edited by hand survive until the
+  asset is exported again. Generator script changes don't count; after a style
+  rule changes, run `node Doc/export_doc.mjs --force` (regenerates and
+  re-renders everything, overwriting hand edits; ask the user first if they
+  edited files). `doc.html` is always rewritten. It is a standalone dark page that embeds every
   SVG inline under a heading with its path. The SVG files stay next to it,
   named by package path (`Game/Input/Actions/IA_Zoom.svg` for
   `/Game/Input/Actions/IA_Zoom`). Inline SVGs get their IDs prefixed (`s1-`,
@@ -88,16 +125,19 @@ to rebuild it themselves.
   `All/Content/Input/Actions/IA_Zoom`. For a new asset (no previous revision)
   the heading is `Create <asset type> at <path>`, for example
   `Create Input Action at All/Content/Input/Actions/IA_Zoom`.
-  The doc export also copies all of `Doc/graph/` (diffs, references, `.mmd`
-  diagrams, `.md` tables) to `<export>/graph/`, so each export keeps the
-  source data it was made from, in case its documents need regenerating.
-  `--regenerate <export folder>` rewrites `doc.html` of an existing export and
-  removes an outdated `doc.md` from before the switch to HTML.
+  `node Doc/export_doc.mjs --finish` renames `Transient` to
+  `Doc/commits/<YYYYMMDD_HHmmss>` (current local date and time) and rewrites
+  its `doc.html` title; run it only when the user says the step is done. The
+  dated folder keeps its `graph/` source data, in case its documents need
+  regenerating. `--regenerate <export folder>` rewrites `doc.html` of an
+  existing export and removes an outdated `doc.md` from before the switch to
+  HTML.
 - Every exported SVG carries a `<metadata>` block with a
   `<bde:asset xmlns:bde="urn:blueprint-diff-export" .../>` element, written by
   `export_svg.mjs` from the SVG's diff: `package`, `kind` (`blueprint` or
   `asset`), `class`, `type` (display name such as `Input Action`; Blueprints
-  are `Blueprint Class`), `new`, `revision`, `source`, and for Blueprints
+  are `Blueprint Class`), `new`, `revision`, `source` (the diff, relative to
+  the export folder: `graph/transient/...`), and for Blueprints
   `parent`. `export_doc.mjs` reads only this metadata, so each export folder
   describes itself without the diffs. Put any further per-asset facts the docs
   need into this block.
@@ -146,8 +186,13 @@ what they see on screen.
   left out. The event stays if it has other wires.
 - Leave out event nodes and function entry nodes with nothing connected, such
   as the unused BeginPlay, ActorBeginOverlap, Tick and Construction Script of a
-  new Blueprint. A graph left empty gets no box; if nothing is left at all, no
-  `.mmd` is written (and an old one is removed). The exported diffs keep these
+  new Blueprint. Also leave out an event or function entry that only calls its
+  parent (all its wires go to one Parent call node that has no other wires,
+  like a child Blueprint's default `Event Tick` -> `Parent: Tick`), together
+  with that Parent call. A graph left empty gets no box; if nothing is left at
+  all, no `.mmd` is written (and an old one is removed). A new Blueprint with
+  nothing to draw gets a `.md` table instead ("Create a new Blueprint Class ...
+  with the parent class ..."), so the doc still says to create it. The exported diffs keep these
   nodes; only the diagrams skip them.
 
 ### Node titles

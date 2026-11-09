@@ -1,6 +1,0 @@
-(asset-diff "/Game/Input/Actions/IA_Zoom"
-  (class "InputAction")
-  (old (revision "5fa87844") (date "2026-11-08T07:49:26.000Z") (description "Add mouse wheel camera zoom\n\nRe-create the IA_Zoom input action (Axis1D), map it to MouseWheelAxis\nin IMC_Default, and add the zoom logic to BP_ThirdPersonCharacter: on\nIA_Zoom Triggered, add the action value to the camera boom's Target\nArm Length.\n\nInclude the exported diffs in Doc/graph and the documentation export\nDoc/commits/20261108_082750.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"))
-  (new working-copy)
-  (properties
-    (changed "Modifiers" (old "") (new "(\"/Script/EnhancedInput.InputModifierNegate'/Game/Input/Actions/IA_Zoom.IA_Zoom:InputModifierNegate_0'\",\"/Script/EnhancedInput.InputModifierScalar'/Game/Input/Actions/IA_Zoom.IA_Zoom:InputModifierScalar_0'\")"))))
