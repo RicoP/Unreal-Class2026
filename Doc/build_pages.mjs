@@ -99,6 +99,10 @@ ${entries.join("\n")}
 </html>
 `;
 writeFileSync(path.join(outDir, "index.html"), page, "utf8");
+// Step navigation every doc page loads (../nav.js), and the step folders in order, which it
+// reads from steps.json next to it.
+copyFileSync(path.join(docDir, "site", "nav.js"), path.join(outDir, "nav.js"));
+writeFileSync(path.join(outDir, "steps.json"), JSON.stringify(exports, null, 2) + "\n", "utf8");
 // Serve files as they are (no Jekyll processing on GitHub Pages).
 writeFileSync(path.join(outDir, ".nojekyll"), "");
 console.log(`Wrote ${path.relative(process.cwd(), outDir)} with ${exports.length} exports`);

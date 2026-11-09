@@ -225,6 +225,8 @@ ${sections.join("\n")}
       apply(known.includes(requested) ? requested : "default");
       select.addEventListener("change", () => apply(select.value));
     </script>
+    <!-- Step navigation of the documentation website (Doc/site/nav.js); missing when viewed locally. -->
+    <script src="../nav.js"></script>
   </body>
 </html>
 `;

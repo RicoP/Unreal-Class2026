@@ -9,6 +9,7 @@ on:
     paths:
       - "Doc/commits/**"
       - "Doc/build_pages.mjs"
+      - "Doc/site/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 

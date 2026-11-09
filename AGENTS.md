@@ -198,7 +198,14 @@ to rebuild it themselves.
   dated export's `doc.html` plus the files it links (level screenshots; SVGs
   are embedded), no `graph/` data, no `Transient`, and an `index.html` of all
   exports in order, oldest first, titled `Step 1`, `Step 2`, ... (the folder
-  dates only give the order and aren't shown), with their section headings. The workflow fetches
+  dates only give the order and aren't shown), with their section headings.
+  Every `doc.html` ends with `<script src="../nav.js"></script>`
+  (`export_doc.mjs` writes it; older exports got it added by hand). The site's
+  `nav.js` is `Doc/site/nav.js`, copied unchanged; `build_pages.mjs` writes
+  the step folders in order to `steps.json` next to it, which `nav.js` fetches
+  (no globals). It creates a "‹ Step 2 · Step 3 of 4 · Step 4 ›" bar inside
+  the page's `<header>` (left/right arrow keys work too). Viewed locally the
+  script is missing and the page shows no bar. The workflow fetches
   only `Doc/commits/**` from Git LFS. The repository's Pages source must be
   "GitHub Actions" (Settings → Pages).
 - Every exported SVG carries a `<metadata>` block with a
