@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Documentation export 20261109_105725</title>
+    <style>
+      body { margin: 0; padding: 24px; background: #2b2b2b; color: #e6e6e6;
+             font-family: "trebuchet ms", verdana, arial, sans-serif; }
+      header { display: flex; justify-content: flex-end; }
+      h2 { margin: 32px 0 12px; font-size: 17px; font-weight: normal; color: #ffffff; }
+      label { font-size: 14px; }
+      select { margin-left: 6px; font: inherit; }
+      .figure svg, .figure img { display: block; max-width: 100%; height: auto; }
+      /* Palettes from Doc/palette.json. Each SVG carries the default palette at zero specificity. */
+      body[data-palette="default"] svg { --node-body: #151515; --text: #f2f2f2; --text-muted: #999999; --border-event: #b3261e; --border-setter: #2b5d8f; --border-neutral: #3a3a3a; --border-function: #8a8a8a; --border-call: #456980; --border-context: #555555; --table-header: #262626; --table-stripe: #1c1c1c; --pin-exec: #ffffff; --pin-boolean: #950000; --pin-byte: #006f65; --pin-integer: #1fe3af; --pin-integer64: #ace3af; --pin-float: #38d500; --pin-name: #cd82ff; --pin-string: #ff00d4; --pin-text: #e77caa; --pin-vector: #ffca23; --pin-rotator: #a0b4ff; --pin-transform: #ff7300; --pin-object: #00aaf5; --pin-delegate: #ff3838; --pin-other: #777777; }
+      body[data-palette="red-green-safe"] svg { --border-event: #cc79a7; --border-setter: #0072b2; --border-call: #b8a868; --pin-boolean: #cc79a7; --pin-byte: #66d9c2; --pin-integer: #009e73; --pin-integer64: #c8f0e0; --pin-float: #e69f00; --pin-name: #b39ddb; --pin-string: #bbbbbb; --pin-text: #f5b8d6; --pin-vector: #f0e442; --pin-rotator: #9fb6ff; --pin-transform: #a6761d; --pin-object: #56b4e9; --pin-delegate: #d55e00; --pin-other: #888888; }
+      body[data-palette="blue-yellow-safe"] svg { --border-event: #ff7043; --border-setter: #9fb6ff; --border-call: #4f7f8f; --pin-boolean: #ff4f6d; --pin-byte: #b0b0b0; --pin-integer: #888888; --pin-integer64: #c8c8c8; --pin-float: #7dff4d; --pin-name: #ce93d8; --pin-string: #009e73; --pin-text: #ff9de2; --pin-vector: #ffb000; --pin-rotator: #d070ff; --pin-transform: #ff8c1a; --pin-object: #ab47bc; --pin-delegate: #e53935; --pin-other: #777777; }
+      body[data-palette="high-contrast"] svg { --node-body: #000000; --text: #ffffff; --text-muted: #d0d0d0; --border-event: #ff8c1a; --border-setter: #5aa9ff; --border-call: #a8c8e8; --border-neutral: #bfbfbf; --border-function: #e0e0e0; --border-context: #808080; --table-header: #262626; --table-stripe: #101010; --pin-exec: #ffffff; --pin-boolean: #ff6680; --pin-byte: #00e0d0; --pin-integer: #00ffc8; --pin-integer64: #b8ffe0; --pin-float: #7dff4d; --pin-name: #e0a3ff; --pin-string: #ff66ff; --pin-text: #ffb3d1; --pin-vector: #ffe14d; --pin-rotator: #c0ccff; --pin-transform: #ffad5c; --pin-object: #33d1ff; --pin-delegate: #ff5c5c; --pin-other: #c8c8c8; }
+      body[data-palette="greyscale"] svg { --node-body: #000000; --text: #ffffff; --text-muted: #bdbdbd; --border-event: #ffffff; --border-setter: #808080; --border-call: #b8b8b8; --border-neutral: #6e6e6e; --border-function: #bdbdbd; --border-context: #4a4a4a; --table-header: #262626; --table-stripe: #141414; --pin-exec: #ffffff; --pin-boolean: #5c5c5c; --pin-byte: #8e8e8e; --pin-integer: #c6c6c6; --pin-integer64: #c6c6c6; --pin-float: #c6c6c6; --pin-name: #8e8e8e; --pin-string: #8e8e8e; --pin-text: #8e8e8e; --pin-vector: #ffffff; --pin-rotator: #c6c6c6; --pin-transform: #8e8e8e; --pin-object: #8e8e8e; --pin-delegate: #5c5c5c; --pin-other: #6e6e6e; }
+    </style>
+  </head>
+  <body data-palette="default">
+    <header>
+      <label>Colours <select id="palette"><option value="default">Unreal editor</option><option value="red-green-safe">Red-green safe (protanopia, deuteranopia)</option><option value="blue-yellow-safe">Blue-yellow safe (tritanopia)</option><option value="high-contrast">High contrast</option><option value="greyscale">Greyscale (achromatopsia, print)</option></select></label>
+    </header>
+    <section>
+      <h2>Import character-female-a.fbx into All/Content/Kenney-Assets/mini-characters</h2>
+      <div class="figure" role="img" aria-label="All/Content/Kenney-Assets/mini-characters">
+<svg xmlns="http://www.w3.org/2000/svg" width="1014" height="260" viewBox="-1 -1 1014 260">
+  <metadata>
+    <bde:asset xmlns:bde="urn:blueprint-diff-export" kind="import" package="/Game/Kenney-Assets/mini-characters" files="character-female-a.fbx" source="graph/transient/Game/Kenney-Assets/mini-characters/character-female-a.import.md"/>
+  </metadata>
+  <style>
+    :where(svg){--node-body:#151515;--text:#f2f2f2;--text-muted:#999999;--border-event:#b3261e;--border-setter:#2b5d8f;--border-neutral:#3a3a3a;--border-function:#8a8a8a;--border-call:#456980;--border-context:#555555;--table-header:#262626;--table-stripe:#1c1c1c;--pin-exec:#ffffff;--pin-boolean:#950000;--pin-byte:#006f65;--pin-integer:#1fe3af;--pin-integer64:#ace3af;--pin-float:#38d500;--pin-name:#cd82ff;--pin-string:#ff00d4;--pin-text:#e77caa;--pin-vector:#ffca23;--pin-rotator:#a0b4ff;--pin-transform:#ff7300;--pin-object:#00aaf5;--pin-delegate:#ff3838;--pin-other:#777777;--text-dim:color-mix(in srgb, var(--text) 45%, var(--node-body));--border-event-dim:color-mix(in srgb, var(--border-event) 45%, var(--node-body));--border-setter-dim:color-mix(in srgb, var(--border-setter) 45%, var(--node-body));--border-function-dim:color-mix(in srgb, var(--border-function) 45%, var(--node-body));--border-call-dim:color-mix(in srgb, var(--border-call) 45%, var(--node-body));--pin-exec-dim:color-mix(in srgb, var(--pin-exec) 45%, var(--node-body));--pin-boolean-dim:color-mix(in srgb, var(--pin-boolean) 45%, var(--node-body));--pin-byte-dim:color-mix(in srgb, var(--pin-byte) 45%, var(--node-body));--pin-integer-dim:color-mix(in srgb, var(--pin-integer) 45%, var(--node-body));--pin-integer64-dim:color-mix(in srgb, var(--pin-integer64) 45%, var(--node-body));--pin-float-dim:color-mix(in srgb, var(--pin-float) 45%, var(--node-body));--pin-name-dim:color-mix(in srgb, var(--pin-name) 45%, var(--node-body));--pin-string-dim:color-mix(in srgb, var(--pin-string) 45%, var(--node-body));--pin-text-dim:color-mix(in srgb, var(--pin-text) 45%, var(--node-body));--pin-vector-dim:color-mix(in srgb, var(--pin-vector) 45%, var(--node-body));--pin-rotator-dim:color-mix(in srgb, var(--pin-rotator) 45%, var(--node-body));--pin-transform-dim:color-mix(in srgb, var(--pin-transform) 45%, var(--node-body));--pin-object-dim:color-mix(in srgb, var(--pin-object) 45%, var(--node-body));--pin-delegate-dim:color-mix(in srgb, var(--pin-delegate) 45%, var(--node-body));--pin-other-dim:color-mix(in srgb, var(--pin-other) 45%, var(--node-body));}
+  </style>
+  <style>
+    text{font-family:trebuchet ms, verdana, arial, sans-serif;font-size:14px;dominant-baseline:central}
+  </style>
+  <rect x="0" y="0" width="1012" height="258" rx="6" style="fill:var(--node-body);stroke:var(--border-neutral);stroke-width:2"/>
+  <text x="12" y="17" style="fill:var(--text)" font-weight="bold">Import character-female-a.fbx</text>
+  <rect x="1" y="34" width="1010" height="28" style="fill:var(--table-header)"/>
+  <line x1="0" y1="34" x2="1012" y2="34" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="48" style="fill:var(--text)" font-weight="bold">Setting</text>
+  <line x1="246" y1="34" x2="246" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="258" y="48" style="fill:var(--text)" font-weight="bold">Value</text>
+  <rect x="1" y="62" width="1010" height="28" style="fill:var(--node-body)"/>
+  <line x1="0" y1="62" x2="1012" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="76" style="fill:var(--text)">Files</text>
+  <line x1="246" y1="62" x2="246" y2="90" style="stroke:var(--border-neutral)"/>
+  <text x="258" y="76" style="fill:var(--text)">character-female-a.fbx</text>
+  <rect x="1" y="90" width="1010" height="28" style="fill:var(--table-stripe)"/>
+  <line x1="0" y1="90" x2="1012" y2="90" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="104" style="fill:var(--text)">Creates Anim Sequence</text>
+  <line x1="246" y1="90" x2="246" y2="118" style="stroke:var(--border-neutral)"/>
+  <text x="258" y="104" style="fill:var(--text)">32 in all: character-female-aattack-kick-left, character-female-aattack-kick-right, …, character-female-awheelchair-sit</text>
+  <rect x="1" y="118" width="1010" height="28" style="fill:var(--node-body)"/>
+  <line x1="0" y1="118" x2="1012" y2="118" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="132" style="fill:var(--text)">Creates Material Instance Constant</text>
+  <line x1="246" y1="118" x2="246" y2="146" style="stroke:var(--border-neutral)"/>
+  <text x="258" y="132" style="fill:var(--text)">colormap</text>
+  <rect x="1" y="146" width="1010" height="28" style="fill:var(--table-stripe)"/>
+  <line x1="0" y1="146" x2="1012" y2="146" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="160" style="fill:var(--text)">Creates Physics Asset</text>
+  <line x1="246" y1="146" x2="246" y2="174" style="stroke:var(--border-neutral)"/>
+  <text x="258" y="160" style="fill:var(--text)">character-female-a_PhysicsAsset</text>
+  <rect x="1" y="174" width="1010" height="28" style="fill:var(--node-body)"/>
+  <line x1="0" y1="174" x2="1012" y2="174" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="188" style="fill:var(--text)">Creates Skeletal Mesh</text>
+  <line x1="246" y1="174" x2="246" y2="202" style="stroke:var(--border-neutral)"/>
+  <text x="258" y="188" style="fill:var(--text)">character-female-a</text>
+  <rect x="1" y="202" width="1010" height="28" style="fill:var(--table-stripe)"/>
+  <line x1="0" y1="202" x2="1012" y2="202" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="216" style="fill:var(--text)">Creates Skeleton</text>
+  <line x1="246" y1="202" x2="246" y2="230" style="stroke:var(--border-neutral)"/>
+  <text x="258" y="216" style="fill:var(--text)">character-female-a_Skeleton</text>
+  <rect x="1" y="230" width="1010" height="28" style="fill:var(--node-body)"/>
+  <line x1="0" y1="230" x2="1012" y2="230" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="244" style="fill:var(--text)">Creates Texture2D</text>
+  <line x1="246" y1="230" x2="246" y2="258" style="stroke:var(--border-neutral)"/>
+  <text x="258" y="244" style="fill:var(--text)">colormap</text>
+</svg>
+      </div>
+    </section>
+    <section>
+      <h2>Import 18 files into All/Content/Kenney-Assets/mini-characters</h2>
+      <div class="figure" role="img" aria-label="All/Content/Kenney-Assets/mini-characters">
+<svg xmlns="http://www.w3.org/2000/svg" width="1153" height="232" viewBox="-1 -1 1153 232">
+  <metadata>
+    <bde:asset xmlns:bde="urn:blueprint-diff-export" kind="import" package="/Game/Kenney-Assets/mini-characters" files="character-female-b.fbx, character-female-c.fbx, character-female-d.fbx, character-female-e.fbx, character-female-f.fbx, character-knight.fbx, character-male-a.fbx, character-male-b.fbx, character-male-c.fbx, character-male-d.fbx, character-male-e.fbx, character-male-f.fbx, character-male-g.fbx, character-raider.fbx, character-robot.fbx, character-soldier.fbx, character-worker.fbx, character-zombie.fbx" source="graph/transient/Game/Kenney-Assets/mini-characters/character-female-b.import.md"/>
+  </metadata>
+  <style>
+    :where(svg){--node-body:#151515;--text:#f2f2f2;--text-muted:#999999;--border-event:#b3261e;--border-setter:#2b5d8f;--border-neutral:#3a3a3a;--border-function:#8a8a8a;--border-call:#456980;--border-context:#555555;--table-header:#262626;--table-stripe:#1c1c1c;--pin-exec:#ffffff;--pin-boolean:#950000;--pin-byte:#006f65;--pin-integer:#1fe3af;--pin-integer64:#ace3af;--pin-float:#38d500;--pin-name:#cd82ff;--pin-string:#ff00d4;--pin-text:#e77caa;--pin-vector:#ffca23;--pin-rotator:#a0b4ff;--pin-transform:#ff7300;--pin-object:#00aaf5;--pin-delegate:#ff3838;--pin-other:#777777;--text-dim:color-mix(in srgb, var(--text) 45%, var(--node-body));--border-event-dim:color-mix(in srgb, var(--border-event) 45%, var(--node-body));--border-setter-dim:color-mix(in srgb, var(--border-setter) 45%, var(--node-body));--border-function-dim:color-mix(in srgb, var(--border-function) 45%, var(--node-body));--border-call-dim:color-mix(in srgb, var(--border-call) 45%, var(--node-body));--pin-exec-dim:color-mix(in srgb, var(--pin-exec) 45%, var(--node-body));--pin-boolean-dim:color-mix(in srgb, var(--pin-boolean) 45%, var(--node-body));--pin-byte-dim:color-mix(in srgb, var(--pin-byte) 45%, var(--node-body));--pin-integer-dim:color-mix(in srgb, var(--pin-integer) 45%, var(--node-body));--pin-integer64-dim:color-mix(in srgb, var(--pin-integer64) 45%, var(--node-body));--pin-float-dim:color-mix(in srgb, var(--pin-float) 45%, var(--node-body));--pin-name-dim:color-mix(in srgb, var(--pin-name) 45%, var(--node-body));--pin-string-dim:color-mix(in srgb, var(--pin-string) 45%, var(--node-body));--pin-text-dim:color-mix(in srgb, var(--pin-text) 45%, var(--node-body));--pin-vector-dim:color-mix(in srgb, var(--pin-vector) 45%, var(--node-body));--pin-rotator-dim:color-mix(in srgb, var(--pin-rotator) 45%, var(--node-body));--pin-transform-dim:color-mix(in srgb, var(--pin-transform) 45%, var(--node-body));--pin-object-dim:color-mix(in srgb, var(--pin-object) 45%, var(--node-body));--pin-delegate-dim:color-mix(in srgb, var(--pin-delegate) 45%, var(--node-body));--pin-other-dim:color-mix(in srgb, var(--pin-other) 45%, var(--node-body));}
+  </style>
+  <style>
+    text{font-family:trebuchet ms, verdana, arial, sans-serif;font-size:14px;dominant-baseline:central}
+  </style>
+  <rect x="0" y="0" width="1151" height="230" rx="6" style="fill:var(--node-body);stroke:var(--border-neutral);stroke-width:2"/>
+  <text x="12" y="17" style="fill:var(--text)" font-weight="bold">Import 18 files</text>
+  <rect x="1" y="34" width="1149" height="28" style="fill:var(--table-header)"/>
+  <line x1="0" y1="34" x2="1151" y2="34" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="48" style="fill:var(--text)" font-weight="bold">Setting</text>
+  <line x1="423" y1="34" x2="423" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="435" y="48" style="fill:var(--text)" font-weight="bold">Value</text>
+  <rect x="1" y="62" width="1149" height="28" style="fill:var(--node-body)"/>
+  <line x1="0" y1="62" x2="1151" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="76" style="fill:var(--text)">Files</text>
+  <line x1="423" y1="62" x2="423" y2="90" style="stroke:var(--border-neutral)"/>
+  <text x="435" y="76" style="fill:var(--text)">18 in all: character-female-b.fbx, character-female-c.fbx, …, character-zombie.fbx</text>
+  <rect x="1" y="90" width="1149" height="28" style="fill:var(--table-stripe)"/>
+  <line x1="0" y1="90" x2="1151" y2="90" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="104" style="fill:var(--text)">Common Skeletal Meshes And Animations Properties › Skeleton</text>
+  <line x1="423" y1="90" x2="423" y2="118" style="stroke:var(--border-neutral)"/>
+  <text x="435" y="104" style="fill:var(--text)">character-female-a_Skeleton</text>
+  <rect x="1" y="118" width="1149" height="28" style="fill:var(--node-body)"/>
+  <line x1="0" y1="118" x2="1151" y2="118" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="132" style="fill:var(--text)">Animation Pipeline › Import Animations</text>
+  <line x1="423" y1="118" x2="423" y2="146" style="stroke:var(--border-neutral)"/>
+  <text x="435" y="132" style="fill:var(--text)">False</text>
+  <rect x="1" y="146" width="1149" height="28" style="fill:var(--table-stripe)"/>
+  <line x1="0" y1="146" x2="1151" y2="146" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="160" style="fill:var(--text)">Material Pipeline › Parent Material</text>
+  <line x1="423" y1="146" x2="423" y2="174" style="stroke:var(--border-neutral)"/>
+  <text x="435" y="160" style="fill:var(--text)">colormap</text>
+  <rect x="1" y="174" width="1149" height="28" style="fill:var(--node-body)"/>
+  <line x1="0" y1="174" x2="1151" y2="174" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="188" style="fill:var(--text)">Creates Physics Asset</text>
+  <line x1="423" y1="174" x2="423" y2="202" style="stroke:var(--border-neutral)"/>
+  <text x="435" y="188" style="fill:var(--text)">18 in all: character-female-b_PhysicsAsset, character-female-c_PhysicsAsset, …, character-zombie_PhysicsAsset</text>
+  <rect x="1" y="202" width="1149" height="28" style="fill:var(--table-stripe)"/>
+  <line x1="0" y1="202" x2="1151" y2="202" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="216" style="fill:var(--text)">Creates Skeletal Mesh</text>
+  <line x1="423" y1="202" x2="423" y2="230" style="stroke:var(--border-neutral)"/>
+  <text x="435" y="216" style="fill:var(--text)">18 in all: character-female-b, character-female-c, …, character-zombie</text>
+</svg>
+      </div>
+    </section>
+    <section>
+      <h2>All/Content/App/Enemy/BP_Enemy_Base: Class Defaults and Components</h2>
+      <div class="figure" role="img" aria-label="All/Content/App/Enemy/BP_Enemy_Base">
+<svg xmlns="http://www.w3.org/2000/svg" width="553" height="148" viewBox="-1 -1 553 148">
+  <metadata>
+    <bde:asset xmlns:bde="urn:blueprint-diff-export" package="/Game/App/Enemy/BP_Enemy_Base" kind="blueprint" class="Blueprint" type="Blueprint Class" new="false" revision="15f713d3" parent="/Script/Engine.Character" part="settings" source="graph/transient/Game/App/Enemy/BP_Enemy_Base.sexpr"/>
+  </metadata>
+  <style>
+    :where(svg){--node-body:#151515;--text:#f2f2f2;--text-muted:#999999;--border-event:#b3261e;--border-setter:#2b5d8f;--border-neutral:#3a3a3a;--border-function:#8a8a8a;--border-call:#456980;--border-context:#555555;--table-header:#262626;--table-stripe:#1c1c1c;--pin-exec:#ffffff;--pin-boolean:#950000;--pin-byte:#006f65;--pin-integer:#1fe3af;--pin-integer64:#ace3af;--pin-float:#38d500;--pin-name:#cd82ff;--pin-string:#ff00d4;--pin-text:#e77caa;--pin-vector:#ffca23;--pin-rotator:#a0b4ff;--pin-transform:#ff7300;--pin-object:#00aaf5;--pin-delegate:#ff3838;--pin-other:#777777;--text-dim:color-mix(in srgb, var(--text) 45%, var(--node-body));--border-event-dim:color-mix(in srgb, var(--border-event) 45%, var(--node-body));--border-setter-dim:color-mix(in srgb, var(--border-setter) 45%, var(--node-body));--border-function-dim:color-mix(in srgb, var(--border-function) 45%, var(--node-body));--border-call-dim:color-mix(in srgb, var(--border-call) 45%, var(--node-body));--pin-exec-dim:color-mix(in srgb, var(--pin-exec) 45%, var(--node-body));--pin-boolean-dim:color-mix(in srgb, var(--pin-boolean) 45%, var(--node-body));--pin-byte-dim:color-mix(in srgb, var(--pin-byte) 45%, var(--node-body));--pin-integer-dim:color-mix(in srgb, var(--pin-integer) 45%, var(--node-body));--pin-integer64-dim:color-mix(in srgb, var(--pin-integer64) 45%, var(--node-body));--pin-float-dim:color-mix(in srgb, var(--pin-float) 45%, var(--node-body));--pin-name-dim:color-mix(in srgb, var(--pin-name) 45%, var(--node-body));--pin-string-dim:color-mix(in srgb, var(--pin-string) 45%, var(--node-body));--pin-text-dim:color-mix(in srgb, var(--pin-text) 45%, var(--node-body));--pin-vector-dim:color-mix(in srgb, var(--pin-vector) 45%, var(--node-body));--pin-rotator-dim:color-mix(in srgb, var(--pin-rotator) 45%, var(--node-body));--pin-transform-dim:color-mix(in srgb, var(--pin-transform) 45%, var(--node-body));--pin-object-dim:color-mix(in srgb, var(--pin-object) 45%, var(--node-body));--pin-delegate-dim:color-mix(in srgb, var(--pin-delegate) 45%, var(--node-body));--pin-other-dim:color-mix(in srgb, var(--pin-other) 45%, var(--node-body));}
+  </style>
+  <style>
+    text{font-family:trebuchet ms, verdana, arial, sans-serif;font-size:14px;dominant-baseline:central}
+  </style>
+  <rect x="0" y="0" width="551" height="146" rx="6" style="fill:var(--node-body);stroke:var(--border-neutral);stroke-width:2"/>
+  <text x="12" y="17" style="fill:var(--text)" font-weight="bold">BP_Enemy_Base (Blueprint Class)</text>
+  <rect x="1" y="34" width="549" height="28" style="fill:var(--table-header)"/>
+  <line x1="0" y1="34" x2="551" y2="34" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="48" style="fill:var(--text)" font-weight="bold">Setting</text>
+  <line x1="284" y1="34" x2="284" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="296" y="48" style="fill:var(--text)" font-weight="bold">Before</text>
+  <line x1="408" y1="34" x2="408" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="420" y="48" style="fill:var(--text)" font-weight="bold">After</text>
+  <rect x="1" y="62" width="549" height="28" style="fill:var(--node-body)"/>
+  <line x1="0" y1="62" x2="551" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="76" style="fill:var(--text)">Capsule Component › Capsule Half Height</text>
+  <line x1="284" y1="62" x2="284" y2="90" style="stroke:var(--border-neutral)"/>
+  <text x="296" y="76" style="fill:var(--text)">88</text>
+  <line x1="408" y1="62" x2="408" y2="90" style="stroke:var(--border-neutral)"/>
+  <text x="420" y="76" style="fill:var(--text)">50</text>
+  <rect x="1" y="90" width="549" height="28" style="fill:var(--table-stripe)"/>
+  <line x1="0" y1="90" x2="551" y2="90" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="104" style="fill:var(--text)">Mesh › Skeletal Mesh Asset</text>
+  <line x1="284" y1="90" x2="284" y2="118" style="stroke:var(--border-neutral)"/>
+  <text x="296" y="104" style="fill:var(--text)">TutorialTPP</text>
+  <line x1="408" y1="90" x2="408" y2="118" style="stroke:var(--border-neutral)"/>
+  <text x="420" y="104" style="fill:var(--text)">character-female-a</text>
+  <rect x="1" y="118" width="549" height="28" style="fill:var(--node-body)"/>
+  <line x1="0" y1="118" x2="551" y2="118" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="132" style="fill:var(--text)">Mesh › Relative Location</text>
+  <line x1="284" y1="118" x2="284" y2="146" style="stroke:var(--border-neutral)"/>
+  <text x="296" y="132" style="fill:var(--text)">X: 0, Y: 0, Z: -90</text>
+  <line x1="408" y1="118" x2="408" y2="146" style="stroke:var(--border-neutral)"/>
+  <text x="420" y="132" style="fill:var(--text)">X: 0, Y: 0, Z: -50</text>
+</svg>
+      </div>
+    </section>
+    <section>
+      <h2>All/Content/App/Enemy/BP_Enemy_Variant1: Class Defaults and Components</h2>
+      <div class="figure" role="img" aria-label="All/Content/App/Enemy/BP_Enemy_Variant1">
+<svg xmlns="http://www.w3.org/2000/svg" width="475" height="92" viewBox="-1 -1 475 92">
+  <metadata>
+    <bde:asset xmlns:bde="urn:blueprint-diff-export" package="/Game/App/Enemy/BP_Enemy_Variant1" kind="blueprint" class="Blueprint" type="Blueprint Class" new="false" revision="15f713d3" parent="/Game/App/Enemy/BP_Enemy_Base.BP_Enemy_Base_C" part="settings" source="graph/transient/Game/App/Enemy/BP_Enemy_Variant1.sexpr"/>
+  </metadata>
+  <style>
+    :where(svg){--node-body:#151515;--text:#f2f2f2;--text-muted:#999999;--border-event:#b3261e;--border-setter:#2b5d8f;--border-neutral:#3a3a3a;--border-function:#8a8a8a;--border-call:#456980;--border-context:#555555;--table-header:#262626;--table-stripe:#1c1c1c;--pin-exec:#ffffff;--pin-boolean:#950000;--pin-byte:#006f65;--pin-integer:#1fe3af;--pin-integer64:#ace3af;--pin-float:#38d500;--pin-name:#cd82ff;--pin-string:#ff00d4;--pin-text:#e77caa;--pin-vector:#ffca23;--pin-rotator:#a0b4ff;--pin-transform:#ff7300;--pin-object:#00aaf5;--pin-delegate:#ff3838;--pin-other:#777777;--text-dim:color-mix(in srgb, var(--text) 45%, var(--node-body));--border-event-dim:color-mix(in srgb, var(--border-event) 45%, var(--node-body));--border-setter-dim:color-mix(in srgb, var(--border-setter) 45%, var(--node-body));--border-function-dim:color-mix(in srgb, var(--border-function) 45%, var(--node-body));--border-call-dim:color-mix(in srgb, var(--border-call) 45%, var(--node-body));--pin-exec-dim:color-mix(in srgb, var(--pin-exec) 45%, var(--node-body));--pin-boolean-dim:color-mix(in srgb, var(--pin-boolean) 45%, var(--node-body));--pin-byte-dim:color-mix(in srgb, var(--pin-byte) 45%, var(--node-body));--pin-integer-dim:color-mix(in srgb, var(--pin-integer) 45%, var(--node-body));--pin-integer64-dim:color-mix(in srgb, var(--pin-integer64) 45%, var(--node-body));--pin-float-dim:color-mix(in srgb, var(--pin-float) 45%, var(--node-body));--pin-name-dim:color-mix(in srgb, var(--pin-name) 45%, var(--node-body));--pin-string-dim:color-mix(in srgb, var(--pin-string) 45%, var(--node-body));--pin-text-dim:color-mix(in srgb, var(--pin-text) 45%, var(--node-body));--pin-vector-dim:color-mix(in srgb, var(--pin-vector) 45%, var(--node-body));--pin-rotator-dim:color-mix(in srgb, var(--pin-rotator) 45%, var(--node-body));--pin-transform-dim:color-mix(in srgb, var(--pin-transform) 45%, var(--node-body));--pin-object-dim:color-mix(in srgb, var(--pin-object) 45%, var(--node-body));--pin-delegate-dim:color-mix(in srgb, var(--pin-delegate) 45%, var(--node-body));--pin-other-dim:color-mix(in srgb, var(--pin-other) 45%, var(--node-body));}
+  </style>
+  <style>
+    text{font-family:trebuchet ms, verdana, arial, sans-serif;font-size:14px;dominant-baseline:central}
+  </style>
+  <rect x="0" y="0" width="473" height="90" rx="6" style="fill:var(--node-body);stroke:var(--border-neutral);stroke-width:2"/>
+  <text x="12" y="17" style="fill:var(--text)" font-weight="bold">BP_Enemy_Variant1 (Blueprint Class)</text>
+  <rect x="1" y="34" width="471" height="28" style="fill:var(--table-header)"/>
+  <line x1="0" y1="34" x2="473" y2="34" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="48" style="fill:var(--text)" font-weight="bold">Setting</text>
+  <line x1="195" y1="34" x2="195" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="207" y="48" style="fill:var(--text)" font-weight="bold">Before</text>
+  <line x1="338" y1="34" x2="338" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="350" y="48" style="fill:var(--text)" font-weight="bold">After</text>
+  <rect x="1" y="62" width="471" height="28" style="fill:var(--node-body)"/>
+  <line x1="0" y1="62" x2="473" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="76" style="fill:var(--text)">Mesh › Skeletal Mesh Asset</text>
+  <line x1="195" y1="62" x2="195" y2="90" style="stroke:var(--border-neutral)"/>
+  <text x="207" y="76" style="fill:var(--text)">character-female-a</text>
+  <line x1="338" y1="62" x2="338" y2="90" style="stroke:var(--border-neutral)"/>
+  <text x="350" y="76" style="fill:var(--text)">character-zombie</text>
+</svg>
+      </div>
+    </section>
+    <section>
+      <h2>Recreate the level geometry shown in All/Content/ThirdPerson/Lvl_ThirdPerson</h2>
+      <div class="figure"><img src="Game/ThirdPerson/Lvl_ThirdPerson.png" alt="All/Content/ThirdPerson/Lvl_ThirdPerson"></div>
+    </section>
+    <script>
+      const select = document.getElementById("palette");
+      const apply = (name) => {
+        document.body.dataset.palette = name;
+        select.value = name;
+        try { localStorage.setItem("doc-palette", name); } catch (error) { /* storage unavailable */ }
+      };
+      let saved = null;
+      try { saved = localStorage.getItem("doc-palette"); } catch (error) { /* storage unavailable */ }
+      const requested = new URLSearchParams(location.search).get("palette") || saved;
+      const known = [...select.options].map((option) => option.value);
+      apply(known.includes(requested) ? requested : "default");
+      select.addEventListener("change", () => apply(select.value));
+    </script>
+  </body>
+</html>

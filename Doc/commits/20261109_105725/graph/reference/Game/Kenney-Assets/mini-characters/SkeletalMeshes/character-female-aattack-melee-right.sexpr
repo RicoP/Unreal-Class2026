@@ -1,0 +1,14 @@
+(asset "/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-aattack-melee-right"
+  (class "AnimSequence")
+  (revision working-copy)
+  (properties
+    (set "BoneCompressionSettings" "/Script/Engine.AnimBoneCompressionSettings'/ACLPlugin/ACLAnimBoneCompressionSettings.ACLAnimBoneCompressionSettings'")
+    (set "CurveCompressionSettings" "/Script/Engine.AnimCurveCompressionSettings'/ACLPlugin/ACLAnimCurveCompressionSettings.ACLAnimCurveCompressionSettings'")
+    (set "VariableFrameStrippingSettings" "/Script/Engine.VariableFrameStrippingSettings'/Engine/Animation/DefaultVariableFrameStrippingSettings.DefaultVariableFrameStrippingSettings'")
+    (set "PlatformTargetFrameRate Default" "(Numerator=60,Denominator=1)")
+    (set "NumberOfSampledKeys" "26")
+    (set "NumberOfSampledFrames" "25")
+    (set "DataModelInterface" "AnimationSequencerDataModel'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-aattack-melee-right.character-female-aattack-melee-right:AnimationSequencerDataModel'")
+    (set "Controller" "AnimSequencerController'/Engine/Transient.AnimSequencerController_23'")
+    (set "Skeleton" "/Script/Engine.Skeleton'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-a_Skeleton.character-female-a_Skeleton'")
+    (set "AssetUserData" "(\"/Script/AnimationModifiers.AnimationModifiersAssetUserData'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-aattack-melee-right.character-female-aattack-melee-right:AnimationModifiersAssetUserData_0'\")")))

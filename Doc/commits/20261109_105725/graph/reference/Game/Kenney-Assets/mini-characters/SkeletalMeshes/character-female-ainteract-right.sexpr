@@ -1,0 +1,14 @@
+(asset "/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-ainteract-right"
+  (class "AnimSequence")
+  (revision working-copy)
+  (properties
+    (set "BoneCompressionSettings" "/Script/Engine.AnimBoneCompressionSettings'/ACLPlugin/ACLAnimBoneCompressionSettings.ACLAnimBoneCompressionSettings'")
+    (set "CurveCompressionSettings" "/Script/Engine.AnimCurveCompressionSettings'/ACLPlugin/ACLAnimCurveCompressionSettings.ACLAnimCurveCompressionSettings'")
+    (set "VariableFrameStrippingSettings" "/Script/Engine.VariableFrameStrippingSettings'/Engine/Animation/DefaultVariableFrameStrippingSettings.DefaultVariableFrameStrippingSettings'")
+    (set "PlatformTargetFrameRate Default" "(Numerator=60,Denominator=1)")
+    (set "NumberOfSampledKeys" "41")
+    (set "NumberOfSampledFrames" "40")
+    (set "DataModelInterface" "AnimationSequencerDataModel'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-ainteract-right.character-female-ainteract-right:AnimationSequencerDataModel'")
+    (set "Controller" "AnimSequencerController'/Engine/Transient.AnimSequencerController_38'")
+    (set "Skeleton" "/Script/Engine.Skeleton'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-a_Skeleton.character-female-a_Skeleton'")
+    (set "AssetUserData" "(\"/Script/AnimationModifiers.AnimationModifiersAssetUserData'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-ainteract-right.character-female-ainteract-right:AnimationModifiersAssetUserData_0'\")")))

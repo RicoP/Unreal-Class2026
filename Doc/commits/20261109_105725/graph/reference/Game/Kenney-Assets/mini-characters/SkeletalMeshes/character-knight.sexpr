@@ -1,0 +1,9 @@
+(asset "/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-knight"
+  (class "SkeletalMesh")
+  (revision working-copy)
+  (properties
+    (set "SourceModels" "((TriangleCount=780,VertexCount=472,Bounds=(Origin=(X=0.000000,Y=-2.170352,Z=40.680223),BoxExtent=(X=38.358414,Y=24.257888,Z=40.680213),SphereRadius=43.868285),CachedSkinWeightProfileNames=,CachedMorphTargetNames=,CachedHasVertexColors=(True),CachedVertexColorGuid=6E29C1F66E29C1F66E29C1F66E29C1F6,MeshDescriptionBulkData=\"/Script/Engine.SkeletalMeshDescriptionBulkData'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-knight.character-knight:SkeletalMeshDescriptionBulkData_0'\",LODHysteresis=0.020000,BuildSettings=(bComputeWeightedNormals=True,bRemoveDegenerates=False,ThresholdUV=0.000977),ReductionSettings=(NumOfTrianglesPercentage=1.000000,NumOfVertPercentage=1.000000,MaxDeviationPercentage=0.000000),bImportWithBaseMesh=True))")
+    (set "Skeleton" "/Script/Engine.Skeleton'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-a_Skeleton.character-female-a_Skeleton'")
+    (set "Materials" "((MaterialInterface=\"/Script/Engine.MaterialInstanceConstant'/Game/Kenney-Assets/mini-characters/Materials/colormap.colormap'\",MaterialSlotName=\"colormap\",ImportedMaterialSlotName=\"colormap\",UVChannelData=(bInitialized=True)))")
+    (set "PhysicsAsset" "/Script/Engine.PhysicsAsset'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-knight_PhysicsAsset.character-knight_PhysicsAsset'")
+    (set "SamplingInfo BuiltData WholeMeshBuiltData" "(())")))

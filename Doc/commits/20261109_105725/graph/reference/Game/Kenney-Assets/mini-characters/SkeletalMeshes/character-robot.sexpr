@@ -1,0 +1,9 @@
+(asset "/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-robot"
+  (class "SkeletalMesh")
+  (revision working-copy)
+  (properties
+    (set "SourceModels" "((TriangleCount=870,VertexCount=500,Bounds=(Origin=(X=0.000000,Y=-0.137800,Z=42.226255),BoxExtent=(X=38.389946,Y=16.098330,Z=42.226244),SphereRadius=45.691988),CachedSkinWeightProfileNames=,CachedMorphTargetNames=,CachedHasVertexColors=(True),CachedVertexColorGuid=6733F3C96733F3C96733F3C96733F3C9,MeshDescriptionBulkData=\"/Script/Engine.SkeletalMeshDescriptionBulkData'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-robot.character-robot:SkeletalMeshDescriptionBulkData_0'\",LODHysteresis=0.020000,BuildSettings=(bComputeWeightedNormals=True,bRemoveDegenerates=False,ThresholdUV=0.000977),ReductionSettings=(NumOfTrianglesPercentage=1.000000,NumOfVertPercentage=1.000000,MaxDeviationPercentage=0.000000),bImportWithBaseMesh=True))")
+    (set "Skeleton" "/Script/Engine.Skeleton'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-a_Skeleton.character-female-a_Skeleton'")
+    (set "Materials" "((MaterialInterface=\"/Script/Engine.MaterialInstanceConstant'/Game/Kenney-Assets/mini-characters/Materials/colormap.colormap'\",MaterialSlotName=\"colormap\",ImportedMaterialSlotName=\"colormap\",UVChannelData=(bInitialized=True)))")
+    (set "PhysicsAsset" "/Script/Engine.PhysicsAsset'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-robot_PhysicsAsset.character-robot_PhysicsAsset'")
+    (set "SamplingInfo BuiltData WholeMeshBuiltData" "(())")))

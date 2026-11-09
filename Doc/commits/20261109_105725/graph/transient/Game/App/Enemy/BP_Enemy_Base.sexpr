@@ -1,0 +1,13 @@
+(blueprint-diff "/Game/App/Enemy/BP_Enemy_Base"
+  (old (revision "15f713d3") (date "2026-11-09T07:40:29.000Z") (description "Add enemies that chase the player on a navmesh\n\n- BP_Enemy_Base (Character): mesh, Auto Possess AI placed in world or\n  spawned, slower walk speed oriented to movement; a looping timer calls\n  AI MoveTo towards the player character every 0.5 s.\n- BP_Enemy_Variant1: child of BP_Enemy_Base.\n- Lvl_ThirdPerson: NavMeshBoundsVolume (with its RecastNavMesh) and three\n  BP_Enemy_Variant1 placed in the level.\n- Doc/commits/20261109_084022: documentation of this step.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (parent "/Script/Engine.Character")
+  (components
+    (component "CapsuleComponent" (class "CapsuleComponent") (kind native)
+      (properties
+        (changed "CapsuleHalfHeight" (old "88.000000") (new "50"))))
+    (component "Mesh" (class "SkeletalMeshComponent") (kind native)
+      (properties
+        (changed "SkeletalMeshAsset" (old "/Script/Engine.SkeletalMesh'/Engine/Tutorial/SubEditors/TutorialAssets/Character/TutorialTPP.TutorialTPP'") (new "/Script/Engine.SkeletalMesh'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-a.character-female-a'"))
+        (changed "SkeletalMesh" (old "/Script/Engine.SkeletalMesh'/Engine/Tutorial/SubEditors/TutorialAssets/Character/TutorialTPP.TutorialTPP'") (new "/Script/Engine.SkeletalMesh'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-a.character-female-a'"))
+        (changed "RelativeLocation" (old "(X=0.000000,Y=0.000000,Z=-90.000000)") (new "(X=0.000000,Y=0.000000,Z=-50)"))))))

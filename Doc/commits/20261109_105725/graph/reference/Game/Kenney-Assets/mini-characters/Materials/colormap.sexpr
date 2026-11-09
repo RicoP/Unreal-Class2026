@@ -1,0 +1,9 @@
+(asset "/Game/Kenney-Assets/mini-characters/Materials/colormap"
+  (class "MaterialInstanceConstant")
+  (revision working-copy)
+  (properties
+    (set "Parent" "/Script/Engine.Material'/InterchangeAssets/Materials/FBXLegacyLambertSurfaceMaterial.FBXLegacyLambertSurfaceMaterial'")
+    (set "ScalarParameterValues" "((ParameterInfo=(Name=\"DiffuseColorMapWeight\"),ParameterValue=1.000000,ExpressionGUID=AD3071C64FF6BFDF84E0CC81F80EE597))")
+    (set "TextureParameterValues" "((ParameterInfo=(Name=\"DiffuseColorMap\"),ParameterValue=\"/Script/Engine.Texture2D'/Game/Kenney-Assets/mini-characters/Textures/colormap.colormap'\",ExpressionGUID=7F87B0224188388942067CA8BF27E66B))")
+    (set "BasePropertyOverrides OpacityMaskClipValue" "0.333300")
+    (set "BasePropertyOverrides UsageFlags" "38011009")))

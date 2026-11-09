@@ -1,0 +1,6 @@
+(asset-diff "/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-f_PhysicsAsset"
+  (class "PhysicsAsset")
+  (old none)
+  (baseline class-default)
+  (new working-copy)
+  (properties))

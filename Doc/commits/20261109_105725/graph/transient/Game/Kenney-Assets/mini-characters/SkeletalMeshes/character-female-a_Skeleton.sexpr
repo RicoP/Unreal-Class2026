@@ -1,0 +1,8 @@
+(asset-diff "/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-a_Skeleton"
+  (class "Skeleton")
+  (old none)
+  (baseline class-default)
+  (new working-copy)
+  (properties
+    (changed "BoneTree" (old "") (new "((),(),(),(),(),(),())"))
+    (changed "AssetUserData" (old "") (new "(\"/Script/Engine.AnimCurveMetaData'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-a_Skeleton.character-female-a_Skeleton:AnimCurveMetaData_0'\")"))))

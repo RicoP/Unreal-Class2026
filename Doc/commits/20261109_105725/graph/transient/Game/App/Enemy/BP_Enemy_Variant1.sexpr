@@ -1,0 +1,9 @@
+(blueprint-diff "/Game/App/Enemy/BP_Enemy_Variant1"
+  (old (revision "15f713d3") (date "2026-11-09T07:40:29.000Z") (description "Add enemies that chase the player on a navmesh\n\n- BP_Enemy_Base (Character): mesh, Auto Possess AI placed in world or\n  spawned, slower walk speed oriented to movement; a looping timer calls\n  AI MoveTo towards the player character every 0.5 s.\n- BP_Enemy_Variant1: child of BP_Enemy_Base.\n- Lvl_ThirdPerson: NavMeshBoundsVolume (with its RecastNavMesh) and three\n  BP_Enemy_Variant1 placed in the level.\n- Doc/commits/20261109_084022: documentation of this step.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (parent "/Game/App/Enemy/BP_Enemy_Base.BP_Enemy_Base_C")
+  (components
+    (component "Mesh" (class "SkeletalMeshComponent") (kind native)
+      (properties
+        (changed "SkeletalMeshAsset" (old "/Script/Engine.SkeletalMesh'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-a.character-female-a'") (new "/Script/Engine.SkeletalMesh'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-zombie.character-zombie'"))
+        (changed "SkeletalMesh" (old "/Script/Engine.SkeletalMesh'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-a.character-female-a'") (new "/Script/Engine.SkeletalMesh'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-zombie.character-zombie'"))))))

@@ -1,0 +1,6 @@
+(asset "/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-a_Skeleton"
+  (class "Skeleton")
+  (revision working-copy)
+  (properties
+    (set "BoneTree" "((),(),(),(),(),(),())")
+    (set "AssetUserData" "(\"/Script/Engine.AnimCurveMetaData'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-a_Skeleton.character-female-a_Skeleton:AnimCurveMetaData_0'\")")))
