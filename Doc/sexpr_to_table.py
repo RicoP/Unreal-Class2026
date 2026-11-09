@@ -20,7 +20,8 @@ from sexpr_to_mermaid import first, lists, parse  # noqa: E402
 
 
 def words(name):
-    return re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", name)
+    """'AnimSequence' -> 'Anim Sequence'; 'Texture2D' and runs of capitals stay together."""
+    return re.sub(r"(?<=[a-z])(?=[A-Z])|(?<=[A-Z0-9])(?=[A-Z][a-z])", " ", name)
 
 
 def setting_name(name):
@@ -46,8 +47,9 @@ def shorten(text):
         text,
     )
     # References to assets: show the asset name, e.g. "IA_Zoom".
-    text = re.sub(r"\"?/Script/[\w.]+'/[\w/]+\.(\w+)'\"?", r"\1", text)
-    text = re.sub(r"/Game/[\w/]+\.(\w+)(?::[\w.]+)?", r"\1", text)
+    # Asset names may contain hyphens (character-female-a).
+    text = re.sub(r"\"?/Script/[\w.]+'/[\w/-]+\.([\w-]+)(?::[\w.]+)?'\"?", r"\1", text)
+    text = re.sub(r"/Game/[\w/-]+\.([\w-]+)(?::[\w.]+)?", r"\1", text)
     return text
 
 
@@ -316,12 +318,152 @@ def blueprint_settings_markdown(diff):
     return "\n".join(lines) + "\n"
 
 
+# Assets an import creates next to a skeletal mesh, named after it.
+IMPORT_COMPANIONS = ("_Skeleton", "_PhysicsAsset")
+
+# Import options as Unreal's default import preset sets them. The plugin lists options that
+# differ from the pipeline class defaults, which includes these; only real changes are shown.
+IMPORT_PRESET = {
+    "PipelineDisplayName": "Default FBX OBJ Assets Pipeline",
+    "bAssetTypeSubFolders": "True",
+    "CommonMeshesProperties bComputeWeightedNormals": "True",
+    "MeshPipeline ThresholdUV": "0.000977",
+    "MeshPipeline bImportGeometryCaches": "False",
+    "AnimationPipeline bRemoveCurveRedundantKeys": "True",
+    "AnimationPipeline bDoNotImportCurveWithZero": "True",
+    "MaterialPipeline MaterialImport": "ImportAsMaterialInstances",
+    "MaterialPipeline bCreateMaterialInstanceForParent": "True",
+    "MaterialPipeline TexturePipeline bAllowNonPowerOfTwo": "True",
+    "MaterialPipeline SparseVolumeTexturePipeline bImportSparseVolumeTextures": "False",
+    "MaterialPipeline SparseVolumeTexturePipeline bImportAnimatedSparseVolumeTextures": "False",
+}
+
+# Folders an import with "Asset Type Sub Folders" creates below the folder imported into.
+TYPE_SUBFOLDERS = {"SkeletalMeshes", "StaticMeshes", "Materials", "Textures", "Animations", "Skeletons", "PhysicsAssets"}
+
+IMAGE_SOURCES = (".png", ".jpg", ".jpeg", ".tga", ".bmp", ".exr", ".hdr", ".tif", ".tiff", ".psd")
+
+
+def import_options(diff):
+    """The import options that differ from the preset, without duplicates, in their order."""
+    options = {}
+    for entry in (first(diff, "import-options") or ["import-options"])[1:]:
+        name, value = entry[1], entry[2]
+        if IMPORT_PRESET.get(name) != value:
+            options.setdefault(name, value)
+    return tuple(options.items())
+
+
+def import_source(path, diff):
+    """The source file an asset diff was imported from, also for the Skeleton and Physics Asset
+    an import creates next to a mesh (taken from the mesh's diff); None for other assets."""
+    source = first(diff, "imported-from")
+    if source:
+        return source[1]
+    for suffix in IMPORT_COMPANIONS:
+        if path.stem.endswith(suffix):
+            mesh = path.with_name(path.stem.removesuffix(suffix) + ".sexpr")
+            if mesh.exists():
+                mesh_source = first(parse(mesh.read_text(encoding="utf-8")), "imported-from")
+                if mesh_source:
+                    return mesh_source[1]
+    return None
+
+
+def import_tables(paths):
+    """
+    One table per import step instead of one per imported asset. Source files imported into the
+    same folder with the same options are one step. Writes <folder>/<first file>.import.md;
+    returns the diffs it covers.
+    """
+    units = {}  # source file -> {"options", "assets": [(class, name, file path, package folder)]}
+    covered = set()
+    for path in paths:
+        diff = parse(path.read_text(encoding="utf-8"))
+        if not (isinstance(diff, list) and diff[0] == "asset-diff"):
+            continue
+        source = import_source(path, diff)
+        if not source:
+            continue
+        covered.add(path)
+        unit = units.setdefault(source, {"options": None, "assets": []})
+        unit["assets"].append((words(first(diff, "class")[1]), diff[1].rsplit("/", 1)[-1], path, diff[1].rsplit("/", 1)[0]))
+        if first(diff, "imported-from") and unit["options"] is None:
+            unit["options"] = import_options(diff)
+
+    # A texture the FBX brought along (colormap.png) belongs to that import step, not its own.
+    for source in [s for s in units if s.lower().endswith(IMAGE_SOURCES)]:
+        owner = next((s for s, u in units.items() if not s.lower().endswith(IMAGE_SOURCES)
+                      and u["options"] == units[source]["options"]), None)
+        if owner:
+            units[owner]["assets"] += units.pop(source)["assets"]
+
+    def destination(unit):
+        """Where the files were imported to: the mesh's folder, or the folder above the type
+        subfolders (SkeletalMeshes, Materials, ...) the import created."""
+        meshes = [a for a in unit["assets"] if a[0].endswith("Mesh")] or unit["assets"]
+        folder, package_folder = meshes[0][2].parent, meshes[0][3]
+        if folder.name in TYPE_SUBFOLDERS:
+            folder, package_folder = folder.parent, package_folder.rsplit("/", 1)[0]
+        return folder, package_folder
+
+    steps = {}
+    for source, unit in sorted(units.items()):
+        folder, package_folder = destination(unit)
+        steps.setdefault((folder, package_folder, unit["options"] or ()), []).append((source, unit))
+
+    for (folder, package_folder, options), members in steps.items():
+        sources = [Path(source).name for source, _ in members]
+        output = folder / (Path(sources[0]).stem + ".import.md")
+        newest = max(asset[2].stat().st_mtime for _, unit in members for asset in unit["assets"])
+        if output.exists() and output.stat().st_mtime >= newest:
+            continue  # up to date (and possibly edited by hand)
+        title = f"Import {sources[0]}" if len(sources) == 1 else f"Import {len(sources)} files"
+        def short_list(names):
+            """'a, b, c' or, for long lists, '18 in all: a, b, …, z' so the table stays narrow."""
+            return ", ".join(names) if len(names) <= 3 else f"{len(names)} in all: {names[0]}, {names[1]}, …, {names[-1]}"
+
+        rows = [("Files", short_list(sources))]
+        rows += [(setting_name(name), value_cell(value)) for name, value in options]
+        created = {}
+        for _, unit in members:
+            for asset_class, name, _, _ in unit["assets"]:
+                created.setdefault(asset_class, []).append(name)
+        for asset_class, names in sorted(created.items()):
+            rows.append((f"Creates {asset_class}", short_list(names)))
+        lines = [
+            f"<!-- import: folder=\"{package_folder}\" files=\"{', '.join(sources)}\" -->",
+            f"### {title}",
+            "",
+            f"Import {', '.join(f'`{s}`' for s in sources)} into `{package_folder}` with these options:",
+            "",
+            "| Setting | Value |",
+            "|---|---|",
+            *[f"| {setting} | {value} |" for setting, value in rows],
+        ]
+        output.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+        print(f"Wrote {output}")
+    return covered
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("files", nargs="+", type=Path, help="asset or actor diff .sexpr files")
+    parser.add_argument("files", nargs="*", type=Path, help="asset or actor diff .sexpr files")
+    parser.add_argument("--all-in", type=Path, default=None,
+                        help="folder with every diff of the documentation, for grouping imported assets into "
+                             "import steps (default: only the files above)")
     args = parser.parse_args()
 
+    # Imported assets are documented per import step, not one by one.
+    everything = sorted(args.all_in.rglob("*.sexpr")) if args.all_in else args.files
+    imported = import_tables([path.resolve() for path in everything])
+    args.files = [path.resolve() for path in args.files]
+    for path in imported:
+        path.with_suffix(".md").unlink(missing_ok=True)
+
     for path in args.files:
+        if path in imported:
+            continue
         diff = parse(path.read_text(encoding="utf-8"))
         if isinstance(diff, list) and diff[0] == "blueprint-diff":
             # The graph is a diagram (sexpr_to_mermaid.py); class defaults and components go into

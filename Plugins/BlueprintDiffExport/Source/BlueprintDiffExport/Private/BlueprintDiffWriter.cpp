@@ -13,6 +13,8 @@
 #include "Engine/Level.h"
 #include "Engine/SCS_Node.h"
 #include "Engine/SimpleConstructionScript.h"
+#include "EditorFramework/AssetImportData.h"
+#include "InterchangeAssetImportData.h"
 #include "Misc/PackageName.h"
 #include "GameFramework/Actor.h"
 #include "GraphDiffControl.h"
@@ -374,6 +376,85 @@ namespace
 				*PropertyValueText(Difference.Identifier, Old, OldPackage, NewPackage), *NewValue));
 		}
 		return Entries;
+	}
+
+	/** An asset's import data (source file, and for Interchange imports the import options), or null. */
+	const UAssetImportData* ImportDataOf(const UObject* Asset)
+	{
+		const FObjectPropertyBase* Property = Asset ? FindFProperty<FObjectPropertyBase>(Asset->GetClass(), TEXT("AssetImportData")) : nullptr;
+		return Property ? Cast<UAssetImportData>(Property->GetObjectPropertyValue_InContainer(Asset)) : nullptr;
+	}
+
+	/**
+	 * Options of an import pipeline that differ from the pipeline class defaults, as
+	 * (set "<sub-object path> <property>" value) lines. Sub-objects (an Interchange pipeline's
+	 * mesh, animation and common skeletal mesh settings) are walked recursively.
+	 */
+	void AddOptionEntries(const UObject* Object, const UObject* Defaults, const FString& Prefix, int32 Depth, TArray<FString>& Lines, int32 Level = 0)
+	{
+		if (!Object || Level > 4)
+		{
+			return;
+		}
+		if (!Defaults || Defaults->GetClass() != Object->GetClass())
+		{
+			Defaults = Object->GetClass()->GetDefaultObject();
+		}
+		TArray<FSingleObjectDiffEntry> Differences;
+		DiffUtils::CompareUnrelatedObjects(Defaults, Object, Differences);
+		for (const FSingleObjectDiffEntry& Difference : Differences)
+		{
+			if (Difference.DiffType != EPropertyDiffType::PropertyValueChanged || IsOwnSubobjectReference(Difference.Identifier, Object))
+			{
+				continue;
+			}
+			Lines.Add(FString::Printf(TEXT("%s(set %s %s)"), *Indent(Depth),
+				*Quote(Prefix + Difference.Identifier.ToDisplayName()),
+				*PropertyValueText(Difference.Identifier, Object, FString(), FString())));
+		}
+		for (TFieldIterator<FObjectPropertyBase> Property(Object->GetClass()); Property; ++Property)
+		{
+			const UObject* Subobject = Property->GetObjectPropertyValue_InContainer(Object);
+			if (Subobject && Subobject->IsIn(Object))
+			{
+				AddOptionEntries(Subobject, Property->GetObjectPropertyValue_InContainer(Defaults),
+					Prefix + Property->GetName() + TEXT(" "), Depth, Lines, Level + 1);
+			}
+		}
+	}
+
+	/**
+	 * Where an imported asset came from: (imported-from "<source file>"), and for assets imported
+	 * with Interchange (import-options (set ...) ...) with the import dialog's settings that
+	 * differ from the pipeline defaults, such as the Skeleton to use or whether to import
+	 * animations. Nothing for assets that weren't imported.
+	 */
+	void AddImportInfo(const UObject* Asset, TArray<FString>& Lines)
+	{
+		const UAssetImportData* ImportData = ImportDataOf(Asset);
+		const FString Source = ImportData ? ImportData->GetFirstFilename() : FString();
+		if (Source.IsEmpty())
+		{
+			return;
+		}
+		Lines.Add(Indent(1) + TEXT("(imported-from ") + Quote(FPaths::ConvertRelativePathToFull(Source)) + TEXT(")"));
+		if (const UInterchangeAssetImportData* Interchange = Cast<UInterchangeAssetImportData>(ImportData))
+		{
+			TArray<FString> Options;
+			for (const UObject* Pipeline : Interchange->GetPipelines())
+			{
+				if (Pipeline)
+				{
+					AddOptionEntries(Pipeline, nullptr, FString(), 2, Options);
+				}
+			}
+			if (!Options.IsEmpty())
+			{
+				Lines.Add(Indent(1) + TEXT("(import-options"));
+				Lines.Append(Options);
+				Lines.Last() += TEXT(")");
+			}
+		}
 	}
 
 	/**
@@ -766,6 +847,7 @@ bool ExportAssetDiff(UObject* Asset, FString& OutPath, FString& OutError)
 		Lines.Add(Indent(1) + TEXT("(baseline class-default)"));
 	}
 	Lines.Add(Indent(1) + TEXT("(new working-copy)"));
+	AddImportInfo(Asset, Lines);
 	AddPropertyDiffs(Old ? Old : ClassDefault, Asset, false, Lines);
 	Lines.Last() += TEXT(")");
 

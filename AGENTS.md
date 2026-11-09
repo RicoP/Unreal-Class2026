@@ -97,6 +97,35 @@ to rebuild it themselves.
   builder, `Default__…` values) are left out. In SVG metadata actors have
   `kind="actor"`, `package` = the level, and `label`; `doc.html` headings read
   "Place <type> [named <label>] in <level>" or "Change <label> in <level>".
+- Imported assets (meshes, animations, textures from FBX, glTF, ...): their
+  `asset-diff` has `(imported-from "<source file>")` and, for imports through
+  Interchange, `(import-options (set "<pipeline sub-object> <option>" value) ...)`
+  with the import dialog settings that differ from the pipeline defaults (for
+  example the Skeleton to use, or Import Animations off). The doc documents
+  imports per step, not per asset: `sexpr_to_table.py` skips imported assets
+  and the `<mesh>_Skeleton` / `<mesh>_PhysicsAsset` an import creates next to
+  them, and writes one `<folder>/<first file>.import.md` per group of source
+  files imported into the same folder with the same options: files, options,
+  and what it creates. Options still at the value of Unreal's default import
+  preset (`IMPORT_PRESET` in `sexpr_to_table.py`) and duplicates are left
+  out, so only real changes show (Skeleton, Import Animations off, Parent
+  Material). A texture the import brought along (`colormap.png`) counts
+  towards that import step; the folder imported into is the one above the
+  type subfolders the import creates (`SkeletalMeshes`, `Materials`,
+  `Textures`, ...). Long lists read `18 in all: a, b, …, z`. Import steps come
+  first in `doc.html`, before everything that may use them. Its first line is an
+  `<!-- import: folder="..." files="..." -->` comment that `export_svg.mjs`
+  turns into metadata (`kind="import"`); the heading reads "Import <file or
+  N files> into <folder>". `export_doc.mjs` passes the whole
+  `Transient/graph/transient` folder (`--all-in`) so groups see every diff.
+- **Tools → Save Level Screenshot** (same "Documentation" section) captures
+  the active level viewport in Game View (no grid, icons or gizmos; the
+  previous view mode is restored) to
+  `Doc/commits/Transient/<level package path>.png`, for example
+  `Doc/commits/Transient/Game/ThirdPerson/Lvl_ThirdPerson.png`. Level geometry
+  (boxes placed and scaled by hand) is documented this way instead of actor
+  by actor. `doc.html` shows it under "Recreate the level geometry shown in
+  <level path>", linked as an image file next to the page (not embedded).
 - **Tools → Export Diffs of Changed Assets** (editor main menu, "Documentation"
   section) does the same for every project asset that revision control
   reports as new, added or modified, skipping levels and their `__External…`

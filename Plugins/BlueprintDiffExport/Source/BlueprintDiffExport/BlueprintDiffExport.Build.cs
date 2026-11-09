@@ -20,6 +20,9 @@ public class BlueprintDiffExport : ModuleRules
 			"ToolMenus",
 			"Slate",
 			"SlateCore",
+			"LevelEditor",
+			"ImageCore",
+			"InterchangeEngine",
 		});
 	}
 }

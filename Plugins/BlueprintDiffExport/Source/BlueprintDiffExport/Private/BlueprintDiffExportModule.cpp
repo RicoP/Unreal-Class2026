@@ -6,6 +6,12 @@
 #include "Engine/World.h"
 #include "FileHelpers.h"
 #include "GameFramework/Actor.h"
+#include "HAL/FileManager.h"
+#include "ImageCore.h"
+#include "ImageUtils.h"
+#include "LevelEditor.h"
+#include "LevelEditorViewport.h"
+#include "SLevelViewport.h"
 #include "Selection.h"
 #include "Framework/Notifications/NotificationManager.h"
 #include "HAL/PlatformProcess.h"
@@ -128,6 +134,63 @@ namespace
 			{
 				Notify(FText::Format(LOCTEXT("FailedActor", "Diff for {0} failed: {1}"), FText::FromString(Actor->GetActorLabel()), FText::FromString(Error)), false, FString());
 			}
+		}
+	}
+
+	/**
+	 * Save the active level viewport as Doc/commits/Transient/<level package path>.png, e.g.
+	 * Doc/commits/Transient/Game/ThirdPerson/Lvl_ThirdPerson.png, so the doc can show the level
+	 * geometry instead of listing every placed box. Captured in Game View (no grid, icons or
+	 * gizmos), then the viewport is restored.
+	 */
+	void SaveLevelScreenshot()
+	{
+		if (GEditor && GEditor->PlayWorld)
+		{
+			Notify(LOCTEXT("StopPlayScreenshot", "Stop the Play session before saving a level screenshot."), false, FString());
+			return;
+		}
+		const UWorld* World = GEditor ? GEditor->GetEditorWorldContext().World() : nullptr;
+		FLevelEditorModule& LevelEditor = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
+		const TSharedPtr<SLevelViewport> LevelViewport = LevelEditor.GetFirstActiveLevelViewport();
+		FViewport* Viewport = LevelViewport.IsValid() ? LevelViewport->GetActiveViewport() : nullptr;
+		if (!World || !Viewport || Viewport->GetSizeXY().X <= 0 || Viewport->GetSizeXY().Y <= 0)
+		{
+			Notify(LOCTEXT("NoViewport", "No level viewport to capture."), false, FString());
+			return;
+		}
+
+		FLevelEditorViewportClient& Client = LevelViewport->GetLevelViewportClient();
+		const bool bWasGameView = Client.IsInGameView();
+		Client.SetGameView(true);
+		Viewport->Draw();
+		TArray<FColor> Pixels;
+		const bool bRead = Viewport->ReadPixels(Pixels);
+		Client.SetGameView(bWasGameView);
+		Viewport->Invalidate();
+
+		const FIntPoint Size = Viewport->GetSizeXY();
+		if (!bRead || Pixels.Num() != Size.X * Size.Y)
+		{
+			Notify(LOCTEXT("ReadFailed", "Could not read the viewport pixels."), false, FString());
+			return;
+		}
+		for (FColor& Pixel : Pixels)
+		{
+			Pixel.A = 255; // the scene colour has no meaningful alpha
+		}
+
+		const FString LevelPackage = World->GetOutermost()->GetName();
+		const FString OutputPath = FPaths::ConvertRelativePathToFull(
+			FPaths::Combine(FPaths::ProjectDir(), TEXT("Doc/commits/Transient"), LevelPackage.RightChop(1) + TEXT(".png")));
+		IFileManager::Get().MakeDirectory(*FPaths::GetPath(OutputPath), true);
+		if (FImageUtils::SaveImageByExtension(*OutputPath, FImageView(Pixels.GetData(), Size.X, Size.Y)))
+		{
+			Notify(FText::Format(LOCTEXT("ScreenshotSaved", "Saved level screenshot to {0}"), FText::FromString(OutputPath)), true, OutputPath);
+		}
+		else
+		{
+			Notify(FText::Format(LOCTEXT("ScreenshotFailed", "Could not write {0}"), FText::FromString(OutputPath)), false, FString());
 		}
 	}
 
@@ -322,6 +385,12 @@ private:
 			LOCTEXT("ExportChangedTooltip", "Export a diff (and full reference) of every project asset that revision control reports as new or modified. Levels are skipped."),
 			FSlateIcon(),
 			FUIAction(FExecuteAction::CreateStatic(&ExportChanged)));
+		ToolsSection.AddMenuEntry(
+			"SaveLevelScreenshot",
+			LOCTEXT("SaveScreenshotLabel", "Save Level Screenshot"),
+			LOCTEXT("SaveScreenshotTooltip", "Capture the active level viewport (in Game View) to Doc/commits/Transient/<level path>.png. The doc shows it as the level geometry to recreate."),
+			FSlateIcon(),
+			FUIAction(FExecuteAction::CreateStatic(&SaveLevelScreenshot)));
 	}
 };
 

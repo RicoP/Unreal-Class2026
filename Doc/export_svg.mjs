@@ -659,6 +659,11 @@ function diffFileOf(sourceFile) {
 }
 
 function assetMetadata(sourceFile) {
+  if (/\.import\.md$/i.test(sourceFile)) {
+    // One import step (sexpr_to_table.py): destination folder and source files, from its first line.
+    const header = /<!-- import: folder="([^"]*)" files="([^"]*)" -->/.exec(readFileSync(sourceFile, "utf8"));
+    return header ? { kind: "import", package: header[1], files: header[2], source: sourcePath(sourceFile) } : null;
+  }
   const diffFile = diffFileOf(sourceFile);
   if (!existsSync(diffFile)) {
     return null;
@@ -668,7 +673,8 @@ function assetMetadata(sourceFile) {
   if (!kind) {
     return null;
   }
-  const words = (name) => name.replace(/(?<=[a-z0-9])(?=[A-Z])/g, " ");
+  // "AnimSequence" -> "Anim Sequence"; "Texture2D" and runs of capitals stay together.
+  const words = (name) => name.replace(/(?<=[a-z])(?=[A-Z])|(?<=[A-Z0-9])(?=[A-Z][a-z])/g, " ");
   if (kind === "actor-diff") {
     // An actor placed in a level: package is the level, label the actor's name in the Outliner.
     const className = /\(class "([^"]+)"\)/.exec(diff)?.[1] ?? "Actor";

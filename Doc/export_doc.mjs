@@ -43,14 +43,19 @@ function timestamp(date) {
   );
 }
 
-/** Relative paths (with forward slashes) of all SVGs below a folder, sorted. */
+/**
+ * Relative paths (with forward slashes) of all SVGs and level screenshots (PNG) below a folder,
+ * sorted, leaving out the graph/ source data.
+ */
 function svgFiles(root, folder = root) {
   const files = [];
   for (const name of readdirSync(folder)) {
     const full = path.join(folder, name);
     if (statSync(full).isDirectory()) {
-      files.push(...svgFiles(root, full));
-    } else if (name.toLowerCase().endsWith(".svg")) {
+      if (!(folder === root && name === "graph")) {
+        files.push(...svgFiles(root, full));
+      }
+    } else if (/\.(svg|png)$/i.test(name)) {
       files.push(path.relative(root, full).split(path.sep).join("/"));
     }
   }
@@ -89,6 +94,11 @@ function createBlueprintHeading(meta, shownPath) {
 }
 
 function headingFor(meta, shownPath, hasSettings) {
+  if (meta.kind === "import") {
+    const files = (meta.files ?? "").split(", ").filter(Boolean);
+    const what = files.length === 1 ? files[0] : `${files.length} files`;
+    return `Import ${what} into ${shownPath}`;
+  }
   if (meta.kind === "blueprint" && meta.new === "true" && (meta.part === "settings" || !hasSettings)) {
     return createBlueprintHeading(meta, shownPath);
   }
@@ -148,10 +158,22 @@ function paletteOptions() {
 
 function writeDoc(folder) {
   const title = `Documentation export ${path.basename(folder)}`;
-  const files = svgFiles(folder);
-  const metas = new Map(files.map((file) => [file, svgMetadata(path.join(folder, file))]));
+  const allFiles = svgFiles(folder);
+  const metas = new Map(allFiles.map((file) => [file, file.endsWith(".png") ? {} : svgMetadata(path.join(folder, file))]));
+  // Import steps come first: everything else may use what they bring in.
+  const files = [...allFiles.filter((file) => metas.get(file).kind === "import"), ...allFiles.filter((file) => metas.get(file).kind !== "import")];
   const withSettings = new Set([...metas.values()].filter((meta) => meta.part === "settings").map((meta) => meta.package));
   const sections = files.map((file, index) => {
+    if (file.endsWith(".png")) {
+      // A level screenshot (Tools > Save Level Screenshot): the geometry to rebuild by eye.
+      const levelPath = browserPath("/" + file.replace(/\.png$/i, ""));
+      return [
+        "    <section>",
+        `      <h2>${html(`Recreate the level geometry shown in ${levelPath}`)}</h2>`,
+        `      <div class="figure"><img src="${html(encodeURI(file))}" alt="${html(levelPath)}"></div>`,
+        "    </section>",
+      ].join("\n");
+    }
     const meta = metas.get(file);
     const shownPath = browserPath(meta.package || "/" + file.replace(/\.svg$/i, ""));
     const heading = headingFor(meta, shownPath, withSettings.has(meta.package));
@@ -179,7 +201,7 @@ function writeDoc(folder) {
       h2 { margin: 32px 0 12px; font-size: 17px; font-weight: normal; color: #ffffff; }
       label { font-size: 14px; }
       select { margin-left: 6px; font: inherit; }
-      .figure svg { display: block; max-width: 100%; height: auto; }
+      .figure svg, .figure img { display: block; max-width: 100%; height: auto; }
       /* Palettes from Doc/palette.json. Each SVG carries the default palette at zero specificity. */
 ${paletteCss()}
     </style>
@@ -258,8 +280,8 @@ function needsGenerating(diff) {
  */
 function build(force) {
   const diffs = diffFiles(path.join(transient, "graph", "transient"));
-  if (diffs.length === 0) {
-    console.error(`Nothing to export: ${path.relative(process.cwd(), transient)}/graph/transient has no diffs. Export some from the editor first.`);
+  if (diffs.length === 0 && !(existsSync(transient) && svgFiles(transient).some((file) => file.endsWith(".png")))) {
+    console.error(`Nothing to export: ${path.relative(process.cwd(), transient)} has no diffs or level screenshots. Export some from the editor first.`);
     process.exit(1);
   }
   const outdated = force ? diffs : diffs.filter(needsGenerating);
@@ -269,12 +291,15 @@ function build(force) {
   const python = process.env.PYTHON ?? "python";
   const isBlueprint = (file) => /^\s*\(blueprint-diff\b/.test(readFileSync(file, "utf8"));
   const blueprints = outdated.filter(isBlueprint);
-  if (blueprints.length) {
-    run(python, [path.join(docDir, "sexpr_to_mermaid.py"), ...blueprints]);
+  // In batches, so the command line stays short (Windows allows about 32,000 characters).
+  const batches = (files) => Array.from({ length: Math.ceil(files.length / 40) }, (_, i) => files.slice(i * 40, i * 40 + 40));
+  for (const batch of batches(blueprints)) {
+    run(python, [path.join(docDir, "sexpr_to_mermaid.py"), ...batch]);
   }
-  // Tables for assets and actors, and each Blueprint's class defaults and components.
-  if (outdated.length) {
-    run(python, [path.join(docDir, "sexpr_to_table.py"), ...outdated]);
+  // Tables for assets and actors, and each Blueprint's class defaults and components. Imported
+  // assets are grouped into one table per import step, which needs to see every diff.
+  for (const batch of outdated.length ? batches(outdated) : [[]]) {
+    run(python, [path.join(docDir, "sexpr_to_table.py"), ...batch, "--all-in", path.join(transient, "graph", "transient")]);
   }
   run(process.execPath, [path.join(docDir, "export_svg.mjs"), ...(force ? ["--force"] : [])]);
   writeDoc(transient);
