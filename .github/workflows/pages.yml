@@ -1,0 +1,50 @@
+# Publish the documentation exports (Doc/commits/<YYYYMMDD_HHmmss>/doc.html) on GitHub Pages.
+# Doc/build_pages.mjs copies each doc.html and the images it links, leaves out the graph/
+# source data and the work in progress, and writes an index of all exports.
+name: Documentation website
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Doc/commits/**"
+      - "Doc/build_pages.mjs"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time; a newer push replaces a queued one.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+      # Only the documentation's images, not the Unreal assets.
+      - name: Fetch documentation images from Git LFS
+        run: git lfs pull --include="Doc/commits/**"
+      - name: Build the site
+        run: node Doc/build_pages.mjs _site
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

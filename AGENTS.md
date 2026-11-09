@@ -192,6 +192,14 @@ to rebuild it themselves.
   regenerating. `--regenerate <export folder>` rewrites `doc.html` of an
   existing export and removes an outdated `doc.md` from before the switch to
   HTML.
+- Website: `.github/workflows/pages.yml` publishes the exports on GitHub
+  Pages on every push to `main` that touches `Doc/commits/` (or by hand,
+  "Run workflow"). `node Doc/build_pages.mjs [out]` builds the site: each
+  dated export's `doc.html` plus the files it links (level screenshots; SVGs
+  are embedded), no `graph/` data, no `Transient`, and an `index.html` of all
+  exports, newest first, with their section headings. The workflow fetches
+  only `Doc/commits/**` from Git LFS. The repository's Pages source must be
+  "GitHub Actions" (Settings → Pages).
 - Every exported SVG carries a `<metadata>` block with a
   `<bde:asset xmlns:bde="urn:blueprint-diff-export" .../>` element, written by
   `export_svg.mjs` from the SVG's diff: `package`, `kind` (`blueprint` or
