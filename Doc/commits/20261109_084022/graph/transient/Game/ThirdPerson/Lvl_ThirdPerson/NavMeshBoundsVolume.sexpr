@@ -1,0 +1,12 @@
+(actor-diff "/Game/ThirdPerson/Lvl_ThirdPerson"
+  (label "NavMeshBoundsVolume")
+  (class "NavMeshBoundsVolume")
+  (class-path "/Script/NavigationSystem.NavMeshBoundsVolume")
+  (package "/Game/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/3/GX/X0GM78I9ZUBC4DAZCW69BB")
+  (old none)
+  (baseline class-default)
+  (new working-copy)
+  (transform (location 90.0 -160.0 0.0) (rotation 0.0 0.0 0.0) (scale -36.523 45.703 2.5))
+  (properties
+    (changed "BrushComponent" (old "/Script/Engine.BrushComponent'/Script/NavigationSystem.Default__NavMeshBoundsVolume:BrushComponent0'") (new "BrushComponent0"))
+    (changed "BrushBuilder" (old "None") (new "/Script/UnrealEd.CubeBuilder'/Game/ThirdPerson/Lvl_ThirdPerson.Lvl_ThirdPerson:PersistentLevel.NavMeshBoundsVolume_UAID_80FA5B952CD0DE1203_2041741912.CubeBuilder_3'"))))

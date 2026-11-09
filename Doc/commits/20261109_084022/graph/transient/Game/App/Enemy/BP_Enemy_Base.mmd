@@ -1,0 +1,78 @@
+---
+config:
+  look: classic
+  themeCSS: "g.node *, g.cluster * { filter: none !important; }"
+  flowchart:
+    curve: monotoneX
+    nodeSpacing: 20
+    rankSpacing: 60
+    subGraphTitleMargin:
+      top: 4
+      bottom: 4
+---
+flowchart LR
+
+    subgraph N_EventGraph_K2Node_Event_0["◆ Event BeginPlay"]
+    end
+    subgraph N_EventGraph_K2Node_CustomEvent_0["◆ CustomEvent"]
+    end
+    subgraph N_EventGraph_K2Node_CallFunction_2["Get Player Character"]
+    end
+    subgraph N_EventGraph_K2Node_Self_0["Self"]
+    end
+    subgraph N_EventGraph_K2Node_CallFunction_1["Set Timer by Event"]
+        N_EventGraph_K2Node_CallFunction_1_anchor_in[" "]
+        N_EventGraph_K2Node_CallFunction_1_anchor_out[" "]
+        N_EventGraph_K2Node_CallFunction_1_Delegate["<span style='display:inline-block;min-width:150px;text-align:left'>● Connect to Event CustomEvent</span>"]
+        N_EventGraph_K2Node_CallFunction_1_Time["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>0.5</span> Time</span>"]
+        N_EventGraph_K2Node_CallFunction_1_bLooping["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>true</span> Looping</span>"]
+        N_EventGraph_K2Node_CallFunction_1_InitialStartDelayVariance["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>0.2</span> Initial Start Delay Variance</span>"]
+    end
+    subgraph N_EventGraph_K2Node_AIMoveTo_0["AI MoveTo"]
+        N_EventGraph_K2Node_AIMoveTo_0_anchor_in[" "]
+        N_EventGraph_K2Node_AIMoveTo_0_anchor_out[" "]
+        N_EventGraph_K2Node_AIMoveTo_0_Pawn["<span style='display:inline-block;min-width:150px;text-align:left'>● Pawn</span>"]
+        N_EventGraph_K2Node_AIMoveTo_0_TargetActor["<span style='display:inline-block;min-width:150px;text-align:left'>● Target Actor</span>"]
+        N_EventGraph_K2Node_AIMoveTo_0_AcceptanceRadius["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>50</span> Acceptance Radius</span>"]
+    end
+
+    %% Wires
+    N_EventGraph_K2Node_Event_0 ==> N_EventGraph_K2Node_CallFunction_1_anchor_in
+    N_EventGraph_K2Node_CustomEvent_0 ==> N_EventGraph_K2Node_AIMoveTo_0_anchor_in
+    N_EventGraph_K2Node_CallFunction_2 --> N_EventGraph_K2Node_AIMoveTo_0_TargetActor
+    N_EventGraph_K2Node_Self_0 --> N_EventGraph_K2Node_AIMoveTo_0_Pawn
+
+    %% Keep inputs left of outputs inside each node
+    N_EventGraph_K2Node_CallFunction_1_Delegate ~~~ N_EventGraph_K2Node_CallFunction_1_anchor_out
+    N_EventGraph_K2Node_CallFunction_1_Time ~~~ N_EventGraph_K2Node_CallFunction_1_anchor_out
+    N_EventGraph_K2Node_CallFunction_1_bLooping ~~~ N_EventGraph_K2Node_CallFunction_1_anchor_out
+    N_EventGraph_K2Node_CallFunction_1_InitialStartDelayVariance ~~~ N_EventGraph_K2Node_CallFunction_1_anchor_out
+    N_EventGraph_K2Node_CallFunction_1_anchor_in ~~~ N_EventGraph_K2Node_CallFunction_1_anchor_out
+    N_EventGraph_K2Node_AIMoveTo_0_Pawn ~~~ N_EventGraph_K2Node_AIMoveTo_0_anchor_out
+    N_EventGraph_K2Node_AIMoveTo_0_TargetActor ~~~ N_EventGraph_K2Node_AIMoveTo_0_anchor_out
+    N_EventGraph_K2Node_AIMoveTo_0_AcceptanceRadius ~~~ N_EventGraph_K2Node_AIMoveTo_0_anchor_out
+    N_EventGraph_K2Node_AIMoveTo_0_anchor_in ~~~ N_EventGraph_K2Node_AIMoveTo_0_anchor_out
+
+    %% Nodes
+    style N_EventGraph_K2Node_Event_0 fill:#151515,stroke:#b3261e,stroke-width:3px,color:#f2f2f2
+    style N_EventGraph_K2Node_CustomEvent_0 fill:#151515,stroke:#b3261e,stroke-width:3px,color:#f2f2f2
+    style N_EventGraph_K2Node_CallFunction_2 fill:#151515,stroke:#00aaf5,stroke-width:2px,color:#00aaf5,rx:16px,ry:16px
+    style N_EventGraph_K2Node_Self_0 fill:#151515,stroke:#00aaf5,stroke-width:2px,color:#00aaf5,rx:16px,ry:16px
+    style N_EventGraph_K2Node_CallFunction_1 fill:#151515,stroke:#456980,stroke-width:2px,color:#f2f2f2
+    style N_EventGraph_K2Node_AIMoveTo_0 fill:#151515,stroke:#456980,stroke-width:2px,color:#f2f2f2
+
+    %% Pins
+    classDef pin_anchor fill:#151515,stroke:#151515,color:#151515
+    classDef pin_boolean fill:#151515,stroke:#151515,color:#950000
+    classDef pin_delegate fill:#151515,stroke:#151515,color:#ff3838
+    classDef pin_float fill:#151515,stroke:#151515,color:#38d500
+    classDef pin_object fill:#151515,stroke:#151515,color:#00aaf5
+    class N_EventGraph_K2Node_CallFunction_1_anchor_in,N_EventGraph_K2Node_CallFunction_1_anchor_out,N_EventGraph_K2Node_AIMoveTo_0_anchor_in,N_EventGraph_K2Node_AIMoveTo_0_anchor_out pin_anchor
+    class N_EventGraph_K2Node_CallFunction_1_bLooping pin_boolean
+    class N_EventGraph_K2Node_CallFunction_1_Delegate pin_delegate
+    class N_EventGraph_K2Node_CallFunction_1_Time,N_EventGraph_K2Node_CallFunction_1_InitialStartDelayVariance,N_EventGraph_K2Node_AIMoveTo_0_AcceptanceRadius pin_float
+    class N_EventGraph_K2Node_AIMoveTo_0_Pawn,N_EventGraph_K2Node_AIMoveTo_0_TargetActor pin_object
+
+    %% Wire colours (dimmed and dashed between two nodes that aren't part of the change)
+    linkStyle 0,1 stroke:#ffffff,stroke-width:3px
+    linkStyle 2,3 stroke:#00aaf5,stroke-width:2px

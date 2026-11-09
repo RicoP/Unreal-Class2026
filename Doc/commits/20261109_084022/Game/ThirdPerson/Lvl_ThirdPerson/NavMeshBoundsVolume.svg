@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="468" height="92" viewBox="-1 -1 468 92">
+  <metadata>
+    <bde:asset xmlns:bde="urn:blueprint-diff-export" package="/Game/ThirdPerson/Lvl_ThirdPerson" kind="actor" class="NavMeshBoundsVolume" type="Nav Mesh Bounds Volume" label="NavMeshBoundsVolume" new="true" revision="none" actor-package="/Game/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/3/GX/X0GM78I9ZUBC4DAZCW69BB" source="graph/transient/Game/ThirdPerson/Lvl_ThirdPerson/NavMeshBoundsVolume.sexpr"/>
+  </metadata>
+  <style>
+    :where(svg){--node-body:#151515;--text:#f2f2f2;--text-muted:#999999;--border-event:#b3261e;--border-setter:#2b5d8f;--border-neutral:#3a3a3a;--border-function:#8a8a8a;--border-call:#456980;--border-context:#555555;--table-header:#262626;--table-stripe:#1c1c1c;--pin-exec:#ffffff;--pin-boolean:#950000;--pin-byte:#006f65;--pin-integer:#1fe3af;--pin-integer64:#ace3af;--pin-float:#38d500;--pin-name:#cd82ff;--pin-string:#ff00d4;--pin-text:#e77caa;--pin-vector:#ffca23;--pin-rotator:#a0b4ff;--pin-transform:#ff7300;--pin-object:#00aaf5;--pin-delegate:#ff3838;--pin-other:#777777;--text-dim:color-mix(in srgb, var(--text) 45%, var(--node-body));--border-event-dim:color-mix(in srgb, var(--border-event) 45%, var(--node-body));--border-setter-dim:color-mix(in srgb, var(--border-setter) 45%, var(--node-body));--border-function-dim:color-mix(in srgb, var(--border-function) 45%, var(--node-body));--border-call-dim:color-mix(in srgb, var(--border-call) 45%, var(--node-body));--pin-exec-dim:color-mix(in srgb, var(--pin-exec) 45%, var(--node-body));--pin-boolean-dim:color-mix(in srgb, var(--pin-boolean) 45%, var(--node-body));--pin-byte-dim:color-mix(in srgb, var(--pin-byte) 45%, var(--node-body));--pin-integer-dim:color-mix(in srgb, var(--pin-integer) 45%, var(--node-body));--pin-integer64-dim:color-mix(in srgb, var(--pin-integer64) 45%, var(--node-body));--pin-float-dim:color-mix(in srgb, var(--pin-float) 45%, var(--node-body));--pin-name-dim:color-mix(in srgb, var(--pin-name) 45%, var(--node-body));--pin-string-dim:color-mix(in srgb, var(--pin-string) 45%, var(--node-body));--pin-text-dim:color-mix(in srgb, var(--pin-text) 45%, var(--node-body));--pin-vector-dim:color-mix(in srgb, var(--pin-vector) 45%, var(--node-body));--pin-rotator-dim:color-mix(in srgb, var(--pin-rotator) 45%, var(--node-body));--pin-transform-dim:color-mix(in srgb, var(--pin-transform) 45%, var(--node-body));--pin-object-dim:color-mix(in srgb, var(--pin-object) 45%, var(--node-body));--pin-delegate-dim:color-mix(in srgb, var(--pin-delegate) 45%, var(--node-body));--pin-other-dim:color-mix(in srgb, var(--pin-other) 45%, var(--node-body));}
+  </style>
+  <style>
+    text{font-family:trebuchet ms, verdana, arial, sans-serif;font-size:14px;dominant-baseline:central}
+  </style>
+  <rect x="0" y="0" width="466" height="90" rx="6" style="fill:var(--node-body);stroke:var(--border-neutral);stroke-width:2"/>
+  <text x="12" y="17" style="fill:var(--text)" font-weight="bold">NavMeshBoundsVolume (Nav Mesh Bounds Volume)</text>
+  <rect x="1" y="34" width="464" height="28" style="fill:var(--table-header)"/>
+  <line x1="0" y1="34" x2="466" y2="34" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="48" style="fill:var(--text)" font-weight="bold">Setting</text>
+  <line x1="126" y1="34" x2="126" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="138" y="48" style="fill:var(--text)" font-weight="bold">Value</text>
+  <rect x="1" y="62" width="464" height="28" style="fill:var(--node-body)"/>
+  <line x1="0" y1="62" x2="466" y2="62" style="stroke:var(--border-neutral)"/>
+  <text x="12" y="76" style="fill:var(--text)">Location / Scale</text>
+  <line x1="126" y1="62" x2="126" y2="90" style="stroke:var(--border-neutral)"/>
+  <text x="138" y="76" style="fill:var(--text)">Such that in contains the walkable level geometry</text>
+</svg>
