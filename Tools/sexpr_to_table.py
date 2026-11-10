@@ -338,6 +338,12 @@ IMPORT_PRESET = {
     "MaterialPipeline SparseVolumeTexturePipeline bImportAnimatedSparseVolumeTextures": "False",
 }
 
+# Pipeline bookkeeping Interchange sometimes saves with the options: per-import objects
+# (InterchangeResultsContainer_47, ...) and editor state, not choices in the import dialog.
+# Left in, they make every file look imported with different options.
+IMPORT_BOOKKEEPING = ("Results", "CacheContextParam ContextType", "CacheContextParam BaseNodeContainer",
+                      "BaseNodeContainer", "bAllowPropertyStatesEdition")
+
 # Folders an import with "Asset Type Sub Folders" creates below the folder imported into.
 TYPE_SUBFOLDERS = {"SkeletalMeshes", "StaticMeshes", "Materials", "Textures", "Animations", "Skeletons", "PhysicsAssets"}
 
@@ -349,6 +355,8 @@ def import_options(diff):
     options = {}
     for entry in (first(diff, "import-options") or ["import-options"])[1:]:
         name, value = entry[1], entry[2]
+        if any(name == b or name.endswith(" " + b) for b in IMPORT_BOOKKEEPING):
+            continue
         if IMPORT_PRESET.get(name) != value:
             options.setdefault(name, value)
     return tuple(options.items())

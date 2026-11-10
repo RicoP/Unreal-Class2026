@@ -7,12 +7,15 @@
 // in Doc/commits/Transient. The editor plugin writes diffs to Transient/graph/transient (and
 // full versions to Transient/graph/reference). Without options, this script writes a diagram
 // (.mmd, sexpr_to_mermaid.py) or table (.md, sexpr_to_table.py) next to every diff, renders
-// them all to SVG (export_svg.mjs), and writes Transient/doc.html, which embeds every SVG
-// inline (IDs prefixed per SVG so their styles don't clash) and offers the colour palettes
-// from Tools/palette.json.
+// the diagrams to SVG (export_svg.mjs), and writes Transient/doc.html, which embeds every SVG
+// inline (IDs prefixed per SVG so their styles don't clash), shows every table as an HTML
+// table, and offers the colour palettes from Tools/palette.json. Steps finished before tables
+// became HTML have table SVGs instead; those are still shown.
 // Every run also writes the website's shared files: Doc/index.html (the finished steps as
 // Step 1, Step 2, ...), Doc/doc.js (copied from Tools/doc.js: palette switch and step
-// navigation, loaded by every doc.html as ../../doc.js) and Doc/steps.json (the step order).
+// navigation, loaded by every doc.html as ../../doc.js), Doc/doc.css (Tools/doc.css plus the
+// palettes; the stylesheet of index.html and every new doc.html) and Doc/steps.json (the
+// step order).
 // Only what is out of date is regenerated (by file timestamps), so diagrams and tables edited
 // by hand survive until their diff is exported again; --force regenerates everything.
 // --finish renames Transient to Doc/commits/<YYYYMMDD_HHmmss>, ready to commit; the next
@@ -24,7 +27,8 @@
 //
 // New assets get the heading "Create <asset type> at <package path>" instead of just the
 // package path. Whether an asset is new, and its type, come from the <metadata> block that
-// export_svg.mjs writes into each SVG, so every export folder describes itself.
+// export_svg.mjs writes into each SVG, and for tables from their diff in graph/transient
+// (assetMetadata in doc_sources.mjs, the same facts), so every export folder describes itself.
 //
 // Pass --commits <dir> to use another commits folder (for testing), or
 // --regenerate <export folder> to rewrite doc.html of an existing export without rebuilding.
@@ -33,6 +37,7 @@ import { spawnSync } from "node:child_process";
 import { copyFileSync, existsSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { assetMetadata, parseTable } from "./doc_sources.mjs";
 
 const toolsDir = path.dirname(fileURLToPath(import.meta.url));
 const argIndex = process.argv.indexOf("--commits");
@@ -66,6 +71,26 @@ function svgFiles(root, folder = root) {
     }
   }
   return files.sort();
+}
+
+/**
+ * The tables (.md) in a folder's graph/transient, as a map from the path their SVG had before
+ * tables became HTML (Game/X.settings.svg for graph/transient/Game/X.settings.md) to the table
+ * file, so they sort among the SVGs as before.
+ */
+function tableFiles(folder) {
+  const graphRoot = path.join(folder, "graph", "transient");
+  const below = (dir) =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+      const full = path.join(dir, entry.name);
+      return entry.isDirectory() ? below(full) : entry.name.toLowerCase().endsWith(".md") ? [full] : [];
+    });
+  return new Map(
+    (existsSync(graphRoot) ? below(graphRoot) : []).map((file) => [
+      path.relative(graphRoot, file).split(path.sep).join("/").replace(/\.md$/i, ".svg"),
+      file,
+    ]),
+  );
 }
 
 /** Attributes of the <bde:asset> metadata element in an SVG, or {} if it has none. */
@@ -142,17 +167,45 @@ function uniqueIds(svg, prefix) {
   return result;
 }
 
-/** CSS that applies a palette when doc.html's <body data-palette="..."> selects it. */
+/**
+ * CSS that applies a palette when doc.html's <body data-palette="..."> selects it: to the page
+ * (HTML tables) and to each SVG, which carries the default palette at zero specificity.
+ * Other palettes only list the colours they change, so they start from the default one.
+ */
 function paletteCss() {
   const palettes = JSON.parse(readFileSync(path.join(toolsDir, "palette.json"), "utf8")).palettes;
   return Object.entries(palettes)
     .map(([name, palette]) => {
-      const variables = Object.entries(palette.colors)
+      const colors = name === "default" ? palette.colors : { ...palettes.default.colors, ...palette.colors };
+      const variables = Object.entries(colors)
         .map(([key, value]) => `--${key}: ${value};`)
         .join(" ");
-      return `      body[data-palette="${name}"] svg { ${variables} }`;
+      return `body[data-palette="${name}"], body[data-palette="${name}"] svg { ${variables} }`;
     })
     .join("\n");
+}
+
+/** A table cell's text as HTML: `code` spans as <code>. */
+function cellHtml(text) {
+  return html(text).replace(/`([^`]+)`/g, "<code>$1</code>");
+}
+
+/** A table written by sexpr_to_table.py as an HTML table; its first row is the header. */
+function tableHtml({ title, rows }) {
+  const [header, ...body] = rows;
+  const cells = (row, tag) =>
+    row.map((value) => (value === "—" ? `<${tag} class="none">—</${tag}>` : `<${tag}>${cellHtml(value)}</${tag}>`)).join("");
+  return [
+    `      <div class="table">`,
+    "        <table>",
+    ...(title ? [`          <caption>${cellHtml(title)}</caption>`] : []),
+    `          <thead><tr>${cells(header, "th")}</tr></thead>`,
+    "          <tbody>",
+    ...body.map((row) => `            <tr>${cells(row, "td")}</tr>`),
+    "          </tbody>",
+    "        </table>",
+    "      </div>",
+  ].join("\n");
 }
 
 function paletteOptions() {
@@ -164,8 +217,19 @@ function paletteOptions() {
 
 function writeDoc(folder) {
   const title = `Documentation export ${path.basename(folder)}`;
-  const allFiles = svgFiles(folder);
-  const metas = new Map(allFiles.map((file) => [file, file.endsWith(".png") ? {} : svgMetadata(path.join(folder, file))]));
+  const images = svgFiles(folder);
+  // Tables are shown as HTML, unless the step is older and has the table as SVG already.
+  const tables = new Map(
+    [...tableFiles(folder)].filter(([file, md]) => !images.includes(file) && parseTable(readFileSync(md, "utf8")).rows.length >= 2),
+  );
+  const allFiles = [...images, ...tables.keys()].sort();
+  const metaOf = (file) => {
+    if (tables.has(file)) {
+      return assetMetadata(tables.get(file), folder) ?? {};
+    }
+    return file.endsWith(".png") ? {} : svgMetadata(path.join(folder, file));
+  };
+  const metas = new Map(allFiles.map((file) => [file, metaOf(file)]));
   // Import steps come first: everything else may use what they bring in.
   const files = [...allFiles.filter((file) => metas.get(file).kind === "import"), ...allFiles.filter((file) => metas.get(file).kind !== "import")];
   const withSettings = new Set([...metas.values()].filter((meta) => meta.part === "settings").map((meta) => meta.package));
@@ -183,6 +247,9 @@ function writeDoc(folder) {
     const meta = metas.get(file);
     const shownPath = browserPath(meta.package || "/" + file.replace(/\.svg$/i, ""));
     const heading = headingFor(meta, shownPath, withSettings.has(meta.package));
+    if (tables.has(file)) {
+      return ["    <section>", `      <h2>${html(heading)}</h2>`, tableHtml(parseTable(readFileSync(tables.get(file), "utf8"))), "    </section>"].join("\n");
+    }
     const svg = uniqueIds(readFileSync(path.join(folder, file), "utf8").replace(/<\?xml[^>]*\?>\s*/, ""), `s${index + 1}`);
     return [
       "    <section>",
@@ -200,19 +267,10 @@ function writeDoc(folder) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>${html(title)}</title>
-    <style>
-      body { margin: 0; padding: 24px; background: #2b2b2b; color: #e6e6e6;
-             font-family: "trebuchet ms", verdana, arial, sans-serif; }
-      header { display: flex; justify-content: flex-end; }
-      h2 { margin: 32px 0 12px; font-size: 17px; font-weight: normal; color: #ffffff; }
-      label { font-size: 14px; }
-      select { margin-left: 6px; font: inherit; }
-      .figure svg, .figure img { display: block; max-width: 100%; height: auto; }
-      /* Palettes from Tools/palette.json. Each SVG carries the default palette at zero specificity. */
-${paletteCss()}
-    </style>
+    <!-- Shared stylesheet with the palettes: Doc/doc.css (from Tools/doc.css) -->
+    <link rel="stylesheet" href="../../doc.css">
   </head>
-  <body data-palette="default">
+  <body class="step" data-palette="default">
     <header>
       <label>Colours <select id="palette">${paletteOptions()}</select></label>
     </header>
@@ -302,12 +360,19 @@ function build(force) {
 /**
  * Write the website's shared files into the site root (Doc/): index.html listing the finished
  * steps in order as Step 1, Step 2, ... with their section headings (the dated folder names
- * only give the order), doc.js (Tools/doc.js) and steps.json (the step folders in order).
+ * only give the order), doc.js (Tools/doc.js), doc.css (Tools/doc.css plus the palettes) and
+ * steps.json (the step folders in order).
+ * While Transient has a doc.html, it is the last step, marked as work in progress, so its layout
+ * can be checked with the rest of the website. The published website leaves it out: the Pages
+ * workflow runs --site again on the steps it publishes.
  */
 function writeSite() {
   const steps = readdirSync(commitsDir)
     .filter((name) => /^\d{8}_\d{6}$/.test(name) && existsSync(path.join(commitsDir, name, "doc.html")))
     .sort();
+  if (existsSync(path.join(transient, "doc.html"))) {
+    steps.push(path.basename(transient));
+  }
   const unescape = (text) =>
     text.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&amp;/g, "&");
   const entries = steps.map((folder, index) => {
@@ -315,9 +380,10 @@ function writeSite() {
     const items = [...page.matchAll(/<h2>([\s\S]*?)<\/h2>/g)]
       .map((m) => `          <li>${html(unescape(m[1].trim()))}</li>`)
       .join("\n");
+    const wip = folder === path.basename(transient) ? " (work in progress)" : "";
     return [
       "      <article>",
-      `        <h2><a href="commits/${folder}/doc.html">Step ${index + 1}</a></h2>`,
+      `        <h2><a href="commits/${folder}/doc.html">Step ${index + 1}</a>${wip}</h2>`,
       `        <ul>\n${items}\n        </ul>`,
       "      </article>",
     ].join("\n");
@@ -328,17 +394,9 @@ function writeSite() {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Unreal Class 2026</title>
-    <style>
-      body { margin: 0; padding: 24px 16px; background: #2b2b2b; color: #e6e6e6;
-             font-family: "trebuchet ms", verdana, arial, sans-serif; }
-      main { max-width: 900px; margin: 0 auto; }
-      h1 { margin: 0 0 24px; font-size: 24px; color: #ffffff; }
-      h2 { margin: 24px 0 8px; font-size: 18px; font-weight: normal; }
-      a { color: #7cc4ff; }
-      ul { margin: 0; padding-left: 20px; color: #bdbdbd; font-size: 14px; line-height: 1.6; }
-    </style>
+    <link rel="stylesheet" href="doc.css">
   </head>
-  <body>
+  <body class="index">
     <main>
       <h1>Unreal Class 2026</h1>
 ${entries.join("\n")}
@@ -348,8 +406,14 @@ ${entries.join("\n")}
 `;
   writeFileSync(path.join(siteDir, "index.html"), index, "utf8");
   copyFileSync(path.join(toolsDir, "doc.js"), path.join(siteDir, "doc.js"));
+  const css = readFileSync(path.join(toolsDir, "doc.css"), "utf8").trimEnd();
+  writeFileSync(
+    path.join(siteDir, "doc.css"),
+    `${css}\n\n/* Palettes from Tools/palette.json, written by Tools/export_doc.mjs. */\n${paletteCss()}\n`,
+    "utf8",
+  );
   writeFileSync(path.join(siteDir, "steps.json"), JSON.stringify(steps, null, 2) + "\n", "utf8");
-  console.log(`Wrote ${path.relative(process.cwd(), siteDir)}: index.html, doc.js, steps.json (${steps.length} steps)`);
+  console.log(`Wrote ${path.relative(process.cwd(), siteDir)}: index.html, doc.js, doc.css, steps.json (${steps.length} steps)`);
 }
 
 /** Rename Transient to Doc/commits/<YYYYMMDD_HHmmss>, ready to commit. */
@@ -374,7 +438,7 @@ if (regenerateIndex > 0) {
 } else if (process.argv.includes("--finish")) {
   finish();
 } else if (process.argv.includes("--site")) {
-  // Only the website's shared files (index.html, doc.js, steps.json).
+  // Only the website's shared files (index.html, doc.js, doc.css, steps.json).
 } else {
   build(process.argv.includes("--force"));
 }

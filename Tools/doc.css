@@ -1,0 +1,62 @@
+/* Shared stylesheet of the documentation website. Tools/export_doc.mjs copies it to Doc/doc.css
+   and appends the colour palettes from Tools/palette.json (CSS variables such as --text, set on
+   <body data-palette="...">). Loaded by Doc/index.html (body.index) and every
+   Doc/commits/<step>/doc.html (body.step) as ../../doc.css. */
+
+body {
+  margin: 0;
+  background: #2b2b2b;
+  color: #e6e6e6;
+  font-family: "trebuchet ms", verdana, arial, sans-serif;
+}
+
+/* Website index: the finished steps. */
+
+body.index { padding: 24px 16px; }
+.index main { max-width: 900px; margin: 0 auto; }
+.index h1 { margin: 0 0 24px; font-size: 24px; color: #ffffff; }
+.index h2 { margin: 24px 0 8px; font-size: 18px; font-weight: normal; }
+.index a { color: #7cc4ff; }
+.index ul { margin: 0; padding-left: 20px; color: #bdbdbd; font-size: 14px; line-height: 1.6; }
+
+/* One step: a section per diagram, table or level screenshot. */
+
+body.step { padding: 24px 16px; }
+.step header { display: flex; justify-content: flex-end; }
+.step h2 { margin: 32px 0 12px; font-size: 17px; font-weight: normal; color: #ffffff; }
+.step label { font-size: 14px; }
+.step select { margin-left: 6px; font: inherit; }
+.figure svg, .figure img { display: block; max-width: 100%; height: auto; }
+
+/* Tables (sexpr_to_table.py), drawn like the diagrams: node body, neutral grid, striped rows.
+   Wide tables scroll inside their box instead of widening the page. */
+
+.table {
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  box-sizing: border-box;
+  border: 2px solid var(--border-neutral);
+  border-radius: 6px;
+  background: var(--node-body);
+}
+.table table { border-collapse: collapse; font-size: 14px; color: var(--text); }
+.table caption { padding: 8px 12px; text-align: left; font-weight: bold; color: var(--text); }
+.table th, .table td {
+  padding: 5px 12px;
+  border-top: 1px solid var(--border-neutral);
+  text-align: left;
+  vertical-align: top;
+}
+.table th + th, .table td + td { border-left: 1px solid var(--border-neutral); }
+.table th { background: var(--table-header); font-weight: bold; }
+.table tbody tr:nth-child(even) { background: var(--table-stripe); }
+/* Setting names stay on one line; long values (collision response lists) wrap, but never so
+   narrow that a value breaks into single words. On a phone, names wrap too. */
+.table td:first-child { white-space: nowrap; }
+.table td:not(:first-child) { min-width: 16ch; max-width: 60ch; overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .table td:first-child { white-space: normal; min-width: 12ch; }
+}
+.table .none { color: var(--text-muted); }
+.table code { font-family: consolas, "courier new", monospace; font-size: 13px; }

@@ -1,15 +1,14 @@
-// Render every Mermaid diagram (.mmd) and settings table (.md) of the documentation being
-// worked on, in Doc/commits/Transient/graph/transient/, to SVG.
+// Render every Mermaid diagram (.mmd) of the documentation being worked on, in
+// Doc/commits/Transient/graph/transient/, to SVG. Tables (.md) aren't rendered: export_doc.mjs
+// writes them into doc.html as HTML tables.
 //
 //   node Tools/export_svg.mjs        (or: npm run export-svg, inside Tools/)
 //
 // Output goes to Doc/commits/Transient/<package path>.svg. An SVG newer than its source, its
-// diff, this script and palette.json is skipped (--force renders all), and SVGs whose source
-// is gone are removed. e.g.
+// diff, this script, doc_sources.mjs and palette.json is skipped (--force renders all), and
+// SVGs whose source is gone are removed (also the table SVGs of earlier versions). e.g.
 //   Doc/commits/Transient/graph/transient/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.mmd
 //   -> Doc/commits/Transient/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.svg
-//   Doc/commits/Transient/graph/transient/Game/Input/Actions/IA_Zoom.md
-//   -> Doc/commits/Transient/Game/Input/Actions/IA_Zoom.svg
 // With file arguments, renders exactly those files, each SVG next to its source.
 //
 // Needs `npm install` in Tools/ once. Rendering uses the Chrome set in Tools/puppeteer.json.
@@ -19,6 +18,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, wri
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import puppeteer from "puppeteer";
+import { assetMetadata, diffFileOf } from "./doc_sources.mjs";
 
 // Colours live in Tools/palette.json. Exported SVGs refer to them as CSS variables
 // (var(--pin-float)) and carry the default palette, so a page can switch palettes.
@@ -56,18 +56,6 @@ for (const [name, value] of Object.entries(defaultColours)) {
 for (const name of dimConfig.colors) {
   nameColour(`${name}-dim`, dimmed(defaultColours[name]));
 }
-
-const TABLE = {
-  font: "trebuchet ms, verdana, arial, sans-serif",
-  fontSize: 14,
-  body: "var(--node-body)",
-  stripe: "var(--table-stripe)",
-  header: "var(--table-header)",
-  border: "var(--border-neutral)",
-  text: "var(--text)",
-  muted: "var(--text-muted)",
-  title: "var(--text)",
-};
 
 /** Replace default palette colours (hex or rgb()) in a rendered SVG with their CSS variables. */
 function useColourVariables(svg) {
@@ -469,101 +457,21 @@ function filesBelow(folder) {
   });
 }
 
-/** Paths (relative to the repo) of every diagram and table in Transient/graph/transient. */
+/** Paths (relative to the repo) of every diagram in Transient/graph/transient. */
 function transientSources() {
   return filesBelow(graphRoot)
-    .filter((file) => /\.(mmd|md)$/i.test(file))
+    .filter((file) => /\.mmd$/i.test(file))
     .map((file) => path.relative(repoRoot, file).split(path.sep).join("/"))
     .sort();
 }
 
 /** Transient/graph/transient/Game/X.mmd -> Game/X.svg */
 function packageRelativeSvg(file) {
-  return path.relative(graphRoot, path.join(repoRoot, file)).replace(/\.(mmd|md)$/i, ".svg");
-}
-
-/** Title and rows of a table written by sexpr_to_table.py. */
-function parseTable(markdown) {
-  const lines = markdown.split(/\r?\n/);
-  const title = (lines.find((line) => line.startsWith("### ")) ?? "").slice(4).trim();
-  const rows = lines
-    .filter((line) => line.startsWith("|") && !/^\|[\s|:-]+\|$/.test(line))
-    .map((line) =>
-      line
-        .split(/(?<!\\)\|/)
-        .slice(1, -1)
-        .map((value) => value.trim().replace(/\\\|/g, "|").replace(/`/g, "")),
-    );
-  return { title, rows };
+  return path.relative(graphRoot, path.join(repoRoot, file)).replace(/\.mmd$/i, ".svg");
 }
 
 function xml(text) {
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
-
-/** Draw a table as SVG; text widths are measured in the browser so columns fit. */
-async function tableSvg(page, { title, rows }) {
-  const font = `${TABLE.fontSize}px ${TABLE.font}`;
-  const boldFont = `bold ${font}`;
-  const texts = rows.flatMap((row, index) => row.map((value) => [value, index === 0]));
-  const widths = await page.evaluate(
-    (items, plain, bold, heading) => {
-      const context = document.createElement("canvas").getContext("2d");
-      const measure = (text, f) => {
-        context.font = f;
-        return context.measureText(text).width;
-      };
-      return { cells: items.map(([text, isHeader]) => measure(text, isHeader ? bold : plain)), title: measure(heading, bold) };
-    },
-    texts,
-    font,
-    boldFont,
-    title,
-  );
-
-  const padX = 12;
-  const rowHeight = 28;
-  const titleHeight = title ? 34 : 0;
-  const columns = Math.max(...rows.map((row) => row.length));
-  const columnWidths = Array(columns).fill(0);
-  let index = 0;
-  for (const row of rows) {
-    row.forEach((_, column) => {
-      columnWidths[column] = Math.max(columnWidths[column], Math.ceil(widths.cells[index++]) + 2 * padX);
-    });
-  }
-  const tableWidth = columnWidths.reduce((a, b) => a + b, 0);
-  const width = Math.max(tableWidth, Math.ceil(widths.title) + 2 * padX);
-  columnWidths[columns - 1] += width - tableWidth;
-  const height = titleHeight + rows.length * rowHeight;
-
-  const parts = [
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${width + 2}" height="${height + 2}" viewBox="-1 -1 ${width + 2} ${height + 2}">`,
-    `<style>text{font-family:${TABLE.font};font-size:${TABLE.fontSize}px;dominant-baseline:central}</style>`,
-    // Colours go in style attributes: presentation attributes like fill="" don't accept var().
-    `<rect x="0" y="0" width="${width}" height="${height}" rx="6" style="fill:${TABLE.body};stroke:${TABLE.border};stroke-width:2"/>`,
-  ];
-  if (title) {
-    parts.push(`<text x="${padX}" y="${titleHeight / 2}" style="fill:${TABLE.title}" font-weight="bold">${xml(title)}</text>`);
-  }
-  rows.forEach((row, rowIndex) => {
-    const top = titleHeight + rowIndex * rowHeight;
-    const fill = rowIndex === 0 ? TABLE.header : rowIndex % 2 === 0 ? TABLE.stripe : TABLE.body;
-    parts.push(`<rect x="1" y="${top}" width="${width - 2}" height="${rowHeight}" style="fill:${fill}"/>`);
-    parts.push(`<line x1="0" y1="${top}" x2="${width}" y2="${top}" style="stroke:${TABLE.border}"/>`);
-    let left = 0;
-    row.forEach((value, column) => {
-      const colour = value === "—" ? TABLE.muted : TABLE.text;
-      const weight = rowIndex === 0 ? ` font-weight="bold"` : "";
-      parts.push(`<text x="${left + padX}" y="${top + rowHeight / 2}" style="fill:${colour}"${weight}>${xml(value)}</text>`);
-      left += columnWidths[column];
-      if (column < columns - 1) {
-        parts.push(`<line x1="${left}" y1="${top}" x2="${left}" y2="${top + rowHeight}" style="stroke:${TABLE.border}"/>`);
-      }
-    });
-  });
-  parts.push("</svg>");
-  return parts.join("\n") + "\n";
 }
 
 /**
@@ -638,84 +546,7 @@ function colourArrowheads(svg) {
 // Namespace of the metadata written into each SVG; export_doc.mjs reads it.
 const METADATA_NS = "urn:blueprint-diff-export";
 
-/**
- * Where a diff lives, relative to its export folder (graph/transient/Game/X.sexpr), so the
- * path stays right when Transient is renamed to a dated folder. Outside an export folder:
- * relative to the repo.
- */
-function sourcePath(diffFile) {
-  const parts = path.resolve(diffFile).split(path.sep);
-  const graph = parts.lastIndexOf("graph");
-  const relative = graph > 0 ? parts.slice(graph) : path.relative(repoRoot, diffFile).split(path.sep);
-  return relative.join("/");
-}
-
-/**
- * Facts about the asset an SVG shows, taken from the diff (.sexpr) next to its source file:
- * package path, kind, class, display type, whether it's new, and the compared revision.
- */
-/** X.mmd, X.md and X.settings.md (a Blueprint's class defaults and components) -> X.sexpr */
-function diffFileOf(sourceFile) {
-  return sourceFile.replace(/(\.settings)?\.(mmd|md)$/i, ".sexpr");
-}
-
-function assetMetadata(sourceFile) {
-  if (/\.import\.md$/i.test(sourceFile)) {
-    // One import step (sexpr_to_table.py): destination folder and source files, from its first line.
-    const header = /<!-- import: folder="([^"]*)" files="([^"]*)" -->/.exec(readFileSync(sourceFile, "utf8"));
-    return header ? { kind: "import", package: header[1], files: header[2], source: sourcePath(sourceFile) } : null;
-  }
-  const diffFile = diffFileOf(sourceFile);
-  if (!existsSync(diffFile)) {
-    return null;
-  }
-  const diff = readFileSync(diffFile, "utf8");
-  const kind = /^\s*\((asset-diff|blueprint-diff|actor-diff)\b/.exec(diff)?.[1];
-  if (!kind) {
-    return null;
-  }
-  // "AnimSequence" -> "Anim Sequence"; "Texture2D" and runs of capitals stay together.
-  const words = (name) => name.replace(/(?<=[a-z])(?=[A-Z])|(?<=[A-Z0-9])(?=[A-Z][a-z])/g, " ");
-  if (kind === "actor-diff") {
-    // An actor placed in a level: package is the level, label the actor's name in the Outliner.
-    const className = /\(class "([^"]+)"\)/.exec(diff)?.[1] ?? "Actor";
-    const actorFields = {
-      package: /^\s*\(\S+ "([^"]+)"/.exec(diff)?.[1] ?? "",
-      kind: "actor",
-      class: className,
-      type: words(className.replace(/_C$/, "")),
-      label: /\(label "([^"]*)"\)/.exec(diff)?.[1] ?? "",
-      new: String(/^\s*\(old none\b/m.test(diff)),
-      revision: /\(old \(revision "([^"]+)"\)/.exec(diff)?.[1] ?? "none",
-      "actor-package": /\(package "([^"]*)"\)/.exec(diff)?.[1] ?? "",
-    };
-    actorFields.source = sourcePath(diffFile);
-    return actorFields;
-  }
-  const isBlueprint = kind === "blueprint-diff";
-  const className = isBlueprint ? "Blueprint" : /\(class "([^"]+)"\)/.exec(diff)?.[1] ?? "Object";
-  const fields = {
-    package: /^\s*\(\S+ "([^"]+)"/.exec(diff)?.[1] ?? "",
-    kind: isBlueprint ? "blueprint" : "asset",
-    class: className,
-    type: isBlueprint ? "Blueprint Class" : words(className),
-    new: String(/^\s*\(old none\b/m.test(diff)),
-    revision: /\(old \(revision "([^"]+)"\)/.exec(diff)?.[1] ?? "none",
-  };
-  if (isBlueprint) {
-    fields.parent = /\(parent "([^"]*)"\)/.exec(diff)?.[1] ?? "";
-    // A Blueprint can have two SVGs: its class defaults and components, and its graph.
-    fields.part = /\.settings\.md$/i.test(sourceFile) ? "settings" : "graph";
-  }
-  const deletedIn = /\(deleted-in "([^"]+)"\)/.exec(diff)?.[1];
-  if (deletedIn) {
-    fields["deleted-in"] = deletedIn;
-  }
-  fields.source = sourcePath(diffFile);
-  return fields;
-}
-
-/** Insert the asset metadata right after the opening <svg> tag. */
+/** Insert the asset metadata (assetMetadata in doc_sources.mjs) right after the opening <svg> tag. */
 function withMetadata(svg, fields) {
   if (!fields) {
     return svg;
@@ -773,10 +604,10 @@ function prettySvg(svg) {
   return lines.join("\n") + "\n";
 }
 
-// With file arguments (node Tools/export_svg.mjs a.mmd b.md), render exactly those files and
+// With file arguments (node Tools/export_svg.mjs a.mmd b.mmd), render exactly those files and
 // write each SVG next to its source. Without arguments, render everything in Transient.
-// Up-to-date SVGs (newer than their source, diff, this script and palette.json) are skipped;
-// --force renders everything again.
+// Up-to-date SVGs (newer than their source, diff, this script, doc_sources.mjs and
+// palette.json) are skipped; --force renders everything again.
 const force = process.argv.includes("--force");
 const explicitFiles = process.argv
   .slice(2)
@@ -784,11 +615,11 @@ const explicitFiles = process.argv
   .map((file) => path.relative(repoRoot, path.resolve(process.cwd(), file)).split(path.sep).join("/"));
 const sources = explicitFiles.length ? explicitFiles : transientSources();
 if (sources.length === 0) {
-  console.log(`No .mmd or .md files in ${path.relative(process.cwd(), graphRoot)}.`);
-  process.exit(0);
+  console.log(`No .mmd files in ${path.relative(process.cwd(), graphRoot)}.`);
 }
 if (!explicitFiles.length) {
-  // Remove SVGs whose diagram or table is gone, so nothing outdated stays in the doc.
+  // Remove SVGs whose diagram is gone, so nothing outdated stays in the doc. This also removes
+  // table SVGs from before tables became HTML.
   const expected = new Set(sources.map((file) => path.join(outputRoot, packageRelativeSvg(file)).toLowerCase()));
   for (const file of filesBelow(outputRoot)) {
     const isSvg = file.toLowerCase().endsWith(".svg") && !file.startsWith(path.join(outputRoot, "graph") + path.sep);
@@ -804,14 +635,18 @@ let failures = 0;
 let browser = null;
 
 const modified = (file) => (existsSync(file) ? statSync(file).mtimeMs : 0);
-// An SVG depends on its source, the diff its metadata comes from, this script and the palette.
-const toolsModified = Math.max(modified(fileURLToPath(import.meta.url)), modified(path.join(toolsDir, "palette.json")));
+// An SVG depends on its source, the diff its metadata comes from, the scripts and the palette.
+const toolsModified = Math.max(
+  modified(fileURLToPath(import.meta.url)),
+  modified(path.join(toolsDir, "doc_sources.mjs")),
+  modified(path.join(toolsDir, "palette.json")),
+);
 let upToDate = 0;
 
 /** The SVG to write for a source, or null if it's up to date (or another source claims it). */
 function claimOutput(file) {
   if (explicitFiles.length) {
-    return path.join(repoRoot, file).replace(/\.(mmd|md)$/i, ".svg");
+    return path.join(repoRoot, file).replace(/\.mmd$/i, ".svg");
   }
   const relative = packageRelativeSvg(file);
   if (written.has(relative)) {
@@ -831,21 +666,7 @@ function claimOutput(file) {
 }
 
 for (const file of sources.filter((f) => f.toLowerCase().endsWith(".md"))) {
-  const table = parseTable(readFileSync(path.join(repoRoot, file), "utf8"));
-  if (table.rows.length < 2) {
-    console.log(`${file}: no table rows, skipped`);
-    continue;
-  }
-  const output = claimOutput(file);
-  if (!output) {
-    continue;
-  }
-  browser ??= await puppeteer.launch(JSON.parse(readFileSync(puppeteerConfig, "utf8")));
-  const page = await browser.newPage();
-  const metadata = assetMetadata(path.join(repoRoot, file));
-  writeFileSync(output, prettySvg(withMetadata(withPalette(await tableSvg(page, table)), metadata)), "utf8");
-  await page.close();
-  console.log(`${file} -> ${path.relative(repoRoot, output)}`);
+  console.log(`${file}: tables aren't rendered to SVG any more (export_doc.mjs writes them as HTML), skipped`);
 }
 
 for (const file of sources.filter((f) => f.toLowerCase().endsWith(".mmd"))) {
@@ -860,7 +681,7 @@ for (const file of sources.filter((f) => f.toLowerCase().endsWith(".mmd"))) {
     { encoding: "utf8" },
   );
   if (result.status === 0) {
-    const metadata = assetMetadata(path.join(repoRoot, file));
+    const metadata = assetMetadata(path.join(repoRoot, file), repoRoot);
     browser ??= await puppeteer.launch(JSON.parse(readFileSync(puppeteerConfig, "utf8")));
     const page = await browser.newPage();
     const mmdSource = readFileSync(path.join(repoRoot, file), "utf8");

@@ -72,7 +72,8 @@ to rebuild it themselves.
   `SkeletalMeshAsset`, see `SUPERSEDED` in `sexpr_to_table.py`). In
   `doc.html` this table comes before the graph: the create heading below (or
   "<path>: Class Defaults and Components"), then "<path>: Graph".
-  SVG metadata has `part="settings"` or `part="graph"` for Blueprints.
+  Asset metadata has `part="settings"` (the table) or `part="graph"` (the
+  diagram SVG) for Blueprints.
 - The same menu entry works on other assets, such as Input Actions and Input
   Mapping Contexts. It writes an `asset-diff` of their changed properties, and
   a reference with all their non-default properties. A new asset (no committed
@@ -109,13 +110,16 @@ to rebuild it themselves.
   and what it creates. Options still at the value of Unreal's default import
   preset (`IMPORT_PRESET` in `sexpr_to_table.py`) and duplicates are left
   out, so only real changes show (Skeleton, Import Animations off, Parent
-  Material). A texture the import brought along (`colormap.png`) counts
+  Material). Interchange sometimes also saves pipeline bookkeeping (`Results`,
+  `CacheContextParam`, `BaseNodeContainer` pointing at numbered transient
+  objects, `bAllowPropertyStatesEdition`); `IMPORT_BOOKKEEPING` drops it, or
+  every file would look like its own import step. A texture the import brought along (`colormap.png`) counts
   towards that import step; the folder imported into is the one above the
   type subfolders the import creates (`SkeletalMeshes`, `Materials`,
   `Textures`, ...). Long lists read `18 in all: a, b, …, z`. Import steps come
   first in `doc.html`, before everything that may use them. Its first line is an
-  `<!-- import: folder="..." files="..." -->` comment that `export_svg.mjs`
-  turns into metadata (`kind="import"`); the heading reads "Import <file or
+  `<!-- import: folder="..." files="..." -->` comment that `assetMetadata`
+  (`Tools/doc_sources.mjs`) turns into metadata (`kind="import"`); the heading reads "Import <file or
   N files> into <folder>". `export_doc.mjs` passes the whole
   `Transient/graph/transient` folder (`--all-in`) so groups see every diff.
 - **Tools → Save Level Screenshot** (same "Documentation" section) captures
@@ -149,15 +153,19 @@ to rebuild it themselves.
   rules). Without a reference file it falls back to added nodes and their
   direct neighbours. Changes it can't draw (such as removed nodes) are printed
   on stderr.
-- `node Tools/export_svg.mjs` renders every `.mmd` and `.md` table under
+- `node Tools/export_svg.mjs` renders every `.mmd` diagram under
   `Doc/commits/Transient/graph/transient/` to
   `Doc/commits/Transient/<package path>.svg`. An SVG newer than its source,
-  its diff, `export_svg.mjs` and `palette.json` is skipped (`--force` renders
-  all), and SVGs whose source is gone are removed. With file arguments
-  (`node Tools/export_svg.mjs a.mmd b.md`) it renders exactly those files instead
-  and writes each SVG next to its source.
-  SVGs are pretty-printed. Tables are drawn as SVG in the same
-  dark style as diagrams. In every exported SVG, palette colours are CSS
+  its diff, `export_svg.mjs`, `doc_sources.mjs` and `palette.json` is skipped
+  (`--force` renders all), and SVGs whose source is gone are removed. With file
+  arguments (`node Tools/export_svg.mjs a.mmd b.mmd`) it renders exactly those
+  files instead and writes each SVG next to its source.
+  Tables (`.md`) aren't rendered to SVG: `export_doc.mjs` writes them into
+  `doc.html` as HTML tables, styled by `doc.css` in the same dark look as the
+  diagrams (palette variables, striped rows; wide tables scroll inside their
+  box). Steps finished before this change keep their table SVGs, and
+  `writeDoc` still shows those (a table is skipped when its old SVG exists).
+  SVGs are pretty-printed. In every exported SVG, palette colours are CSS
   variables (`var(--pin-float)`), and the SVG carries the default palette at
   zero specificity (`:where(svg)`), so it looks the same on its own and a page
   can restyle it. It needs `npm install` in `Tools/` once. It uses the Mermaid
@@ -174,8 +182,8 @@ to rebuild it themselves.
   asset is exported again. Generator script changes don't count; after a style
   rule changes, run `node Tools/export_doc.mjs --force` (regenerates and
   re-renders everything, overwriting hand edits; ask the user first if they
-  edited files). `doc.html` is always rewritten. It is a standalone dark page that embeds every
-  SVG inline under a heading with its path. The SVG files stay next to it,
+  edited files). `doc.html` is always rewritten. It is a dark page that embeds every
+  SVG inline and every table as HTML, each under a heading with its path. The SVG files stay next to it,
   named by package path (`Game/Input/Actions/IA_Zoom.svg` for
   `/Game/Input/Actions/IA_Zoom`). Inline SVGs get their IDs prefixed (`s1-`,
   `s2-`, ...) because every Mermaid diagram uses `my-svg`. The page has a
@@ -193,15 +201,27 @@ to rebuild it themselves.
   existing export and removes an outdated `doc.md` from before the switch to
   HTML.
 - Layout: `Tools/` holds every documentation tool (Python and Node scripts,
-  `palette.json`, `package.json`, `node_modules`, `doc.js`); `Doc/` is the
-  documentation website itself and contains only generated files:
-  `Doc/index.html`, `Doc/doc.js`, `Doc/steps.json` and the steps in
-  `Doc/commits/<YYYYMMDD_HHmmss>/` (plus `Doc/commits/Transient`, ignored by
-  git). `export_doc.mjs` rewrites the three root files on every run (`--site`
-  writes only them): `index.html` lists the finished steps in order, oldest
-  first, as `Step 1`, `Step 2`, ... (the folder dates only give the order and
-  aren't shown) with their section headings; `doc.js` is copied from
-  `Tools/doc.js`; `steps.json` is the step folders in order.
+  `doc_sources.mjs`, `palette.json`, `package.json`, `node_modules`, `doc.js`,
+  `doc.css`); `Doc/` is the documentation website itself and contains only
+  generated files: `Doc/index.html`, `Doc/doc.js`, `Doc/doc.css`,
+  `Doc/steps.json` and the steps in `Doc/commits/<YYYYMMDD_HHmmss>/` (plus
+  `Doc/commits/Transient`, ignored by git). `export_doc.mjs` rewrites the four
+  root files on every run (`--site` writes only them): `index.html` lists the
+  finished steps in order, oldest first, as `Step 1`, `Step 2`, ... (the folder
+  dates only give the order and aren't shown) with their section headings;
+  `doc.js` is copied from `Tools/doc.js`; `doc.css` is `Tools/doc.css` plus the
+  palettes from `palette.json` (`body[data-palette=...]` rules for the page and
+  its SVGs); `steps.json` is the step folders in order. Edit styles in
+  `Tools/doc.css`, never in `Doc/doc.css`. While `Transient` has a `doc.html`,
+  it is listed as the last step ("Step N (work in progress)") in `index.html`
+  and `steps.json`, so its layout and step navigation can be checked with the
+  rest of the website. The Pages workflow publishes without it: after
+  collecting the site it runs `node Tools/export_doc.mjs --site --commits
+  _site/commits`, which writes the step list from the published steps only.
+- `doc.css` is the shared stylesheet: `index.html` (`<body class="index">`)
+  links `doc.css`, and every `doc.html` (`<body class="step">`) written since
+  tables became HTML links `../../doc.css` and has no inline style. Older
+  steps keep their inline `<style>` until regenerated.
 - Every `doc.html` ends with `<script src="../../doc.js"></script>` and has
   no inline script (`export_doc.mjs` writes it; older exports were changed by
   hand). `doc.js`: (1) the colour palette switch (applies the page's
@@ -216,15 +236,18 @@ to rebuild it themselves.
   without `commits/Transient`, `graph/` folders and separate SVG files (the
   pages embed them). It fetches only `Doc/**` from Git LFS. The repository's
   Pages source must be "GitHub Actions" (Settings → Pages).
-- Every exported SVG carries a `<metadata>` block with a
+- Asset metadata comes from `assetMetadata` in `Tools/doc_sources.mjs`, which
+  reads the diff next to a diagram or table: `package`, `kind` (`blueprint`,
+  `asset`, `actor` or `import`), `class`, `type` (display name such as
+  `Input Action`; Blueprints are `Blueprint Class`), `new`, `revision`,
+  `source` (the diff, relative to the export folder: `graph/transient/...`),
+  and for Blueprints `parent` and `part`. Every diagram SVG carries it as a
+  `<metadata>` block with a
   `<bde:asset xmlns:bde="urn:blueprint-diff-export" .../>` element, written by
-  `export_svg.mjs` from the SVG's diff: `package`, `kind` (`blueprint` or
-  `asset`), `class`, `type` (display name such as `Input Action`; Blueprints
-  are `Blueprint Class`), `new`, `revision`, `source` (the diff, relative to
-  the export folder: `graph/transient/...`), and for Blueprints
-  `parent`. `export_doc.mjs` reads only this metadata, so each export folder
-  describes itself without the diffs. Put any further per-asset facts the docs
-  need into this block.
+  `export_svg.mjs`; for tables `export_doc.mjs` calls `assetMetadata` on the
+  `.md` in the export folder's `graph/transient` (dated folders keep it). So
+  each export folder describes itself. Put any further per-asset facts the
+  docs need into `assetMetadata`.
 - Never check out old binary assets to compare versions. Use the exported diff.
 
 ## Mermaid diagram style
