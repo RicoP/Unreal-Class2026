@@ -58,6 +58,22 @@ to rebuild it themselves.
   diagram ("Create a new Blueprint Class ..., then set:" with the parent class
   first, or "change its class defaults and components" with Before/After);
   rows read `Class Defaults › <setting>` and `<component> › <setting>`.
+  Collision Responses are read like the editor's grid: a new Blueprint gets one
+  row per component with the channels grouped by response in the grid's column
+  order (`Ignore: Visibility, Camera · Overlap: Pawn`, or `Ignore: all
+  channels`); a changed one gets a row per channel that changed
+  (`<component> › Collision Responses › Camera | Block | Ignore`). Exported
+  response lists only name channels that differ from their default, Block
+  (`FCollisionResponse::UpdateArrayFromResponseContainer`), so unnamed ones are
+  Block. A new Blueprint, or one that gets new components, also gets its
+  component tree before the table, a `- name (type)` Markdown list indented
+  two spaces per level (`Components:`), shown in `doc.html` as a nested list.
+  It is built from the Blueprint's reference export and those of its
+  Blueprint parents that are in the same export (so a child shows inherited
+  components), with C++ parents' own attachments from `NATIVE_ATTACH`
+  (Character: Mesh on the capsule); components of a C++ parent appear only
+  when the Blueprint changes them. Scene components come first as a tree,
+  then components without a place in it (e.g. Rotating Movement).
   A new Blueprint's heading is `Create New <parent class> Blueprint at <path>`
   (e.g. `Create New Character Blueprint at All/Content/App/Enemy/BP_Enemy_Base`),
   or, when the parent is a Blueprint of this project (`/Game/...`),

@@ -263,7 +263,106 @@ def value_cell(value):
     return trim_numbers(cell(value))
 
 
-def blueprint_settings_markdown(diff):
+# Collision channels in the order of the editor's Collision Responses grid: trace channels, then
+# object channels. Project channels (DefaultEngine.ini) follow in the order they're exported.
+COLLISION_CHANNELS = ("Visibility", "Camera", "WorldStatic", "WorldDynamic", "Pawn", "PhysicsBody", "Vehicle", "Destructible")
+# The grid's columns, left to right.
+COLLISION_RESPONSES = ("Ignore", "Overlap", "Block")
+
+
+def collision_responses(value):
+    """{'Visibility': 'Ignore', ..., 'Pawn': 'Overlap'} for every channel of an exported
+    '(ResponseArray=((Channel="Pawn",Response=ECR_Overlap),...))'. The array only lists channels
+    that differ from their default response, which is Block for the engine's channels
+    (FCollisionResponse::UpdateArrayFromResponseContainer), so the others are Block."""
+    responses = dict.fromkeys(COLLISION_CHANNELS, "Block")
+    responses.update(re.findall(r'Channel=\\?"(\w+)\\?",Response=ECR_(\w+)', value or ""))
+    return responses
+
+
+def collision_summary(responses):
+    """'Ignore: Visibility, Camera · Overlap: Pawn', grouped like the editor's columns;
+    'Ignore: all channels' when every channel has the same response."""
+    groups = [(response, [c for c, r in responses.items() if r == response]) for response in COLLISION_RESPONSES]
+    groups = [(response, channels) for response, channels in groups if channels]
+    if len(groups) == 1:
+        return f"{groups[0][0]}: all channels"
+    return " · ".join(f"{response}: {', '.join(channels)}" for response, channels in groups)
+
+
+def component_type(component_class):
+    """'StaticMeshComponent' -> 'Static Mesh Component', as the Components panel names types."""
+    return words(component_class.removesuffix("Component")) + " Component"
+
+
+# Components a C++ parent class attaches itself (ACharacter: mesh and arrow on the capsule).
+# Their diff entries have no attach-to, because it isn't set in the Blueprint.
+NATIVE_ATTACH = {"Mesh": "CapsuleComponent", "ArrowComponent": "CapsuleComponent"}
+
+
+def reference_of(diff_path, package):
+    """The reference export (graph/reference/<package>.sexpr) of a package, found from a diff in
+    graph/transient, or None if it wasn't exported."""
+    parts = diff_path.parts
+    if "graph" not in parts:
+        return None
+    graph = Path(*parts[: len(parts) - parts[::-1].index("graph")])
+    file = graph / "reference" / (package.lstrip("/") + ".sexpr")
+    return parse(file.read_text(encoding="utf-8")) if file.exists() else None
+
+
+def component_hierarchy(diff, diff_path):
+    """'- name (type)' Markdown list lines of a Blueprint's components, each indented under the
+    component it's attached to. The components come from the Blueprint's reference export and
+    those of its Blueprint parents, so inherited ones show too (the diff stands in for a missing
+    reference). Components of a C++ parent are only exported when the Blueprint changes them."""
+    removed = {c[1] for c in (first(diff, "components") or ["components"])[1:] if c[0] == "component-removed"}
+    components = {}  # name -> {"class": ..., "attach": ...}
+    blueprint, seen = reference_of(diff_path, diff[1]) or diff, set()
+    while blueprint is not None and blueprint[1] not in seen:
+        seen.add(blueprint[1])
+        for component in (first(blueprint, "components") or ["components"])[1:]:
+            if component[0] != "component" or component[1] in removed:
+                continue
+            info = components.setdefault(component[1], {"class": None, "attach": None})
+            info["class"] = info["class"] or first(component, "class")[1]
+            attach = first(component, "attach-to")
+            if attach:
+                info["attach"] = info["attach"] or attach[1]
+            elif first(component, "kind") == ["kind", "native"]:
+                info["attach"] = info["attach"] or NATIVE_ATTACH.get(component[1])
+        # Up to the parent Blueprint, as far as it was exported too.
+        parent = (first(blueprint, "parent") or ["parent", ""])[1]
+        blueprint = reference_of(diff_path, parent.rsplit(".", 1)[0]) if parent.startswith("/Game/") else None
+
+    # A parent known only from attach-to, e.g. the DefaultSceneRoot every Actor Blueprint starts with.
+    for info in list(components.values()):
+        if info["attach"] and info["attach"] not in components:
+            scene_root = info["attach"] == "DefaultSceneRoot"
+            components[info["attach"]] = {"class": "SceneComponent" if scene_root else None, "attach": None}
+    children = {}
+    for name, info in components.items():
+        children.setdefault(info["attach"], []).append(name)
+
+    lines = []
+
+    def write(name, depth):
+        component_class = components[name]["class"]
+        lines.append("  " * depth + f"- {words(name)}" + (f" ({component_type(component_class)})" if component_class else ""))
+        for child in sorted(children.get(name, [])):
+            write(child, depth + 1)
+
+    # The scene components' tree first, then components without a place in it (movement and
+    # other actor components), as in the Components panel.
+    def root_order(name):
+        return (name not in children, name)
+
+    for root in sorted(children.get(None, []), key=root_order):
+        write(root, 0)
+    return lines
+
+
+def blueprint_settings_markdown(diff, diff_path):
     """Class defaults and components of a Blueprint diff, or None if it has neither and isn't new."""
     package = diff[1]
     name = package.rsplit("/", 1)[-1]
@@ -287,7 +386,7 @@ def blueprint_settings_markdown(diff):
             continue
         label = words(component[1])
         if first(component, "new"):
-            kind = words(first(component, "class")[1].removesuffix("Component")) + " Component"
+            kind = component_type(first(component, "class")[1])
             attach = first(component, "attach-to")
             rows.append(("Add Component", None, f"{label} ({kind}" + (f", attached to {words(attach[1])})" if attach else ")")))
         entries = (first(component, "properties") or ["properties"])[1:]
@@ -295,10 +394,28 @@ def blueprint_settings_markdown(diff):
         for entry in entries:
             if SUPERSEDED.get(entry[1]) in names:
                 continue
-            old = first(entry, "old")
-            rows.append((f"{label} › {setting_name(entry[1])}", old[1] if old else None, first(entry, "new")[1]))
+            old, new = first(entry, "old"), first(entry, "new")[1]
+            old = old[1] if old else None
+            if entry[1].endswith("CollisionResponses"):
+                # The response list as the editor's grid reads it: for a new Blueprint the channels
+                # grouped by response, for a change only the channels that changed.
+                setting = f"{label} › Collision Responses"
+                before, after = collision_responses(old), collision_responses(new)
+                if is_new:
+                    rows.append((setting, None, collision_summary(after)))
+                else:
+                    rows += [(f"{setting} › {channel}", before.get(channel, "Block"), response)
+                             for channel, response in after.items() if before.get(channel, "Block") != response]
+                    rows += [(f"{setting} › {channel}", response, "Block")
+                             for channel, response in before.items() if channel not in after and response != "Block"]
+                continue
+            rows.append((f"{label} › {setting_name(entry[1])}", old, new))
 
     lines = [f"### {name} (Blueprint Class)", ""]
+    # A new Blueprint, or one that gets new components: its component tree first.
+    hierarchy = component_hierarchy(diff, diff_path) if is_new or any(first(c, "new") for c in components) else []
+    if hierarchy:
+        lines += ["Components:", "", *hierarchy, ""]
     if is_new:
         lines += [
             f"Create a new Blueprint Class named `{name}` in `{package.rsplit('/', 1)[0]}`, then set:",
@@ -477,7 +594,7 @@ def main():
             # The graph is a diagram (sexpr_to_mermaid.py); class defaults and components go into
             # a table next to it, <name>.settings.md.
             output = path.with_suffix(".settings.md")
-            markdown = blueprint_settings_markdown(diff)
+            markdown = blueprint_settings_markdown(diff, path)
             if markdown is None:
                 output.unlink(missing_ok=True)
                 print(f"{path}: no class default or component changes, no table")

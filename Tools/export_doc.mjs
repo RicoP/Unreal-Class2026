@@ -190,12 +190,38 @@ function cellHtml(text) {
   return html(text).replace(/`([^`]+)`/g, "<code>$1</code>");
 }
 
-/** A table written by sexpr_to_table.py as an HTML table; its first row is the header. */
-function tableHtml({ title, rows }) {
+/** A component tree ([depth, "name (type)"] items) as nested lists, like the Components panel. */
+function treeHtml(tree) {
+  const lines = [];
+  let depth = -1;
+  for (const [level, text] of tree) {
+    if (level > depth) {
+      lines.push("<ul>".repeat(level - depth));
+    } else {
+      lines.push("</li>" + "</ul></li>".repeat(depth - level));
+    }
+    lines.push(`<li>${cellHtml(text)}`);
+    depth = level;
+  }
+  lines.push("</li>" + "</ul></li>".repeat(depth) + "</ul>");
+  return [
+    `      <div class="components">`,
+    "        <p>Components</p>",
+    `        ${lines.join("")}`,
+    "      </div>",
+  ].join("\n");
+}
+
+/**
+ * A table written by sexpr_to_table.py as an HTML table; its first row is the header. A
+ * Blueprint's component tree, when it has one, comes first.
+ */
+function tableHtml({ title, tree, rows }) {
   const [header, ...body] = rows;
   const cells = (row, tag) =>
     row.map((value) => (value === "—" ? `<${tag} class="none">—</${tag}>` : `<${tag}>${cellHtml(value)}</${tag}>`)).join("");
   return [
+    ...(tree.length ? [treeHtml(tree)] : []),
     `      <div class="table">`,
     "        <table>",
     ...(title ? [`          <caption>${cellHtml(title)}</caption>`] : []),

@@ -84,10 +84,17 @@ export function assetMetadata(sourceFile, root = process.cwd()) {
   return fields;
 }
 
-/** Title and rows (the first one is the header) of a table written by sexpr_to_table.py. */
+/**
+ * Title, component tree and rows (the first one is the header) of a table written by
+ * sexpr_to_table.py. The tree is its "- name (type)" list, as [depth, text] (two spaces per level).
+ */
 export function parseTable(markdown) {
   const lines = markdown.split(/\r?\n/);
   const title = (lines.find((line) => line.startsWith("### ")) ?? "").slice(4).trim();
+  const tree = lines
+    .map((line) => /^( *)- (.+)$/.exec(line))
+    .filter(Boolean)
+    .map(([, indent, text]) => [indent.length / 2, text.trim()]);
   const rows = lines
     .filter((line) => line.startsWith("|") && !/^\|[\s|:-]+\|$/.test(line))
     .map((line) =>
@@ -96,5 +103,5 @@ export function parseTable(markdown) {
         .slice(1, -1)
         .map((value) => value.trim().replace(/\\\|/g, "|")),
     );
-  return { title, rows };
+  return { title, tree, rows };
 }
