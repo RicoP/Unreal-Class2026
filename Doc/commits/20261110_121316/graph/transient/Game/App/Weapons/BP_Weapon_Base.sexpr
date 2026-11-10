@@ -1,0 +1,44 @@
+(blueprint-diff "/Game/App/Weapons/BP_Weapon_Base"
+  (old none)
+  (new working-copy)
+  (parent "/Script/Engine.Actor")
+  (components
+    (component "Pivot" (class "SceneComponent") (kind added) (new)
+      (properties))
+    (component "Sphere" (class "SphereComponent") (kind added) (attach-to "Weapon") (new)
+      (properties
+        (changed "BodyInstance ObjectType" (old "ECC_WorldDynamic") (new "ECC_WorldStatic"))
+        (changed "BodyInstance CollisionEnabled" (old "QueryOnly") (new "NoCollision"))
+        (changed "BodyInstance bNotifyRigidBodyCollision" (old "False") (new "True"))
+        (changed "BodyInstance CollisionProfileName" (old "OverlapAllDynamic") (new "Custom"))
+        (changed "BodyInstance CollisionResponses" (old "(ResponseArray=((Channel=\"WorldStatic\",Response=ECR_Overlap),(Channel=\"WorldDynamic\",Response=ECR_Overlap),(Channel=\"Pawn\",Response=ECR_Overlap),(Channel=\"Visibility\",Response=ECR_Overlap),(Channel=\"Camera\",Response=ECR_Overlap),(Channel=\"PhysicsBody\",Response=ECR_Overlap),(Channel=\"Vehicle\",Response=ECR_Overlap),(Channel=\"Destructible\",Response=ECR_Overlap)))") (new "(ResponseArray=((Channel=\"Visibility\",Response=ECR_Ignore),(Channel=\"Camera\",Response=ECR_Ignore),(Channel=\"WorldStatic\",Response=ECR_Ignore),(Channel=\"WorldDynamic\",Response=ECR_Ignore),(Channel=\"Pawn\",Response=ECR_Overlap),(Channel=\"PhysicsBody\",Response=ECR_Ignore),(Channel=\"Vehicle\",Response=ECR_Ignore),(Channel=\"Destructible\",Response=ECR_Ignore)))"))
+        (changed "BodyInstance bEnableGravity" (old "True") (new "False"))
+        (changed "RelativeLocation" (old "(X=0.000000,Y=0.000000,Z=0.000000)") (new "(X=0.000000,Y=0.000000,Z=38.685858)"))
+        (changed "RelativeScale3D" (old "(X=1.000000,Y=1.000000,Z=1.000000)") (new "(X=2.000000,Y=2.000000,Z=2.000000)"))))
+    (component "Weapon" (class "StaticMeshComponent") (kind added) (attach-to "Pivot") (new)
+      (properties
+        (changed "StaticMesh" (old "None") (new "/Script/Engine.StaticMesh'/Game/itch-assets/StaticMeshes/dagger_A.dagger_A'"))
+        (changed "BodyInstance CollisionEnabled" (old "QueryAndPhysics") (new "QueryOnly"))
+        (changed "BodyInstance CollisionProfileName" (old "BlockAllDynamic") (new "Custom"))
+        (changed "BodyInstance CollisionResponses" (old "()") (new "(ResponseArray=((Channel=\"Visibility\",Response=ECR_Ignore),(Channel=\"Camera\",Response=ECR_Ignore),(Channel=\"WorldStatic\",Response=ECR_Ignore),(Channel=\"WorldDynamic\",Response=ECR_Ignore),(Channel=\"Pawn\",Response=ECR_Ignore),(Channel=\"PhysicsBody\",Response=ECR_Ignore),(Channel=\"Vehicle\",Response=ECR_Ignore),(Channel=\"Destructible\",Response=ECR_Ignore)))"))
+        (changed "RelativeLocation" (old "(X=0.000000,Y=0.000000,Z=0.000000)") (new "(X=0.000000,Y=0.000000,Z=-8.630399)"))
+        (changed "RelativeScale3D" (old "(X=1.000000,Y=1.000000,Z=1.000000)") (new "(X=0.222500,Y=0.222500,Z=0.222500)")))))
+  (graph "EventGraph" added
+    (node-added addition
+      (node "K2Node_Event_0" "Event BeginPlay" (pos 0 0))
+      (pin out "OutputDelegate" "Delegate")
+      (pin out "then" "Exec"))
+    (node-added addition
+      (node "K2Node_Event_1" "Event ActorBeginOverlap" (pos 0 208))
+      (pin out "OutputDelegate" "Delegate")
+      (pin out "then" "Exec")
+      (pin out "OtherActor" "Actor Object Reference"))
+    (node-added addition
+      (node "K2Node_Event_2" "Event Tick" (pos 0 416))
+      (pin out "OutputDelegate" "Delegate")
+      (pin out "then" "Exec")
+      (pin out "DeltaSeconds" "Float (single-precision)" (default "0.0"))))
+  (graph "UserConstructionScript" added
+    (node-added addition
+      (node "K2Node_FunctionEntry_0" "Construction Script" (pos 0 0))
+      (pin out "then" "Exec"))))

@@ -1,0 +1,9 @@
+(asset "/Game/itch-assets/Textures/weapons_bits_texture"
+  (class "Texture2D")
+  (revision working-copy)
+  (properties
+    (set "OodleTextureSdkVersion" "2.9.16")
+    (set "AlphaCoverageThresholds" "(X=0.000000,Y=0.000000,Z=0.000000,W=0.750000)")
+    (set "bUseNewMipFilter" "True")
+    (set "CompositeTextureMode" "CTM_Disabled")
+    (set "bNormalizeNormals" "True")))

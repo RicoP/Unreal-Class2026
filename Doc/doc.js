@@ -2,7 +2,7 @@
 // website root; every Doc/commits/<step>/doc.html loads it as ../../doc.js, on disk and online.
 //
 // 1. Colour palette switch: applies the palette picked in the page's <select id="palette">
-//    (palette CSS and options are written into each page from Doc/palette.json), remembers it
+//    (palette CSS and options are written into each page from Tools/palette.json), remembers it
 //    per browser (localStorage "doc-palette") and accepts ?palette=<name> in the address.
 // 2. Step navigation: "‹ Step 2 · Step 3 of 4 · Step 4 ›" in the page's <header>, with
 //    left/right arrow keys. The order of the steps comes from steps.json next to this script

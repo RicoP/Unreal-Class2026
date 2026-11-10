@@ -1,0 +1,6 @@
+(asset "/Game/itch-assets/StaticMeshes/hammer_B"
+  (class "StaticMesh")
+  (revision working-copy)
+  (properties
+    (set "NaniteSettings bEnabled" "True")
+    (set "bCustomizedCollision" "True")))

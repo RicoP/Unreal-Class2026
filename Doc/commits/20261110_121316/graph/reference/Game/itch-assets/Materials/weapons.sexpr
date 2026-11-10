@@ -1,0 +1,8 @@
+(asset "/Game/itch-assets/Materials/weapons"
+  (class "MaterialInstanceConstant")
+  (revision working-copy)
+  (properties
+    (set "Parent" "/Script/Engine.MaterialInstanceConstant'/Game/Kenney-Assets/mini-characters/Materials/colormap.colormap'")
+    (set "TextureParameterValues" "((ParameterInfo=(Name=\"DiffuseColorMap\"),ParameterValue=\"/Script/Engine.Texture2D'/Game/itch-assets/Textures/weapons_bits_texture.weapons_bits_texture'\"))")
+    (set "BasePropertyOverrides OpacityMaskClipValue" "0.333300")
+    (set "BasePropertyOverrides UsageFlags" "38011009")))

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Documentation export 20261110_121316</title>
+    <!-- Shared stylesheet with the palettes: Doc/doc.css (from Tools/doc.css) -->
+    <link rel="stylesheet" href="../../doc.css">
+  </head>
+  <body class="step" data-palette="default">
+    <header>
+      <label>Colours <select id="palette"><option value="default">Unreal editor</option><option value="red-green-safe">Red-green safe (protanopia, deuteranopia)</option><option value="blue-yellow-safe">Blue-yellow safe (tritanopia)</option><option value="high-contrast">High contrast</option><option value="greyscale">Greyscale (achromatopsia, print)</option></select></label>
+    </header>
+    <section>
+      <h2>Import 23 files into All/Content/Kenney-Assets/mini-characters</h2>
+      <div class="table">
+        <table>
+          <caption>Import 23 files</caption>
+          <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Files</td><td>23 in all: aid-cane-blind.fbx, aid-cane-low-vision.fbx, …, wheelchair.fbx</td></tr>
+            <tr><td>Animation Pipeline › Import Animations</td><td>False</td></tr>
+            <tr><td>Material Pipeline › Parent Material</td><td>colormap</td></tr>
+            <tr><td>Creates Static Mesh</td><td>24 in all: aid-cane-blind, aid-cane-low-vision, …, wheelchair</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section>
+      <h2>Import 31 files into All/Content/itch-assets</h2>
+      <div class="table">
+        <table>
+          <caption>Import 31 files</caption>
+          <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Files</td><td>31 in all: arrow_A.fbx, arrow_B.fbx, …, wand_A.fbx</td></tr>
+            <tr><td>Animation Pipeline › Import Animations</td><td>False</td></tr>
+            <tr><td>Material Pipeline › Parent Material</td><td>colormap</td></tr>
+            <tr><td>Creates Material Instance Constant</td><td>weapons</td></tr>
+            <tr><td>Creates Static Mesh</td><td>31 in all: arrow_A, arrow_B, …, wand_A</td></tr>
+            <tr><td>Creates Texture2D</td><td>weapons_bits_texture</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section>
+      <h2>All/Content/App/Enemy/BP_Enemy_Base: Class Defaults and Components</h2>
+      <div class="table">
+        <table>
+          <caption>BP_Enemy_Base (Blueprint Class)</caption>
+          <thead><tr><th>Setting</th><th>Before</th><th>After</th></tr></thead>
+          <tbody>
+            <tr><td>Capsule Component › Body Instance › Collision Profile Name</td><td>Pawn</td><td>Custom</td></tr>
+            <tr><td>Capsule Component › Collision Responses › Camera</td><td>Block</td><td>Ignore</td></tr>
+            <tr><td>Mesh › Body Instance › Collision Profile Name</td><td>Character Mesh</td><td>Custom</td></tr>
+            <tr><td>Mesh › Collision Responses › Camera</td><td>Block</td><td>Ignore</td></tr>
+            <tr><td>Mesh › Collision Responses › WorldStatic</td><td>Block</td><td>Ignore</td></tr>
+            <tr><td>Mesh › Collision Responses › WorldDynamic</td><td>Block</td><td>Ignore</td></tr>
+            <tr><td>Mesh › Collision Responses › PhysicsBody</td><td>Block</td><td>Ignore</td></tr>
+            <tr><td>Mesh › Collision Responses › Destructible</td><td>Block</td><td>Ignore</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section>
+      <h2>Create New Actor Blueprint at All/Content/App/Weapons/BP_Weapon_Base</h2>
+      <div class="components">
+        <p>Components</p>
+        <ul><li>Pivot (Scene Component)<ul><li>Weapon (Static Mesh Component)<ul><li>Sphere (Sphere Component)</li></ul></li></ul></li></ul>
+      </div>
+      <div class="table">
+        <table>
+          <caption>BP_Weapon_Base (Blueprint Class)</caption>
+          <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Parent Class</td><td>Actor</td></tr>
+            <tr><td>Add Component</td><td>Pivot (Scene Component)</td></tr>
+            <tr><td>Add Component</td><td>Sphere (Sphere Component, attached to Weapon)</td></tr>
+            <tr><td>Sphere › Body Instance › Object Type</td><td>ECC_WorldStatic</td></tr>
+            <tr><td>Sphere › Body Instance › Collision Enabled</td><td>No Collision</td></tr>
+            <tr><td>Sphere › Body Instance › Notify Rigid Body Collision</td><td>True</td></tr>
+            <tr><td>Sphere › Body Instance › Collision Profile Name</td><td>Custom</td></tr>
+            <tr><td>Sphere › Collision Responses</td><td>Ignore: Visibility, Camera, WorldStatic, WorldDynamic, PhysicsBody, Vehicle, Destructible · Overlap: Pawn</td></tr>
+            <tr><td>Sphere › Body Instance › Enable Gravity</td><td>False</td></tr>
+            <tr><td>Sphere › Relative Location</td><td>X: 0, Y: 0, Z: 38.685858</td></tr>
+            <tr><td>Sphere › Relative Scale3D</td><td>X: 2, Y: 2, Z: 2</td></tr>
+            <tr><td>Add Component</td><td>Weapon (Static Mesh Component, attached to Pivot)</td></tr>
+            <tr><td>Weapon › Static Mesh</td><td>dagger_A</td></tr>
+            <tr><td>Weapon › Body Instance › Collision Enabled</td><td>Query Only</td></tr>
+            <tr><td>Weapon › Body Instance › Collision Profile Name</td><td>Custom</td></tr>
+            <tr><td>Weapon › Collision Responses</td><td>Ignore: all channels</td></tr>
+            <tr><td>Weapon › Relative Location</td><td>X: 0, Y: 0, Z: -8.630399</td></tr>
+            <tr><td>Weapon › Relative Scale3D</td><td>X: 0.2225, Y: 0.2225, Z: 0.2225</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section>
+      <h2>Create Child Blueprint of BP_Weapon_Base with the name BP_Weapons_Sword</h2>
+      <div class="components">
+        <p>Components</p>
+        <ul><li>Pivot (Scene Component)<ul><li>Weapon (Static Mesh Component)<ul><li>Sphere (Sphere Component)</li></ul></li></ul></li></ul>
+      </div>
+      <div class="table">
+        <table>
+          <caption>BP_Weapons_Sword (Blueprint Class)</caption>
+          <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Parent Class</td><td>BP_Weapon_Base</td></tr>
+            <tr><td>Weapon › Static Mesh</td><td>sword_B</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <!-- Palette switch and step navigation: Doc/doc.js (from Tools/doc.js) -->
+    <script src="../../doc.js"></script>
+  </body>
+</html>
