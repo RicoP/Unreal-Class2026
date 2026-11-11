@@ -1,0 +1,18 @@
+(blueprint-diff "/Game/App/Weapons/BP_Weapon_Base"
+  (old (revision "dbed13bf") (date "2026-11-10T11:13:31.000Z") (description "Add weapon meshes and the weapon Blueprints\n\n- Import KayKit's fantasy weapons (31 meshes with their material and\n  texture) into itch-assets, and Kenney's mini-characters props (23 files)\n  into Kenney-Assets/mini-characters.\n- BP_Weapon_Base: Pivot with the Weapon mesh and a Sphere hitbox that\n  overlaps only Pawns; BP_Weapons_Sword is a child with the sword_B mesh.\n- BP_Enemy_Base: capsule and mesh ignore the Camera channel, so the camera\n  boom doesn't pull in on enemies; the mesh ignores world and physics too.\n- Doc/commits/20261110_121316: documentation of this step.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (parent "/Script/Engine.Actor")
+  (components
+    (component "Capsule" (class "CapsuleComponent") (kind added) (attach-to "Weapon") (new)
+      (properties
+        (changed "BodyInstance bNotifyRigidBodyCollision" (old "False") (new "True"))
+        (changed "RelativeLocation" (old "(X=0.000000,Y=0.000000,Z=0.000000)") (new "(X=0.000000,Y=0.000000,Z=38.788313)"))
+        (changed "RelativeScale3D" (old "(X=1.000000,Y=1.000000,Z=1.000000)") (new "(X=4.494382,Y=4.494382,Z=4.494382)"))))
+    (component "Weapon" (class "StaticMeshComponent") (kind added) (attach-to "Pivot")
+      (properties
+        (changed "StaticMesh" (old "None") (new "/Script/Engine.StaticMesh'/Game/Kenney-Assets/mini-characters/StaticMeshes/aid-cane.aid-cane'"))
+        (changed "bGenerateOverlapEvents" (old "True") (new "False"))
+        (changed "CanCharacterStepUpOn" (old "ECB_Yes") (new "ECB_No"))
+        (changed "BodyInstance CollisionResponses" (old "(ResponseArray=((Channel=\"Visibility\",Response=ECR_Ignore),(Channel=\"Camera\",Response=ECR_Ignore),(Channel=\"WorldStatic\",Response=ECR_Ignore),(Channel=\"WorldDynamic\",Response=ECR_Ignore),(Channel=\"Pawn\",Response=ECR_Ignore),(Channel=\"PhysicsBody\",Response=ECR_Ignore),(Channel=\"Vehicle\",Response=ECR_Ignore),(Channel=\"Destructible\",Response=ECR_Ignore)))") (new "(ResponseArray=((Channel=\"Visibility\",Response=ECR_Overlap),(Channel=\"Camera\",Response=ECR_Overlap),(Channel=\"WorldStatic\",Response=ECR_Overlap),(Channel=\"WorldDynamic\",Response=ECR_Overlap),(Channel=\"Pawn\",Response=ECR_Overlap),(Channel=\"PhysicsBody\",Response=ECR_Overlap),(Channel=\"Vehicle\",Response=ECR_Overlap),(Channel=\"Destructible\",Response=ECR_Overlap)))"))
+        (changed "RelativeRotation" (old "(Pitch=0.000000,Yaw=0.000000,Roll=0.000000)") (new "(Pitch=0.000000,Yaw=90.000000,Roll=0.000000)"))))
+    (component-removed "Sphere")))

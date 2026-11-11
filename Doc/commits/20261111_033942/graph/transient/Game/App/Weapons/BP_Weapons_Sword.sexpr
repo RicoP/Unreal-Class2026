@@ -1,0 +1,14 @@
+(blueprint-diff "/Game/App/Weapons/BP_Weapons_Sword"
+  (old (revision "dbed13bf") (date "2026-11-10T11:13:31.000Z") (description "Add weapon meshes and the weapon Blueprints\n\n- Import KayKit's fantasy weapons (31 meshes with their material and\n  texture) into itch-assets, and Kenney's mini-characters props (23 files)\n  into Kenney-Assets/mini-characters.\n- BP_Weapon_Base: Pivot with the Weapon mesh and a Sphere hitbox that\n  overlaps only Pawns; BP_Weapons_Sword is a child with the sword_B mesh.\n- BP_Enemy_Base: capsule and mesh ignore the Camera channel, so the camera\n  boom doesn't pull in on enemies; the mesh ignores world and physics too.\n- Doc/commits/20261110_121316: documentation of this step.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (parent "/Game/App/Weapons/BP_Weapon_Base.BP_Weapon_Base_C")
+  (components
+    (component "Capsule" (class "CapsuleComponent") (kind inherited)
+      (properties
+        (changed "RelativeLocation" (old "(X=0.000000,Y=0.000000,Z=38.788313)") (new "(X=0.000000,Y=0.000000,Z=115.559114)"))
+        (changed "RelativeScale3D" (old "(X=4.494382,Y=4.494382,Z=4.494382)") (new "(X=2.247191,Y=2.247191,Z=2.247191)"))))
+    (component "Weapon" (class "StaticMeshComponent") (kind inherited)
+      (properties
+        (changed "StaticMesh" (old "/Script/Engine.StaticMesh'/Game/Kenney-Assets/mini-characters/StaticMeshes/aid-cane.aid-cane'") (new "/Script/Engine.StaticMesh'/Game/itch-assets/StaticMeshes/sword_B.sword_B'"))
+        (changed "BodyInstance CollisionResponses" (old "(ResponseArray=((Channel=\"Visibility\",Response=ECR_Overlap),(Channel=\"Camera\",Response=ECR_Overlap),(Channel=\"WorldStatic\",Response=ECR_Overlap),(Channel=\"WorldDynamic\",Response=ECR_Overlap),(Channel=\"Pawn\",Response=ECR_Overlap),(Channel=\"PhysicsBody\",Response=ECR_Overlap),(Channel=\"Vehicle\",Response=ECR_Overlap),(Channel=\"Destructible\",Response=ECR_Overlap)))") (new "()"))
+        (changed "RelativeLocation" (old "(X=0.000000,Y=0.000000,Z=-8.630399)") (new "(X=0.000000,Y=0.000000,Z=5.810089)"))))))

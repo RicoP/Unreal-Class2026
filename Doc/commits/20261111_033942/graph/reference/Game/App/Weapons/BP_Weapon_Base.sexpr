@@ -1,0 +1,38 @@
+(blueprint "/Game/App/Weapons/BP_Weapon_Base"
+  (revision working-copy)
+  (parent "/Script/Engine.Actor")
+  (variables)
+  (components
+    (component "Capsule" (class "CapsuleComponent") (kind added) (attach-to "Weapon")
+      (properties
+        (set "BodyInstance bNotifyRigidBodyCollision" "True")
+        (set "RelativeLocation" "(X=0.000000,Y=0.000000,Z=38.788313)")
+        (set "RelativeScale3D" "(X=4.494382,Y=4.494382,Z=4.494382)")))
+    (component "Pivot" (class "SceneComponent") (kind added)
+      (properties))
+    (component "Weapon" (class "StaticMeshComponent") (kind added) (attach-to "Pivot")
+      (properties
+        (set "StaticMesh" "/Script/Engine.StaticMesh'/Game/Kenney-Assets/mini-characters/StaticMeshes/aid-cane.aid-cane'")
+        (set "bGenerateOverlapEvents" "False")
+        (set "CanCharacterStepUpOn" "ECB_No")
+        (set "BodyInstance CollisionEnabled" "QueryOnly")
+        (set "BodyInstance CollisionProfileName" "Custom")
+        (set "BodyInstance CollisionResponses" "(ResponseArray=((Channel=\"Visibility\",Response=ECR_Overlap),(Channel=\"Camera\",Response=ECR_Overlap),(Channel=\"WorldStatic\",Response=ECR_Overlap),(Channel=\"WorldDynamic\",Response=ECR_Overlap),(Channel=\"Pawn\",Response=ECR_Overlap),(Channel=\"PhysicsBody\",Response=ECR_Overlap),(Channel=\"Vehicle\",Response=ECR_Overlap),(Channel=\"Destructible\",Response=ECR_Overlap)))")
+        (set "RelativeLocation" "(X=0.000000,Y=0.000000,Z=-8.630399)")
+        (set "RelativeRotation" "(Pitch=0.000000,Yaw=90.000000,Roll=0.000000)")
+        (set "RelativeScale3D" "(X=0.222500,Y=0.222500,Z=0.222500)"))))
+  (graph "EventGraph"
+    (node "K2Node_Event_0" "Event BeginPlay" (pos 0 0)
+      (pin out "OutputDelegate" "Delegate")
+      (pin out "then" "Exec"))
+    (node "K2Node_Event_1" "Event ActorBeginOverlap" (pos 0 208)
+      (pin out "OutputDelegate" "Delegate")
+      (pin out "then" "Exec")
+      (pin out "OtherActor" "Actor Object Reference"))
+    (node "K2Node_Event_2" "Event Tick" (pos 0 416)
+      (pin out "OutputDelegate" "Delegate")
+      (pin out "then" "Exec")
+      (pin out "DeltaSeconds" "Float (single-precision)" (default "0.0"))))
+  (graph "UserConstructionScript"
+    (node "K2Node_FunctionEntry_0" "Construction Script" (pos 0 0)
+      (pin out "then" "Exec"))))

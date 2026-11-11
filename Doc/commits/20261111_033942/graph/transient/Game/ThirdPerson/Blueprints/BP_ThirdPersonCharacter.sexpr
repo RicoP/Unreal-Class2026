@@ -1,0 +1,40 @@
+(blueprint-diff "/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"
+  (old (revision "ddf323cc") (date "2026-11-08T08:18:58.000Z") (description "Clamp camera zoom and add zoom modifiers\n\nClamp the camera boom's Target Arm Length between 50 and 1500 with a\nClamp (Float) node between the addition and the setter, and add Negate\nand Scalar modifiers to IA_Zoom.\n\nUpdate the exported diffs in Doc/graph (IMC_Default didn't change this\ntime) and add the documentation export Doc/commits/20261108_091615.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (parent "/Script/Engine.Character")
+  (graph "EventGraph"
+    (node-added addition
+      (text "Added Node 'Cast To BP_Weapon_Base'")
+      (node "K2Node_DynamicCast_0" "Cast To BP_Weapon_Base" (pos -688 -1568))
+      (pin in "execute" "Exec" (links (pin "K2Node_Event_0" "then")))
+      (pin out "then" "Exec" (links (pin "K2Node_CallFunction_6" "execute")))
+      (pin out "CastFailed" "Exec")
+      (pin in "Object" "Object Reference" (links (pin "K2Node_Event_0" "OtherActor")))
+      (pin out "AsBP Weapon Base" "BP Weapon Base Object Reference" (links (pin "K2Node_CallFunction_6" "self"))))
+    (node-added addition
+      (text "Added Node 'Attach Actor To Component'")
+      (node "K2Node_CallFunction_6" "Attach Actor To Component" (pos -160 -1376))
+      (pin in "execute" "Exec" (links (pin "K2Node_DynamicCast_0" "then")))
+      (pin out "then" "Exec")
+      (pin in "self" "Actor Object Reference" (links (pin "K2Node_DynamicCast_0" "AsBP Weapon Base")))
+      (pin in "Parent" "Scene Component Object Reference" (links (pin "K2Node_VariableGet_3" "Mesh")))
+      (pin in "SocketName" "Name" (default "HandGrip_R"))
+      (pin in "LocationRule" "EAttachmentRule Enum" (default "SnapToTarget"))
+      (pin in "RotationRule" "EAttachmentRule Enum" (default "KeepRelative"))
+      (pin in "ScaleRule" "EAttachmentRule Enum" (default "SnapToTarget"))
+      (pin in "bWeldSimulatedBodies" "Boolean" (default "TRUE"))
+      (pin out "ReturnValue" "Boolean" (default "false")))
+    (node-added addition
+      (text "Added Node 'Event ActorBeginOverlap'")
+      (node "K2Node_Event_0" "Event ActorBeginOverlap" (pos -992 -1360))
+      (pin out "OutputDelegate" "Delegate")
+      (pin out "then" "Exec" (links (pin "K2Node_DynamicCast_0" "execute")))
+      (pin out "OtherActor" "Actor Object Reference" (links (pin "K2Node_DynamicCast_0" "Object"))))
+    (node-added addition
+      (text "Added Node 'Get Mesh'")
+      (node "K2Node_VariableGet_3" "Get Mesh" (pos -608 -1168))
+      (pin out "Mesh" "Skeletal Mesh Component Object Reference" (links (pin "K2Node_CallFunction_6" "Parent"))))
+    (node-added addition
+      (text "Added Node 'Comment'")
+      (node "EdGraphNode_Comment_0" "Comment" (pos -656 -1280))
+      (comment "Drag in CharacterMesh0 from the Components view" (size 288 272) (color "#6c6c6c")))))

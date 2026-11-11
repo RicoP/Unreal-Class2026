@@ -10,6 +10,10 @@ to rebuild it themselves.
   local memory, so they live in the repo.
 - Don't write lesson documentation until the user says documentation has
   started. Until then, diffs and diagrams are experiments.
+- "Commit and push" also means finishing the transient doc: rebuild
+  (`node Tools/export_doc.mjs`), finish (`--finish`), and commit the dated
+  step folder with the assets it documents, then push. The website only
+  publishes finished steps, so an unfinished Transient never shows up there.
 - Open decision: `Tools/update_graph.py` is an earlier approach that wrote a
   snapshot of the whole project (`Doc/graph.sexpr`, now deleted). The
   `BlueprintDiffExport` plugin replaced it for Blueprints, so don't run it on
