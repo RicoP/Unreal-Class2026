@@ -15,6 +15,7 @@ Plugins/**/DerivedDataCache/
 Plugins/**/Saved/
 
 # Generated IDE and project files
+*.slnx
 *.sln
 *.suo
 *.sdf
