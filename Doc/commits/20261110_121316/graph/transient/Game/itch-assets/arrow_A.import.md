@@ -7,6 +7,7 @@ Import `arrow_A.fbx`, `arrow_B.fbx`, `axe_A.fbx`, `axe_B.fbx`, `axe_C.fbx`, `bow
 |---|---|
 | Files | 31 in all: arrow_A.fbx, arrow_B.fbx, …, wand_A.fbx |
 | Animation Pipeline › Import Animations | False |
+| Mesh Pipeline › Import Collisions | False |
 | Material Pipeline › Parent Material | colormap |
 | Creates Material Instance Constant | weapons |
 | Creates Static Mesh | 31 in all: arrow_A, arrow_B, …, wand_A |

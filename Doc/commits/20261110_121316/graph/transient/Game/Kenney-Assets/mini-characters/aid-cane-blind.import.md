@@ -7,5 +7,6 @@ Import `aid-cane-blind.fbx`, `aid-cane-low-vision.fbx`, `aid-cane.fbx`, `aid-cru
 |---|---|
 | Files | 23 in all: aid-cane-blind.fbx, aid-cane-low-vision.fbx, …, wheelchair.fbx |
 | Animation Pipeline › Import Animations | False |
+| Mesh Pipeline › Import Collisions | False |
 | Material Pipeline › Parent Material | colormap |
 | Creates Static Mesh | 24 in all: aid-cane-blind, aid-cane-low-vision, …, wheelchair |
