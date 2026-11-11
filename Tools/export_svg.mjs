@@ -98,8 +98,21 @@ function withPalette(svg) {
 async function tightenNodeBoxes(page, svgFile, mmdSource) {
   // "%% pin-order a b c" (from sexpr_to_mermaid.py): rows that must be stacked in this order.
   const pinOrders = [...mmdSource.matchAll(/^\s*%% pin-order (.+)$/gm)].map((m) => m[1].trim().split(/\s+/));
+  // Comment boxes (subgraphs C_...) and the node boxes and comments directly inside them.
+  const commentChildren = {};
+  const open = [];
+  for (const line of mmdSource.split(/\r?\n/)) {
+    const subgraph = /^\s*subgraph\s+([^\s[]+)/.exec(line);
+    if (subgraph) {
+      const parent = open[open.length - 1];
+      if (parent?.startsWith("C_")) (commentChildren[parent] ??= []).push(subgraph[1]);
+      open.push(subgraph[1]);
+    } else if (/^\s*end\s*$/.test(line)) {
+      open.pop();
+    }
+  }
   await page.goto(pathToFileURL(svgFile).href);
-  return page.evaluate((pinOrders) => {
+  return page.evaluate((pinOrders, commentChildren) => {
     const svg = document.documentElement;
     const pairPattern = /(-?[\d.]+(?:e-?\d+)?),(-?[\d.]+(?:e-?\d+)?)/g;
     const TITLE_SIDE = 16; // px between a node's title and its left and right border, at least
@@ -425,8 +438,130 @@ async function tightenNodeBoxes(page, svgFile, mmdSource) {
       }
       path.setAttribute("d", d);
     }
+
+    // Comment boxes were laid out around the node boxes before these shrank. Fit each around
+    // its nodes and inner comments again (innermost first), with its title above them. The
+    // layout leaves no room for a subgraph's title, so a comment may grow upward for it, as
+    // long as it doesn't cover another node box or comment; otherwise boxes only get smaller.
+    const COMMENT_PAD = 12; // px between a comment's border and what it frames
+    const descendants = (id) => (commentChildren[id] ?? []).flatMap((child) => [child, ...descendants(child)]);
+    // A subgraph's drawn box: a cluster's rect, or, for an empty subgraph (a collapsed node such
+    // as a pure getter), the node Mermaid draws instead.
+    const boxOf = (id) =>
+      svg.querySelector(`g.cluster[id="${CSS.escape(id)}"] > rect`) ?? svg.querySelector(`g.node[data-id="${CSS.escape(id)}"]`);
+    const overlaps = (a, b) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+    const fitted = new Set();
+    const fitComment = (id) => {
+      if (fitted.has(id)) return;
+      fitted.add(id);
+      const cluster = svg.querySelector(`g.cluster[id="${CSS.escape(id)}"]`);
+      const rect = cluster?.querySelector(":scope > rect");
+      const label = cluster?.querySelector(":scope > g.cluster-label");
+      if (!rect) return;
+      const inner = (commentChildren[id] ?? [])
+        .map((child) => {
+          if (child.startsWith("C_")) fitComment(child);
+          const childBox = boxOf(child);
+          return childBox && localBox(rect, childBox);
+        })
+        .filter(Boolean);
+      if (!inner.length) return;
+      const title = label ? localBox(rect, label) : { left: 0, right: 0, top: 0, bottom: 0 };
+      const content = {
+        left: Math.min(...inner.map((b) => b.left)),
+        right: Math.max(...inner.map((b) => b.right)),
+        top: Math.min(...inner.map((b) => b.top)),
+        bottom: Math.max(...inner.map((b) => b.bottom)),
+      };
+      // Never past the box the layout made, which the drawing's size already includes.
+      const old = {
+        left: rect.x.baseVal.value,
+        top: rect.y.baseVal.value,
+        right: rect.x.baseVal.value + rect.width.baseVal.value,
+        bottom: rect.y.baseVal.value + rect.height.baseVal.value,
+      };
+      // Is this area free of other node boxes and comments (not counting what this comment frames,
+      // or boxes around it)?
+      const inside = new Set([id, ...descendants(id)]);
+      const isInside = (otherId) => [...inside].some((i) => otherId === i || otherId.startsWith(i + "_"));
+      const others = [
+        ...[...svg.querySelectorAll("g.cluster")].map((c) => [c.id, c.querySelector(":scope > rect")]),
+        ...[...svg.querySelectorAll("g.node[data-id]")].map((n) => [n.dataset.id, n]),
+      ];
+      const free = (band) =>
+        !others.some(([otherId, element]) => {
+          if (!element || !/^[NC]_/.test(otherId) || isInside(otherId)) return false;
+          const box = localBox(rect, element);
+          const encloses = box.left <= old.left && box.right >= old.right && box.top <= old.top && box.bottom >= old.bottom;
+          return !encloses && overlaps(box, band);
+        });
+      const width = Math.max(content.right - content.left + 2 * COMMENT_PAD, title.right - title.left + 2 * COMMENT_PAD);
+      const centre = (content.left + content.right) / 2;
+      const wantedTop = content.top - COMMENT_PAD - (title.bottom - title.top) - COMMENT_PAD / 2;
+      const top =
+        wantedTop < old.top && free({ left: old.left, right: old.right, top: wantedTop, bottom: old.top })
+          ? wantedTop
+          : Math.max(old.top, wantedTop);
+      const bottom = Math.min(old.bottom, content.bottom + COMMENT_PAD);
+      // Sideways too, for a title wider than the box.
+      const wantedLeft = centre - width / 2;
+      const wantedRight = centre + width / 2;
+      const left =
+        wantedLeft < old.left && free({ left: wantedLeft, right: old.left, top, bottom }) ? wantedLeft : Math.max(old.left, wantedLeft);
+      const right =
+        wantedRight > old.right && free({ left: old.right, right: wantedRight, top, bottom }) ? wantedRight : Math.min(old.right, wantedRight);
+      rect.setAttribute("x", left);
+      rect.setAttribute("y", top);
+      rect.setAttribute("width", right - left);
+      rect.setAttribute("height", bottom - top);
+      if (label) {
+        // A title that still doesn't fit (something is in the way) ends in "…" inside the box.
+        const room = right - left - 2 * COMMENT_PAD;
+        const shown = Math.min(title.right - title.left, room);
+        if (shown < title.right - title.left) {
+          const frame = label.querySelector("foreignObject");
+          const text = label.querySelector("foreignObject > div");
+          if (frame && text) {
+            frame.setAttribute("width", room);
+            Object.assign(text.style, { display: "block", maxWidth: `${room}px`, overflow: "hidden", textOverflow: "ellipsis" });
+          }
+        }
+        const [, tx, ty] = label.getAttribute("transform").match(/translate\(\s*([-\d.e]+)[ ,]+([-\d.e]+)/);
+        const dx = (left + right) / 2 - (title.left + shown / 2);
+        const dy = top + COMMENT_PAD / 2 - title.top;
+        label.setAttribute("transform", `translate(${Number(tx) + dx}, ${Number(ty) + dy})`);
+      }
+    };
+    Object.keys(commentChildren).forEach(fitComment);
+    // A comment that grew past the edge of the drawing: let the drawing grow with it.
+    const view = svg.viewBox.baseVal;
+    const edges = [...fitted]
+      .map((id) => svg.querySelector(`g.cluster[id="${CSS.escape(id)}"] > rect`))
+      .filter(Boolean)
+      .map((rect) => {
+        const r = rect.getBoundingClientRect();
+        const [left, top] = toLocal(svg, r.left, r.top);
+        const [right] = toLocal(svg, r.right, r.bottom);
+        return { left, right, top };
+      });
+    for (const { left, right, top } of edges) {
+      if (top - 2 < view.y) {
+        view.height += view.y - (top - 2);
+        view.y = top - 2;
+      }
+      if (left - 2 < view.x) {
+        view.width += view.x - (left - 2);
+        view.x = left - 2;
+      }
+      if (right + 2 > view.x + view.width) {
+        view.width = right + 2 - view.x;
+      }
+    }
+    // Mermaid caps the drawing at its natural width; keep that cap in step.
+    if (svg.style.maxWidth) svg.style.maxWidth = `${view.width}px`;
+
     return new XMLSerializer().serializeToString(svg);
-  }, pinOrders);
+  }, pinOrders, commentChildren);
 }
 
 // This script and its helpers live in Tools/; the documentation it renders in Doc/.

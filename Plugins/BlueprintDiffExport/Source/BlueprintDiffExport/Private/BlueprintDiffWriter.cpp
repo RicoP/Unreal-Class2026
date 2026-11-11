@@ -5,6 +5,7 @@
 #include "EdGraph/EdGraph.h"
 #include "EdGraph/EdGraphNode.h"
 #include "EdGraph/EdGraphPin.h"
+#include "EdGraphNode_Comment.h"
 #include "EdGraphSchema_K2.h"
 #include "Components/ActorComponent.h"
 #include "Components/SceneComponent.h"
@@ -23,6 +24,7 @@
 #include "ISourceControlRevision.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
+#include "PhysicsEngine/BodySetup.h"
 #include "SourceControlHelpers.h"
 #include "SourceControlOperations.h"
 
@@ -131,9 +133,21 @@ namespace
 		return UEdGraphSchema_K2::TypeToText(Pin->PinType).ToString();
 	}
 
-	/** Every pin of a node, with its type, default value and links. */
+	/**
+	 * Every pin of a node, with its type, default value and links. A comment box also gets
+	 * (comment "<text>" (size <width> <height>) (color "#rrggbb")): its position is the node's,
+	 * so together they say which nodes it frames.
+	 */
 	void AddNodeDetails(const UEdGraphNode* Node, int32 Depth, TArray<FString>& Lines)
 	{
+		if (const UEdGraphNode_Comment* Comment = Cast<UEdGraphNode_Comment>(Node))
+		{
+			// CommentColor is linear; the editor shows it as sRGB.
+			const FColor Color = Comment->CommentColor.ToFColor(true);
+			Lines.Add(FString::Printf(TEXT("%s(comment %s (size %d %d) (color \"#%02x%02x%02x\"))"),
+				*Indent(Depth), *Quote(Comment->NodeComment), Comment->NodeWidth, Comment->NodeHeight,
+				Color.R, Color.G, Color.B));
+		}
 		for (const UEdGraphPin* Pin : Node->Pins)
 		{
 			if (!Pin || Pin->bHidden)
@@ -647,7 +661,10 @@ namespace
 			OldNames.Sort();
 			for (const FString& Name : OldNames)
 			{
-				if (!NewComponents.Contains(Name))
+				// Only components this Blueprint added can be removed in it. An inherited one that is
+				// gone only lost this Blueprint's overrides: they were reset, or the parent Blueprint
+				// removed the component (its own diff shows that).
+				if (!NewComponents.Contains(Name) && FCString::Strcmp(OldComponents[Name].Kind, TEXT("added")) == 0)
 				{
 					Entries.Add(Indent(2) + TEXT("(component-removed ") + Quote(Name) + TEXT(")"));
 				}
@@ -806,14 +823,93 @@ namespace
 		return OldObject;
 	}
 
+	/** An asset's physics body setup (a static mesh's collision), or null if it has none. */
+	const UBodySetup* BodySetupOf(const UObject* Asset)
+	{
+		const FObjectPropertyBase* Property = Asset ? FindFProperty<FObjectPropertyBase>(Asset->GetClass(), TEXT("BodySetup")) : nullptr;
+		return Property ? Cast<UBodySetup>(Property->GetObjectPropertyValue_InContainer(Asset)) : nullptr;
+	}
+
+	/**
+	 * A body setup's simple collision shapes, counted per kind as the Static Mesh Editor's
+	 * Collision > Primitives lists them ("1 Box, 2 Convex Elements"), or "no simple collision".
+	 */
+	FString CollisionPrimitivesText(const UBodySetup* BodySetup)
+	{
+		TArray<FString> Parts;
+		if (BodySetup)
+		{
+			const FKAggregateGeom& Geometry = BodySetup->AggGeom;
+			const auto Count = [&Parts](int32 Number, const TCHAR* One, const TCHAR* Many)
+			{
+				if (Number > 0)
+				{
+					Parts.Add(FString::Printf(TEXT("%d %s"), Number, Number == 1 ? One : Many));
+				}
+			};
+			Count(Geometry.BoxElems.Num(), TEXT("Box"), TEXT("Boxes"));
+			Count(Geometry.SphereElems.Num(), TEXT("Sphere"), TEXT("Spheres"));
+			Count(Geometry.SphylElems.Num(), TEXT("Capsule"), TEXT("Capsules"));
+			Count(Geometry.ConvexElems.Num(), TEXT("Convex Element"), TEXT("Convex Elements"));
+			Count(Geometry.TaperedCapsuleElems.Num(), TEXT("Tapered Capsule"), TEXT("Tapered Capsules"));
+			Count(Geometry.LevelSetElems.Num(), TEXT("Level Set"), TEXT("Level Sets"));
+		}
+		return Quote(Parts.IsEmpty() ? FString(TEXT("no simple collision")) : FString::Join(Parts, TEXT(", ")));
+	}
+
+	/** A body setup's Collision Complexity as the editor names it ("Project Default"), or "none". */
+	FString CollisionComplexityText(const UBodySetup* BodySetup)
+	{
+		const FByteProperty* Property = BodySetup ? FindFProperty<FByteProperty>(UBodySetup::StaticClass(), TEXT("CollisionTraceFlag")) : nullptr;
+		if (!Property || !Property->Enum)
+		{
+			return Quote(TEXT("none"));
+		}
+		const uint8 Value = Property->GetPropertyValue_InContainer(BodySetup);
+		return Quote(Property->Enum->GetDisplayNameTextByValue(Value).ToString());
+	}
+
+	/**
+	 * A static mesh's collision. It lives in the mesh's BodySetup sub-object, which PropertyEntries
+	 * leaves out like every reference to an object's own sub-objects, so removing or adding
+	 * collision in the Static Mesh Editor would not show. Only what is set by hand is listed: the
+	 * simple collision shapes per kind and the Collision Complexity, not the body setup's internal
+	 * data (its GUID changes whenever collision is rebuilt).
+	 */
+	void AddBodySetupEntries(const UObject* Old, const UObject* New, bool bReference, int32 Depth, TArray<FString>& Lines)
+	{
+		const UBodySetup* NewSetup = BodySetupOf(New);
+		const UBodySetup* OldSetup = BodySetupOf(Old);
+		if (!NewSetup && !OldSetup)
+		{
+			return;
+		}
+		const auto Add = [&](const TCHAR* Name, const FString& OldValue, const FString& NewValue)
+		{
+			if (OldValue == NewValue)
+			{
+				return;
+			}
+			Lines.Add(bReference
+				? FString::Printf(TEXT("%s(set %s %s)"), *Indent(Depth), *Quote(Name), *NewValue)
+				: FString::Printf(TEXT("%s(changed %s (old %s) (new %s))"), *Indent(Depth), *Quote(Name), *OldValue, *NewValue));
+		};
+		// A mesh compared with its class default has no body setup there: compare with an empty one.
+		const UBodySetup* Baseline = OldSetup ? OldSetup : GetDefault<UBodySetup>();
+		Add(TEXT("BodySetup CollisionPrimitives"), CollisionPrimitivesText(OldSetup), CollisionPrimitivesText(NewSetup));
+		Add(TEXT("BodySetup CollisionComplexity"), CollisionComplexityText(Baseline), CollisionComplexityText(NewSetup));
+	}
+
 	/**
 	 * Property differences between two objects of the same kind. In a diff each entry shows
 	 * the old and new value; in a reference (compared against the class default) only the value.
+	 * An asset's collision (BodySetup) is included.
 	 */
 	void AddPropertyDiffs(const UObject* Old, const UObject* New, bool bReference, TArray<FString>& Lines)
 	{
 		Lines.Add(Indent(1) + TEXT("(properties"));
 		Lines.Append(PropertyEntries(Old, New, bReference, false, 2, OldPackageOf(Old, New), New->GetPackage()->GetName()));
+		AddBodySetupEntries(Old, New, bReference, 2, Lines);
 		Lines.Last() += TEXT(")");
 	}
 }

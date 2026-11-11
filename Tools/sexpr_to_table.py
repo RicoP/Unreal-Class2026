@@ -382,7 +382,7 @@ def blueprint_settings_markdown(diff, diff_path):
         rows.append((f"Class Defaults › {setting_name(entry[1])}", old[1] if old else None, first(entry, "new")[1]))
     for component in components:
         if component[0] == "component-removed":
-            rows.append((f"Component {component[1]}", component[1], "remove"))
+            rows.append(("Remove Component", words(component[1]), None))
             continue
         label = words(component[1])
         if first(component, "new"):
@@ -507,6 +507,8 @@ def import_tables(paths):
         diff = parse(path.read_text(encoding="utf-8"))
         if not (isinstance(diff, list) and diff[0] == "asset-diff"):
             continue
+        if first(diff, "old") != ["old", "none"]:
+            continue  # imported in an earlier step; changes to it get a normal table
         source = import_source(path, diff)
         if not source:
             continue

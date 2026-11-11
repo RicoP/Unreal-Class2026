@@ -60,6 +60,9 @@ body.step { padding: 24px 16px; }
 }
 .table .none { color: var(--text-muted); }
 
+/* The assets a merged section changes (identical changes to several assets), above its table. */
+.step .assets { margin: 0 0 12px; max-width: 900px; font-size: 14px; line-height: 1.6; color: var(--text-muted); }
+
 /* A Blueprint's component tree above its table, indented like the Components panel. */
 .components { margin: 0 0 12px; font-size: 14px; color: var(--text); }
 .components p { margin: 0 0 4px; font-weight: bold; }
@@ -69,3 +72,6 @@ body.step { padding: 24px 16px; }
 .components li li { position: relative; }
 .components li li::before { content: "└"; position: absolute; left: -16px; color: var(--text-muted); }
 .table code { font-family: consolas, "courier new", monospace; font-size: 13px; }
+/* Asset names link to where the asset was downloaded (Doc/asset_sources.json). */
+.table a, .step .assets a { color: #7cc4ff; text-decoration: none; border-bottom: 1px dotted currentColor; }
+.table a:hover, .step .assets a:hover { border-bottom-style: solid; }

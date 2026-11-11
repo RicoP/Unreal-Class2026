@@ -185,9 +185,47 @@ function paletteCss() {
     .join("\n");
 }
 
-/** A table cell's text as HTML: `code` spans as <code>. */
-function cellHtml(text) {
-  return html(text).replace(/`([^`]+)`/g, "<code>$1</code>");
+/**
+ * Where assets were downloaded from, by asset name: Doc/asset_sources.json maps asset files
+ * ("Content/itch-assets/StaticMeshes/sword_B.uasset") to a page; tables name assets by their
+ * name ("sword_B"). A name that two sources claim gets no link.
+ */
+function loadAssetSources() {
+  const file = path.join(siteDir, "asset_sources.json");
+  const sources = new Map();
+  if (!existsSync(file)) {
+    return sources;
+  }
+  for (const [asset, url] of Object.entries(JSON.parse(readFileSync(file, "utf8")))) {
+    const name = path.posix.basename(asset).replace(/\.uasset$/i, "");
+    sources.set(name, sources.has(name) && sources.get(name) !== url ? null : url);
+  }
+  return sources;
+}
+const assetSources = loadAssetSources();
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+// Whole asset names only: "sword_B" in "sword_B, sword_C", not in "sword_B_old". Longest first.
+// The source file it was imported from ("sword_B.fbx") came from the same place: linked whole.
+const assetNames = [...assetSources].filter(([, url]) => url).map(([name]) => name).sort((a, b) => b.length - a.length);
+const assetPattern = assetNames.length
+  ? new RegExp(`(?<![\\w-])(${assetNames.map(escapeRegExp).join("|")})(?:\\.(?:fbx|FBX|obj|OBJ|gltf|glb))?(?![\\w-])`, "g")
+  : null;
+
+/** Asset names in HTML text as links to where the asset came from, opened in a new tab. */
+function linkAssets(text) {
+  return assetPattern
+    ? text.replace(assetPattern, (match, name) => `<a href="${html(assetSources.get(name))}" target="_blank" rel="noopener">${match}</a>`)
+    : text;
+}
+
+/**
+ * A table cell's text as HTML: `code` spans as <code>, and with links (values, not setting or
+ * component names, which could share a word with an asset such as "Group") asset names as links
+ * to their source.
+ */
+function cellHtml(text, links = true) {
+  const cell = html(text).replace(/`([^`]+)`/g, "<code>$1</code>");
+  return links ? linkAssets(cell) : cell;
 }
 
 /** A component tree ([depth, "name (type)"] items) as nested lists, like the Components panel. */
@@ -200,7 +238,7 @@ function treeHtml(tree) {
     } else {
       lines.push("</li>" + "</ul></li>".repeat(depth - level));
     }
-    lines.push(`<li>${cellHtml(text)}`);
+    lines.push(`<li>${cellHtml(text, false)}`);
     depth = level;
   }
   lines.push("</li>" + "</ul></li>".repeat(depth) + "</ul>");
@@ -218,8 +256,13 @@ function treeHtml(tree) {
  */
 function tableHtml({ title, tree, rows }) {
   const [header, ...body] = rows;
+  // The first column names settings; only the values link assets.
   const cells = (row, tag) =>
-    row.map((value) => (value === "—" ? `<${tag} class="none">—</${tag}>` : `<${tag}>${cellHtml(value)}</${tag}>`)).join("");
+    row
+      .map((value, column) =>
+        value === "—" ? `<${tag} class="none">—</${tag}>` : `<${tag}>${cellHtml(value, tag === "td" && column > 0)}</${tag}>`,
+      )
+      .join("");
   return [
     ...(tree.length ? [treeHtml(tree)] : []),
     `      <div class="table">`,
@@ -259,7 +302,44 @@ function writeDoc(folder) {
   // Import steps come first: everything else may use what they bring in.
   const files = [...allFiles.filter((file) => metas.get(file).kind === "import"), ...allFiles.filter((file) => metas.get(file).kind !== "import")];
   const withSettings = new Set([...metas.values()].filter((meta) => meta.part === "settings").map((meta) => meta.package));
-  const sections = files.map((file, index) => {
+
+  // Asset tables in the same folder that are 100% the same (asset type, new or changed, and
+  // rows) become one section that lists the assets, e.g. collision removed from 30 Static
+  // Meshes at once. The section sits where the first of them would be; a different asset in
+  // between (sorted by name) doesn't split the group.
+  const groups = [];
+  const byKey = new Map();
+  for (const file of files) {
+    const meta = metas.get(file);
+    const table = tables.has(file) && meta.kind === "asset" ? parseTable(readFileSync(tables.get(file), "utf8")) : null;
+    const key = table && JSON.stringify([meta.package.replace(/\/[^/]*$/, ""), meta.type, meta.new, table.rows]);
+    if (key && byKey.has(key)) {
+      byKey.get(key).files.push(file);
+      continue;
+    }
+    const group = { files: [file], table };
+    groups.push(group);
+    if (key) byKey.set(key, group);
+  }
+  const groupSection = ({ files: members, table }) => {
+    const meta = metas.get(members[0]);
+    const names = members.map((file) => metas.get(file).package.split("/").pop());
+    const what = `${names.length} ${meta.type} assets`;
+    const heading = `${meta.new === "true" ? "Create" : "Change"} ${what} in ${browserPath(meta.package.replace(/\/[^/]*$/, ""))}`;
+    return [
+      "    <section>",
+      `      <h2>${html(heading)}</h2>`,
+      `      <p class="assets">${linkAssets(html(names.join(", ")))}</p>`,
+      tableHtml({ ...table, title: what, tree: [] }),
+      "    </section>",
+    ].join("\n");
+  };
+
+  const sections = groups.map((group, index) => {
+    if (group.files.length > 1) {
+      return groupSection(group);
+    }
+    const [file] = group.files;
     if (file.endsWith(".png")) {
       // A level screenshot (Tools > Save Level Screenshot): the geometry to rebuild by eye.
       const levelPath = browserPath("/" + file.replace(/\.png$/i, ""));

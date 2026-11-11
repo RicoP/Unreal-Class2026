@@ -114,12 +114,24 @@ to rebuild it themselves.
   builder, `Default__…` values) are left out. In SVG metadata actors have
   `kind="actor"`, `package` = the level, and `label`; `doc.html` headings read
   "Place <type> [named <label>] in <level>" or "Change <label> in <level>".
+- References to an object's own sub-objects are left out of property diffs,
+  so the plugin adds an asset's collision (its `BodySetup` sub-object, e.g.
+  a static mesh's) by hand: `BodySetup CollisionPrimitives` (simple shapes
+  counted per kind, "1 Box, 2 Convex Elements" or "no simple collision") and
+  `BodySetup CollisionComplexity` (the editor's display name). The body
+  setup's other data isn't listed (its GUID changes on every rebuild).
+- `component-removed` is only written for components the Blueprint added
+  itself. An inherited component whose override record disappeared (its
+  overrides were reset, or the parent removed it) isn't a removal in the
+  child.
 - Imported assets (meshes, animations, textures from FBX, glTF, ...): their
   `asset-diff` has `(imported-from "<source file>")` and, for imports through
   Interchange, `(import-options (set "<pipeline sub-object> <option>" value) ...)`
   with the import dialog settings that differ from the pipeline defaults (for
-  example the Skeleton to use, or Import Animations off). The doc documents
-  imports per step, not per asset: `sexpr_to_table.py` skips imported assets
+  example the Skeleton to use, or Import Animations off). Only assets new in
+  the step (`(old none)`) count as imports; one imported in an earlier step
+  gets a normal "Open ... and change" table, or none if nothing changed. The
+  doc documents imports per step, not per asset: `sexpr_to_table.py` skips imported assets
   and the `<mesh>_Skeleton` / `<mesh>_PhysicsAsset` an import creates next to
   them, and writes one `<folder>/<first file>.import.md` per group of source
   files imported into the same folder with the same options: files, options,
@@ -154,6 +166,12 @@ to rebuild it themselves.
   have unsaved changes, it first lists them in a message box and asks whether
   to export anyway (default: No), because revision control only sees saved
   files.
+- Asset tables in the same folder that are 100% the same (asset type, new or
+  changed, and identical rows) are merged by `writeDoc` into one section where
+  the first of them would be: "Change <N> <type> assets in <folder>" (or
+  "Create ..."), the asset names in a `<p class="assets">`, then the table
+  once. Anything that differs, even one row, keeps its own section; it doesn't
+  split a group that sorts around it.
 - Non-Blueprint assets have no graph, so the lesson shows them as tables.
   Generate one with `python Tools/sexpr_to_table.py <file>.sexpr`; it writes a
   `.md` file next to the diff.
@@ -234,6 +252,23 @@ to rebuild it themselves.
   rest of the website. The Pages workflow publishes without it: after
   collecting the site it runs `node Tools/export_doc.mjs --site --commits
   _site/commits`, which writes the step list from the published steps only.
+- `Doc/asset_sources.json` is the one hand-maintained file in `Doc/`: a lookup
+  from an asset file (repo-relative, forward slashes, e.g.
+  `Content/itch-assets/StaticMeshes/arrow_A.uasset`) to the page it was
+  downloaded from (e.g. `https://kaylousberg.itch.io/fantasy-weapons-bits`).
+  Keep it up to date: when the user names where imported assets come from,
+  add every asset of that import. `export_doc.mjs` turns asset names (the file
+  name without `.uasset`, whole words only) into links to their source that
+  open in a new tab: in table values and captions and in a merged section's
+  asset list, not in the Setting column or component trees (setting and
+  component names could share a word with an asset, e.g. Kenney's `Group`).
+  A name claimed by two different sources gets no link; a source file named
+  after the asset (`sword_B.fbx`, also `.obj`, `.gltf`, `.glb`) is linked
+  whole. Steps 5 (`20261110_121316`, regenerated) and 4 (`20261109_105725`,
+  whose tables are SVG: asset names in `<text>` were wrapped by hand in
+  `<a target="_blank"><tspan style="fill:#7cc4ff;text-decoration:underline">`)
+  have links too; steps 1-3 name no listed assets. When sources are added for
+  assets an older step names, add its links the same way.
 - `doc.css` is the shared stylesheet: `index.html` (`<body class="index">`)
   links `doc.css`, and every `doc.html` (`<body class="step">`) written since
   tables became HTML links `../../doc.css` and has no inline style. Older
@@ -301,6 +336,20 @@ what they see on screen.
   end. A plain `.mmd` preview shows loop wires without arrowhead, and the wire
   meets its output pin from the left.
 - Wires connect pin rows, not whole nodes, except for pure getters (below).
+- Comment boxes of the Blueprint editor are drawn as subgraphs `C_...` around
+  the drawn nodes they frame, titled with the comment's first line, in its
+  colour (`fill:none`; dimmed and dashed when the comment isn't part of the
+  change), each with `direction LR`. The plugin writes a comment node's
+  `(comment "<text>" (size w h) (color "#rrggbb"))` (sRGB); a node belongs to
+  the smallest comment containing its position, a comment to the smallest
+  comment enclosing it, and comments around no drawn node are left out.
+  Comment nodes are never drawn as nodes. Mermaid lays clusters out around
+  the unshrunk node boxes and leaves no room for their titles, so
+  `export_svg.mjs` refits each comment around its final contents (innermost
+  first; a collapsed node is an empty subgraph, which Mermaid draws as a
+  `g.node`, not a cluster) and lets it grow upward and sideways for its title
+  unless that would cover another box, growing the SVG's viewBox if needed.
+  A title that still doesn't fit ends in "…".
 - Leave out reroute nodes completely. Draw the wire directly from the pin
   feeding the reroute node to the pins it leads to.
 - Don't draw wires from an event's delegate pin (for example a Custom Event

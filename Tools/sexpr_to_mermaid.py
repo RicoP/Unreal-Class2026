@@ -227,6 +227,52 @@ class Node:
         return node_title(self.role, self.raw_title)
 
 
+def is_comment(name):
+    """Comment boxes are nodes in the editor's graph; the diagrams draw them as boxes around nodes."""
+    return name.startswith("EdGraphNode_Comment")
+
+
+class Comment:
+    """A comment box of the Blueprint editor: its text, rectangle (graph units) and colour."""
+
+    def __init__(self, name, text, x, y, width, height, colour):
+        self.name = name
+        self.text = text
+        self.x, self.y, self.width, self.height = x, y, width, height
+        self.colour = colour
+        self.context = True  # not part of the diff
+
+    @property
+    def title(self):
+        return self.text.split("\n", 1)[0].strip() or "Comment"
+
+    @property
+    def area(self):
+        return self.width * self.height
+
+    def contains(self, x, y):
+        return self.x <= x <= self.x + self.width and self.y <= y <= self.y + self.height
+
+    def encloses(self, other):
+        return (self.contains(other.x, other.y) and self.contains(other.x + other.width, other.y + other.height)
+                and self.area > other.area)
+
+
+def reference_comments(reference, graph_name):
+    """Comment boxes of one graph in a reference file. The plugin writes their text, size and
+    colour as (comment "<text>" (size w h) (color "#rrggbb")); older exports have none."""
+    graph = next((g for g in lists(reference, "graph") if g[1] == graph_name), None)
+    comments = []
+    for info in lists(graph or [], "node"):
+        details = first(info, "comment")
+        pos, size = first(info, "pos"), first(details or [], "size")
+        if details and pos and size:
+            colour = first(details, "color")
+            comments.append(Comment(info[1], details[1], int(pos[1]), int(pos[2]), int(size[1]), int(size[2]),
+                                    colour[1] if colour else TEXT))
+    return comments
+
+
 def read_graph(graph, warnings):
     """Return the added nodes and the wires between pins of a graph diff."""
     nodes = {}
@@ -251,6 +297,8 @@ def read_graph(graph, warnings):
             warnings.append(f"{graph[1]}: not drawn: {kind} {text[1] if text else ''}")
             continue
         info = first(entry, "node")
+        if is_comment(info[1]):
+            continue  # needs the reference file to know what it frames
         pos = first(info, "pos")
         node = Node(info[1], info[2], int(pos[1]), int(pos[2]))
         nodes[node.name] = node
@@ -368,6 +416,8 @@ def reference_graph(reference, graph_name):
     graph = next((g for g in lists(reference, "graph") if g[1] == graph_name), None)
     nodes, wires = {}, {}
     for info in lists(graph or [], "node"):
+        if is_comment(info[1]):
+            continue  # comment boxes: reference_comments
         pos = first(info, "pos")
         node = Node(info[1], info[2], int(pos[1]), int(pos[2]))
         nodes[node.name] = node
@@ -466,8 +516,9 @@ def label(text):
     return '"' + text.replace('"', "#quot;") + '"'
 
 
-def render_graph(graph_name, nodes, wires, lines, styles, classes, edges, indent):
+def render_graph(graph_name, nodes, wires, lines, styles, classes, edges, indent, comments=()):
     pad = "    " * indent
+    blocks = {}  # node name -> the lines of its subgraph, written inside its comment boxes below
     connected = {}
     for source, target, _ in wires:
         connected.setdefault(source[0], set()).add(source[1])
@@ -518,7 +569,8 @@ def render_graph(graph_name, nodes, wires, lines, styles, classes, edges, indent
         collapsible = getter_like or node.role == "operator"
         collapsed = collapsible and not values and not node.event_links
 
-        lines.append(f"{pad}subgraph {node_id}[{label(node.title)}]")
+        block = blocks[node.name] = []
+        block.append(f"{pad}subgraph {node_id}[{label(node.title)}]")
         # Invisible anchor rows: Mermaid attaches a wire to a node box to an arbitrary row of it,
         # so the layout could put an event right of the node it triggers, or spread the node's
         # rows sideways. Instead, wires of omitted exec pins go to an anchor in the input column
@@ -533,7 +585,7 @@ def render_graph(graph_name, nodes, wires, lines, styles, classes, edges, indent
         anchor_out = ident(node_id, "anchor_out") if rows and (wired("out") or not outputs) else None
         for anchor in (anchor_in, anchor_out):
             if anchor:
-                lines.append(f'{pad}    {anchor}[" "]')
+                block.append(f'{pad}    {anchor}[" "]')
                 classes.setdefault("anchor", []).append(anchor)
         for pin_name, direction, pin_type in [] if collapsed else inputs + outputs:
             pin_id = ident(node_id, pin_name)
@@ -558,15 +610,15 @@ def render_graph(graph_name, nodes, wires, lines, styles, classes, edges, indent
             else:
                 text = f"{marker} {name}" if direction == "in" else f"{name} {marker}"
             shape = (">", "]") if kind == "exec" else ("[", "]")
-            lines.append(f"{pad}    {pin_id}{shape[0]}{label(pin_label(text.strip(), direction))}{shape[1]}")
+            block.append(f"{pad}    {pin_id}{shape[0]}{label(pin_label(text.strip(), direction))}{shape[1]}")
             classes.setdefault(f"{kind}_dim" if node.context else kind, []).append(pin_id)
 
         # The layout may stack exec output rows in any order (it sorts rows to reduce crossings);
         # export_svg.mjs puts the rows listed here back in this order, top to bottom.
         exec_rows = [ident(node_id, p) for p, _, t in outputs if pin_kind(t) == "exec"]
         if not collapsed and len(exec_rows) >= 2:
-            lines.append(f"{pad}    %% pin-order {' '.join(exec_rows)}")
-        lines.append(f"{pad}end")
+            block.append(f"{pad}    %% pin-order {' '.join(exec_rows)}")
+        block.append(f"{pad}end")
         # Exec wires of omitted exec pins connect to the node box itself.
         for pin_name in node_level_exec:
             anchor = anchor_in if node.pins[pin_name][0] == "in" else anchor_out
@@ -602,6 +654,8 @@ def render_graph(graph_name, nodes, wires, lines, styles, classes, edges, indent
             extra = ",stroke-dasharray:5 5" + extra
         styles.append(f"style {node_id} fill:{BODY},stroke:{stroke},stroke-width:{width},color:{title}{extra}")
 
+    write_in_comments(graph_name, order, blocks, comments, lines, styles, pad)
+
     loops = loop_wires(order, wires)
     rank = {node.name: i for i, node in enumerate(order)}
     drawn = set()
@@ -614,6 +668,44 @@ def render_graph(graph_name, nodes, wires, lines, styles, classes, edges, indent
             old = nodes[source[0]].context and nodes[target[0]].context
             edges.append((*pair, pin_kind(pin_type), old, (source, target) in loops))
     return invisible
+
+
+def write_in_comments(graph_name, order, blocks, comments, lines, styles, pad):
+    """
+    Write the node subgraphs, each inside the comment boxes around it in the editor: a node goes
+    into the smallest comment containing its position, a comment into the smallest comment that
+    encloses it. Only comments around drawn nodes are drawn, as subgraphs C_... in the comment's
+    colour (dimmed and dashed when the comment isn't part of the change, like nodes).
+    """
+    def smallest(candidates):
+        return min(candidates, key=lambda c: (c.area, c.name)).name if candidates else None
+
+    parent_of = {c.name: smallest([o for o in comments if o is not c and o.encloses(c)]) for c in comments}
+    home = {node.name: smallest([c for c in comments if c.contains(node.x, node.y)]) for node in order}
+    used = set()
+    for name in home.values():
+        while name and name not in used:
+            used.add(name)
+            name = parent_of[name]
+
+    def write(parent, depth):
+        step = "    " * depth
+        for comment in sorted((c for c in comments if c.name in used and parent_of[c.name] == parent),
+                              key=lambda c: (c.x, c.y, c.name)):
+            comment_id = ident("C", graph_name, comment.name)
+            # The layout doesn't leave room for the title above the nodes; export_svg.mjs makes it.
+            lines.append(f"{pad}{step}subgraph {comment_id}[{label(comment.title)}]")
+            # A comment box only linked inside itself would otherwise lay out top to bottom.
+            lines.append(f"{pad}{step}    direction LR")
+            write(comment.name, depth + 1)
+            lines.append(f"{pad}{step}end")
+            colour, dashes = (dim(comment.colour), ",stroke-dasharray:5 5") if comment.context else (comment.colour, "")
+            styles.append(f"style {comment_id} fill:none,stroke:{colour},stroke-width:2px,color:{colour}{dashes}")
+        for node in order:
+            if home[node.name] == parent:
+                lines.extend(step + line for line in blocks[node.name])
+
+    write(None, 0)
 
 
 def loop_wires(order, wires):
@@ -661,9 +753,10 @@ def to_mermaid(diff, warnings, reference=None):
     graphs = lists(diff, "graph")
     lines, styles, classes, edges, invisible = [], [], {}, [], []
 
-    drawable = []  # (graph name, nodes, wires) for graphs with something left to draw
+    drawable = []  # (graph name, nodes, wires, comments) for graphs with something left to draw
     for graph in graphs:
         graph_name = graph[1]
+        comments = []
         if reference is not None:
             # Draw everything connected to the change in the current graph; mute what didn't change.
             changed, start = diff_changes(graph, warnings)
@@ -672,6 +765,9 @@ def to_mermaid(diff, warnings, reference=None):
             for node in nodes.values():
                 node.context = node.name not in changed
             wires = remove_reroutes(nodes, wires)
+            comments = reference_comments(reference, graph_name)
+            for comment in comments:
+                comment.context = comment.name not in changed
         else:
             nodes, wires, known = read_graph(graph, warnings)
             wires = remove_reroutes(nodes, wires)
@@ -706,13 +802,13 @@ def to_mermaid(diff, warnings, reference=None):
         for name in [n for n, node in nodes.items() if is_entry(node) and n not in wired]:
             del nodes[name]
         if nodes:
-            drawable.append((graph_name, nodes, wires))
+            drawable.append((graph_name, nodes, wires, comments))
 
     if not drawable:
         return None
 
     nested = len(drawable) > 1
-    for graph_name, nodes, wires in drawable:
+    for graph_name, nodes, wires, comments in drawable:
         if nested:
             group_id = ident("G", graph_name)
             lines.append(f"    subgraph {group_id}[{label(graph_name)}]")
@@ -720,7 +816,7 @@ def to_mermaid(diff, warnings, reference=None):
             lines.append("        direction LR")
             # A box around each graph when several graphs changed: transparent, subtle border.
             styles.append(f"style {group_id} fill:none,stroke:{_COLOURS['border-neutral']},stroke-width:1px,color:{TEXT}")
-        invisible += render_graph(graph_name, nodes, wires, lines, styles, classes, edges, 2 if nested else 1)
+        invisible += render_graph(graph_name, nodes, wires, lines, styles, classes, edges, 2 if nested else 1, comments)
         if nested:
             lines.append("    end")
         lines.append("")
