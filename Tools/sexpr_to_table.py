@@ -97,10 +97,12 @@ def describe_item(item):
 
 
 def cell(value):
-    """Shorten object paths and escape Markdown table syntax."""
+    """Shorten object paths and escape Markdown table syntax; plain numbers lose trailing zeros."""
     if value is None or value == "none":
         return "—"
     text = shorten(str(value)).strip('"')
+    if re.fullmatch(r"-?\d+\.\d+", text):
+        text = number(text)
     return (text or "(empty)").replace("|", "\\|").replace("\n", " ")
 
 
@@ -153,21 +155,40 @@ def blend_sample(item, axis_max):
     return f"{animation} at {number(str(x))}"
 
 
+# Properties an animation asset keeps for the engine, not set by hand: its data model and
+# controller objects (the controller's name changes on every load) and the frame rate taken
+# from the animation it was made from.
+ASSET_BOOKKEEPING = {"DataModelInterface", "Controller", "CommonTargetFrameRate"}
+
+
 def to_markdown(diff):
     package = diff[1]
     name = package.rsplit("/", 1)[-1]
     asset_class = words(first(diff, "class")[1])
     is_new = first(diff, "baseline") is not None
-    properties = first(diff, "properties")[1:]
+    properties = [entry for entry in first(diff, "properties")[1:] if entry[1] not in ASSET_BOOKKEEPING]
+    # A value that reads the same before and after (an object path that only differs in a
+    # transient part) is no change to make.
+    properties = [entry for entry in properties if is_new or
+                  cell((first(entry, "old") or [0, None])[1]) != cell((first(entry, "new") or [0, None])[1])]
     describers = {}  # setting -> (describe new item, describe old item)
     if first(diff, "class")[1] == "BlendSpace1D":
         new_max, old_max = blend_axis_max(properties, "new"), blend_axis_max(properties, "old")
         describers["SampleData"] = (lambda item: blend_sample(item, new_max), lambda item: blend_sample(item, old_max))
 
     lines = [f"### {name} ({asset_class})", ""]
-    if not properties:
-        lines.append("No changes.")
+    if not properties and is_new:
+        # One row, so doc.html shows the step (it leaves out tables without rows).
+        lines += [
+            f"Create a new {asset_class} named `{name}` in `{package.rsplit('/', 1)[0]}` and keep its default settings.",
+            "",
+            "| Setting | Value |",
+            "|---|---|",
+            "| All settings | Default |",
+        ]
         return "\n".join(lines) + "\n"
+    if not properties:
+        return None  # saved again without a change: nothing to document
 
     if is_new:
         lines += [
@@ -698,6 +719,10 @@ def main():
             print(f"{path}: skipped, not an asset or actor diff (use sexpr_to_mermaid.py for Blueprints)", file=sys.stderr)
             continue
         output = path.with_suffix(".md")
+        if markdown is None:
+            output.unlink(missing_ok=True)
+            print(f"{path}: no changes, no table")
+            continue
         output.write_text(markdown, encoding="utf-8", newline="\n")
         print(f"Wrote {output}")
 

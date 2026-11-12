@@ -1,0 +1,15 @@
+(asset "/Game/Characters/Mannequins/Anims/Unarmed/Attack/MM_Attack_01"
+  (class "AnimSequence")
+  (revision working-copy)
+  (properties
+    (set "BoneCompressionSettings" "/Script/Engine.AnimBoneCompressionSettings'/Engine/Animation/DefaultRecorderBoneCompression.DefaultRecorderBoneCompression'")
+    (set "CurveCompressionSettings" "/Script/Engine.AnimCurveCompressionSettings'/ACLPlugin/ACLAnimCurveCompressionSettings.ACLAnimCurveCompressionSettings'")
+    (set "VariableFrameStrippingSettings" "/Script/Engine.VariableFrameStrippingSettings'/Engine/Animation/DefaultVariableFrameStrippingSettings.DefaultVariableFrameStrippingSettings'")
+    (set "RetargetSource" "SKM_Manny")
+    (set "bForceRootLock" "True")
+    (set "NumberOfSampledKeys" "31")
+    (set "NumberOfSampledFrames" "30")
+    (set "DataModelInterface" "AnimationSequencerDataModel'/Game/Characters/Mannequins/Anims/Unarmed/Attack/MM_Attack_01.MM_Attack_01:AnimationSequencerDataModel'")
+    (set "Controller" "AnimSequencerController'/Engine/Transient.AnimSequencerController_32'")
+    (set "Skeleton" "/Script/Engine.Skeleton'/Game/Characters/Mannequins/Meshes/SK_Mannequin.SK_Mannequin'")
+    (set "AssetUserData" "(\"/Script/AnimationModifiers.AnimationModifiersAssetUserData'/Game/Characters/Mannequins/Anims/Unarmed/Attack/MM_Attack_01.MM_Attack_01:AnimationModifiersAssetUserData_0'\",\"/Script/LevelSequence.AnimSequenceLevelSequenceLink'/Game/Characters/Mannequins/Anims/Unarmed/Attack/MM_Attack_01.MM_Attack_01:AnimSequenceLevelSequenceLink_0'\")")))

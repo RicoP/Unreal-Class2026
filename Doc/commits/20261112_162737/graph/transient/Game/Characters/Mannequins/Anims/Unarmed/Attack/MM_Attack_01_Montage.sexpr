@@ -1,0 +1,10 @@
+(asset-diff "/Game/Characters/Mannequins/Anims/Unarmed/Attack/MM_Attack_01_Montage"
+  (class "AnimMontage")
+  (old none)
+  (baseline class-default)
+  (new working-copy)
+  (properties
+    (changed "CommonTargetFrameRate" (old "(Numerator=60000,Denominator=1)") (new "(Numerator=30,Denominator=1)"))
+    (changed "DataModelInterface" (old "None") (new "AnimDataModel'/Game/Characters/Mannequins/Anims/Unarmed/Attack/MM_Attack_01_Montage.MM_Attack_01_Montage:AnimDataModel'"))
+    (changed "Controller" (old "None") (new "AnimDataController'/Engine/Transient.AnimDataController_0'"))
+    (changed "Skeleton" (old "None") (new "/Script/Engine.Skeleton'/Game/Characters/Mannequins/Meshes/SK_Mannequin.SK_Mannequin'"))))

@@ -1,0 +1,9 @@
+(asset-diff "/Game/Characters/Mannequins/Anims/Unarmed/Attack/MM_Attack_01"
+  (class "AnimSequence")
+  (old (revision "c6120a53") (date "2026-11-07T04:51:09.000Z") (description "Initial commit: Platforming1 Unreal project\n\nAdd project files, config and content, with Git LFS tracking for\nbinary assets and a .gitignore for Unreal generated folders.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (properties
+    (changed "bEnableRootMotion" (old "True") (new "False"))
+    (changed "bForceRootLock" (old "False") (new "True"))
+    (changed "DataModelInterface" (old "AnimationSequencerDataModel'/Game/Characters/Mannequins/Anims/Unarmed/Attack/MM_Attack_01.MM_Attack_01:AnimationSequencerDataModel'") (new "AnimationSequencerDataModel'/Game/Characters/Mannequins/Anims/Unarmed/Attack/MM_Attack_01.MM_Attack_01:AnimationSequencerDataModel'"))
+    (changed "Controller" (old "AnimSequencerController'/Engine/Transient.AnimSequencerController_37'") (new "AnimSequencerController'/Engine/Transient.AnimSequencerController_32'"))))

@@ -25,6 +25,8 @@
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "PhysicsEngine/BodySetup.h"
+#include "Animation/AnimMontage.h"
+#include "Animation/Skeleton.h"
 #include "SourceControlHelpers.h"
 #include "SourceControlOperations.h"
 
@@ -901,6 +903,56 @@ namespace
 	}
 
 	/**
+	 * A montage's slots and what plays in them, as the Montage editor's slot tracks show it:
+	 * "DefaultGroup.DefaultSlot: MM_Attack_01" (several slots separated by "; "), or "none".
+	 */
+	FString MontageSlotsText(const UObject* Object)
+	{
+		const UAnimMontage* Montage = Cast<UAnimMontage>(Object);
+		if (!Montage)
+		{
+			return Quote(TEXT("none"));
+		}
+		const USkeleton* Skeleton = Montage->GetSkeleton();
+		TArray<FString> Slots;
+		for (const FSlotAnimationTrack& Track : Montage->SlotAnimTracks)
+		{
+			TArray<FString> Animations;
+			for (const FAnimSegment& Segment : Track.AnimTrack.AnimSegments)
+			{
+				if (const UAnimSequenceBase* Animation = Segment.GetAnimReference())
+				{
+					Animations.Add(Animation->GetName());
+				}
+			}
+			const FName Group = Skeleton ? Skeleton->GetSlotGroupName(Track.SlotName) : NAME_None;
+			const FString Slot = Group.IsNone() ? Track.SlotName.ToString() : Group.ToString() + TEXT(".") + Track.SlotName.ToString();
+			Slots.Add(Slot + TEXT(": ") + (Animations.IsEmpty() ? FString(TEXT("no animation")) : FString::Join(Animations, TEXT(", "))));
+		}
+		return Quote(Slots.IsEmpty() ? FString(TEXT("none")) : FString::Join(Slots, TEXT("; ")));
+	}
+
+	/**
+	 * A montage's slot tracks. They aren't editable properties (the Montage editor edits them
+	 * with its own UI), so PropertyEntries doesn't see them, and without them a montage's
+	 * table wouldn't say which animation it plays.
+	 */
+	void AddMontageEntries(const UObject* Old, const UObject* New, bool bReference, int32 Depth, TArray<FString>& Lines)
+	{
+		if (!Cast<UAnimMontage>(New) && !Cast<UAnimMontage>(Old))
+		{
+			return;
+		}
+		const FString OldValue = MontageSlotsText(Old), NewValue = MontageSlotsText(New);
+		if (OldValue != NewValue)
+		{
+			Lines.Add(bReference
+				? FString::Printf(TEXT("%s(set \"MontageSlots\" %s)"), *Indent(Depth), *NewValue)
+				: FString::Printf(TEXT("%s(changed \"MontageSlots\" (old %s) (new %s))"), *Indent(Depth), *OldValue, *NewValue));
+		}
+	}
+
+	/**
 	 * Property differences between two objects of the same kind. In a diff each entry shows
 	 * the old and new value; in a reference (compared against the class default) only the value.
 	 * An asset's collision (BodySetup) is included.
@@ -910,6 +962,7 @@ namespace
 		Lines.Add(Indent(1) + TEXT("(properties"));
 		Lines.Append(PropertyEntries(Old, New, bReference, false, 2, OldPackageOf(Old, New), New->GetPackage()->GetName()));
 		AddBodySetupEntries(Old, New, bReference, 2, Lines);
+		AddMontageEntries(Old, New, bReference, 2, Lines);
 		Lines.Last() += TEXT(")");
 	}
 }

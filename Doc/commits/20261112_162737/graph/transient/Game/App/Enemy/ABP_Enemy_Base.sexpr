@@ -1,0 +1,34 @@
+(blueprint-diff "/Game/App/Enemy/ABP_Enemy_Base"
+  (old (revision "091a9821") (date "2026-11-12T06:12:26.000Z") (description "Animate the enemy with an idle-to-walk blend\n\n- BS_Enemy_Base: Blend Space 1D on character-female-a_Skeleton, idle\n  at the beginning and walk at the end of a Walk Speed axis up to 450.\n- ABP_Enemy_Base: Animation Blueprint that sets Walk Speed from the\n  pawn's horizontal velocity and plays the blend space.\n- BP_Enemy_Base: the Mesh uses ABP_Enemy_Base.\n- Tools/sexpr_to_table.py: Blueprint variables in the settings table;\n  BlendSpace1D samples read \"at Beginning/End of Blend\".\n- Doc/commits/20261112_071214: documentation of this step.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (parent "/Script/Engine.AnimInstance")
+  (graph "AnimGraph"
+    (pin-relinked-node modification
+      (text "Link Moved  'Result' ['Blendspace Player 'BS_Enemy_Base'' -> 'Slot 'DefaultSlot'']")
+      (old (node "AnimGraphNode_BlendSpacePlayer_0" "Blendspace Player 'BS_Enemy_Base'" (pos -368 144)))
+      (new (node "AnimGraphNode_Slot_0" "Slot 'DefaultSlot'" (pos -352 144)))
+      (old-pin (pin "AnimGraphNode_Root_0" "Result") (links (pin "AnimGraphNode_BlendSpacePlayer_0" "Pose")) (default "(LinkID=-1,SourceLinkID=-1)"))
+      (new-pin (pin "AnimGraphNode_Root_0" "Result") (links (pin "AnimGraphNode_Slot_0" "Pose")) (default "(LinkID=-1,SourceLinkID=-1)")))
+    (node-property modification
+      (text "Property Changed: ErrorMsg")
+      (old (node "AnimGraphNode_Root_0" "Output Pose" (pos -112 95)))
+      (new (node "AnimGraphNode_Root_0" "Output Pose" (pos -112 95))))
+    (node-moved minor
+      (text "Moved Node 'Blendspace Player 'BS_Enemy_Base''")
+      (old (node "AnimGraphNode_BlendSpacePlayer_0" "Blendspace Player 'BS_Enemy_Base'" (pos -368 144)))
+      (new (node "AnimGraphNode_BlendSpacePlayer_0" "Blendspace Player 'BS_Enemy_Base'" (pos -608 144))))
+    (pin-relinked-node modification
+      (text "Link Moved  'Pose' ['Output Pose' -> 'Slot 'DefaultSlot'']")
+      (old (node "AnimGraphNode_Root_0" "Output Pose" (pos -112 95)))
+      (new (node "AnimGraphNode_Slot_0" "Slot 'DefaultSlot'" (pos -352 144)))
+      (old-pin (pin "AnimGraphNode_BlendSpacePlayer_0" "Pose") (links (pin "AnimGraphNode_Root_0" "Result")) (default ""))
+      (new-pin (pin "AnimGraphNode_BlendSpacePlayer_0" "Pose") (links (pin "AnimGraphNode_Slot_0" "Source")) (default "")))
+    (node-moved minor
+      (text "Moved Node 'Get Walk Speed'")
+      (old (node "K2Node_VariableGet_0" "Get Walk Speed" (pos -528 182)))
+      (new (node "K2Node_VariableGet_0" "Get Walk Speed" (pos -768 182))))
+    (node-added addition
+      (text "Added Node 'Slot 'DefaultSlot''")
+      (node "AnimGraphNode_Slot_0" "Slot 'DefaultSlot'" (pos -352 144))
+      (pin in "Source" "Pose Link Structure" (links (pin "AnimGraphNode_BlendSpacePlayer_0" "Pose")))
+      (pin out "Pose" "Pose Link Structure" (links (pin "AnimGraphNode_Root_0" "Result"))))))

@@ -1,0 +1,5 @@
+(asset-diff "/Game/App/Enemy/BS_Enemy_Base"
+  (class "BlendSpace1D")
+  (old (revision "091a9821") (date "2026-11-12T06:12:26.000Z") (description "Animate the enemy with an idle-to-walk blend\n\n- BS_Enemy_Base: Blend Space 1D on character-female-a_Skeleton, idle\n  at the beginning and walk at the end of a Walk Speed axis up to 450.\n- ABP_Enemy_Base: Animation Blueprint that sets Walk Speed from the\n  pawn's horizontal velocity and plays the blend space.\n- BP_Enemy_Base: the Mesh uses ABP_Enemy_Base.\n- Tools/sexpr_to_table.py: Blueprint variables in the settings table;\n  BlendSpace1D samples read \"at Beginning/End of Blend\".\n- Doc/commits/20261112_071214: documentation of this step.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (properties))

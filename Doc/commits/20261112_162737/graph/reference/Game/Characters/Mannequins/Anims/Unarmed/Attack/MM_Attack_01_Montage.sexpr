@@ -1,0 +1,8 @@
+(asset "/Game/Characters/Mannequins/Anims/Unarmed/Attack/MM_Attack_01_Montage"
+  (class "AnimMontage")
+  (revision working-copy)
+  (properties
+    (set "CommonTargetFrameRate" "(Numerator=30,Denominator=1)")
+    (set "DataModelInterface" "AnimDataModel'/Game/Characters/Mannequins/Anims/Unarmed/Attack/MM_Attack_01_Montage.MM_Attack_01_Montage:AnimDataModel'")
+    (set "Controller" "AnimDataController'/Engine/Transient.AnimDataController_0'")
+    (set "Skeleton" "/Script/Engine.Skeleton'/Game/Characters/Mannequins/Meshes/SK_Mannequin.SK_Mannequin'")))

@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="my-svg" width="100%" style="max-width: 1024.38px; background-color: transparent;" viewBox="-8 -12 1024.375 101" role="graphics-document document" aria-roledescription="flowchart-v2">
+  <metadata>
+    <bde:asset xmlns:bde="urn:blueprint-diff-export" package="/Game/App/Enemy/ABP_Enemy_Base" kind="blueprint" class="Blueprint" type="Blueprint Class" new="false" revision="091a9821" parent="/Script/Engine.AnimInstance" part="graph" source="graph/transient/Game/App/Enemy/ABP_Enemy_Base.sexpr"/>
+  </metadata>
+  <style>
+    :where(svg){--node-body:#151515;--text:#f2f2f2;--text-muted:#999999;--border-event:#b3261e;--border-setter:#2b5d8f;--border-neutral:#3a3a3a;--border-function:#8a8a8a;--border-call:#456980;--border-context:#555555;--table-header:#262626;--table-stripe:#1c1c1c;--pin-exec:#ffffff;--pin-boolean:#950000;--pin-byte:#006f65;--pin-integer:#1fe3af;--pin-integer64:#ace3af;--pin-float:#38d500;--pin-name:#cd82ff;--pin-string:#ff00d4;--pin-text:#e77caa;--pin-vector:#ffca23;--pin-rotator:#a0b4ff;--pin-transform:#ff7300;--pin-object:#00aaf5;--pin-delegate:#ff3838;--pin-other:#777777;--text-dim:color-mix(in srgb, var(--text) 45%, var(--node-body));--border-event-dim:color-mix(in srgb, var(--border-event) 45%, var(--node-body));--border-setter-dim:color-mix(in srgb, var(--border-setter) 45%, var(--node-body));--border-function-dim:color-mix(in srgb, var(--border-function) 45%, var(--node-body));--border-call-dim:color-mix(in srgb, var(--border-call) 45%, var(--node-body));--pin-exec-dim:color-mix(in srgb, var(--pin-exec) 45%, var(--node-body));--pin-boolean-dim:color-mix(in srgb, var(--pin-boolean) 45%, var(--node-body));--pin-byte-dim:color-mix(in srgb, var(--pin-byte) 45%, var(--node-body));--pin-integer-dim:color-mix(in srgb, var(--pin-integer) 45%, var(--node-body));--pin-integer64-dim:color-mix(in srgb, var(--pin-integer64) 45%, var(--node-body));--pin-float-dim:color-mix(in srgb, var(--pin-float) 45%, var(--node-body));--pin-name-dim:color-mix(in srgb, var(--pin-name) 45%, var(--node-body));--pin-string-dim:color-mix(in srgb, var(--pin-string) 45%, var(--node-body));--pin-text-dim:color-mix(in srgb, var(--pin-text) 45%, var(--node-body));--pin-vector-dim:color-mix(in srgb, var(--pin-vector) 45%, var(--node-body));--pin-rotator-dim:color-mix(in srgb, var(--pin-rotator) 45%, var(--node-body));--pin-transform-dim:color-mix(in srgb, var(--pin-transform) 45%, var(--node-body));--pin-object-dim:color-mix(in srgb, var(--pin-object) 45%, var(--node-body));--pin-delegate-dim:color-mix(in srgb, var(--pin-delegate) 45%, var(--node-body));--pin-other-dim:color-mix(in srgb, var(--pin-other) 45%, var(--node-body));}
+  </style>
+  <style>
+    #my-svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#333;}
+    #my-svg .error-icon{fill:#552222;}
+    #my-svg .error-text{fill:#552222;stroke:#552222;}
+    #my-svg .edge-thickness-normal{stroke-width:2px;}
+    #my-svg .edge-thickness-thick{stroke-width:3.5px;}
+    #my-svg .edge-pattern-solid{stroke-dasharray:0;}
+    #my-svg .edge-pattern-dashed{stroke-dasharray:3;}
+    #my-svg .edge-pattern-dotted{stroke-dasharray:2;}
+    #my-svg .marker{fill:#333333;stroke:#333333;}
+    #my-svg .marker.cross{stroke:#333333;}
+    #my-svg svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}
+    #my-svg .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#333;}
+    #my-svg .cluster-label text{fill:#333;}
+    #my-svg .cluster-label span,#my-svg p{color:#333;}
+    #my-svg .label text,#my-svg span,#my-svg p{fill:#333;color:#333;}
+    #my-svg .node rect,#my-svg .node circle,#my-svg .node ellipse,#my-svg .node polygon,#my-svg .node path{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}
+    #my-svg .flowchart-label text{text-anchor:middle;}
+    #my-svg .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}
+    #my-svg .node .label{text-align:center;}
+    #my-svg .node.clickable{cursor:pointer;}
+    #my-svg .arrowheadPath{fill:#333333;}
+    #my-svg .edgePath .path{stroke:#333333;stroke-width:2.0px;}
+    #my-svg .flowchart-link{stroke:#333333;fill:none;}
+    #my-svg .edgeLabel{background-color:#e8e8e8;text-align:center;}
+    #my-svg .edgeLabel rect{opacity:0.5;background-color:#e8e8e8;fill:#e8e8e8;}
+    #my-svg .labelBkg{background-color:rgba(232, 232, 232, 0.5);}
+    #my-svg .cluster rect{fill:#ffffde;stroke:#aaaa33;stroke-width:1px;}
+    #my-svg .cluster text{fill:#333;}
+    #my-svg .cluster span,#my-svg p{color:#333;}
+    #my-svg div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(80, 100%, 96.2745098039%);border:1px solid #aaaa33;border-radius:2px;pointer-events:none;z-index:100;}
+    #my-svg .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#333;}
+    #my-svg g.node *,#my-svg g.cluster *{filter:none!important;}
+    #my-svg :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}
+    #my-svg .pin_anchor&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--node-body)!important;}
+    #my-svg .pin_anchor span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--node-body)!important;}
+    #my-svg .pin_anchor tspan{fill:var(--node-body)!important;}
+    #my-svg .pin_other&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-other)!important;}
+    #my-svg .pin_other span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-other)!important;}
+    #my-svg .pin_other tspan{fill:var(--pin-other)!important;}
+  </style>
+  <g>
+    <marker id="my-svg_flowchart-pointEnd" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-pointEnd-256b0c" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-float-dim);stroke:var(--pin-float-dim);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-pointEnd-777777" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-other);stroke:var(--pin-other);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-pointStart" class="marker flowchart" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-circleEnd" class="marker flowchart" viewBox="0 0 10 10" refX="11" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto">
+      <circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-circleStart" class="marker flowchart" viewBox="0 0 10 10" refX="-1" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto">
+      <circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-crossEnd" class="marker cross flowchart" viewBox="0 0 11 11" refX="12" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto">
+      <path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-crossStart" class="marker cross flowchart" viewBox="0 0 11 11" refX="-1" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto">
+      <path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <g class="root">
+      <g class="clusters">
+        <g class="cluster default flowchart-label" id="N_AnimGraph_AnimGraphNode_Root_0">
+          <rect style="fill:var(--node-body);stroke:var(--border-function);stroke-width:2px;" rx="0" ry="0" x="738.3750275135039" y="-0.000008678436302034243" width="164.9999339103697" height="61.00000321865082"/>
+          <g class="cluster-label" transform="translate(777.5468971252441, 3.999991321563698)">
+            <foreignObject width="86.65625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">Output Pose</span></div></foreignObject>
+          </g>
+        </g>
+      </g>
+      <g class="edgePaths">
+        <path d="M127.453,44C154.803,44,154.803,44,182.153,44" id="L-N_AnimGraph_K2Node_VariableGet_0-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_AnimGraph_K2Node_VariableGet_0 LE-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0" style="stroke:var(--pin-float-dim);stroke-width:2px;stroke-dasharray:6 4;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-256b0c)"/>
+        <path d="M456.094,44C483.44399999999996,44,483.44399999999996,44,510.794,44" id="L-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0-N_AnimGraph_AnimGraphNode_Slot_0-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0 LE-N_AnimGraph_AnimGraphNode_Slot_0" style="stroke:var(--pin-other);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-777777)"/>
+        <path d="M648.375,44C690.725,44,690.725,44,733.075,44" id="L-N_AnimGraph_AnimGraphNode_Slot_0-N_AnimGraph_AnimGraphNode_Root_0_Result-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_AnimGraph_AnimGraphNode_Slot_0 LE-N_AnimGraph_AnimGraphNode_Root_0_Result" style="stroke:var(--pin-other);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-777777)"/>
+        <path d="M903.375,44C913.375,44,923.375,44,933.375,44C943.375,44,953.375,44,963.375,44L901.3749614238735,23.999994540214573" id="L-N_AnimGraph_AnimGraphNode_Root_0_Result-N_AnimGraph_AnimGraphNode_Root_0_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_AnimGraph_AnimGraphNode_Root_0_Result LE-N_AnimGraph_AnimGraphNode_Root_0_anchor_out" style="stroke-width: 0;fill:none;"/>
+      </g>
+      <g class="edgeLabels">
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+      </g>
+      <g class="nodes">
+        <g class="node default pin_other flowchart-label" id="flowchart-N_AnimGraph_AnimGraphNode_Root_0_Result-1" data-node="true" data-id="N_AnimGraph_AnimGraphNode_Root_0_Result" transform="translate(820.875, 44)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● Result</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="flowchart-N_AnimGraph_K2Node_VariableGet_0-2" data-node="true" data-id="N_AnimGraph_K2Node_VariableGet_0" transform="translate(63.7265625, 44)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-float-dim);stroke-width:2px;stroke-dasharray:5 5;rx:16px;ry:16px;" rx="0" ry="0" x="-63.7265625" y="-17" width="127.453125" height="34"/>
+          <g class="label" style="color:var(--pin-float-dim);" transform="translate(-56.2265625, -9.5)">
+            <rect/>
+            <foreignObject width="112.453125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-float-dim); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-float-dim);">Get Walk Speed</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="flowchart-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0-3" data-node="true" data-id="N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0" transform="translate(321.7734375, 44)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-other-dim);stroke-width:2px;stroke-dasharray:5 5;rx:16px;ry:16px;" rx="0" ry="0" x="-134.3203125" y="-17" width="268.640625" height="34"/>
+          <g class="label" style="color:var(--pin-other-dim);" transform="translate(-126.8203125, -9.5)">
+            <rect/>
+            <foreignObject width="253.640625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-other-dim); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-other-dim);">Blendspace Player 'BS_Enemy_Base'</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="flowchart-N_AnimGraph_AnimGraphNode_Slot_0-5" data-node="true" data-id="N_AnimGraph_AnimGraphNode_Slot_0" transform="translate(582.234375, 44)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-other);stroke-width:2px;rx:16px;ry:16px;" rx="0" ry="0" x="-66.140625" y="-17" width="132.28125" height="34"/>
+          <g class="label" style="color:var(--pin-other);" transform="translate(-58.640625, -9.5)">
+            <rect/>
+            <foreignObject width="117.28125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-other); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-other);">Slot 'DefaultSlot'</span></div></foreignObject>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <rect style="fill: none; stroke: var(--border-function); stroke-width: 2px; pointer-events: none;" rx="0" ry="0" x="738.3750275135039" y="-0.000008678436302034243" width="164.9999339103697" height="61.00000321865082" transform="matrix(0.9999999999999999,0,0,0.9999999999999999,-8.881784197001252e-16,0)"/>
+</svg>

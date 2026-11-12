@@ -1,0 +1,206 @@
+---
+config:
+  look: classic
+  themeCSS: "g.node *, g.cluster * { filter: none !important; }"
+  flowchart:
+    curve: monotoneX
+    nodeSpacing: 20
+    rankSpacing: 60
+    subGraphTitleMargin:
+      top: 4
+      bottom: 4
+---
+flowchart LR
+
+    subgraph G_EventGraph["EventGraph"]
+        direction LR
+        subgraph N_EventGraph_K2Node_Event_0["◆ Event BeginPlay"]
+        end
+        subgraph N_EventGraph_K2Node_CustomEvent_0["◆ CustomEvent"]
+        end
+        subgraph N_EventGraph_K2Node_CallFunction_2["Get Player Character"]
+        end
+        subgraph N_EventGraph_K2Node_Self_0["Self"]
+        end
+        subgraph N_EventGraph_K2Node_CallFunction_1["Set Timer by Event"]
+            N_EventGraph_K2Node_CallFunction_1_anchor_in[" "]
+            N_EventGraph_K2Node_CallFunction_1_anchor_out[" "]
+            N_EventGraph_K2Node_CallFunction_1_Delegate["<span style='display:inline-block;min-width:150px;text-align:left'>● Connect to Event CustomEvent</span>"]
+            N_EventGraph_K2Node_CallFunction_1_Time["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>0.5</span> Time</span>"]
+            N_EventGraph_K2Node_CallFunction_1_bLooping["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>true</span> Looping</span>"]
+            N_EventGraph_K2Node_CallFunction_1_InitialStartDelayVariance["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>0.2</span> Initial Start Delay Variance</span>"]
+            N_EventGraph_K2Node_CallFunction_1_ReturnValue["<span style='display:inline-block;min-width:150px;text-align:right'>Return Value ●</span>"]
+        end
+        subgraph N_EventGraph_K2Node_AIMoveTo_0["AI MoveTo"]
+            N_EventGraph_K2Node_AIMoveTo_0_anchor_in[" "]
+            N_EventGraph_K2Node_AIMoveTo_0_anchor_out[" "]
+            N_EventGraph_K2Node_AIMoveTo_0_Pawn["<span style='display:inline-block;min-width:150px;text-align:left'>● Pawn</span>"]
+            N_EventGraph_K2Node_AIMoveTo_0_TargetActor["<span style='display:inline-block;min-width:150px;text-align:left'>● Target Actor</span>"]
+            N_EventGraph_K2Node_AIMoveTo_0_AcceptanceRadius["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>50</span> Acceptance Radius</span>"]
+        end
+        subgraph N_EventGraph_K2Node_VariableSet_0["Set AI Timer Handle"]
+            N_EventGraph_K2Node_VariableSet_0_anchor_in[" "]
+            N_EventGraph_K2Node_VariableSet_0_anchor_out[" "]
+            N_EventGraph_K2Node_VariableSet_0_AI_Timer_Handle["<span style='display:inline-block;min-width:150px;text-align:left'>● AI Timer Handle</span>"]
+        end
+    end
+
+    subgraph G_EventGraph_Hit["EventGraph Hit"]
+        direction LR
+        subgraph N_EventGraph_Hit_K2Node_Event_1["◆ Event ActorBeginOverlap"]
+            N_EventGraph_Hit_K2Node_Event_1_anchor_in[" "]
+            N_EventGraph_Hit_K2Node_Event_1_anchor_out[" "]
+            N_EventGraph_Hit_K2Node_Event_1_OtherActor["<span style='display:inline-block;min-width:150px;text-align:right'>Other Actor ●</span>"]
+        end
+        subgraph N_EventGraph_Hit_K2Node_DynamicCast_0["Cast To BP_Weapon_Base"]
+            N_EventGraph_Hit_K2Node_DynamicCast_0_anchor_in[" "]
+            N_EventGraph_Hit_K2Node_DynamicCast_0_Object["<span style='display:inline-block;min-width:150px;text-align:left'>● Object</span>"]
+            N_EventGraph_Hit_K2Node_DynamicCast_0_then>"<span style='display:inline-block;min-width:150px;text-align:right'>Then ▶</span>"]
+        end
+        subgraph N_EventGraph_Hit_K2Node_VariableGet_2["Get Life"]
+        end
+        subgraph N_EventGraph_Hit_K2Node_PromotableOperator_0["integer > integer"]
+        end
+        subgraph N_EventGraph_Hit_K2Node_IfThenElse_0["Branch"]
+            N_EventGraph_Hit_K2Node_IfThenElse_0_anchor_in[" "]
+            N_EventGraph_Hit_K2Node_IfThenElse_0_Condition["<span style='display:inline-block;min-width:150px;text-align:left'>● Condition</span>"]
+            N_EventGraph_Hit_K2Node_IfThenElse_0_then>"<span style='display:inline-block;min-width:150px;text-align:right'>True ▶</span>"]
+        end
+        subgraph N_EventGraph_Hit_K2Node_VariableGet_0["Get AI Timer Handle"]
+        end
+        subgraph N_EventGraph_Hit_K2Node_CallFunction_3["Clear and Invalidate Timer by Handle"]
+            N_EventGraph_Hit_K2Node_CallFunction_3_anchor_in[" "]
+            N_EventGraph_Hit_K2Node_CallFunction_3_anchor_out[" "]
+            N_EventGraph_Hit_K2Node_CallFunction_3_Handle["<span style='display:inline-block;min-width:150px;text-align:left'>● Handle</span>"]
+        end
+        subgraph N_EventGraph_Hit_K2Node_VariableGet_1["Get Mesh"]
+        end
+        subgraph N_EventGraph_Hit_K2Node_PlayMontage_0["Play Montage"]
+            N_EventGraph_Hit_K2Node_PlayMontage_0_anchor_in[" "]
+            N_EventGraph_Hit_K2Node_PlayMontage_0_InSkeletalMeshComponent["<span style='display:inline-block;min-width:150px;text-align:left'>● In Skeletal Mesh Component</span>"]
+            N_EventGraph_Hit_K2Node_PlayMontage_0_PlayRate["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>1</span> Play Rate</span>"]
+            N_EventGraph_Hit_K2Node_PlayMontage_0_bShouldStopAllMontages["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>true</span> Should Stop All Montages</span>"]
+            N_EventGraph_Hit_K2Node_PlayMontage_0_then>"<span style='display:inline-block;min-width:150px;text-align:right'>Then ▶</span>"]
+        end
+        subgraph N_EventGraph_Hit_K2Node_VariableSet_1["Set Life"]
+        end
+        subgraph N_EventGraph_Hit_K2Node_VariableGet_3["Get Capsule Component"]
+        end
+        subgraph N_EventGraph_Hit_K2Node_CallFunction_6["Set Collision Response To Channel"]
+            N_EventGraph_Hit_K2Node_CallFunction_6_anchor_in[" "]
+            N_EventGraph_Hit_K2Node_CallFunction_6_anchor_out[" "]
+            N_EventGraph_Hit_K2Node_CallFunction_6_self["<span style='display:inline-block;min-width:150px;text-align:left'>● Target</span>"]
+            N_EventGraph_Hit_K2Node_CallFunction_6_Channel["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>ECC_Pawn</span> Channel</span>"]
+            N_EventGraph_Hit_K2Node_CallFunction_6_NewResponse["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>ECR_Ignore</span> New Response</span>"]
+        end
+    end
+
+    %% Wires
+    N_EventGraph_K2Node_Event_0 ==> N_EventGraph_K2Node_CallFunction_1_anchor_in
+    N_EventGraph_K2Node_CustomEvent_0 ==> N_EventGraph_K2Node_AIMoveTo_0_anchor_in
+    N_EventGraph_K2Node_CallFunction_2 --> N_EventGraph_K2Node_AIMoveTo_0_TargetActor
+    N_EventGraph_K2Node_Self_0 --> N_EventGraph_K2Node_AIMoveTo_0_Pawn
+    N_EventGraph_K2Node_CallFunction_1_ReturnValue --> N_EventGraph_K2Node_VariableSet_0_AI_Timer_Handle
+    N_EventGraph_K2Node_CallFunction_1_anchor_out ==> N_EventGraph_K2Node_VariableSet_0_anchor_in
+    N_EventGraph_Hit_K2Node_Event_1_OtherActor --> N_EventGraph_Hit_K2Node_DynamicCast_0_Object
+    N_EventGraph_Hit_K2Node_Event_1_anchor_out ==> N_EventGraph_Hit_K2Node_DynamicCast_0_anchor_in
+    N_EventGraph_Hit_K2Node_DynamicCast_0_then ==> N_EventGraph_Hit_K2Node_IfThenElse_0_anchor_in
+    N_EventGraph_Hit_K2Node_VariableGet_2 --> N_EventGraph_Hit_K2Node_PromotableOperator_0
+    N_EventGraph_Hit_K2Node_PromotableOperator_0 --> N_EventGraph_Hit_K2Node_IfThenElse_0_Condition
+    N_EventGraph_Hit_K2Node_IfThenElse_0_then ==> N_EventGraph_Hit_K2Node_CallFunction_3_anchor_in
+    N_EventGraph_Hit_K2Node_VariableGet_0 --> N_EventGraph_Hit_K2Node_CallFunction_3_Handle
+    N_EventGraph_Hit_K2Node_CallFunction_3_anchor_out ==> N_EventGraph_Hit_K2Node_PlayMontage_0_anchor_in
+    N_EventGraph_Hit_K2Node_VariableGet_1 --> N_EventGraph_Hit_K2Node_PlayMontage_0_InSkeletalMeshComponent
+    N_EventGraph_Hit_K2Node_PlayMontage_0_then ==> N_EventGraph_Hit_K2Node_VariableSet_1
+    N_EventGraph_Hit_K2Node_VariableSet_1 ==> N_EventGraph_Hit_K2Node_CallFunction_6_anchor_in
+    N_EventGraph_Hit_K2Node_VariableGet_3 --> N_EventGraph_Hit_K2Node_CallFunction_6_self
+
+    %% Keep inputs left of outputs inside each node
+    N_EventGraph_K2Node_CallFunction_1_Delegate ~~~ N_EventGraph_K2Node_CallFunction_1_ReturnValue
+    N_EventGraph_K2Node_CallFunction_1_Delegate ~~~ N_EventGraph_K2Node_CallFunction_1_anchor_out
+    N_EventGraph_K2Node_CallFunction_1_Time ~~~ N_EventGraph_K2Node_CallFunction_1_ReturnValue
+    N_EventGraph_K2Node_CallFunction_1_Time ~~~ N_EventGraph_K2Node_CallFunction_1_anchor_out
+    N_EventGraph_K2Node_CallFunction_1_bLooping ~~~ N_EventGraph_K2Node_CallFunction_1_ReturnValue
+    N_EventGraph_K2Node_CallFunction_1_bLooping ~~~ N_EventGraph_K2Node_CallFunction_1_anchor_out
+    N_EventGraph_K2Node_CallFunction_1_InitialStartDelayVariance ~~~ N_EventGraph_K2Node_CallFunction_1_ReturnValue
+    N_EventGraph_K2Node_CallFunction_1_InitialStartDelayVariance ~~~ N_EventGraph_K2Node_CallFunction_1_anchor_out
+    N_EventGraph_K2Node_CallFunction_1_anchor_in ~~~ N_EventGraph_K2Node_CallFunction_1_ReturnValue
+    N_EventGraph_K2Node_CallFunction_1_anchor_in ~~~ N_EventGraph_K2Node_CallFunction_1_anchor_out
+    N_EventGraph_K2Node_AIMoveTo_0_Pawn ~~~ N_EventGraph_K2Node_AIMoveTo_0_anchor_out
+    N_EventGraph_K2Node_AIMoveTo_0_TargetActor ~~~ N_EventGraph_K2Node_AIMoveTo_0_anchor_out
+    N_EventGraph_K2Node_AIMoveTo_0_AcceptanceRadius ~~~ N_EventGraph_K2Node_AIMoveTo_0_anchor_out
+    N_EventGraph_K2Node_AIMoveTo_0_anchor_in ~~~ N_EventGraph_K2Node_AIMoveTo_0_anchor_out
+    N_EventGraph_K2Node_VariableSet_0_AI_Timer_Handle ~~~ N_EventGraph_K2Node_VariableSet_0_anchor_out
+    N_EventGraph_K2Node_VariableSet_0_anchor_in ~~~ N_EventGraph_K2Node_VariableSet_0_anchor_out
+    N_EventGraph_Hit_K2Node_Event_1_anchor_in ~~~ N_EventGraph_Hit_K2Node_Event_1_OtherActor
+    N_EventGraph_Hit_K2Node_Event_1_anchor_in ~~~ N_EventGraph_Hit_K2Node_Event_1_anchor_out
+    N_EventGraph_Hit_K2Node_DynamicCast_0_Object ~~~ N_EventGraph_Hit_K2Node_DynamicCast_0_then
+    N_EventGraph_Hit_K2Node_DynamicCast_0_anchor_in ~~~ N_EventGraph_Hit_K2Node_DynamicCast_0_then
+    N_EventGraph_Hit_K2Node_IfThenElse_0_Condition ~~~ N_EventGraph_Hit_K2Node_IfThenElse_0_then
+    N_EventGraph_Hit_K2Node_IfThenElse_0_anchor_in ~~~ N_EventGraph_Hit_K2Node_IfThenElse_0_then
+    N_EventGraph_Hit_K2Node_CallFunction_3_Handle ~~~ N_EventGraph_Hit_K2Node_CallFunction_3_anchor_out
+    N_EventGraph_Hit_K2Node_CallFunction_3_anchor_in ~~~ N_EventGraph_Hit_K2Node_CallFunction_3_anchor_out
+    N_EventGraph_Hit_K2Node_PlayMontage_0_InSkeletalMeshComponent ~~~ N_EventGraph_Hit_K2Node_PlayMontage_0_then
+    N_EventGraph_Hit_K2Node_PlayMontage_0_PlayRate ~~~ N_EventGraph_Hit_K2Node_PlayMontage_0_then
+    N_EventGraph_Hit_K2Node_PlayMontage_0_bShouldStopAllMontages ~~~ N_EventGraph_Hit_K2Node_PlayMontage_0_then
+    N_EventGraph_Hit_K2Node_PlayMontage_0_anchor_in ~~~ N_EventGraph_Hit_K2Node_PlayMontage_0_then
+    N_EventGraph_Hit_K2Node_CallFunction_6_self ~~~ N_EventGraph_Hit_K2Node_CallFunction_6_anchor_out
+    N_EventGraph_Hit_K2Node_CallFunction_6_Channel ~~~ N_EventGraph_Hit_K2Node_CallFunction_6_anchor_out
+    N_EventGraph_Hit_K2Node_CallFunction_6_NewResponse ~~~ N_EventGraph_Hit_K2Node_CallFunction_6_anchor_out
+    N_EventGraph_Hit_K2Node_CallFunction_6_anchor_in ~~~ N_EventGraph_Hit_K2Node_CallFunction_6_anchor_out
+
+    %% Nodes
+    style G_EventGraph fill:none,stroke:#3a3a3a,stroke-width:1px,color:#f2f2f2
+    style N_EventGraph_K2Node_Event_0 fill:#151515,stroke:#5c1d19,stroke-width:3px,color:#787878,stroke-dasharray:5 5
+    style N_EventGraph_K2Node_CustomEvent_0 fill:#151515,stroke:#5c1d19,stroke-width:3px,color:#787878,stroke-dasharray:5 5
+    style N_EventGraph_K2Node_CallFunction_2 fill:#151515,stroke:#0c587a,stroke-width:2px,color:#0c587a,stroke-dasharray:5 5,rx:16px,ry:16px
+    style N_EventGraph_K2Node_Self_0 fill:#151515,stroke:#0c587a,stroke-width:2px,color:#0c587a,stroke-dasharray:5 5,rx:16px,ry:16px
+    style N_EventGraph_K2Node_CallFunction_1 fill:#151515,stroke:#2b3b45,stroke-width:2px,color:#787878,stroke-dasharray:5 5
+    style N_EventGraph_K2Node_AIMoveTo_0 fill:#151515,stroke:#2b3b45,stroke-width:2px,color:#787878,stroke-dasharray:5 5
+    style N_EventGraph_K2Node_VariableSet_0 fill:#151515,stroke:#2b5d8f,stroke-width:3px,color:#f2f2f2
+    style G_EventGraph_Hit fill:none,stroke:#3a3a3a,stroke-width:1px,color:#f2f2f2
+    style N_EventGraph_Hit_K2Node_Event_1 fill:#151515,stroke:#b3261e,stroke-width:3px,color:#f2f2f2
+    style N_EventGraph_Hit_K2Node_DynamicCast_0 fill:#151515,stroke:#8a8a8a,stroke-width:2px,color:#f2f2f2
+    style N_EventGraph_Hit_K2Node_VariableGet_2 fill:#151515,stroke:#1fe3af,stroke-width:2px,color:#1fe3af,rx:16px,ry:16px
+    style N_EventGraph_Hit_K2Node_PromotableOperator_0 fill:#151515,stroke:#950000,stroke-width:2px,color:#950000,rx:16px,ry:16px
+    style N_EventGraph_Hit_K2Node_IfThenElse_0 fill:#151515,stroke:#8a8a8a,stroke-width:2px,color:#f2f2f2
+    style N_EventGraph_Hit_K2Node_VariableGet_0 fill:#151515,stroke:#777777,stroke-width:2px,color:#777777,rx:16px,ry:16px
+    style N_EventGraph_Hit_K2Node_CallFunction_3 fill:#151515,stroke:#456980,stroke-width:2px,color:#f2f2f2
+    style N_EventGraph_Hit_K2Node_VariableGet_1 fill:#151515,stroke:#00aaf5,stroke-width:2px,color:#00aaf5,rx:16px,ry:16px
+    style N_EventGraph_Hit_K2Node_PlayMontage_0 fill:#151515,stroke:#8a8a8a,stroke-width:2px,color:#f2f2f2
+    style N_EventGraph_Hit_K2Node_VariableSet_1 fill:#151515,stroke:#2b5d8f,stroke-width:3px,color:#f2f2f2
+    style N_EventGraph_Hit_K2Node_VariableGet_3 fill:#151515,stroke:#00aaf5,stroke-width:2px,color:#00aaf5,rx:16px,ry:16px
+    style N_EventGraph_Hit_K2Node_CallFunction_6 fill:#151515,stroke:#456980,stroke-width:2px,color:#f2f2f2
+
+    %% Pins
+    classDef pin_anchor fill:#151515,stroke:#151515,color:#151515
+    classDef pin_boolean fill:#151515,stroke:#151515,color:#950000
+    classDef pin_boolean_dim fill:#151515,stroke:#151515,color:#4f0c0c
+    classDef pin_delegate_dim fill:#151515,stroke:#151515,color:#7e2525
+    classDef pin_exec fill:#151515,stroke:#151515,color:#ffffff
+    classDef pin_float fill:#151515,stroke:#151515,color:#38d500
+    classDef pin_float_dim fill:#151515,stroke:#151515,color:#256b0c
+    classDef pin_object fill:#151515,stroke:#151515,color:#00aaf5
+    classDef pin_object_dim fill:#151515,stroke:#151515,color:#0c587a
+    classDef pin_other fill:#151515,stroke:#151515,color:#777777
+    classDef pin_other_dim fill:#151515,stroke:#151515,color:#414141
+    class N_EventGraph_K2Node_CallFunction_1_anchor_in,N_EventGraph_K2Node_CallFunction_1_anchor_out,N_EventGraph_K2Node_AIMoveTo_0_anchor_in,N_EventGraph_K2Node_AIMoveTo_0_anchor_out,N_EventGraph_K2Node_VariableSet_0_anchor_in,N_EventGraph_K2Node_VariableSet_0_anchor_out,N_EventGraph_Hit_K2Node_Event_1_anchor_in,N_EventGraph_Hit_K2Node_Event_1_anchor_out,N_EventGraph_Hit_K2Node_DynamicCast_0_anchor_in,N_EventGraph_Hit_K2Node_IfThenElse_0_anchor_in,N_EventGraph_Hit_K2Node_CallFunction_3_anchor_in,N_EventGraph_Hit_K2Node_CallFunction_3_anchor_out,N_EventGraph_Hit_K2Node_PlayMontage_0_anchor_in,N_EventGraph_Hit_K2Node_CallFunction_6_anchor_in,N_EventGraph_Hit_K2Node_CallFunction_6_anchor_out pin_anchor
+    class N_EventGraph_Hit_K2Node_IfThenElse_0_Condition,N_EventGraph_Hit_K2Node_PlayMontage_0_bShouldStopAllMontages pin_boolean
+    class N_EventGraph_K2Node_CallFunction_1_bLooping pin_boolean_dim
+    class N_EventGraph_K2Node_CallFunction_1_Delegate pin_delegate_dim
+    class N_EventGraph_Hit_K2Node_DynamicCast_0_then,N_EventGraph_Hit_K2Node_IfThenElse_0_then,N_EventGraph_Hit_K2Node_PlayMontage_0_then pin_exec
+    class N_EventGraph_Hit_K2Node_PlayMontage_0_PlayRate pin_float
+    class N_EventGraph_K2Node_CallFunction_1_Time,N_EventGraph_K2Node_CallFunction_1_InitialStartDelayVariance,N_EventGraph_K2Node_AIMoveTo_0_AcceptanceRadius pin_float_dim
+    class N_EventGraph_Hit_K2Node_Event_1_OtherActor,N_EventGraph_Hit_K2Node_DynamicCast_0_Object,N_EventGraph_Hit_K2Node_PlayMontage_0_InSkeletalMeshComponent,N_EventGraph_Hit_K2Node_CallFunction_6_self pin_object
+    class N_EventGraph_K2Node_AIMoveTo_0_Pawn,N_EventGraph_K2Node_AIMoveTo_0_TargetActor pin_object_dim
+    class N_EventGraph_K2Node_VariableSet_0_AI_Timer_Handle,N_EventGraph_Hit_K2Node_CallFunction_3_Handle,N_EventGraph_Hit_K2Node_CallFunction_6_Channel,N_EventGraph_Hit_K2Node_CallFunction_6_NewResponse pin_other
+    class N_EventGraph_K2Node_CallFunction_1_ReturnValue pin_other_dim
+
+    %% Wire colours (dimmed and dashed between two nodes that aren't part of the change)
+    linkStyle 10 stroke:#950000,stroke-width:2px
+    linkStyle 5,7,8,11,13,15,16 stroke:#ffffff,stroke-width:3px
+    linkStyle 0,1 stroke:#7e7e7e,stroke-width:3px,stroke-dasharray:6 4
+    linkStyle 9 stroke:#1fe3af,stroke-width:2px
+    linkStyle 6,14,17 stroke:#00aaf5,stroke-width:2px
+    linkStyle 2,3 stroke:#0c587a,stroke-width:2px,stroke-dasharray:6 4
+    linkStyle 4,12 stroke:#777777,stroke-width:2px

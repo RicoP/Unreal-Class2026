@@ -1,0 +1,12 @@
+(asset-diff "/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-adie_Montage"
+  (class "AnimMontage")
+  (old none)
+  (baseline class-default)
+  (new working-copy)
+  (properties
+    (changed "bEnableAutoBlendOut" (old "True") (new "False"))
+    (changed "CommonTargetFrameRate" (old "(Numerator=60000,Denominator=1)") (new "(Numerator=60,Denominator=1)"))
+    (changed "RateScale" (old "1.000000") (new "0.400000"))
+    (changed "DataModelInterface" (old "None") (new "AnimDataModel'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-adie_Montage.character-female-adie_Montage:AnimDataModel'"))
+    (changed "Controller" (old "None") (new "AnimDataController'/Engine/Transient.AnimDataController_1'"))
+    (changed "Skeleton" (old "None") (new "/Script/Engine.Skeleton'/Game/Kenney-Assets/mini-characters/SkeletalMeshes/character-female-a_Skeleton.character-female-a_Skeleton'"))))

@@ -70,7 +70,16 @@ to rebuild it themselves.
   changes. BlendSpace1D samples read `<animation> at Beginning of Blend` when
   X is 0 (an unset SampleValue is 0), `<animation> at End of Blend` when X is
   about `BlendParameters[0] Max` (100 unless the diff changes it; removed
-  samples use the old Max), otherwise `<animation> at <X>`. Collision Responses are read like the editor's grid: a new Blueprint gets one
+  samples use the old Max), otherwise `<animation> at <X>`. Asset tables leave
+  out `ASSET_BOOKKEEPING` (an animation's DataModelInterface, Controller and
+  CommonTargetFrameRate) and changes that read the same before and after; plain
+  numbers lose trailing zeros (`0.4`); a new asset with default settings reads
+  "Create a new <class> … and keep its default settings" with the single row
+  `All settings | Default` (`doc.html` drops tables without rows); an existing
+  asset exported without changes gets no table at all. A montage's slot
+  tracks aren't editable properties, so the plugin writes them as
+  `MontageSlots` (`DefaultGroup.DefaultSlot: MM_Attack_01`, `AddMontageEntries`).
+  Collision Responses are read like the editor's grid: a new Blueprint gets one
   row per component with the channels grouped by response in the grid's column
   order (`Ignore: Visibility, Camera · Overlap: Pawn`, or `Ignore: all
   channels`); a changed one gets a row per channel that changed

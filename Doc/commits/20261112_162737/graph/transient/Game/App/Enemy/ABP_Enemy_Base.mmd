@@ -1,0 +1,48 @@
+---
+config:
+  look: classic
+  themeCSS: "g.node *, g.cluster * { filter: none !important; }"
+  flowchart:
+    curve: monotoneX
+    nodeSpacing: 20
+    rankSpacing: 60
+    subGraphTitleMargin:
+      top: 4
+      bottom: 4
+---
+flowchart LR
+
+    subgraph N_AnimGraph_K2Node_VariableGet_0["Get Walk Speed"]
+    end
+    subgraph N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0["Blendspace Player 'BS_Enemy_Base'"]
+    end
+    subgraph N_AnimGraph_AnimGraphNode_Slot_0["Slot 'DefaultSlot'"]
+    end
+    subgraph N_AnimGraph_AnimGraphNode_Root_0["Output Pose"]
+        N_AnimGraph_AnimGraphNode_Root_0_anchor_out[" "]
+        N_AnimGraph_AnimGraphNode_Root_0_Result["<span style='display:inline-block;min-width:150px;text-align:left'>● Result</span>"]
+    end
+
+    %% Wires
+    N_AnimGraph_K2Node_VariableGet_0 --> N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0
+    N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0 --> N_AnimGraph_AnimGraphNode_Slot_0
+    N_AnimGraph_AnimGraphNode_Slot_0 --> N_AnimGraph_AnimGraphNode_Root_0_Result
+
+    %% Keep inputs left of outputs inside each node
+    N_AnimGraph_AnimGraphNode_Root_0_Result ~~~ N_AnimGraph_AnimGraphNode_Root_0_anchor_out
+
+    %% Nodes
+    style N_AnimGraph_K2Node_VariableGet_0 fill:#151515,stroke:#256b0c,stroke-width:2px,color:#256b0c,stroke-dasharray:5 5,rx:16px,ry:16px
+    style N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0 fill:#151515,stroke:#414141,stroke-width:2px,color:#414141,stroke-dasharray:5 5,rx:16px,ry:16px
+    style N_AnimGraph_AnimGraphNode_Slot_0 fill:#151515,stroke:#777777,stroke-width:2px,color:#777777,rx:16px,ry:16px
+    style N_AnimGraph_AnimGraphNode_Root_0 fill:#151515,stroke:#8a8a8a,stroke-width:2px,color:#f2f2f2
+
+    %% Pins
+    classDef pin_anchor fill:#151515,stroke:#151515,color:#151515
+    classDef pin_other fill:#151515,stroke:#151515,color:#777777
+    class N_AnimGraph_AnimGraphNode_Root_0_anchor_out pin_anchor
+    class N_AnimGraph_AnimGraphNode_Root_0_Result pin_other
+
+    %% Wire colours (dimmed and dashed between two nodes that aren't part of the change)
+    linkStyle 0 stroke:#256b0c,stroke-width:2px,stroke-dasharray:6 4
+    linkStyle 1,2 stroke:#777777,stroke-width:2px
