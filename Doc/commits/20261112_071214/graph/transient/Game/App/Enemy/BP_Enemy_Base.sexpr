@@ -1,0 +1,8 @@
+(blueprint-diff "/Game/App/Enemy/BP_Enemy_Base"
+  (old (revision "dbed13bf") (date "2026-11-10T11:13:31.000Z") (description "Add weapon meshes and the weapon Blueprints\n\n- Import KayKit's fantasy weapons (31 meshes with their material and\n  texture) into itch-assets, and Kenney's mini-characters props (23 files)\n  into Kenney-Assets/mini-characters.\n- BP_Weapon_Base: Pivot with the Weapon mesh and a Sphere hitbox that\n  overlaps only Pawns; BP_Weapons_Sword is a child with the sword_B mesh.\n- BP_Enemy_Base: capsule and mesh ignore the Camera channel, so the camera\n  boom doesn't pull in on enemies; the mesh ignores world and physics too.\n- Doc/commits/20261110_121316: documentation of this step.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (parent "/Script/Engine.Character")
+  (components
+    (component "Mesh" (class "SkeletalMeshComponent") (kind native)
+      (properties
+        (changed "AnimClass" (old "None") (new "/Script/Engine.AnimBlueprintGeneratedClass'/Game/App/Enemy/ABP_Enemy_Base.ABP_Enemy_Base_C'"))))))

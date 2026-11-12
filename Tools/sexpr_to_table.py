@@ -104,8 +104,10 @@ def cell(value):
     return (text or "(empty)").replace("|", "\\|").replace("\n", " ")
 
 
-def change_rows(name, old, new):
-    """Table rows for one changed setting; lists of structs are compared item by item."""
+def change_rows(name, old, new, describe=describe, old_describe=None):
+    """Table rows for one changed setting; lists of structs are compared item by item.
+    describe (old_describe for removed items) turns a list element into text."""
+    old_describe = old_describe or describe
     old_items, new_items = list_items(old), list_items(new)
     # An empty array is exported as "", so treat it as an empty list next to a real one.
     if old_items is None and old in ("", None) and new_items is not None:
@@ -120,10 +122,35 @@ def change_rows(name, old, new):
         if item in remaining:
             remaining.remove(item)
         else:
-            rows.append(f"| {setting_name(name)}: remove | {cell(describe(item))} | — |")
+            rows.append(f"| {setting_name(name)}: remove | {cell(old_describe(item))} | — |")
     for item in remaining:
         rows.append(f"| {setting_name(name)}: add | — | {cell(describe(item))} |")
     return rows
+
+
+# Unreal's default end of a blend space axis (FBlendParameter::Max).
+BLEND_AXIS_MAX = 100.0
+
+
+def blend_axis_max(properties, side):
+    """BlendParameters[0] Max of a blend space diff, on the "old" or "new" side."""
+    for entry in properties:
+        if entry[1] == "BlendParameters[0] Max" and first(entry, side):
+            return float(first(entry, side)[1])
+    return BLEND_AXIS_MAX
+
+
+def blend_sample(item, axis_max):
+    """A BlendSpace1D sample: 'character-female-awalk at End of Blend'. X = 0 (also an
+    unset SampleValue) is the beginning of the axis, X = Max its end."""
+    fields = dict(field.partition("=")[::2] for field in split_top_level(item[1:-1]))
+    animation = shorten(fields.get("Animation", "")).strip('"') or "(no animation)"
+    x = float(re.search(r"X=(-?[\d.]+)", fields.get("SampleValue", "")).group(1)) if "X=" in fields.get("SampleValue", "") else 0.0
+    if abs(x) < 1e-3:
+        return f"{animation} at Beginning of Blend"
+    if abs(x - axis_max) < 1e-3 * max(1.0, abs(axis_max)):
+        return f"{animation} at End of Blend"
+    return f"{animation} at {number(str(x))}"
 
 
 def to_markdown(diff):
@@ -132,6 +159,10 @@ def to_markdown(diff):
     asset_class = words(first(diff, "class")[1])
     is_new = first(diff, "baseline") is not None
     properties = first(diff, "properties")[1:]
+    describers = {}  # setting -> (describe new item, describe old item)
+    if first(diff, "class")[1] == "BlendSpace1D":
+        new_max, old_max = blend_axis_max(properties, "new"), blend_axis_max(properties, "old")
+        describers["SampleData"] = (lambda item: blend_sample(item, new_max), lambda item: blend_sample(item, old_max))
 
     lines = [f"### {name} ({asset_class})", ""]
     if not properties:
@@ -151,7 +182,8 @@ def to_markdown(diff):
             if items is None:
                 lines.append(f"| {setting_name(entry[1])} | {cell(new)} |")
             else:
-                lines += [f"| {setting_name(entry[1])}: add | {cell(describe(item))} |" for item in items]
+                describe_new = describers.get(entry[1], (describe,))[0]
+                lines += [f"| {setting_name(entry[1])}: add | {cell(describe_new(item))} |" for item in items]
     else:
         lines += [
             f"Open `{name}` in `{package.rsplit('/', 1)[0]}` and change:",
@@ -161,7 +193,8 @@ def to_markdown(diff):
         ]
         for entry in properties:
             old, new = first(entry, "old"), first(entry, "new")
-            lines += change_rows(entry[1], old[1] if old else None, new[1] if new else None)
+            lines += change_rows(entry[1], old[1] if old else None, new[1] if new else None,
+                                 *describers.get(entry[1], ()))
     return "\n".join(lines) + "\n"
 
 
@@ -362,6 +395,53 @@ def component_hierarchy(diff, diff_path):
     return lines
 
 
+# Starting values a new variable has anyway; listing them adds nothing.
+TYPE_DEFAULTS = {"", "False", "0", "0.0", "0.000000", "None", "()"}
+
+
+def variable_type(text):
+    """A pin type as the variable's type dropdown shows it ("Float", not "Float (double-precision)")."""
+    return text.replace(" (double-precision)", "").replace(" (single-precision)", "")
+
+
+def variable_fields(entry):
+    """Name, type, category, default and Instance Editable of a variable expression."""
+    value = lambda key: (first(entry, key) or [key, ""])[1]
+    return {
+        "Name": entry[1],  # as typed: the My Blueprint panel doesn't add spaces
+        "Variable Type": variable_type(value("type")),
+        "Category": value("category"),
+        "Default Value": value("default"),
+        "Instance Editable": str(value("instance-editable")).capitalize(),
+    }
+
+
+def variable_rows(variables, added_defaults):
+    """Rows for added, changed and removed variables, as the My Blueprint panel and the
+    variable's Details panel show them."""
+    rows = []
+    for entry in variables:
+        if entry[0] == "added":
+            fields = variable_fields(entry)
+            label = fields["Name"]
+            rows.append(("Add Variable", None, f"{label} ({fields['Variable Type']})"))
+            default = added_defaults.get(entry[1], fields["Default Value"])
+            if default not in TYPE_DEFAULTS:
+                rows.append((f"{label} › Default Value", None, default))
+            if fields["Category"] not in ("", "Default"):
+                rows.append((f"{label} › Category", None, fields["Category"]))
+            if fields["Instance Editable"] == "True":
+                rows.append((f"{label} › Instance Editable", None, "True"))
+        elif entry[0] == "removed":
+            rows.append(("Remove Variable", variable_fields(entry)["Name"], None))
+        elif entry[0] == "changed":
+            old, new = variable_fields(first(entry, "old")), variable_fields(first(entry, "new"))
+            for field in old:
+                if old[field] != new[field]:
+                    rows.append((f"Variable {old['Name']} › {field}", old[field], new[field]))
+    return rows
+
+
 def blueprint_settings_markdown(diff, diff_path):
     """Class defaults and components of a Blueprint diff, or None if it has neither and isn't new."""
     package = diff[1]
@@ -370,13 +450,19 @@ def blueprint_settings_markdown(diff, diff_path):
     defaults = (first(diff, "defaults") or ["defaults"])[1:]
     defaults = [entry for entry in defaults if isinstance(entry, list) and entry[0] != "baseline"]
     components = (first(diff, "components") or ["components"])[1:]
-    if not (is_new or defaults or components):
+    variables = [entry for entry in (first(diff, "variables") or ["variables"])[1:] if isinstance(entry, list)]
+    if not (is_new or defaults or components or variables):
         return None
 
     rows = []  # (setting, old, new)
     if is_new:
         parent = (first(diff, "parent") or ["parent", ""])[1].rsplit(".", 1)[-1].removesuffix("_C") or "Actor"
         rows.append(("Parent Class", None, parent))
+    # A new variable's starting value is in the class defaults too; it goes with the variable.
+    added_defaults = {entry[1]: first(entry, "new")[1] for entry in defaults if first(entry, "new")}
+    added_names = {entry[1] for entry in variables if entry[0] == "added"}
+    rows += variable_rows(variables, added_defaults)
+    defaults = [entry for entry in defaults if entry[1] not in added_names]
     for entry in defaults:
         old = first(entry, "old")
         rows.append((f"Class Defaults › {setting_name(entry[1])}", old[1] if old else None, first(entry, "new")[1]))
@@ -426,7 +512,7 @@ def blueprint_settings_markdown(diff, diff_path):
         lines += [f"| {setting} | {value_cell(new)} |" for setting, _, new in rows]
     else:
         lines += [
-            f"Open `{name}` and change its class defaults and components:",
+            f"Open `{name}` and change its {'variables, ' if variables else ''}class defaults and components:",
             "",
             "| Setting | Before | After |",
             "|---|---|---|",

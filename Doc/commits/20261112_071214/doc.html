@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Documentation export 20261112_071214</title>
+    <!-- Shared stylesheet with the palettes: Doc/doc.css (from Tools/doc.css) -->
+    <link rel="stylesheet" href="../../doc.css">
+  </head>
+  <body class="step" data-palette="default">
+    <header>
+      <label>Colours <select id="palette"><option value="default">Unreal editor</option><option value="red-green-safe">Red-green safe (protanopia, deuteranopia)</option><option value="blue-yellow-safe">Blue-yellow safe (tritanopia)</option><option value="high-contrast">High contrast</option><option value="greyscale">Greyscale (achromatopsia, print)</option></select></label>
+    </header>
+    <section>
+      <h2>Create New AnimInstance Blueprint at All/Content/App/Enemy/ABP_Enemy_Base</h2>
+      <div class="table">
+        <table>
+          <caption>ABP_Enemy_Base (Blueprint Class)</caption>
+          <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Parent Class</td><td>Anim Instance</td></tr>
+            <tr><td>Add Variable</td><td>Walk Speed (Float)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section>
+      <h2>All/Content/App/Enemy/ABP_Enemy_Base: Graph</h2>
+      <div class="figure" role="img" aria-label="All/Content/App/Enemy/ABP_Enemy_Base">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="s2-my-svg" width="100%" style="max-width: 1180.23px; background-color: transparent;" viewBox="-7.5 -4 1180.234375 540" role="graphics-document document" aria-roledescription="flowchart-v2">
+  <metadata>
+    <bde:asset xmlns:bde="urn:blueprint-diff-export" package="/Game/App/Enemy/ABP_Enemy_Base" kind="blueprint" class="Blueprint" type="Blueprint Class" new="true" revision="none" parent="/Script/Engine.AnimInstance" part="graph" source="graph/transient/Game/App/Enemy/ABP_Enemy_Base.sexpr"/>
+  </metadata>
+  <style>
+    :where(svg){--node-body:#151515;--text:#f2f2f2;--text-muted:#999999;--border-event:#b3261e;--border-setter:#2b5d8f;--border-neutral:#3a3a3a;--border-function:#8a8a8a;--border-call:#456980;--border-context:#555555;--table-header:#262626;--table-stripe:#1c1c1c;--pin-exec:#ffffff;--pin-boolean:#950000;--pin-byte:#006f65;--pin-integer:#1fe3af;--pin-integer64:#ace3af;--pin-float:#38d500;--pin-name:#cd82ff;--pin-string:#ff00d4;--pin-text:#e77caa;--pin-vector:#ffca23;--pin-rotator:#a0b4ff;--pin-transform:#ff7300;--pin-object:#00aaf5;--pin-delegate:#ff3838;--pin-other:#777777;--text-dim:color-mix(in srgb, var(--text) 45%, var(--node-body));--border-event-dim:color-mix(in srgb, var(--border-event) 45%, var(--node-body));--border-setter-dim:color-mix(in srgb, var(--border-setter) 45%, var(--node-body));--border-function-dim:color-mix(in srgb, var(--border-function) 45%, var(--node-body));--border-call-dim:color-mix(in srgb, var(--border-call) 45%, var(--node-body));--pin-exec-dim:color-mix(in srgb, var(--pin-exec) 45%, var(--node-body));--pin-boolean-dim:color-mix(in srgb, var(--pin-boolean) 45%, var(--node-body));--pin-byte-dim:color-mix(in srgb, var(--pin-byte) 45%, var(--node-body));--pin-integer-dim:color-mix(in srgb, var(--pin-integer) 45%, var(--node-body));--pin-integer64-dim:color-mix(in srgb, var(--pin-integer64) 45%, var(--node-body));--pin-float-dim:color-mix(in srgb, var(--pin-float) 45%, var(--node-body));--pin-name-dim:color-mix(in srgb, var(--pin-name) 45%, var(--node-body));--pin-string-dim:color-mix(in srgb, var(--pin-string) 45%, var(--node-body));--pin-text-dim:color-mix(in srgb, var(--pin-text) 45%, var(--node-body));--pin-vector-dim:color-mix(in srgb, var(--pin-vector) 45%, var(--node-body));--pin-rotator-dim:color-mix(in srgb, var(--pin-rotator) 45%, var(--node-body));--pin-transform-dim:color-mix(in srgb, var(--pin-transform) 45%, var(--node-body));--pin-object-dim:color-mix(in srgb, var(--pin-object) 45%, var(--node-body));--pin-delegate-dim:color-mix(in srgb, var(--pin-delegate) 45%, var(--node-body));--pin-other-dim:color-mix(in srgb, var(--pin-other) 45%, var(--node-body));}
+  </style>
+  <style>
+    #s2-my-svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#333;}
+    #s2-my-svg .error-icon{fill:#552222;}
+    #s2-my-svg .error-text{fill:#552222;stroke:#552222;}
+    #s2-my-svg .edge-thickness-normal{stroke-width:2px;}
+    #s2-my-svg .edge-thickness-thick{stroke-width:3.5px;}
+    #s2-my-svg .edge-pattern-solid{stroke-dasharray:0;}
+    #s2-my-svg .edge-pattern-dashed{stroke-dasharray:3;}
+    #s2-my-svg .edge-pattern-dotted{stroke-dasharray:2;}
+    #s2-my-svg .marker{fill:#333333;stroke:#333333;}
+    #s2-my-svg .marker.cross{stroke:#333333;}
+    #s2-my-svg svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}
+    #s2-my-svg .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#333;}
+    #s2-my-svg .cluster-label text{fill:#333;}
+    #s2-my-svg .cluster-label span,#s2-my-svg p{color:#333;}
+    #s2-my-svg .label text,#s2-my-svg span,#s2-my-svg p{fill:#333;color:#333;}
+    #s2-my-svg .node rect,#s2-my-svg .node circle,#s2-my-svg .node ellipse,#s2-my-svg .node polygon,#s2-my-svg .node path{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}
+    #s2-my-svg .flowchart-label text{text-anchor:middle;}
+    #s2-my-svg .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}
+    #s2-my-svg .node .label{text-align:center;}
+    #s2-my-svg .node.clickable{cursor:pointer;}
+    #s2-my-svg .arrowheadPath{fill:#333333;}
+    #s2-my-svg .edgePath .path{stroke:#333333;stroke-width:2.0px;}
+    #s2-my-svg .flowchart-link{stroke:#333333;fill:none;}
+    #s2-my-svg .edgeLabel{background-color:#e8e8e8;text-align:center;}
+    #s2-my-svg .edgeLabel rect{opacity:0.5;background-color:#e8e8e8;fill:#e8e8e8;}
+    #s2-my-svg .labelBkg{background-color:rgba(232, 232, 232, 0.5);}
+    #s2-my-svg .cluster rect{fill:#ffffde;stroke:#aaaa33;stroke-width:1px;}
+    #s2-my-svg .cluster text{fill:#333;}
+    #s2-my-svg .cluster span,#s2-my-svg p{color:#333;}
+    #s2-my-svg div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(80, 100%, 96.2745098039%);border:1px solid #aaaa33;border-radius:2px;pointer-events:none;z-index:100;}
+    #s2-my-svg .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#333;}
+    #s2-my-svg g.node *,#s2-my-svg g.cluster *{filter:none!important;}
+    #s2-my-svg :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}
+    #s2-my-svg .pin_anchor&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--node-body)!important;}
+    #s2-my-svg .pin_anchor span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--node-body)!important;}
+    #s2-my-svg .pin_anchor tspan{fill:var(--node-body)!important;}
+    #s2-my-svg .pin_exec&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-exec)!important;}
+    #s2-my-svg .pin_exec span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-exec)!important;}
+    #s2-my-svg .pin_exec tspan{fill:var(--pin-exec)!important;}
+    #s2-my-svg .pin_float&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-float)!important;}
+    #s2-my-svg .pin_float span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-float)!important;}
+    #s2-my-svg .pin_float tspan{fill:var(--pin-float)!important;}
+    #s2-my-svg .pin_object&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-object)!important;}
+    #s2-my-svg .pin_object span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-object)!important;}
+    #s2-my-svg .pin_object tspan{fill:var(--pin-object)!important;}
+    #s2-my-svg .pin_other&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-other)!important;}
+    #s2-my-svg .pin_other span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-other)!important;}
+    #s2-my-svg .pin_other tspan{fill:var(--pin-other)!important;}
+  </style>
+  <g>
+    <marker id="s2-my-svg_flowchart-pointEnd" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="s2-my-svg_flowchart-pointEnd-ffffff" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-exec);stroke:var(--pin-exec);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="s2-my-svg_flowchart-pointEnd-00aaf5" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-object);stroke:var(--pin-object);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="s2-my-svg_flowchart-pointEnd-ffca23" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-vector);stroke:var(--pin-vector);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="s2-my-svg_flowchart-pointEnd-38d500" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-float);stroke:var(--pin-float);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="s2-my-svg_flowchart-pointEnd-777777" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-other);stroke:var(--pin-other);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="s2-my-svg_flowchart-pointStart" class="marker flowchart" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="s2-my-svg_flowchart-circleEnd" class="marker flowchart" viewBox="0 0 10 10" refX="11" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto">
+      <circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="s2-my-svg_flowchart-circleStart" class="marker flowchart" viewBox="0 0 10 10" refX="-1" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto">
+      <circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="s2-my-svg_flowchart-crossEnd" class="marker cross flowchart" viewBox="0 0 11 11" refX="12" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto">
+      <path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="s2-my-svg_flowchart-crossStart" class="marker cross flowchart" viewBox="0 0 11 11" refX="-1" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto">
+      <path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <g class="root">
+      <g class="clusters"/>
+      <g class="edgePaths"/>
+      <g class="edgeLabels"/>
+      <g class="nodes">
+        <g class="root" transform="translate(-7.5, 0)">
+          <g class="clusters">
+            <g class="cluster default flowchart-label" id="s2-G_EventGraph">
+              <rect style="fill:none;stroke:var(--border-neutral);stroke-width:1px;" rx="0" ry="0" x="8" y="4" width="1164.234375" height="352"/>
+              <g class="cluster-label" transform="translate(548.453125, 8)">
+                <foreignObject width="83.328125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">EventGraph</span></div></foreignObject>
+              </g>
+            </g>
+            <g class="cluster default flowchart-label" id="s2-C_EventGraph_EdGraphNode_Comment_0">
+              <rect style="fill:none;stroke:#6c6c6c;stroke-width:2px;" rx="0" ry="0" x="291.9726625204086" y="30.000026229023916" width="583.8749872893093" height="82.9999719381332"/>
+              <g class="cluster-label" transform="translate(303.9726689249278, 36.00001659393311)">
+                <foreignObject width="559.8749872893093" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: rgb(108, 108, 108); display: block; white-space: nowrap; max-width: 559.875px; overflow: hidden; text-overflow: ellipsis;"><span class="nodeLabel" style="color:#6c6c6c;">Vector Length XY because only speed on the plane counts for animation blend</span></div></foreignObject>
+              </g>
+            </g>
+            <g class="cluster default flowchart-label" id="s2-N_EventGraph_K2Node_MacroInstance_0">
+              <rect style="fill:var(--node-body);stroke:var(--border-function);stroke-width:2px;" rx="0" ry="0" x="376.2343742549418" y="164.4999810293317" width="397.9999880492687" height="104.50003946870555"/>
+              <g class="cluster-label" transform="translate(549.9843810394406, 168.4999810293317)">
+                <foreignObject width="50.5" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">Is Valid</span></div></foreignObject>
+              </g>
+            </g>
+            <g class="cluster default flowchart-label" id="s2-N_EventGraph_K2Node_VariableSet_0">
+              <rect style="fill:var(--node-body);stroke:var(--border-setter);stroke-width:3px;" rx="0" ry="0" x="892.2343881726263" y="40.000006958842306" width="164.9999568104745" height="60.99999120831481"/>
+              <g class="cluster-label" transform="translate(920.0702855348586, 44.000006958842306)">
+                <foreignObject width="109.328125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">Set Walk Speed</span></div></foreignObject>
+              </g>
+            </g>
+          </g>
+          <g class="edgePaths">
+            <path d="M301.234,288.25C336.9378304889484,288.25,336.9378304889484,177.9999911241233,372.6416609778969,177.9999911241233" id="s2-L-N_EventGraph_K2Node_Event_0-N_EventGraph_K2Node_MacroInstance_0_anchor_in-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_Event_0 LE-N_EventGraph_K2Node_MacroInstance_0_anchor_in" style="stroke-width: 3.5px;fill:none;stroke:var(--pin-exec);stroke-width:3px;fill:none;" marker-end="url(#s2-my-svg_flowchart-pointEnd-ffffff)"/>
+            <path d="M247.41405504792925,146.00000173673033C310.0278580129131,146.00000173673033,310.0278580129131,208.49999731481068,372.64166097789695,208.49999731481068" id="s2-L-N_EventGraph_K2Node_CallFunction_0-N_EventGraph_K2Node_MacroInstance_0_InputObject-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_CallFunction_0 LE-N_EventGraph_K2Node_MacroInstance_0_InputObject" style="stroke:var(--pin-object);stroke-width:2px;fill:none;" marker-end="url(#s2-my-svg_flowchart-pointEnd-00aaf5)"/>
+            <path d="M247.41405504792925,146.00000173673033C325.5708177104577,146.00000173673033,325.5708177104577,84.00000207126135,403.7275803729861,84.00000207126135" id="s2-L-N_EventGraph_K2Node_CallFunction_0-N_EventGraph_K2Node_CallFunction_1-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_CallFunction_0 LE-N_EventGraph_K2Node_CallFunction_1" style="stroke:var(--pin-object);stroke-width:2px;fill:none;" marker-end="url(#s2-my-svg_flowchart-pointEnd-00aaf5)"/>
+            <path d="M774.734,251.5C831.6878374477907,251.5,831.6878374477907,53.50000646710396,888.6416748955813,53.50000646710396" id="s2-L-N_EventGraph_K2Node_MacroInstance_0_Is_Valid-N_EventGraph_K2Node_VariableSet_0_anchor_in-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_MacroInstance_0_Is_Valid LE-N_EventGraph_K2Node_VariableSet_0_anchor_in" style="stroke-width: 3.5px;fill:none;stroke:var(--pin-exec);stroke-width:3px;fill:none;" marker-end="url(#s2-my-svg_flowchart-pointEnd-ffffff)"/>
+            <path d="M510.148,84C564.7620179204032,84,564.7620179204032,84.00000207126135,619.3760358408063,84.00000207126135" id="s2-L-N_EventGraph_K2Node_CallFunction_1-N_EventGraph_K2Node_CallFunction_2-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_CallFunction_1 LE-N_EventGraph_K2Node_CallFunction_2" style="stroke:var(--pin-vector);stroke-width:2px;fill:none;" marker-end="url(#s2-my-svg_flowchart-pointEnd-ffca23)"/>
+            <path d="M760.5,84C824.5708374477907,84,824.5708374477907,84.00000207126135,888.6416748955814,84.00000207126135" id="s2-L-N_EventGraph_K2Node_CallFunction_2-N_EventGraph_K2Node_VariableSet_0_Walk_Speed-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_CallFunction_2 LE-N_EventGraph_K2Node_VariableSet_0_Walk_Speed" style="stroke:var(--pin-float);stroke-width:2px;fill:none;" marker-end="url(#s2-my-svg_flowchart-pointEnd-38d500)"/>
+            <path d="M541.234,208.5C549.568,208.5,557.901,208.5,566.234,208.5C590.517,208.5,614.799,221,639.081,233.5" id="s2-L-N_EventGraph_K2Node_MacroInstance_0_InputObject-N_EventGraph_K2Node_MacroInstance_0_Is_Valid-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_MacroInstance_0_InputObject LE-N_EventGraph_K2Node_MacroInstance_0_Is_Valid" style="stroke-width: 0;fill:none;"/>
+            <path d="M466.234,221.2500204980372L466.234,288.25C499.568,288.25,532.901,288.25,566.234,288.25C588.02,288.25,609.805,278.875,631.59,269.5" id="s2-L-N_EventGraph_K2Node_MacroInstance_0_anchor_in-N_EventGraph_K2Node_MacroInstance_0_Is_Valid-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_MacroInstance_0_anchor_in LE-N_EventGraph_K2Node_MacroInstance_0_Is_Valid" style="stroke-width: 0;fill:none;"/>
+            <path d="M1057.234,84C1065.568,84,1073.901,84,1082.234,84C1092.29,84,1102.346,132.5,1112.402,181L1022.4019699831007,98.99999816715706" id="s2-L-N_EventGraph_K2Node_VariableSet_0_Walk_Speed-N_EventGraph_K2Node_VariableSet_0_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_VariableSet_0_Walk_Speed LE-N_EventGraph_K2Node_VariableSet_0_anchor_out" style="stroke-width: 0;fill:none;"/>
+            <path d="M982.2339999999999,58.49999816715706L982.234,251C1015.568,251,1048.901,251,1082.234,251C1091.768,251,1101.301,223.5,1110.834,196L1020.8339699831008,98.99999816715706" id="s2-L-N_EventGraph_K2Node_VariableSet_0_anchor_in-N_EventGraph_K2Node_VariableSet_0_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_VariableSet_0_anchor_in LE-N_EventGraph_K2Node_VariableSet_0_anchor_out" style="stroke-width: 0;fill:none;"/>
+          </g>
+          <g class="edgeLabels">
+            <g class="edgeLabel">
+              <g class="label" transform="translate(0, 0)">
+                <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+              </g>
+            </g>
+            <g class="edgeLabel">
+              <g class="label" transform="translate(0, 0)">
+                <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+              </g>
+            </g>
+            <g class="edgeLabel">
+              <g class="label" transform="translate(0, 0)">
+                <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+              </g>
+            </g>
+            <g class="edgeLabel">
+              <g class="label" transform="translate(0, 0)">
+                <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+              </g>
+            </g>
+            <g class="edgeLabel">
+              <g class="label" transform="translate(0, 0)">
+                <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+              </g>
+            </g>
+            <g class="edgeLabel">
+              <g class="label" transform="translate(0, 0)">
+                <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+              </g>
+            </g>
+            <g class="edgeLabel">
+              <g class="label" transform="translate(0, 0)">
+                <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+              </g>
+            </g>
+            <g class="edgeLabel">
+              <g class="label" transform="translate(0, 0)">
+                <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+              </g>
+            </g>
+            <g class="edgeLabel">
+              <g class="label" transform="translate(0, 0)">
+                <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+              </g>
+            </g>
+            <g class="edgeLabel">
+              <g class="label" transform="translate(0, 0)">
+                <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+              </g>
+            </g>
+          </g>
+          <g class="nodes">
+            <g class="node default default flowchart-label" id="s2-flowchart-N_EventGraph_K2Node_CallFunction_1-17" data-node="true" data-id="s2-N_EventGraph_K2Node_CallFunction_1" transform="translate(458.734375, 84)">
+              <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-vector);stroke-width:2px;rx:16px;ry:16px;" rx="0" ry="0" x="-51.4140625" y="-17" width="102.828125" height="34"/>
+              <g class="label" style="color:var(--pin-vector);" transform="translate(-43.9140625, -9.5)">
+                <rect/>
+                <foreignObject width="87.828125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-vector); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-vector);">Get Velocity</span></div></foreignObject>
+              </g>
+            </g>
+            <g class="node default default flowchart-label" id="s2-flowchart-N_EventGraph_K2Node_Event_0-12" data-node="true" data-id="s2-N_EventGraph_K2Node_Event_0" transform="translate(167.1171875, 288.25)">
+              <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--border-event);stroke-width:3px;" rx="0" ry="0" x="-134.1171875" y="-18" width="268.234375" height="36"/>
+              <g class="label" style="color:var(--text);" transform="translate(-126.6171875, -10.5)">
+                <rect/>
+                <foreignObject width="253.234375" height="21"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">◆ Event BlueprintUpdateAnimation</span></div></foreignObject>
+              </g>
+            </g>
+            <g class="node default default flowchart-label" id="s2-flowchart-N_EventGraph_K2Node_CallFunction_0-14" data-node="true" data-id="s2-N_EventGraph_K2Node_CallFunction_0" transform="translate(167.1171875, 146)">
+              <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-object);stroke-width:2px;rx:16px;ry:16px;" rx="0" ry="0" x="-80.296875" y="-17" width="160.59375" height="34"/>
+              <g class="label" style="color:var(--pin-object);" transform="translate(-72.796875, -9.5)">
+                <rect/>
+                <foreignObject width="145.59375" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-object); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-object);">Try Get Pawn Owner</span></div></foreignObject>
+              </g>
+            </g>
+            <g class="node default pin_object flowchart-label" id="s2-flowchart-N_EventGraph_K2Node_MacroInstance_0_InputObject-3" data-node="true" data-id="s2-N_EventGraph_K2Node_MacroInstance_0_InputObject" transform="translate(458.734375, 208.5)">
+              <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+              <g class="label" style="" transform="translate(-75, -9.5)">
+                <rect/>
+                <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● Input Object</span></span></div></foreignObject>
+              </g>
+            </g>
+            <g class="node default pin_exec flowchart-label" id="s2-flowchart-N_EventGraph_K2Node_MacroInstance_0_Is_Valid-4" data-node="true" data-id="s2-N_EventGraph_K2Node_MacroInstance_0_Is_Valid" transform="translate(691.734375, 251)">
+              <polygon points="-18,0 165,0 165,-36 -18,-36 0,-18" class="label-container" transform="translate(-82.5,18)" style=""/>
+              <g class="label" style="" transform="translate(-75, -10.5)">
+                <rect/>
+                <foreignObject width="150" height="21"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:right">Is Valid ▶</span></span></div></foreignObject>
+              </g>
+            </g>
+            <g class="node default default flowchart-label" id="s2-flowchart-N_EventGraph_K2Node_CallFunction_2-21" data-node="true" data-id="s2-N_EventGraph_K2Node_CallFunction_2" transform="translate(691.734375, 84)">
+              <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-float);stroke-width:2px;rx:16px;ry:16px;" rx="0" ry="0" x="-68.765625" y="-17" width="137.53125" height="34"/>
+              <g class="label" style="color:var(--pin-float);" transform="translate(-61.265625, -9.5)">
+                <rect/>
+                <foreignObject width="122.53125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-float); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-float);">Vector Length XY</span></div></foreignObject>
+              </g>
+            </g>
+            <g class="node default pin_float flowchart-label" id="s2-flowchart-N_EventGraph_K2Node_VariableSet_0_Walk_Speed-7" data-node="true" data-id="s2-N_EventGraph_K2Node_VariableSet_0_Walk_Speed" transform="translate(974.734375, 84)">
+              <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+              <g class="label" style="" transform="translate(-75, -9.5)">
+                <rect/>
+                <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● Walk Speed</span></span></div></foreignObject>
+              </g>
+            </g>
+          </g>
+        </g>
+        <g class="root" transform="translate(161.5703125, 372)">
+          <g class="clusters">
+            <g class="cluster default flowchart-label" id="s2-G_AnimGraph">
+              <rect style="fill:none;stroke:var(--border-neutral);stroke-width:1px;" rx="0" ry="0" x="8" y="4" width="826.09375" height="152"/>
+              <g class="cluster-label" transform="translate(381.484375, 8)">
+                <foreignObject width="79.125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">AnimGraph</span></div></foreignObject>
+              </g>
+            </g>
+            <g class="cluster default flowchart-label" id="s2-N_AnimGraph_AnimGraphNode_Root_0">
+              <rect style="fill:var(--node-body);stroke:var(--border-function);stroke-width:2px;" rx="0" ry="0" x="554.093736577034" y="39.99998645484459" width="165.00004685521117" height="61.000032216310274"/>
+              <g class="cluster-label" transform="translate(593.2655980348587, 43.99998645484459)">
+                <foreignObject width="86.65625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">Output Pose</span></div></foreignObject>
+              </g>
+            </g>
+          </g>
+          <g class="edgePaths">
+            <path d="M160.453,84C183.65670629063095,84,183.65670629063095,84.00000006407492,206.86041258126193,84.00000006407492" id="s2-L-N_AnimGraph_K2Node_VariableGet_0-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_AnimGraph_K2Node_VariableGet_0 LE-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0" style="stroke:var(--pin-float);stroke-width:2px;fill:none;" marker-end="url(#s2-my-svg_flowchart-pointEnd-38d500)"/>
+            <path d="M479.094,84C514.7975116499945,84,514.7975116499945,84.00000006407492,550.501023299989,84.00000006407492" id="s2-L-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0-N_AnimGraph_AnimGraphNode_Root_0_Result-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0 LE-N_AnimGraph_AnimGraphNode_Root_0_Result" style="stroke:var(--pin-other);stroke-width:2px;fill:none;" marker-end="url(#s2-my-svg_flowchart-pointEnd-777777)"/>
+            <path d="M719.094,84C727.427,84,735.76,84,744.094,84C752.427,84,760.76,84,769.094,84L679.094033432245,83.99999999999977" id="s2-L-N_AnimGraph_AnimGraphNode_Root_0_Result-N_AnimGraph_AnimGraphNode_Root_0_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_AnimGraph_AnimGraphNode_Root_0_Result LE-N_AnimGraph_AnimGraphNode_Root_0_anchor_out" style="stroke-width: 0;fill:none;"/>
+          </g>
+          <g class="edgeLabels">
+            <g class="edgeLabel">
+              <g class="label" transform="translate(0, 0)">
+                <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+              </g>
+            </g>
+            <g class="edgeLabel">
+              <g class="label" transform="translate(0, 0)">
+                <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+              </g>
+            </g>
+            <g class="edgeLabel">
+              <g class="label" transform="translate(0, 0)">
+                <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+              </g>
+            </g>
+          </g>
+          <g class="nodes">
+            <g class="node default default flowchart-label" id="s2-flowchart-N_AnimGraph_K2Node_VariableGet_0-8" data-node="true" data-id="s2-N_AnimGraph_K2Node_VariableGet_0" transform="translate(96.7265625, 84)">
+              <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-float);stroke-width:2px;rx:16px;ry:16px;" rx="0" ry="0" x="-63.7265625" y="-17" width="127.453125" height="34"/>
+              <g class="label" style="color:var(--pin-float);" transform="translate(-56.2265625, -9.5)">
+                <rect/>
+                <foreignObject width="112.453125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-float); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-float);">Get Walk Speed</span></div></foreignObject>
+              </g>
+            </g>
+            <g class="node default default flowchart-label" id="s2-flowchart-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0-9" data-node="true" data-id="s2-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0" transform="translate(344.7734375, 84)">
+              <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-other);stroke-width:2px;rx:16px;ry:16px;" rx="0" ry="0" x="-134.3203125" y="-17" width="268.640625" height="34"/>
+              <g class="label" style="color:var(--pin-other);" transform="translate(-126.8203125, -9.5)">
+                <rect/>
+                <foreignObject width="253.640625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-other); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-other);">Blendspace Player 'BS_Enemy_Base'</span></div></foreignObject>
+              </g>
+            </g>
+            <g class="node default pin_other flowchart-label" id="s2-flowchart-N_AnimGraph_AnimGraphNode_Root_0_Result-1" data-node="true" data-id="s2-N_AnimGraph_AnimGraphNode_Root_0_Result" transform="translate(636.59375, 84)">
+              <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+              <g class="label" style="" transform="translate(-75, -9.5)">
+                <rect/>
+                <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● Result</span></span></div></foreignObject>
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <rect style="fill: none; stroke: var(--border-function); stroke-width: 2px; pointer-events: none;" rx="0" ry="0" x="376.2343742549418" y="164.4999810293317" width="397.9999880492687" height="104.50003946870555" transform="matrix(1,0,0,1,-7.499999999999999,0)"/>
+  <rect style="fill: none; stroke: var(--border-setter); stroke-width: 3px; pointer-events: none;" rx="0" ry="0" x="892.2343881726263" y="40.000006958842306" width="164.9999568104745" height="60.99999120831481" transform="matrix(1,0,0,1,-7.499999999999999,0)"/>
+  <rect style="fill: none; stroke: var(--border-function); stroke-width: 2px; pointer-events: none;" rx="0" ry="0" x="554.093736577034" y="39.99998645484459" width="165.00004685521117" height="61.000032216310274" transform="matrix(1,0,0,1,161.57031249999997,371.9999999999999)"/>
+</svg>
+      </div>
+    </section>
+    <section>
+      <h2>All/Content/App/Enemy/BP_Enemy_Base: Class Defaults and Components</h2>
+      <div class="table">
+        <table>
+          <caption>BP_Enemy_Base (Blueprint Class)</caption>
+          <thead><tr><th>Setting</th><th>Before</th><th>After</th></tr></thead>
+          <tbody>
+            <tr><td>Mesh › Anim Class</td><td>None</td><td>ABP_Enemy_Base_C</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section>
+      <h2>Create Blend Space1D at All/Content/App/Enemy/BS_Enemy_Base</h2>
+      <div class="table">
+        <table>
+          <caption>BS_Enemy_Base (Blend Space1D)</caption>
+          <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Sample Data: add</td><td>character-female-aidle at Beginning of Blend</td></tr>
+            <tr><td>Sample Data: add</td><td>character-female-awalk at End of Blend</td></tr>
+            <tr><td>Blend Parameters[0] › Display Name</td><td>Walk Speed</td></tr>
+            <tr><td>Blend Parameters[0] › Max</td><td>450.000000</td></tr>
+            <tr><td>Skeleton</td><td>character-female-a_Skeleton</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <!-- Palette switch and step navigation: Doc/doc.js (from Tools/doc.js) -->
+    <script src="../../doc.js"></script>
+  </body>
+</html>

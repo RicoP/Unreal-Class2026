@@ -1,0 +1,100 @@
+---
+config:
+  look: classic
+  themeCSS: "g.node *, g.cluster * { filter: none !important; }"
+  flowchart:
+    curve: monotoneX
+    nodeSpacing: 20
+    rankSpacing: 60
+    subGraphTitleMargin:
+      top: 4
+      bottom: 4
+---
+flowchart LR
+
+    subgraph G_AnimGraph["AnimGraph"]
+        direction LR
+        subgraph N_AnimGraph_K2Node_VariableGet_0["Get Walk Speed"]
+        end
+        subgraph N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0["Blendspace Player 'BS_Enemy_Base'"]
+        end
+        subgraph N_AnimGraph_AnimGraphNode_Root_0["Output Pose"]
+            N_AnimGraph_AnimGraphNode_Root_0_anchor_out[" "]
+            N_AnimGraph_AnimGraphNode_Root_0_Result["<span style='display:inline-block;min-width:150px;text-align:left'>● Result</span>"]
+        end
+    end
+
+    subgraph G_EventGraph["EventGraph"]
+        direction LR
+        subgraph C_EventGraph_EdGraphNode_Comment_0["Vector Length XY because only speed on the plane counts for animation blend"]
+            direction LR
+            subgraph N_EventGraph_K2Node_CallFunction_1["Get Velocity"]
+            end
+            subgraph N_EventGraph_K2Node_CallFunction_2["Vector Length XY"]
+            end
+        end
+        subgraph N_EventGraph_K2Node_Event_0["◆ Event BlueprintUpdateAnimation"]
+        end
+        subgraph N_EventGraph_K2Node_CallFunction_0["Try Get Pawn Owner"]
+        end
+        subgraph N_EventGraph_K2Node_MacroInstance_0["Is Valid"]
+            N_EventGraph_K2Node_MacroInstance_0_anchor_in[" "]
+            N_EventGraph_K2Node_MacroInstance_0_InputObject["<span style='display:inline-block;min-width:150px;text-align:left'>● Input Object</span>"]
+            N_EventGraph_K2Node_MacroInstance_0_Is_Valid>"<span style='display:inline-block;min-width:150px;text-align:right'>Is Valid ▶</span>"]
+        end
+        subgraph N_EventGraph_K2Node_VariableSet_0["Set Walk Speed"]
+            N_EventGraph_K2Node_VariableSet_0_anchor_in[" "]
+            N_EventGraph_K2Node_VariableSet_0_anchor_out[" "]
+            N_EventGraph_K2Node_VariableSet_0_Walk_Speed["<span style='display:inline-block;min-width:150px;text-align:left'>● Walk Speed</span>"]
+        end
+    end
+
+    %% Wires
+    N_AnimGraph_K2Node_VariableGet_0 --> N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0
+    N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0 --> N_AnimGraph_AnimGraphNode_Root_0_Result
+    N_EventGraph_K2Node_Event_0 ==> N_EventGraph_K2Node_MacroInstance_0_anchor_in
+    N_EventGraph_K2Node_CallFunction_0 --> N_EventGraph_K2Node_MacroInstance_0_InputObject
+    N_EventGraph_K2Node_CallFunction_0 --> N_EventGraph_K2Node_CallFunction_1
+    N_EventGraph_K2Node_MacroInstance_0_Is_Valid ==> N_EventGraph_K2Node_VariableSet_0_anchor_in
+    N_EventGraph_K2Node_CallFunction_1 --> N_EventGraph_K2Node_CallFunction_2
+    N_EventGraph_K2Node_CallFunction_2 --> N_EventGraph_K2Node_VariableSet_0_Walk_Speed
+
+    %% Keep inputs left of outputs inside each node
+    N_AnimGraph_AnimGraphNode_Root_0_Result ~~~ N_AnimGraph_AnimGraphNode_Root_0_anchor_out
+    N_EventGraph_K2Node_MacroInstance_0_InputObject ~~~ N_EventGraph_K2Node_MacroInstance_0_Is_Valid
+    N_EventGraph_K2Node_MacroInstance_0_anchor_in ~~~ N_EventGraph_K2Node_MacroInstance_0_Is_Valid
+    N_EventGraph_K2Node_VariableSet_0_Walk_Speed ~~~ N_EventGraph_K2Node_VariableSet_0_anchor_out
+    N_EventGraph_K2Node_VariableSet_0_anchor_in ~~~ N_EventGraph_K2Node_VariableSet_0_anchor_out
+
+    %% Nodes
+    style G_AnimGraph fill:none,stroke:#3a3a3a,stroke-width:1px,color:#f2f2f2
+    style N_AnimGraph_K2Node_VariableGet_0 fill:#151515,stroke:#38d500,stroke-width:2px,color:#38d500,rx:16px,ry:16px
+    style N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0 fill:#151515,stroke:#777777,stroke-width:2px,color:#777777,rx:16px,ry:16px
+    style N_AnimGraph_AnimGraphNode_Root_0 fill:#151515,stroke:#8a8a8a,stroke-width:2px,color:#f2f2f2
+    style G_EventGraph fill:none,stroke:#3a3a3a,stroke-width:1px,color:#f2f2f2
+    style N_EventGraph_K2Node_Event_0 fill:#151515,stroke:#b3261e,stroke-width:3px,color:#f2f2f2
+    style N_EventGraph_K2Node_CallFunction_0 fill:#151515,stroke:#00aaf5,stroke-width:2px,color:#00aaf5,rx:16px,ry:16px
+    style N_EventGraph_K2Node_MacroInstance_0 fill:#151515,stroke:#8a8a8a,stroke-width:2px,color:#f2f2f2
+    style N_EventGraph_K2Node_CallFunction_1 fill:#151515,stroke:#ffca23,stroke-width:2px,color:#ffca23,rx:16px,ry:16px
+    style N_EventGraph_K2Node_CallFunction_2 fill:#151515,stroke:#38d500,stroke-width:2px,color:#38d500,rx:16px,ry:16px
+    style N_EventGraph_K2Node_VariableSet_0 fill:#151515,stroke:#2b5d8f,stroke-width:3px,color:#f2f2f2
+    style C_EventGraph_EdGraphNode_Comment_0 fill:none,stroke:#6c6c6c,stroke-width:2px,color:#6c6c6c
+
+    %% Pins
+    classDef pin_anchor fill:#151515,stroke:#151515,color:#151515
+    classDef pin_exec fill:#151515,stroke:#151515,color:#ffffff
+    classDef pin_float fill:#151515,stroke:#151515,color:#38d500
+    classDef pin_object fill:#151515,stroke:#151515,color:#00aaf5
+    classDef pin_other fill:#151515,stroke:#151515,color:#777777
+    class N_AnimGraph_AnimGraphNode_Root_0_anchor_out,N_EventGraph_K2Node_MacroInstance_0_anchor_in,N_EventGraph_K2Node_VariableSet_0_anchor_in,N_EventGraph_K2Node_VariableSet_0_anchor_out pin_anchor
+    class N_EventGraph_K2Node_MacroInstance_0_Is_Valid pin_exec
+    class N_EventGraph_K2Node_VariableSet_0_Walk_Speed pin_float
+    class N_EventGraph_K2Node_MacroInstance_0_InputObject pin_object
+    class N_AnimGraph_AnimGraphNode_Root_0_Result pin_other
+
+    %% Wire colours (dimmed and dashed between two nodes that aren't part of the change)
+    linkStyle 2,5 stroke:#ffffff,stroke-width:3px
+    linkStyle 0,7 stroke:#38d500,stroke-width:2px
+    linkStyle 3,4 stroke:#00aaf5,stroke-width:2px
+    linkStyle 1 stroke:#777777,stroke-width:2px
+    linkStyle 6 stroke:#ffca23,stroke-width:2px

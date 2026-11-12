@@ -62,7 +62,15 @@ to rebuild it themselves.
   diagram ("Create a new Blueprint Class ..., then set:" with the parent class
   first, or "change its class defaults and components" with Before/After);
   rows read `Class Defaults › <setting>` and `<component> › <setting>`.
-  Collision Responses are read like the editor's grid: a new Blueprint gets one
+  Variables come right after Parent Class: `Add Variable | Walk Speed (Float)`
+  (name as typed, type without "(double-precision)"), then the Default Value
+  (taken from the class-defaults entry, which is then left out), Category and
+  Instance Editable rows only where they differ from a fresh variable;
+  `Remove Variable | Old`; and `Variable <old name> › <field> | old | new` for
+  changes. BlendSpace1D samples read `<animation> at Beginning of Blend` when
+  X is 0 (an unset SampleValue is 0), `<animation> at End of Blend` when X is
+  about `BlendParameters[0] Max` (100 unless the diff changes it; removed
+  samples use the old Max), otherwise `<animation> at <X>`. Collision Responses are read like the editor's grid: a new Blueprint gets one
   row per component with the channels grouped by response in the grid's column
   order (`Ignore: Visibility, Camera · Overlap: Pawn`, or `Ignore: all
   channels`); a changed one gets a row per channel that changed
