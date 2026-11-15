@@ -1,0 +1,46 @@
+(blueprint-diff "/Game/App/Weapons/BP_HitBox_Base"
+  (old none)
+  (new working-copy)
+  (parent "/Script/Engine.Actor")
+  (variables
+    (added "Lifetime" (type "Float (double-precision)") (category "Default") (default "") (instance-editable false)))
+  (components
+    (component "Capsule" (class "CapsuleComponent") (kind added) (attach-to "DefaultSceneRoot") (new)
+      (properties
+        (changed "CapsuleHalfHeight" (old "44.000000") (new "150.000000"))
+        (changed "CapsuleRadius" (old "22.000000") (new "44.000000"))
+        (changed "bHiddenInGame" (old "True") (new "False"))))
+    (component "DefaultSceneRoot" (class "SceneComponent") (kind added) (new)
+      (properties)))
+  (graph "EventGraph" added
+    (node-added addition
+      (node "K2Node_Event_0" "Event BeginPlay" (pos 0 0))
+      (pin out "OutputDelegate" "Delegate")
+      (pin out "then" "Exec" (links (pin "K2Node_CallFunction_0" "execute"))))
+    (node-added addition
+      (node "K2Node_Event_1" "Event ActorBeginOverlap" (pos 0 208))
+      (pin out "OutputDelegate" "Delegate")
+      (pin out "then" "Exec")
+      (pin out "OtherActor" "Actor Object Reference"))
+    (node-added addition
+      (node "K2Node_Event_2" "Event Tick" (pos 0 416))
+      (pin out "OutputDelegate" "Delegate")
+      (pin out "then" "Exec")
+      (pin out "DeltaSeconds" "Float (single-precision)" (default "0.0")))
+    (node-added addition
+      (node "K2Node_CallFunction_0" "Delay" (pos 320 0))
+      (pin in "execute" "Exec" (links (pin "K2Node_Event_0" "then")))
+      (pin out "then" "Exec" (links (pin "K2Node_CallFunction_1" "execute")))
+      (pin in "Duration" "Float (single-precision)" (links (pin "K2Node_VariableGet_0" "Lifetime"))))
+    (node-added addition
+      (node "K2Node_VariableGet_0" "Get Lifetime" (pos 160 55))
+      (pin out "Lifetime" "Float (double-precision)" (links (pin "K2Node_CallFunction_0" "Duration"))))
+    (node-added addition
+      (node "K2Node_CallFunction_1" "Destroy Actor" (pos 560 -16))
+      (pin in "execute" "Exec" (links (pin "K2Node_CallFunction_0" "then")))
+      (pin out "then" "Exec")
+      (pin in "self" "Actor Object Reference")))
+  (graph "UserConstructionScript" added
+    (node-added addition
+      (node "K2Node_FunctionEntry_0" "Construction Script" (pos 0 0))
+      (pin out "then" "Exec"))))

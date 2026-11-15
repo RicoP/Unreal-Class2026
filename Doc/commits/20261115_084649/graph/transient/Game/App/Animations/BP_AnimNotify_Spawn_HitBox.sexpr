@@ -1,0 +1,50 @@
+(blueprint-diff "/Game/App/Animations/BP_AnimNotify_Spawn_HitBox"
+  (old none)
+  (new working-copy)
+  (parent "/Script/Engine.AnimNotify")
+  (variables
+    (added "Actor To Spawn" (type "BP Hit Box Base Class Reference") (category "App") (default "") (instance-editable true)))
+  (functions
+    (added "Received_Notify" (override true) (pure false) (const true) (access "Public") (category "") (inputs) (outputs)))
+  (defaults (baseline parent-class)
+    (changed "NotifyColor" (old "(B=200,G=200,R=255,A=255)") (new "(B=0,G=231,R=255,A=255)")))
+  (graph "Received_Notify" added
+    (node-added addition
+      (node "K2Node_FunctionEntry_0" "Received_Notify" (pos -480 0))
+      (pin out "then" "Exec" (links (pin "K2Node_DynamicCast_2" "execute")))
+      (pin out "MeshComp" "Skeletal Mesh Component Object Reference" (links (pin "K2Node_CallFunction_7" "self")))
+      (pin out "Animation" "Anim Sequence Base Object Reference")
+      (pin out "EventReference" "Anim Notify Event Reference Structure (by ref)"))
+    (node-added addition
+      (node "K2Node_FunctionResult_0" "Return Node" (pos 1168 0))
+      (pin in "execute" "Exec" (links (pin "K2Node_SpawnActorFromClass_0" "then")))
+      (pin in "ReturnValue" "Boolean" (default "true")))
+    (node-added addition
+      (node "K2Node_SpawnActorFromClass_0" "SpawnActor" (pos 480 9))
+      (pin in "execute" "Exec" (links (pin "K2Node_DynamicCast_2" "then")))
+      (pin out "then" "Exec" (links (pin "K2Node_FunctionResult_0" "execute")))
+      (pin in "Class" "Actor Class Reference" (links (pin "K2Node_VariableGet_3" "Actor To Spawn")))
+      (pin out "ReturnValue" "BP Hit Box Base Object Reference")
+      (pin in "SpawnTransform" "Transform" (links (pin "K2Node_CallFunction_8" "Transform")))
+      (pin in "CollisionHandlingOverride" "ESpawnActorCollisionHandlingMethod Enum" (default "Undefined"))
+      (pin in "TransformScaleMethod" "ESpawnActorScaleMethod Enum" (default "MultiplyWithRoot"))
+      (pin in "Owner" "Actor Object Reference")
+      (pin in "Instigator" "Pawn Object Reference"))
+    (node-added addition
+      (node "K2Node_VariableGet_3" "Get Actor To Spawn" (pos 208 64))
+      (pin out "Actor To Spawn" "BP Hit Box Base Class Reference" (links (pin "K2Node_SpawnActorFromClass_0" "Class"))))
+    (node-added addition
+      (node "K2Node_CallFunction_7" "GetOwner" (pos -240 272))
+      (pin in "self" "Actor Component Object Reference" (links (pin "K2Node_FunctionEntry_0" "MeshComp")))
+      (pin out "ReturnValue" "Actor Object Reference" (links (pin "K2Node_DynamicCast_2" "Object"))))
+    (node-added addition
+      (node "K2Node_DynamicCast_2" "Cast To BP_Hero" (pos 16 0))
+      (pin in "execute" "Exec" (links (pin "K2Node_FunctionEntry_0" "then")))
+      (pin out "then" "Exec" (links (pin "K2Node_SpawnActorFromClass_0" "execute")))
+      (pin out "CastFailed" "Exec")
+      (pin in "Object" "Object Reference" (links (pin "K2Node_CallFunction_7" "ReturnValue")))
+      (pin out "AsBP Hero" "BP Hero Object Reference" (links (pin "K2Node_CallFunction_8" "self"))))
+    (node-added addition
+      (node "K2Node_CallFunction_8" "GetWeaponHitBoxPoint" (pos 208 272))
+      (pin in "self" "BP Hero Object Reference" (links (pin "K2Node_DynamicCast_2" "AsBP Hero")))
+      (pin out "Transform" "Transform" (links (pin "K2Node_SpawnActorFromClass_0" "SpawnTransform"))))))

@@ -1,0 +1,8 @@
+(asset-diff "/Game/Characters/Mannequins/Anims/Unarmed/Attack/MM_Attack_01_Montage"
+  (class "AnimMontage")
+  (old (revision "0666bd9c") (date "2026-11-12T15:27:49.000Z") (description "Swing at enemies and let them die\n\n- IA_Swing on the left mouse button (IMC_Default); BP_ThirdPersonCharacter\n  plays MM_Attack_01_Montage, guarded by an Is Attacking variable.\n- MM_Attack_01: root motion off and root locked, so the punch plays on\n  the spot.\n- character-female-adie_Montage: holds its last frame (no auto blend\n  out), played at 0.4 speed; ABP_Enemy_Base gets a DefaultSlot node.\n- BP_Enemy_Base: Life (100) and an AI timer handle.\n- Tools/sexpr_to_table.py: leaves out animation bookkeeping and unchanged\n  assets, trims numbers, and documents new assets with default settings.\n- BlueprintDiffExport: montages export their slot tracks (MontageSlots).\n  Not built yet: build with the editor closed.\n- Doc/commits/20261112_162737: documentation of this step.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (properties
+    (changed "DataModelInterface" (old "AnimDataModel'/Game/Characters/Mannequins/Anims/Unarmed/Attack/MM_Attack_01_Montage.MM_Attack_01_Montage:AnimDataModel'") (new "AnimDataModel'/Game/Characters/Mannequins/Anims/Unarmed/Attack/MM_Attack_01_Montage.MM_Attack_01_Montage:AnimDataModel'"))
+    (changed "Controller" (old "AnimDataController'/Engine/Transient.AnimDataController_2'") (new "AnimDataController'/Engine/Transient.AnimDataController_0'"))
+    (changed "AnimNotifies" (old "none") (new "BP_AnimNotify_Spawn_HitBox at 0.412 s (Actor to Spawn: BP_HitBox_Sword)"))))

@@ -1,0 +1,39 @@
+(blueprint-diff "/Game/App/Enemy/BP_Enemy_Base"
+  (old (revision "0666bd9c") (date "2026-11-12T15:27:49.000Z") (description "Swing at enemies and let them die\n\n- IA_Swing on the left mouse button (IMC_Default); BP_ThirdPersonCharacter\n  plays MM_Attack_01_Montage, guarded by an Is Attacking variable.\n- MM_Attack_01: root motion off and root locked, so the punch plays on\n  the spot.\n- character-female-adie_Montage: holds its last frame (no auto blend\n  out), played at 0.4 speed; ABP_Enemy_Base gets a DefaultSlot node.\n- BP_Enemy_Base: Life (100) and an AI timer handle.\n- Tools/sexpr_to_table.py: leaves out animation bookkeeping and unchanged\n  assets, trims numbers, and documents new assets with default settings.\n- BlueprintDiffExport: montages export their slot tracks (MontageSlots).\n  Not built yet: build with the editor closed.\n- Doc/commits/20261112_162737: documentation of this step.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (parent "/Script/Engine.Character")
+  (graph "EventGraph Hit"
+    (pin-relinked-node modification
+      (text "Link Moved  'then' ['Cast To BP_Weapon_Base' -> 'Cast To BP_HitBox_Base']")
+      (old (node "K2Node_DynamicCast_0" "Cast To BP_Weapon_Base" (pos -448 384)))
+      (new (node "K2Node_DynamicCast_1" "Cast To BP_HitBox_Base" (pos -432 384)))
+      (old-pin (pin "K2Node_Event_1" "then") (links (pin "K2Node_DynamicCast_0" "execute")) (default ""))
+      (new-pin (pin "K2Node_Event_1" "then") (links (pin "K2Node_DynamicCast_1" "execute")) (default "")))
+    (pin-relinked-node modification
+      (text "Link Moved  'OtherActor' ['Cast To BP_Weapon_Base' -> 'Cast To BP_HitBox_Base']")
+      (old (node "K2Node_DynamicCast_0" "Cast To BP_Weapon_Base" (pos -448 384)))
+      (new (node "K2Node_DynamicCast_1" "Cast To BP_HitBox_Base" (pos -432 384)))
+      (old-pin (pin "K2Node_Event_1" "OtherActor") (links (pin "K2Node_DynamicCast_0" "Object")) (default ""))
+      (new-pin (pin "K2Node_Event_1" "OtherActor") (links (pin "K2Node_DynamicCast_1" "Object")) (default "")))
+    (pin-relinked-node modification
+      (text "Link Moved  'execute' ['Cast To BP_Weapon_Base' -> 'Cast To BP_HitBox_Base']")
+      (old (node "K2Node_DynamicCast_0" "Cast To BP_Weapon_Base" (pos -448 384)))
+      (new (node "K2Node_DynamicCast_1" "Cast To BP_HitBox_Base" (pos -432 384)))
+      (old-pin (pin "K2Node_IfThenElse_0" "execute") (links (pin "K2Node_DynamicCast_0" "then")) (default ""))
+      (new-pin (pin "K2Node_IfThenElse_0" "execute") (links (pin "K2Node_DynamicCast_1" "then")) (default "")))
+    (node-added addition
+      (text "Added Node 'Cast To BP_HitBox_Base'")
+      (node "K2Node_DynamicCast_1" "Cast To BP_HitBox_Base" (pos -432 384))
+      (pin in "execute" "Exec" (links (pin "K2Node_Event_1" "then")))
+      (pin out "then" "Exec" (links (pin "K2Node_IfThenElse_0" "execute")))
+      (pin out "CastFailed" "Exec")
+      (pin in "Object" "Object Reference" (links (pin "K2Node_Event_1" "OtherActor")))
+      (pin out "AsBP Hit Box Base" "BP Hit Box Base Object Reference"))
+    (node-removed subtraction
+      (text "Removed Node 'Cast To BP_Weapon_Base'")
+      (node "K2Node_DynamicCast_0" "Cast To BP_Weapon_Base" (pos -448 384))
+      (pin in "execute" "Exec" (links (pin "K2Node_Event_1" "then")))
+      (pin out "then" "Exec" (links (pin "K2Node_IfThenElse_0" "execute")))
+      (pin out "CastFailed" "Exec")
+      (pin in "Object" "Object Reference" (links (pin "K2Node_Event_1" "OtherActor")))
+      (pin out "AsBP Weapon Base" "BP Weapon Base Object Reference"))))

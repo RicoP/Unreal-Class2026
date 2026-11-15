@@ -1,0 +1,98 @@
+---
+config:
+  look: classic
+  themeCSS: "g.node *, g.cluster * { filter: none !important; }"
+  flowchart:
+    curve: monotoneX
+    nodeSpacing: 20
+    rankSpacing: 60
+    subGraphTitleMargin:
+      top: 4
+      bottom: 4
+---
+flowchart LR
+
+    subgraph N_Received_Notify_K2Node_FunctionEntry_0["Received_Notify (override)"]
+        N_Received_Notify_K2Node_FunctionEntry_0_anchor_in[" "]
+        N_Received_Notify_K2Node_FunctionEntry_0_anchor_out[" "]
+        N_Received_Notify_K2Node_FunctionEntry_0_MeshComp["<span style='display:inline-block;min-width:150px;text-align:right'>Mesh Comp ●</span>"]
+    end
+    subgraph N_Received_Notify_K2Node_CallFunction_7["Get Owner"]
+    end
+    subgraph N_Received_Notify_K2Node_DynamicCast_2["Cast To BP_Hero"]
+        N_Received_Notify_K2Node_DynamicCast_2_anchor_in[" "]
+        N_Received_Notify_K2Node_DynamicCast_2_Object["<span style='display:inline-block;min-width:150px;text-align:left'>● Object</span>"]
+        N_Received_Notify_K2Node_DynamicCast_2_then>"<span style='display:inline-block;min-width:150px;text-align:right'>Then ▶</span>"]
+        N_Received_Notify_K2Node_DynamicCast_2_AsBP_Hero["<span style='display:inline-block;min-width:150px;text-align:right'>AsBP Hero ●</span>"]
+    end
+    subgraph N_Received_Notify_K2Node_VariableGet_3["Get Actor To Spawn"]
+    end
+    subgraph N_Received_Notify_K2Node_CallFunction_8["Get Weapon Hit Box Point (pure)"]
+    end
+    subgraph N_Received_Notify_K2Node_SpawnActorFromClass_0["Spawn Actor"]
+        N_Received_Notify_K2Node_SpawnActorFromClass_0_anchor_in[" "]
+        N_Received_Notify_K2Node_SpawnActorFromClass_0_anchor_out[" "]
+        N_Received_Notify_K2Node_SpawnActorFromClass_0_Class["<span style='display:inline-block;min-width:150px;text-align:left'>● Class</span>"]
+        N_Received_Notify_K2Node_SpawnActorFromClass_0_SpawnTransform["<span style='display:inline-block;min-width:150px;text-align:left'>● Spawn Transform</span>"]
+        N_Received_Notify_K2Node_SpawnActorFromClass_0_CollisionHandlingOverride["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>Undefined</span> Collision Handling Override</span>"]
+        N_Received_Notify_K2Node_SpawnActorFromClass_0_TransformScaleMethod["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>MultiplyWithRoot</span> Transform Scale Method</span>"]
+    end
+    subgraph N_Received_Notify_K2Node_FunctionResult_0["Return Node"]
+        N_Received_Notify_K2Node_FunctionResult_0_anchor_in[" "]
+        N_Received_Notify_K2Node_FunctionResult_0_anchor_out[" "]
+        N_Received_Notify_K2Node_FunctionResult_0_ReturnValue["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>true</span> Return Value</span>"]
+    end
+
+    %% Wires
+    N_Received_Notify_K2Node_FunctionEntry_0_MeshComp --> N_Received_Notify_K2Node_CallFunction_7
+    N_Received_Notify_K2Node_FunctionEntry_0_anchor_out ==> N_Received_Notify_K2Node_DynamicCast_2_anchor_in
+    N_Received_Notify_K2Node_CallFunction_7 --> N_Received_Notify_K2Node_DynamicCast_2_Object
+    N_Received_Notify_K2Node_DynamicCast_2_AsBP_Hero --> N_Received_Notify_K2Node_CallFunction_8
+    N_Received_Notify_K2Node_DynamicCast_2_then ==> N_Received_Notify_K2Node_SpawnActorFromClass_0_anchor_in
+    N_Received_Notify_K2Node_VariableGet_3 --> N_Received_Notify_K2Node_SpawnActorFromClass_0_Class
+    N_Received_Notify_K2Node_CallFunction_8 --> N_Received_Notify_K2Node_SpawnActorFromClass_0_SpawnTransform
+    N_Received_Notify_K2Node_SpawnActorFromClass_0_anchor_out ==> N_Received_Notify_K2Node_FunctionResult_0_anchor_in
+
+    %% Keep inputs left of outputs inside each node
+    N_Received_Notify_K2Node_FunctionEntry_0_anchor_in ~~~ N_Received_Notify_K2Node_FunctionEntry_0_MeshComp
+    N_Received_Notify_K2Node_FunctionEntry_0_anchor_in ~~~ N_Received_Notify_K2Node_FunctionEntry_0_anchor_out
+    N_Received_Notify_K2Node_DynamicCast_2_Object ~~~ N_Received_Notify_K2Node_DynamicCast_2_then
+    N_Received_Notify_K2Node_DynamicCast_2_Object ~~~ N_Received_Notify_K2Node_DynamicCast_2_AsBP_Hero
+    N_Received_Notify_K2Node_DynamicCast_2_anchor_in ~~~ N_Received_Notify_K2Node_DynamicCast_2_then
+    N_Received_Notify_K2Node_DynamicCast_2_anchor_in ~~~ N_Received_Notify_K2Node_DynamicCast_2_AsBP_Hero
+    N_Received_Notify_K2Node_SpawnActorFromClass_0_Class ~~~ N_Received_Notify_K2Node_SpawnActorFromClass_0_anchor_out
+    N_Received_Notify_K2Node_SpawnActorFromClass_0_SpawnTransform ~~~ N_Received_Notify_K2Node_SpawnActorFromClass_0_anchor_out
+    N_Received_Notify_K2Node_SpawnActorFromClass_0_CollisionHandlingOverride ~~~ N_Received_Notify_K2Node_SpawnActorFromClass_0_anchor_out
+    N_Received_Notify_K2Node_SpawnActorFromClass_0_TransformScaleMethod ~~~ N_Received_Notify_K2Node_SpawnActorFromClass_0_anchor_out
+    N_Received_Notify_K2Node_SpawnActorFromClass_0_anchor_in ~~~ N_Received_Notify_K2Node_SpawnActorFromClass_0_anchor_out
+    N_Received_Notify_K2Node_FunctionResult_0_ReturnValue ~~~ N_Received_Notify_K2Node_FunctionResult_0_anchor_out
+    N_Received_Notify_K2Node_FunctionResult_0_anchor_in ~~~ N_Received_Notify_K2Node_FunctionResult_0_anchor_out
+
+    %% Nodes
+    style N_Received_Notify_K2Node_FunctionEntry_0 fill:#151515,stroke:#8a8a8a,stroke-width:2px,color:#f2f2f2
+    style N_Received_Notify_K2Node_CallFunction_7 fill:#151515,stroke:#00aaf5,stroke-width:2px,color:#00aaf5,rx:16px,ry:16px
+    style N_Received_Notify_K2Node_DynamicCast_2 fill:#151515,stroke:#8a8a8a,stroke-width:2px,color:#f2f2f2
+    style N_Received_Notify_K2Node_VariableGet_3 fill:#151515,stroke:#777777,stroke-width:2px,color:#777777,rx:16px,ry:16px
+    style N_Received_Notify_K2Node_CallFunction_8 fill:#151515,stroke:#ff7300,stroke-width:2px,color:#ff7300,rx:16px,ry:16px
+    style N_Received_Notify_K2Node_SpawnActorFromClass_0 fill:#151515,stroke:#456980,stroke-width:2px,color:#f2f2f2
+    style N_Received_Notify_K2Node_FunctionResult_0 fill:#151515,stroke:#8a8a8a,stroke-width:2px,color:#f2f2f2
+
+    %% Pins
+    classDef pin_anchor fill:#151515,stroke:#151515,color:#151515
+    classDef pin_boolean fill:#151515,stroke:#151515,color:#950000
+    classDef pin_exec fill:#151515,stroke:#151515,color:#ffffff
+    classDef pin_object fill:#151515,stroke:#151515,color:#00aaf5
+    classDef pin_other fill:#151515,stroke:#151515,color:#777777
+    classDef pin_transform fill:#151515,stroke:#151515,color:#ff7300
+    class N_Received_Notify_K2Node_FunctionEntry_0_anchor_in,N_Received_Notify_K2Node_FunctionEntry_0_anchor_out,N_Received_Notify_K2Node_DynamicCast_2_anchor_in,N_Received_Notify_K2Node_SpawnActorFromClass_0_anchor_in,N_Received_Notify_K2Node_SpawnActorFromClass_0_anchor_out,N_Received_Notify_K2Node_FunctionResult_0_anchor_in,N_Received_Notify_K2Node_FunctionResult_0_anchor_out pin_anchor
+    class N_Received_Notify_K2Node_FunctionResult_0_ReturnValue pin_boolean
+    class N_Received_Notify_K2Node_DynamicCast_2_then pin_exec
+    class N_Received_Notify_K2Node_FunctionEntry_0_MeshComp,N_Received_Notify_K2Node_DynamicCast_2_Object,N_Received_Notify_K2Node_DynamicCast_2_AsBP_Hero pin_object
+    class N_Received_Notify_K2Node_SpawnActorFromClass_0_Class,N_Received_Notify_K2Node_SpawnActorFromClass_0_CollisionHandlingOverride,N_Received_Notify_K2Node_SpawnActorFromClass_0_TransformScaleMethod pin_other
+    class N_Received_Notify_K2Node_SpawnActorFromClass_0_SpawnTransform pin_transform
+
+    %% Wire colours (dimmed and dashed between two nodes that aren't part of the change)
+    linkStyle 1,4,7 stroke:#ffffff,stroke-width:3px
+    linkStyle 0,2,3 stroke:#00aaf5,stroke-width:2px
+    linkStyle 5 stroke:#777777,stroke-width:2px
+    linkStyle 6 stroke:#ff7300,stroke-width:2px

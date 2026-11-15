@@ -1,0 +1,24 @@
+(blueprint-diff "/Game/App/World/BP_AppGameMode"
+  (old none)
+  (new working-copy)
+  (parent "/Game/ThirdPerson/Blueprints/BP_ThirdPersonGameMode.BP_ThirdPersonGameMode_C")
+  (defaults (baseline parent-class)
+    (changed "DefaultPawnClass" (old "/Script/Engine.BlueprintGeneratedClass'/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.BP_ThirdPersonCharacter_C'") (new "/Script/Engine.BlueprintGeneratedClass'/Game/App/Hero/BP_Hero.BP_Hero_C'")))
+  (graph "EventGraph" added
+    (node-added addition
+      (node "K2Node_Event_0" "Event BeginPlay" (pos 0 0))
+      (pin out "OutputDelegate" "Delegate")
+      (pin out "then" "Exec"))
+    (node-added addition
+      (node "K2Node_Event_1" "Event Tick" (pos 0 208))
+      (pin out "OutputDelegate" "Delegate")
+      (pin out "then" "Exec")
+      (pin out "DeltaSeconds" "Float (single-precision)" (default "0.0"))))
+  (graph "UserConstructionScript" added
+    (node-added addition
+      (node "K2Node_FunctionEntry_0" "Construction Script" (pos 0 0))
+      (pin out "then" "Exec" (links (pin "K2Node_CallParentFunction_0" "execute"))))
+    (node-added addition
+      (node "K2Node_CallParentFunction_0" "Parent: Construction Script" (pos 200 0))
+      (pin in "execute" "Exec" (links (pin "K2Node_FunctionEntry_0" "then")))
+      (pin out "then" "Exec"))))
