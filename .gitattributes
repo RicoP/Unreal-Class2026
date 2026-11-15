@@ -1,5 +1,7 @@
 # Text files: normalize line endings
 * text=auto
+# Batch files break with LF line endings (labels and goto)
+*.bat text eol=crlf
 
 # Unreal assets
 *.uasset filter=lfs diff=lfs merge=lfs -text
