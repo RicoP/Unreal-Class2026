@@ -16,6 +16,8 @@
 #include "Engine/SimpleConstructionScript.h"
 #include "EditorFramework/AssetImportData.h"
 #include "InterchangeAssetImportData.h"
+#include "K2Node_FunctionEntry.h"
+#include "K2Node_FunctionResult.h"
 #include "Misc/PackageName.h"
 #include "GameFramework/Actor.h"
 #include "GraphDiffControl.h"
@@ -26,6 +28,9 @@
 #include "Misc/Paths.h"
 #include "PhysicsEngine/BodySetup.h"
 #include "Animation/AnimMontage.h"
+#include "Animation/AnimNotifies/AnimNotify.h"
+#include "Animation/AnimNotifies/AnimNotifyState.h"
+#include "Animation/AnimSequenceBase.h"
 #include "Animation/Skeleton.h"
 #include "SourceControlHelpers.h"
 #include "SourceControlOperations.h"
@@ -304,6 +309,113 @@ namespace
 		if (!Entries.IsEmpty())
 		{
 			Lines.Add(Indent(1) + TEXT("(variables"));
+			Lines.Append(Entries);
+			Lines.Last() += TEXT(")");
+		}
+	}
+
+	/** A function's inputs or outputs: (param "Name" (type "Float") (default "1.0")) ... */
+	FString ParamsExpr(const UK2Node_EditablePinBase* Node)
+	{
+		FString Result;
+		if (Node)
+		{
+			for (const TSharedPtr<FUserPinInfo>& Pin : Node->UserDefinedPins)
+			{
+				if (Pin.IsValid())
+				{
+					Result += FString::Printf(TEXT(" (param %s (type %s) (default %s))"),
+						*Quote(Pin->PinName.ToString()),
+						*Quote(UEdGraphSchema_K2::TypeToText(Pin->PinType).ToString()),
+						*Quote(Pin->PinDefaultValue));
+				}
+			}
+		}
+		return Result;
+	}
+
+	/**
+	 * The functions in the My Blueprint panel, by name, as the function's Details panel describes
+	 * them: whether it overrides a function of the parent class (then the rest is given), Pure,
+	 * Const, Access Specifier, Category, inputs and outputs. The Construction Script isn't listed.
+	 */
+	TMap<FString, FString> FunctionExprs(const UBlueprint* Blueprint, TArray<FString>* OutOrder = nullptr)
+	{
+		TMap<FString, FString> Result;
+		if (!Blueprint)
+		{
+			return Result;
+		}
+		for (const UEdGraph* Graph : Blueprint->FunctionGraphs)
+		{
+			if (!Graph || Graph->GetFName() == UEdGraphSchema_K2::FN_UserConstructionScript)
+			{
+				continue;
+			}
+			const UK2Node_FunctionEntry* Entry = nullptr;
+			const UK2Node_FunctionResult* ResultNode = nullptr;
+			for (const UEdGraphNode* Node : Graph->Nodes)
+			{
+				if (!Entry) { Entry = Cast<UK2Node_FunctionEntry>(Node); }
+				if (!ResultNode) { ResultNode = Cast<UK2Node_FunctionResult>(Node); }
+			}
+			if (!Entry)
+			{
+				continue;
+			}
+			const bool bOverride = Blueprint->ParentClass && Blueprint->ParentClass->FindFunctionByName(Graph->GetFName()) != nullptr;
+			const int32 Flags = Entry->GetExtraFlags();
+			const TCHAR* Access = (Flags & FUNC_Private) ? TEXT("Private") : ((Flags & FUNC_Protected) ? TEXT("Protected") : TEXT("Public"));
+			const FString Name = Graph->GetName();
+			Result.Add(Name, FString::Printf(TEXT("%s (override %s) (pure %s) (const %s) (access %s) (category %s) (inputs%s) (outputs%s)"),
+				*Quote(Name),
+				bOverride ? TEXT("true") : TEXT("false"),
+				(Flags & FUNC_BlueprintPure) ? TEXT("true") : TEXT("false"),
+				(Flags & FUNC_Const) ? TEXT("true") : TEXT("false"),
+				*Quote(Access),
+				*Quote(Entry->MetaData.Category.ToString()),
+				*ParamsExpr(Entry),
+				*ParamsExpr(ResultNode)));
+			if (OutOrder)
+			{
+				OutOrder->Add(Name);
+			}
+		}
+		return Result;
+	}
+
+	void AddFunctionDiffs(const UBlueprint* OldBlueprint, const UBlueprint* NewBlueprint, TArray<FString>& Lines)
+	{
+		TArray<FString> OldOrder, NewOrder;
+		const TMap<FString, FString> OldFunctions = FunctionExprs(OldBlueprint, &OldOrder);
+		const TMap<FString, FString> NewFunctions = FunctionExprs(NewBlueprint, &NewOrder);
+
+		TArray<FString> Entries;
+		for (const FString& Name : NewOrder)
+		{
+			const FString* Old = OldFunctions.Find(Name);
+			if (!Old)
+			{
+				Entries.Add(Indent(2) + TEXT("(added ") + NewFunctions[Name] + TEXT(")"));
+			}
+			else if (*Old != NewFunctions[Name])
+			{
+				Entries.Add(Indent(2) + TEXT("(changed"));
+				Entries.Add(Indent(3) + TEXT("(old ") + *Old + TEXT(")"));
+				Entries.Add(Indent(3) + TEXT("(new ") + NewFunctions[Name] + TEXT("))"));
+			}
+		}
+		for (const FString& Name : OldOrder)
+		{
+			if (!NewFunctions.Contains(Name))
+			{
+				Entries.Add(Indent(2) + TEXT("(removed ") + OldFunctions[Name] + TEXT(")"));
+			}
+		}
+
+		if (!Entries.IsEmpty())
+		{
+			Lines.Add(Indent(1) + TEXT("(functions"));
 			Lines.Append(Entries);
 			Lines.Last() += TEXT(")");
 		}
@@ -754,6 +866,15 @@ namespace
 		}
 		Lines.Last() += TEXT(")");
 
+		TArray<FString> FunctionOrder;
+		const TMap<FString, FString> Functions = FunctionExprs(Blueprint, &FunctionOrder);
+		Lines.Add(Indent(1) + TEXT("(functions"));
+		for (const FString& Name : FunctionOrder)
+		{
+			Lines.Add(Indent(2) + TEXT("(function ") + Functions[Name] + TEXT(")"));
+		}
+		Lines.Last() += TEXT(")");
+
 		// Class defaults and components that differ from the parent class.
 		AddDefaultsDiffs(nullptr, Blueprint, true, Lines);
 		AddComponentDiffs(nullptr, Blueprint, true, Lines);
@@ -932,6 +1053,97 @@ namespace
 		return Quote(Slots.IsEmpty() ? FString(TEXT("none")) : FString::Join(Slots, TEXT("; ")));
 	}
 
+	/** "BP_HitBox_Sword_C" -> "BP_HitBox_Sword": a class as the editor names it. */
+	FString ClassDisplayName(const UClass* Class)
+	{
+		FString Name = Class ? Class->GetName() : FString(TEXT("None"));
+		Name.RemoveFromEnd(TEXT("_C"));
+		return Name;
+	}
+
+	/** What was set on a notify placed on a timeline: "Actor To Spawn: BP_HitBox_Sword, ...". */
+	FString NotifySettingsText(const UObject* Notify)
+	{
+		TArray<FString> Settings;
+		const UObject* Defaults = Notify->GetClass()->GetDefaultObject();
+		for (TFieldIterator<FProperty> It(Notify->GetClass()); It; ++It)
+		{
+			const FProperty* Property = *It;
+			if (!Property->HasAnyPropertyFlags(CPF_Edit) || Property->Identical_InContainer(Notify, Defaults))
+			{
+				continue;
+			}
+			FString Value;
+			if (const FObjectPropertyBase* ObjectProperty = CastField<FObjectPropertyBase>(Property))
+			{
+				const UObject* Object = ObjectProperty->GetObjectPropertyValue_InContainer(Notify);
+				const UClass* AsClass = Cast<UClass>(Object);
+				Value = AsClass ? ClassDisplayName(AsClass) : (Object ? Object->GetName() : FString(TEXT("None")));
+			}
+			else
+			{
+				Property->ExportTextItem_InContainer(Value, Notify, nullptr, nullptr, PPF_None);
+			}
+			Settings.Add(FName::NameToDisplayString(Property->GetName(), Property->IsA<FBoolProperty>()) + TEXT(": ") + Value);
+		}
+		return FString::Join(Settings, TEXT(", "));
+	}
+
+	/**
+	 * The notifies on an animation's or montage's timeline, in time order:
+	 * "BP_AnimNotify_Spawn_HitBox at 0.420 s (Actor To Spawn: BP_HitBox_Sword)", a notify state
+	 * "... from 0.200 s for 0.500 s", several separated by "; ", or "none".
+	 */
+	FString AnimNotifiesText(const UObject* Object)
+	{
+		const UAnimSequenceBase* Animation = Cast<UAnimSequenceBase>(Object);
+		if (!Animation)
+		{
+			return Quote(TEXT("none"));
+		}
+		TArray<const FAnimNotifyEvent*> Events;
+		for (const FAnimNotifyEvent& Event : Animation->Notifies)
+		{
+			Events.Add(&Event);
+		}
+		Events.StableSort([](const FAnimNotifyEvent& A, const FAnimNotifyEvent& B) { return A.GetTriggerTime() < B.GetTriggerTime(); });
+		TArray<FString> Entries;
+		for (const FAnimNotifyEvent* Event : Events)
+		{
+			const UObject* Instance = Event->Notify ? static_cast<const UObject*>(Event->Notify.Get()) : static_cast<const UObject*>(Event->NotifyStateClass.Get());
+			FString Entry = Instance ? ClassDisplayName(Instance->GetClass()) : Event->NotifyName.ToString();
+			Entry += Event->NotifyStateClass
+				? FString::Printf(TEXT(" from %.3f s for %.3f s"), Event->GetTriggerTime(), Event->GetDuration())
+				: FString::Printf(TEXT(" at %.3f s"), Event->GetTriggerTime());
+			const FString Settings = Instance ? NotifySettingsText(Instance) : FString();
+			if (!Settings.IsEmpty())
+			{
+				Entry += TEXT(" (") + Settings + TEXT(")");
+			}
+			Entries.Add(Entry);
+		}
+		return Quote(Entries.IsEmpty() ? FString(TEXT("none")) : FString::Join(Entries, TEXT("; ")));
+	}
+
+	/**
+	 * The notifies placed on an animation's or montage's timeline. Like the slot tracks they are
+	 * edited on the timeline, not as properties, so PropertyEntries doesn't see them.
+	 */
+	void AddAnimNotifyEntries(const UObject* Old, const UObject* New, bool bReference, int32 Depth, TArray<FString>& Lines)
+	{
+		if (!Cast<UAnimSequenceBase>(New) && !Cast<UAnimSequenceBase>(Old))
+		{
+			return;
+		}
+		const FString OldValue = AnimNotifiesText(Old), NewValue = AnimNotifiesText(New);
+		if (OldValue != NewValue)
+		{
+			Lines.Add(bReference
+				? FString::Printf(TEXT("%s(set \"AnimNotifies\" %s)"), *Indent(Depth), *NewValue)
+				: FString::Printf(TEXT("%s(changed \"AnimNotifies\" (old %s) (new %s))"), *Indent(Depth), *OldValue, *NewValue));
+		}
+	}
+
 	/**
 	 * A montage's slot tracks. They aren't editable properties (the Montage editor edits them
 	 * with its own UI), so PropertyEntries doesn't see them, and without them a montage's
@@ -963,6 +1175,7 @@ namespace
 		Lines.Append(PropertyEntries(Old, New, bReference, false, 2, OldPackageOf(Old, New), New->GetPackage()->GetName()));
 		AddBodySetupEntries(Old, New, bReference, 2, Lines);
 		AddMontageEntries(Old, New, bReference, 2, Lines);
+		AddAnimNotifyEntries(Old, New, bReference, 2, Lines);
 		Lines.Last() += TEXT(")");
 	}
 }
@@ -1145,6 +1358,7 @@ bool ExportDiff(UBlueprint* Blueprint, FString& OutPath, FString& OutError)
 	Lines.Add(Indent(1) + TEXT("(parent ") + Quote(Blueprint->ParentClass ? Blueprint->ParentClass->GetPathName() : FString()) + TEXT(")"));
 
 	AddVariableDiffs(OldBlueprint, Blueprint, Lines);
+	AddFunctionDiffs(OldBlueprint, Blueprint, Lines);
 	AddDefaultsDiffs(OldBlueprint, Blueprint, false, Lines);
 	AddComponentDiffs(OldBlueprint, Blueprint, false, Lines);
 

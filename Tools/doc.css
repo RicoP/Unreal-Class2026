@@ -26,7 +26,15 @@ body.step { padding: 24px 16px; }
 .step h2 { margin: 32px 0 12px; font-size: 17px; font-weight: normal; color: #ffffff; }
 .step label { font-size: 14px; }
 .step select { margin-left: 6px; font: inherit; }
-.figure svg, .figure img { display: block; max-width: 100%; height: auto; }
+.figure img { display: block; max-width: 100%; height: auto; }
+/* Diagrams are never scaled to fit the page: every one is shown at its natural size, so nodes
+   and text are the same size in all of them, and one wider than the page scrolls inside its
+   own box. Each SVG carries its natural width as an inline max-width (Mermaid writes
+   width="100%" style="max-width: <width>px"), so asking for more than any diagram needs
+   gives exactly that width. */
+.figure { max-width: 100%; overflow-x: auto; scrollbar-color: #6a6a6a transparent; }
+.figure svg { display: block; max-width: 100%; height: auto; }
+.figure svg[style*="max-width"] { width: 100000px; }
 
 /* Tables (sexpr_to_table.py), drawn like the diagrams: node body, neutral grid, striped rows.
    Wide tables scroll inside their box instead of widening the page. */

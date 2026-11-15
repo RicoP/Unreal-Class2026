@@ -284,6 +284,89 @@ function paletteOptions() {
     .join("");
 }
 
+/**
+ * The files of a doc in dependency order: when asset A refers to asset B of the same doc (its
+ * parent class, a cast, a variable type, a class default, an actor's class), B's sections come
+ * first, so students build what is needed before what needs it. Otherwise files keep the order
+ * they come in (by path). Sections of one asset (settings, graph) stay together.
+ *
+ * What an asset refers to is read from its full export (graph/reference), or from its diff when
+ * there is none: other assets' names as whole words ("Cast To BP_Hero", ".../BP_Hero.BP_Hero_C"),
+ * or as the editor spells them in pin and variable types ("BP Hit Box Base Class Reference").
+ * Comment boxes and commit descriptions don't count. Assets that refer to each other can't both
+ * come first: then a child still follows its parent, and the asset with the fewest open
+ * references comes next.
+ */
+function dependencyOrder(files, metas, folder) {
+  const units = new Map();
+  for (const file of files) {
+    const meta = metas.get(file);
+    const key = meta.source ?? file;
+    if (!units.has(key)) {
+      units.set(key, { key, meta, files: [], needs: new Set(), parent: null });
+    }
+    units.get(key).files.push(file);
+  }
+  const quoted = String.raw`"(?:[^"\\]|\\.)*"`;
+  const textOf = ({ meta }) => {
+    if (!meta.source) {
+      return "";
+    }
+    const diff = path.join(folder, meta.source);
+    const reference = path.join(folder, meta.source.replace(/^graph\/transient\//, "graph/reference/"));
+    const file = existsSync(reference) ? reference : diff;
+    return existsSync(file)
+      ? readFileSync(file, "utf8")
+          .replace(new RegExp(String.raw`\((?:comment|description) ${quoted}`, "g"), "")
+      : "";
+  };
+  // What other assets can refer to: Blueprints and assets, by name (actors provide nothing).
+  const providers = [...units.values()]
+    .filter(({ meta }) => (meta.kind === "blueprint" || meta.kind === "asset") && meta.package)
+    .map((unit) => {
+      const name = unit.meta.package.split("/").pop();
+      const spelled = name
+        .split(/_|(?<=[a-z])(?=[A-Z])|(?<=[A-Z0-9])(?=[A-Z][a-z])/)
+        .filter(Boolean)
+        .map(escapeRegExp)
+        .join(" ?");
+      return {
+        unit,
+        mention: new RegExp(
+          `(?<![\\w-])${escapeRegExp(name)}(?:_C)?(?![\\w-])|(?<![\\w-])${spelled} (?:Soft )?(?:Object|Class) Reference`,
+        ),
+        asParent: new RegExp(`\\(parent "[^"]*[/.]${escapeRegExp(name)}(?:_C)?"\\)`),
+      };
+    });
+  for (const unit of units.values()) {
+    const text = textOf(unit);
+    for (const provider of providers) {
+      if (provider.unit !== unit && provider.mention.test(text)) {
+        unit.needs.add(provider.unit);
+        if (provider.asParent.test(text)) {
+          unit.parent = provider.unit;
+        }
+      }
+    }
+  }
+  const ordered = [];
+  const done = new Set();
+  const remaining = [...units.values()];
+  const open = (unit) => [...unit.needs].filter((needed) => !done.has(needed)).length;
+  while (remaining.length) {
+    let next = remaining.find((unit) => open(unit) === 0);
+    if (!next) {
+      // Assets that refer to each other: never a child before its parent, then fewest open references.
+      const candidates = remaining.filter((unit) => !unit.parent || done.has(unit.parent));
+      next = (candidates.length ? candidates : remaining).reduce((best, unit) => (open(unit) < open(best) ? unit : best));
+    }
+    remaining.splice(remaining.indexOf(next), 1);
+    done.add(next);
+    ordered.push(...next.files);
+  }
+  return ordered;
+}
+
 function writeDoc(folder) {
   const title = `Documentation export ${path.basename(folder)}`;
   const images = svgFiles(folder);
@@ -300,7 +383,11 @@ function writeDoc(folder) {
   };
   const metas = new Map(allFiles.map((file) => [file, metaOf(file)]));
   // Import steps come first: everything else may use what they bring in.
-  const files = [...allFiles.filter((file) => metas.get(file).kind === "import"), ...allFiles.filter((file) => metas.get(file).kind !== "import")];
+  // The rest in dependency order: what an asset refers to comes before it.
+  const files = [
+    ...allFiles.filter((file) => metas.get(file).kind === "import"),
+    ...dependencyOrder(allFiles.filter((file) => metas.get(file).kind !== "import"), metas, folder),
+  ];
   const withSettings = new Set([...metas.values()].filter((meta) => meta.part === "settings").map((meta) => meta.package));
 
   // Asset tables in the same folder that are 100% the same (asset type, new or changed, and

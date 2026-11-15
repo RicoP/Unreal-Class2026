@@ -111,6 +111,35 @@ to rebuild it themselves.
   "<path>: Class Defaults and Components"), then "<path>: Graph".
   Asset metadata has `part="settings"` (the table) or `part="graph"` (the
   diagram SVG) for Blueprints.
+- A Blueprint diff lists its functions like its variables: `(functions
+  (added|removed "<name>" (override ..) (pure ..) (const ..) (access ..)
+  (category ..) (inputs (param "<name>" (type ..) (default ..)) ...)
+  (outputs ...)) (changed (old ...) (new ...)))`, matched by name; the
+  reference file has every function as `(function ...)`. The Construction
+  Script isn't listed. `override true` means the parent class already has the
+  function (Functions → Override, e.g. an AnimNotify's `Received_Notify`).
+  `sexpr_to_table.py` writes them after the variables: `Add Function |
+  GetWeaponHitBoxPoint` (name as typed, in a code span), then one
+  `<name> › Add Input` / `Add Output` row per parameter (`Transform
+  (Transform)`), and `Pure`, `Const`, `Access Specifier` and `Category` rows
+  only where they differ from a fresh function; `Override Function | Received
+  Notify` (no further rows: the parent decides the rest); `Remove Function`;
+  and `Function <name> › <field> | old | new` for changes (`Inputs` and
+  `Outputs` as one list each). The function's graph is still drawn in the
+  Blueprint's diagram.
+- Notifies placed on an animation's or montage's timeline aren't editable
+  properties either, so the plugin writes them as `AnimNotifies`
+  (`AddAnimNotifyEntries`), in time order and separated by `; `:
+  `BP_AnimNotify_Spawn_HitBox at 0.420 s (Actor To Spawn: BP_HitBox_Sword)`,
+  a notify state `<class> from 0.200 s for 0.500 s`, a plain named notify by
+  its name, or `none`. The brackets hold what was set on that placed notify
+  (its editable properties that differ from its class defaults). The table
+  row is `Notifies | <before> | <after>` (`SETTING_NAMES` in
+  `sexpr_to_table.py`), with times trimmed (`0.42 s`). The section order
+  puts the montage after the notify Blueprint it names.
+- The bulk export doesn't count a changed level as a failure: its
+  notification ends with "Changed levels left out (<names>): export their
+  actors from the Outliner."
 - The same menu entry works on other assets, such as Input Actions and Input
   Mapping Contexts. It writes an `asset-diff` of their changed properties, and
   a reference with all their non-default properties. A new asset (no committed
@@ -187,6 +216,21 @@ to rebuild it themselves.
   have unsaved changes, it first lists them in a message box and asks whether
   to export anyway (default: No), because revision control only sees saved
   files.
+- Section order in `doc.html` (`dependencyOrder` in `export_doc.mjs`): import
+  steps first, then every asset after the assets of the same doc it refers
+  to, so students build what is needed before what needs it (`BP_Hero` before
+  the notify that casts to it, a parent before its child, a Blueprint before
+  the actor placed from it). Assets without such a link keep their order by
+  path, and an asset's sections (settings, graph) stay together. References
+  are read from the asset's full export (`graph/reference`, else its diff):
+  another documented asset's name as a whole word (`Cast To BP_Hero`,
+  `.../BP_Hero.BP_Hero_C`) or as the editor spells it in pin and variable
+  types (`BP Hit Box Base Class Reference`); comment boxes and commit
+  descriptions don't count. Assets that refer to each other can't both come
+  first: a child still follows its parent, then the asset with the fewest
+  open references goes next. A reference the plugin doesn't export (a
+  montage's notifies) can't be ordered. Finished steps keep their order until
+  regenerated (`--regenerate`).
 - Asset tables in the same folder that are 100% the same (asset type, new or
   changed, and identical rows) are merged by `writeDoc` into one section where
   the first of them would be: "Change <N> <type> assets in <folder>" (or
@@ -290,6 +334,14 @@ to rebuild it themselves.
   `<a target="_blank"><tspan style="fill:#7cc4ff;text-decoration:underline">`)
   have links too; steps 1-3 name no listed assets. When sources are added for
   assets an older step names, add its links the same way.
+- Diagrams in `doc.html` are never scaled to fit the page: each is shown at
+  its natural size (1 SVG unit = 1 CSS pixel), so nodes and text are the same
+  size in every diagram, and one wider than the page scrolls sideways inside
+  its own `.figure` box. `doc.css` does this without knowing the sizes:
+  Mermaid writes each SVG's natural width as an inline `max-width`, and the
+  stylesheet asks for a far larger `width`, which that clamps. SVGs without
+  an inline `max-width` (old table SVGs) and level screenshots still shrink
+  to the page.
 - `doc.css` is the shared stylesheet: `index.html` (`<body class="index">`)
   links `doc.css`, and every `doc.html` (`<body class="step">`) written since
   tables became HTML links `../../doc.css` and has no inline style. Older
@@ -399,6 +451,28 @@ what they see on screen.
   the node, for example `float + float` instead of `+`.
 - Function names exported without spaces get them back
   (`GetPlayerCharacter` -> `Get Player Character`).
+- A pure function the project's Blueprints define themselves is marked in
+  every graph: the node calling it, its entry node and its graph box end in
+  ` (pure)` (`Get Weapon Hit Box Point (pure)`, box `GetWeaponHitBoxPoint
+  (pure)`). Engine functions and overrides aren't marked. `pure_functions` in
+  `sexpr_to_mermaid.py` takes the names from the `(function ... (override
+  false) (pure true))` entries of the reference files of this step and every
+  earlier one (per Blueprint the latest export counts), so a call is marked
+  even when the function's Blueprint isn't exported again. Functions are
+  matched by name only. A diagram is only redrawn when its own diff changes:
+  after a function's Pure setting changes, run `--force` so its callers
+  follow.
+- A function that overrides one of the parent class (Functions → Override)
+  is marked on its entry node and its graph box: `Received_Notify
+  (override)`. The names come from the `(override true)` function entries of
+  the Blueprint's own diff and reference file (`overridden_functions`); an
+  override isn't also marked pure.
+- The pure variant of a built-in node is marked the same way: a cast
+  converted to a pure cast reads `Cast To BP_Hero (pure)`. It is recognised
+  by having no exec pins (`PURE_VARIANT_CLASSES` in `sexpr_to_mermaid.py`:
+  Cast and Class Cast). Other nodes with a pure toggle (a function call's
+  "Show Exec Pins") can't be told from the export yet; that needs a flag
+  from the plugin.
 - The Self node is titled `Self` and collapsed like a pure getter (rounded, in
   the object colour). Only an input `self` pin is labelled `Target`.
 - Draw every node connected to the change, according to the reference graph:
@@ -447,6 +521,10 @@ what they see on screen.
   deliberately set to 0 isn't shown. Numbers drop trailing zeros
   (`50.000000` -> `50`), and asset or class paths become names
   (`/Game/Input/IMC_Default.IMC_Default` -> `IMC_Default`).
+- Exception: a setter's value pin is always shown, also unconnected with 0
+  or `false` (`[0] Life` on `Set Life`, `[false] Is Attacking`): there the
+  value is the point of the node. Without a value at all (an object variable
+  set to nothing) the row reads `● Active Weapon`.
 - Names are split into words before a capital that starts a word
   (`ActionValue` -> `Action Value`, `XAxis` -> `X Axis`); runs of capitals stay
   together (`iOS`).

@@ -24,9 +24,15 @@ def words(name):
     return re.sub(r"(?<=[a-z])(?=[A-Z])|(?<=[A-Z0-9])(?=[A-Z][a-z])", " ", name)
 
 
+# Entries the plugin writes by hand, named as the editor names what they show.
+SETTING_NAMES = {"AnimNotifies": "Notifies"}  # the Notifies track of an animation or montage
+
+
 def setting_name(name):
     """'DefaultKeyMappings Mappings' -> 'Default Key Mappings › Mappings'; booleans lose their
     code prefix like in the editor ('bOrientRotationToMovement' -> 'Orient Rotation To Movement')."""
+    if name in SETTING_NAMES:
+        return SETTING_NAMES[name]
     return " › ".join(words(re.sub(r"^b(?=[A-Z])", "", part)) for part in name.split())
 
 
@@ -103,6 +109,8 @@ def cell(value):
     text = shorten(str(value)).strip('"')
     if re.fullmatch(r"-?\d+\.\d+", text):
         text = number(text)
+    # Times on a timeline ("at 0.420 s", written by the plugin with three decimals).
+    text = re.sub(r"-?\d+\.\d+(?= s\b)", lambda m: number(m.group(0)), text)
     return (text or "(empty)").replace("|", "\\|").replace("\n", " ")
 
 
@@ -463,6 +471,56 @@ def variable_rows(variables, added_defaults):
     return rows
 
 
+def function_fields(entry):
+    """What a function's Details panel shows: Inputs, Outputs, Pure, Const, Access Specifier, Category."""
+    value = lambda key: (first(entry, key) or [key, ""])[1]
+    params = lambda key: ", ".join(
+        f"{param[1]} ({variable_type(first(param, 'type')[1])})"
+        for param in (first(entry, key) or [key])[1:] if isinstance(param, list))
+    return {
+        "Inputs": params("inputs"),
+        "Outputs": params("outputs"),
+        "Pure": str(value("pure")).capitalize(),
+        "Const": str(value("const")).capitalize(),
+        "Access Specifier": value("access"),
+        "Category": value("category"),
+    }
+
+
+# What a function is like right after "Add Function"; only what differs gets a row.
+NEW_FUNCTION = {"Inputs": "", "Outputs": "", "Pure": "False", "Const": "False", "Access Specifier": "Public"}
+
+
+def function_rows(functions):
+    """Rows for added, changed and removed functions, as the My Blueprint panel names them and
+    the function's Details panel shows their settings. A function that overrides one of the
+    parent class (Functions > Override) only gets its name: the parent decides the rest."""
+    rows = []
+    for entry in functions:
+        name = entry[1] if entry[0] != "changed" else first(entry, "new")[1]
+        overrides = (first(first(entry, "new") if entry[0] == "changed" else entry, "override") or [0, "false"])[1] == "true"
+        if entry[0] == "added" and overrides:
+            rows.append(("Override Function", None, words(name.replace("_", " "))))
+        elif entry[0] == "added":
+            rows.append(("Add Function", None, f"`{name}`"))  # as typed, not read as an enum value
+            fields = function_fields(entry)
+            for field, value in fields.items():
+                if field == "Category":
+                    if value not in ("", "Default"):
+                        rows.append((f"{name} › Category", None, value))
+                elif field in ("Inputs", "Outputs"):
+                    # One row per parameter, in order, as they are added one by one.
+                    rows += [(f"{name} › Add {field[:-1]}", None, param) for param in value.split(", ") if param]
+                elif value != NEW_FUNCTION[field]:
+                    rows.append((f"{name} › {field}", None, value))
+        elif entry[0] == "removed":
+            rows.append(("Remove Function", f"`{entry[1]}`", None))
+        elif entry[0] == "changed" and not overrides:
+            old, new = function_fields(first(entry, "old")), function_fields(first(entry, "new"))
+            rows += [(f"Function {name} › {field}", old[field], new[field]) for field in old if old[field] != new[field]]
+    return rows
+
+
 def blueprint_settings_markdown(diff, diff_path):
     """Class defaults and components of a Blueprint diff, or None if it has neither and isn't new."""
     package = diff[1]
@@ -472,7 +530,8 @@ def blueprint_settings_markdown(diff, diff_path):
     defaults = [entry for entry in defaults if isinstance(entry, list) and entry[0] != "baseline"]
     components = (first(diff, "components") or ["components"])[1:]
     variables = [entry for entry in (first(diff, "variables") or ["variables"])[1:] if isinstance(entry, list)]
-    if not (is_new or defaults or components or variables):
+    functions = [entry for entry in (first(diff, "functions") or ["functions"])[1:] if isinstance(entry, list)]
+    if not (is_new or defaults or components or variables or functions):
         return None
 
     rows = []  # (setting, old, new)
@@ -483,6 +542,7 @@ def blueprint_settings_markdown(diff, diff_path):
     added_defaults = {entry[1]: first(entry, "new")[1] for entry in defaults if first(entry, "new")}
     added_names = {entry[1] for entry in variables if entry[0] == "added"}
     rows += variable_rows(variables, added_defaults)
+    rows += function_rows(functions)
     defaults = [entry for entry in defaults if entry[1] not in added_names]
     for entry in defaults:
         old = first(entry, "old")
@@ -533,7 +593,7 @@ def blueprint_settings_markdown(diff, diff_path):
         lines += [f"| {setting} | {value_cell(new)} |" for setting, _, new in rows]
     else:
         lines += [
-            f"Open `{name}` and change its {'variables, ' if variables else ''}class defaults and components:",
+            f"Open `{name}` and change its {'variables, ' if variables else ''}{'functions, ' if functions else ''}class defaults and components:",
             "",
             "| Setting | Before | After |",
             "|---|---|---|",

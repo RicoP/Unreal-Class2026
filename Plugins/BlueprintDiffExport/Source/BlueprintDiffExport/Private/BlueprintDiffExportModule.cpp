@@ -294,6 +294,8 @@ namespace
 
 		int32 Exported = 0;
 		TArray<FString> Failures;
+		// A changed level is no failure: its actors are exported one by one, from the Outliner.
+		TArray<FString> SkippedLevels;
 		{
 			FScopedSlowTask Progress(Changed.Num(), LOCTEXT("Exporting", "Exporting diffs of changed assets"));
 			Progress.MakeDialog();
@@ -306,6 +308,10 @@ namespace
 				if (!Asset)
 				{
 					Failures.Add(FString::Printf(TEXT("%s: could not be loaded"), *AssetData.PackageName.ToString()));
+				}
+				else if (Asset->IsA<UWorld>())
+				{
+					SkippedLevels.Add(AssetData.AssetName.ToString());
 				}
 				else if (ExportAsset(Asset, OutputPath, Error))
 				{
@@ -323,11 +329,18 @@ namespace
 			UE_LOG(LogTemp, Warning, TEXT("BlueprintDiffExport: %s"), *Failure);
 		}
 		const FString TransientFolder = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Doc/commits/Transient/graph/transient")));
+		FText Message = Failures.IsEmpty()
+			? FText::Format(LOCTEXT("ExportedChanged", "Exported diffs of {0} changed assets."), Exported)
+			: FText::Format(LOCTEXT("ExportedChangedWithFailures", "Exported diffs of {0} changed assets; {1} failed (see the Output Log): {2}"),
+				Exported, Failures.Num(), FText::FromString(FString::Join(Failures, TEXT("; "))));
+		if (!SkippedLevels.IsEmpty())
+		{
+			UE_LOG(LogTemp, Display, TEXT("BlueprintDiffExport: changed levels left out: %s"), *FString::Join(SkippedLevels, TEXT(", ")));
+			Message = FText::Format(LOCTEXT("SkippedLevels", "{0} Changed levels left out ({1}): export their actors from the Outliner."),
+				Message, FText::FromString(FString::Join(SkippedLevels, TEXT(", "))));
+		}
 		Notify(
-			Failures.IsEmpty()
-				? FText::Format(LOCTEXT("ExportedChanged", "Exported diffs of {0} changed assets."), Exported)
-				: FText::Format(LOCTEXT("ExportedChangedWithFailures", "Exported diffs of {0} changed assets; {1} failed (see the Output Log): {2}"),
-					Exported, Failures.Num(), FText::FromString(FString::Join(Failures, TEXT("; ")))),
+			Message,
 			Failures.IsEmpty(),
 			TransientFolder);
 	}

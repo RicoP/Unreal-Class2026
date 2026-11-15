@@ -210,6 +210,60 @@ def node_title(role, title):
     return title
 
 
+# Names of this project's own pure Blueprint functions (see pure_functions); nodes that call or
+# define one say so in their title: "Get Weapon Hit Box Point (pure)".
+PURE_FUNCTIONS = set()
+PURE_NODE_CLASSES = ("K2Node_CallFunction", "K2Node_FunctionEntry")
+# Built-in nodes with a pure variant (right-click > Convert to pure cast): pure when they have
+# no exec pins.
+PURE_VARIANT_CLASSES = ("K2Node_DynamicCast", "K2Node_ClassDynamicCast")
+FUNCTION_ENTRY = re.compile(r'\(function "([^"]+)" \(override (true|false)\) \(pure (true|false)\)')
+
+
+def pure_functions(diff_path):
+    """Names of the pure functions the project's Blueprints define themselves (not overrides),
+    read from the full exports (graph/reference) of this step and every earlier one, so a call
+    is recognised even when the function's Blueprint wasn't exported again. Per Blueprint the
+    latest export counts: a function that stopped being pure no longer is."""
+    parts = list(Path(diff_path).resolve().parts)
+    if "graph" not in parts:
+        return set()
+    graph_index = len(parts) - 1 - parts[::-1].index("graph")
+    if graph_index < 2:
+        return set()
+    step, commits = parts[graph_index - 1], Path(*parts[: graph_index - 1])
+    # Dated folders sort by time; Transient, the work in progress, comes after all of them.
+    order = lambda name: (not re.fullmatch(r"\d{8}_\d{6}", name), name)
+    steps = sorted((d.name for d in commits.iterdir() if d.is_dir() and order(d.name) <= order(step)), key=order)
+    by_blueprint = {}
+    for name in steps:
+        for file in sorted((commits / name / "graph" / "reference").rglob("*.sexpr")):
+            text = file.read_text(encoding="utf-8")
+            package = re.match(r'\(blueprint "([^"]+)"', text)
+            if package and "(functions" in text:
+                by_blueprint[package.group(1)] = {
+                    m.group(1) for m in FUNCTION_ENTRY.finditer(text) if m.group(2) == "false" and m.group(3) == "true"}
+    return set().union(*by_blueprint.values()) if by_blueprint else set()
+
+
+# Functions of the Blueprint being drawn that override one of its parent class (Functions >
+# Override, e.g. an AnimNotify's Received_Notify); their entry node and graph box say so.
+OVERRIDES = set()
+
+
+def overridden_functions(*exprs):
+    """Names of the functions a Blueprint overrides, from its diff and reference file."""
+    names = set()
+    for expr in exprs:
+        for entry in (first(expr, "functions") or ["functions"])[1:] if expr else []:
+            if not isinstance(entry, list):
+                continue
+            function = first(entry, "new") if entry[0] == "changed" else entry
+            if entry[0] != "removed" and first(function, "override") == ["override", "true"]:
+                names.add(function[1])
+    return names
+
+
 class Node:
     def __init__(self, name, title, x, y, context=False):
         self.name = name
@@ -224,7 +278,15 @@ class Node:
 
     @property
     def title(self):
-        return node_title(self.role, self.raw_title)
+        title = node_title(self.role, self.raw_title)
+        if self.raw_title in OVERRIDES and self.name.startswith("K2Node_FunctionEntry"):
+            title += " (override)"
+        elif self.raw_title in PURE_FUNCTIONS and self.name.startswith(PURE_NODE_CLASSES):
+            title += " (pure)"
+        elif self.name.startswith(PURE_VARIANT_CLASSES) and self.pins and not any(
+                pin_kind(pin_type) == "exec" for _, pin_type in self.pins.values()):
+            title += " (pure)"
+        return title
 
 
 def is_comment(name):
@@ -532,13 +594,16 @@ def render_graph(graph_name, nodes, wires, lines, styles, classes, edges, indent
         node_id = ident("N", graph_name, node.name)
         linked = connected.get(node.name, set())
         # Unconnected input pins with a value typed in are shown with that value in a box.
+        # A setter's value pin is always shown, also with 0 or false: there the value is the
+        # point of the node ("Set Life" to 0), not an untouched default.
+        always = lambda pin_name: node.role == "setter" and pin_name != "self"  # noqa: E731
         values = {
-            pin_name: node.defaults[pin_name]
+            pin_name: node.defaults.get(pin_name, "")
             for pin_name, (direction, pin_type) in node.pins.items()
             if direction == "in"
             and pin_name not in linked
             and pin_kind(pin_type) != "exec"
-            and is_explicit(node.defaults.get(pin_name, ""))
+            and (always(pin_name) or is_explicit(node.defaults.get(pin_name, "")))
         }
         # A node with at most one exec input has no row for it; wires connect to the node itself.
         # The same goes for exec outputs. Counted over all exec pins the node has, so an Enhanced
@@ -605,7 +670,7 @@ def render_graph(graph_name, nodes, wires, lines, styles, classes, edges, indent
                 name = display_name(pin_name)
             if pin_name in node.event_links:
                 text = f"{marker} {node.event_links[pin_name]}"
-            elif pin_name in values:
+            elif values.get(pin_name, "") != "":
                 text = f"{value_box(values[pin_name])} {name}"
             else:
                 text = f"{marker} {name}" if direction == "in" else f"{name} {marker}"
@@ -811,7 +876,11 @@ def to_mermaid(diff, warnings, reference=None):
     for graph_name, nodes, wires, comments in drawable:
         if nested:
             group_id = ident("G", graph_name)
-            lines.append(f"    subgraph {group_id}[{label(graph_name)}]")
+            # The graph of one of the project's own pure functions says so, like the nodes calling it.
+            shown = f"{graph_name} (pure)" if graph_name in PURE_FUNCTIONS else graph_name
+            if graph_name in OVERRIDES:
+                shown = f"{graph_name} (override)"
+            lines.append(f"    subgraph {group_id}[{label(shown)}]")
             # A graph box only linked inside itself uses its own direction, which defaults to top-down.
             lines.append("        direction LR")
             # A box around each graph when several graphs changed: transparent, subtle border.
@@ -879,6 +948,8 @@ def main():
         if not isinstance(diff, list) or diff[0] != "blueprint-diff":
             sys.exit(f"{path}: not a blueprint-diff file")
         warnings = []
+        PURE_FUNCTIONS.clear()
+        PURE_FUNCTIONS.update(pure_functions(path))
         # The matching reference file holds the full current Blueprint.
         parts = list(path.parts)
         reference = None
@@ -889,6 +960,8 @@ def main():
                 reference = parse(reference_path.read_text(encoding="utf-8"))
         if reference is None:
             warnings.append("no reference file; only added nodes and their direct neighbours are drawn")
+        OVERRIDES.clear()
+        OVERRIDES.update(overridden_functions(diff, reference))
         output = path.with_suffix(".mmd")
         text = to_mermaid(diff, warnings, reference)
         for warning in warnings:
