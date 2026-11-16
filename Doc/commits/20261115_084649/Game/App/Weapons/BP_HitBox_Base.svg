@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="my-svg" width="100%" style="max-width: 694.422px; background-color: transparent;" viewBox="-8 -12 694.421875 146.5" role="graphics-document document" aria-roledescription="flowchart-v2">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="my-svg" width="100%" style="max-width: 574.422px; background-color: transparent;" viewBox="-8 -12 574.422 128.5" role="graphics-document document" aria-roledescription="flowchart-v2">
   <metadata>
     <bde:asset xmlns:bde="urn:blueprint-diff-export" package="/Game/App/Weapons/BP_HitBox_Base" kind="blueprint" class="Blueprint" type="Blueprint Class" new="true" revision="none" parent="/Script/Engine.Actor" part="graph" source="graph/transient/Game/App/Weapons/BP_HitBox_Base.sexpr"/>
   </metadata>
@@ -74,18 +74,18 @@
     <g class="root">
       <g class="clusters">
         <g class="cluster default flowchart-label" id="N_EventGraph_K2Node_CallFunction_0">
-          <rect style="fill:var(--node-body);stroke:var(--border-call);stroke-width:2px;" rx="0" ry="0" x="236.921875" y="0" width="165" height="61"/>
-          <g class="cluster-label" transform="translate(299.640625, 4)">
+          <rect style="fill:var(--node-body);stroke:var(--border-call);stroke-width:2px;" rx="0" ry="0" x="191.921875" y="0" width="165" height="61"/>
+          <g class="cluster-label" transform="translate(254.640625, 4)">
             <foreignObject width="39.5625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">Delay</span></div></foreignObject>
           </g>
         </g>
       </g>
       <g class="edgePaths">
-        <path d="M146.922,99C189.27199700927736,99,189.27199700927736,13.5,231.6219940185547,13.5" id="L-N_EventGraph_K2Node_Event_0-N_EventGraph_K2Node_CallFunction_0_anchor_in-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_Event_0 LE-N_EventGraph_K2Node_CallFunction_0_anchor_in" style="stroke-width: 3.5px;fill:none;stroke:var(--pin-exec);stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffffff)"/>
-        <path d="M126.43,44C179.026,44,179.026,44,231.622,44" id="L-N_EventGraph_K2Node_VariableGet_0-N_EventGraph_K2Node_CallFunction_0_Duration-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_VariableGet_0 LE-N_EventGraph_K2Node_CallFunction_0_Duration" style="stroke:var(--pin-float);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-38d500)"/>
-        <path d="M401.921875,13.5C481.7719375,13.5,481.7719375,71.5,561.622,71.5" id="L-N_EventGraph_K2Node_CallFunction_0_anchor_out-N_EventGraph_K2Node_CallFunction_1-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_CallFunction_0_anchor_out LE-N_EventGraph_K2Node_CallFunction_1" style="stroke-width: 3.5px;fill:none;stroke:var(--pin-exec);stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffffff)"/>
-        <path d="M401.922,44C411.922,44,421.922,44,431.922,44C441.922,44,451.922,55,461.922,66L356.922,59" id="L-N_EventGraph_K2Node_CallFunction_0_Duration-N_EventGraph_K2Node_CallFunction_0_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_CallFunction_0_Duration LE-N_EventGraph_K2Node_CallFunction_0_anchor_out" style="stroke-width: 0;fill:none;"/>
-        <path d="M326.922,33.5L326.922,99C361.922,99,396.922,99,431.922,99C441.922,99,451.922,88,461.922,77L356.922,59" id="L-N_EventGraph_K2Node_CallFunction_0_anchor_in-N_EventGraph_K2Node_CallFunction_0_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_CallFunction_0_anchor_in LE-N_EventGraph_K2Node_CallFunction_0_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M146.922,87C166.922,87,166.6219940185547,13.5,186.6219940185547,13.5" id="L-N_EventGraph_K2Node_Event_0-N_EventGraph_K2Node_CallFunction_0_anchor_in-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_Event_0 LE-N_EventGraph_K2Node_CallFunction_0_anchor_in" style="stroke-width: 3.5px;fill:none;stroke:var(--pin-exec);stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffffff)"/>
+        <path d="M126.43,44C156.526,44,156.526,44,186.622,44" id="L-N_EventGraph_K2Node_VariableGet_0-N_EventGraph_K2Node_CallFunction_0_Duration-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_VariableGet_0 LE-N_EventGraph_K2Node_CallFunction_0_Duration" style="stroke:var(--pin-float);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-38d500)"/>
+        <path d="M356.921875,13.5C399.27193750000004,13.5,399.27193750000004,65.5,441.622,65.5" id="L-N_EventGraph_K2Node_CallFunction_0_anchor_out-N_EventGraph_K2Node_CallFunction_1-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_CallFunction_0_anchor_out LE-N_EventGraph_K2Node_CallFunction_1" style="stroke-width: 3.5px;fill:none;stroke:var(--pin-exec);stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffffff)"/>
+        <path d="M356.922,44C361.922,44,366.922,44,371.922,44C376.922,44,381.922,51.167,386.922,58.333L326.922,58.33299999999997" id="L-N_EventGraph_K2Node_CallFunction_0_Duration-N_EventGraph_K2Node_CallFunction_0_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_CallFunction_0_Duration LE-N_EventGraph_K2Node_CallFunction_0_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M281.922,39.5L281.922,87C311.922,87,341.922,87,371.922,87C376.922,87,381.922,79.833,386.922,72.667L326.922,59" id="L-N_EventGraph_K2Node_CallFunction_0_anchor_in-N_EventGraph_K2Node_CallFunction_0_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_EventGraph_K2Node_CallFunction_0_anchor_in LE-N_EventGraph_K2Node_CallFunction_0_anchor_out" style="stroke-width: 0;fill:none;"/>
       </g>
       <g class="edgeLabels">
         <g class="edgeLabel">
@@ -115,14 +115,14 @@
         </g>
       </g>
       <g class="nodes">
-        <g class="node default pin_float flowchart-label" id="flowchart-N_EventGraph_K2Node_CallFunction_0_Duration-2" data-node="true" data-id="N_EventGraph_K2Node_CallFunction_0_Duration" transform="translate(319.421875, 44)">
+        <g class="node default pin_float flowchart-label" id="flowchart-N_EventGraph_K2Node_CallFunction_0_Duration-2" data-node="true" data-id="N_EventGraph_K2Node_CallFunction_0_Duration" transform="translate(274.421875, 44)">
           <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
           <g class="label" style="" transform="translate(-75, -9.5)">
             <rect/>
             <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● Duration</span></span></div></foreignObject>
           </g>
         </g>
-        <g class="node default default flowchart-label" id="flowchart-N_EventGraph_K2Node_Event_0-3" data-node="true" data-id="N_EventGraph_K2Node_Event_0" transform="translate(73.4609375, 99)">
+        <g class="node default default flowchart-label" id="flowchart-N_EventGraph_K2Node_Event_0-3" data-node="true" data-id="N_EventGraph_K2Node_Event_0" transform="translate(73.4609375, 87)">
           <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--border-event);stroke-width:3px;" rx="0" ry="0" x="-73.4609375" y="-18" width="146.921875" height="36"/>
           <g class="label" style="color:var(--text);" transform="translate(-65.9609375, -10.5)">
             <rect/>
@@ -136,7 +136,7 @@
             <foreignObject width="90.9375" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-float); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-float);">Get Lifetime</span></div></foreignObject>
           </g>
         </g>
-        <g class="node default default flowchart-label" id="flowchart-N_EventGraph_K2Node_CallFunction_1-8" data-node="true" data-id="N_EventGraph_K2Node_CallFunction_1" transform="translate(622.671875, 71.5)">
+        <g class="node default default flowchart-label" id="flowchart-N_EventGraph_K2Node_CallFunction_1-8" data-node="true" data-id="N_EventGraph_K2Node_CallFunction_1" transform="translate(502.671875, 65.5)">
           <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--border-call);stroke-width:2px;" rx="0" ry="0" x="-55.75" y="-17" width="111.5" height="34"/>
           <g class="label" style="color:var(--text);" transform="translate(-48.25, -9.5)">
             <rect/>
@@ -146,5 +146,5 @@
       </g>
     </g>
   </g>
-  <rect style="fill: none; stroke: var(--border-call); stroke-width: 2px; pointer-events: none;" rx="0" ry="0" x="236.921875" y="0" width="165" height="61" transform="matrix(1,0,0,1,0,0)"/>
+  <rect style="fill: none; stroke: var(--border-call); stroke-width: 2px; pointer-events: none;" rx="0" ry="0" x="191.921875" y="0" width="165" height="61" transform="matrix(1,0,0,1,0,0)"/>
 </svg>

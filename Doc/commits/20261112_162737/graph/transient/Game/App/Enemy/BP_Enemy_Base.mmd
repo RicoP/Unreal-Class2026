@@ -4,8 +4,8 @@ config:
   themeCSS: "g.node *, g.cluster * { filter: none !important; }"
   flowchart:
     curve: monotoneX
-    nodeSpacing: 20
-    rankSpacing: 60
+    nodeSpacing: 8
+    rankSpacing: 30
     subGraphTitleMargin:
       top: 4
       bottom: 4
@@ -83,6 +83,9 @@ flowchart LR
             N_EventGraph_Hit_K2Node_PlayMontage_0_then>"<span style='display:inline-block;min-width:150px;text-align:right'>Then ▶</span>"]
         end
         subgraph N_EventGraph_Hit_K2Node_VariableSet_1["Set Life"]
+            N_EventGraph_Hit_K2Node_VariableSet_1_anchor_in[" "]
+            N_EventGraph_Hit_K2Node_VariableSet_1_anchor_out[" "]
+            N_EventGraph_Hit_K2Node_VariableSet_1_Life["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>0</span> Life</span>"]
         end
         subgraph N_EventGraph_Hit_K2Node_VariableGet_3["Get Capsule Component"]
         end
@@ -111,8 +114,8 @@ flowchart LR
     N_EventGraph_Hit_K2Node_VariableGet_0 --> N_EventGraph_Hit_K2Node_CallFunction_3_Handle
     N_EventGraph_Hit_K2Node_CallFunction_3_anchor_out ==> N_EventGraph_Hit_K2Node_PlayMontage_0_anchor_in
     N_EventGraph_Hit_K2Node_VariableGet_1 --> N_EventGraph_Hit_K2Node_PlayMontage_0_InSkeletalMeshComponent
-    N_EventGraph_Hit_K2Node_PlayMontage_0_then ==> N_EventGraph_Hit_K2Node_VariableSet_1
-    N_EventGraph_Hit_K2Node_VariableSet_1 ==> N_EventGraph_Hit_K2Node_CallFunction_6_anchor_in
+    N_EventGraph_Hit_K2Node_PlayMontage_0_then ==> N_EventGraph_Hit_K2Node_VariableSet_1_anchor_in
+    N_EventGraph_Hit_K2Node_VariableSet_1_anchor_out ==> N_EventGraph_Hit_K2Node_CallFunction_6_anchor_in
     N_EventGraph_Hit_K2Node_VariableGet_3 --> N_EventGraph_Hit_K2Node_CallFunction_6_self
 
     %% Keep inputs left of outputs inside each node
@@ -144,6 +147,8 @@ flowchart LR
     N_EventGraph_Hit_K2Node_PlayMontage_0_PlayRate ~~~ N_EventGraph_Hit_K2Node_PlayMontage_0_then
     N_EventGraph_Hit_K2Node_PlayMontage_0_bShouldStopAllMontages ~~~ N_EventGraph_Hit_K2Node_PlayMontage_0_then
     N_EventGraph_Hit_K2Node_PlayMontage_0_anchor_in ~~~ N_EventGraph_Hit_K2Node_PlayMontage_0_then
+    N_EventGraph_Hit_K2Node_VariableSet_1_Life ~~~ N_EventGraph_Hit_K2Node_VariableSet_1_anchor_out
+    N_EventGraph_Hit_K2Node_VariableSet_1_anchor_in ~~~ N_EventGraph_Hit_K2Node_VariableSet_1_anchor_out
     N_EventGraph_Hit_K2Node_CallFunction_6_self ~~~ N_EventGraph_Hit_K2Node_CallFunction_6_anchor_out
     N_EventGraph_Hit_K2Node_CallFunction_6_Channel ~~~ N_EventGraph_Hit_K2Node_CallFunction_6_anchor_out
     N_EventGraph_Hit_K2Node_CallFunction_6_NewResponse ~~~ N_EventGraph_Hit_K2Node_CallFunction_6_anchor_out
@@ -180,17 +185,19 @@ flowchart LR
     classDef pin_exec fill:#151515,stroke:#151515,color:#ffffff
     classDef pin_float fill:#151515,stroke:#151515,color:#38d500
     classDef pin_float_dim fill:#151515,stroke:#151515,color:#256b0c
+    classDef pin_integer fill:#151515,stroke:#151515,color:#1fe3af
     classDef pin_object fill:#151515,stroke:#151515,color:#00aaf5
     classDef pin_object_dim fill:#151515,stroke:#151515,color:#0c587a
     classDef pin_other fill:#151515,stroke:#151515,color:#777777
     classDef pin_other_dim fill:#151515,stroke:#151515,color:#414141
-    class N_EventGraph_K2Node_CallFunction_1_anchor_in,N_EventGraph_K2Node_CallFunction_1_anchor_out,N_EventGraph_K2Node_AIMoveTo_0_anchor_in,N_EventGraph_K2Node_AIMoveTo_0_anchor_out,N_EventGraph_K2Node_VariableSet_0_anchor_in,N_EventGraph_K2Node_VariableSet_0_anchor_out,N_EventGraph_Hit_K2Node_Event_1_anchor_in,N_EventGraph_Hit_K2Node_Event_1_anchor_out,N_EventGraph_Hit_K2Node_DynamicCast_0_anchor_in,N_EventGraph_Hit_K2Node_IfThenElse_0_anchor_in,N_EventGraph_Hit_K2Node_CallFunction_3_anchor_in,N_EventGraph_Hit_K2Node_CallFunction_3_anchor_out,N_EventGraph_Hit_K2Node_PlayMontage_0_anchor_in,N_EventGraph_Hit_K2Node_CallFunction_6_anchor_in,N_EventGraph_Hit_K2Node_CallFunction_6_anchor_out pin_anchor
+    class N_EventGraph_K2Node_CallFunction_1_anchor_in,N_EventGraph_K2Node_CallFunction_1_anchor_out,N_EventGraph_K2Node_AIMoveTo_0_anchor_in,N_EventGraph_K2Node_AIMoveTo_0_anchor_out,N_EventGraph_K2Node_VariableSet_0_anchor_in,N_EventGraph_K2Node_VariableSet_0_anchor_out,N_EventGraph_Hit_K2Node_Event_1_anchor_in,N_EventGraph_Hit_K2Node_Event_1_anchor_out,N_EventGraph_Hit_K2Node_DynamicCast_0_anchor_in,N_EventGraph_Hit_K2Node_IfThenElse_0_anchor_in,N_EventGraph_Hit_K2Node_CallFunction_3_anchor_in,N_EventGraph_Hit_K2Node_CallFunction_3_anchor_out,N_EventGraph_Hit_K2Node_PlayMontage_0_anchor_in,N_EventGraph_Hit_K2Node_VariableSet_1_anchor_in,N_EventGraph_Hit_K2Node_VariableSet_1_anchor_out,N_EventGraph_Hit_K2Node_CallFunction_6_anchor_in,N_EventGraph_Hit_K2Node_CallFunction_6_anchor_out pin_anchor
     class N_EventGraph_Hit_K2Node_IfThenElse_0_Condition,N_EventGraph_Hit_K2Node_PlayMontage_0_bShouldStopAllMontages pin_boolean
     class N_EventGraph_K2Node_CallFunction_1_bLooping pin_boolean_dim
     class N_EventGraph_K2Node_CallFunction_1_Delegate pin_delegate_dim
     class N_EventGraph_Hit_K2Node_DynamicCast_0_then,N_EventGraph_Hit_K2Node_IfThenElse_0_then,N_EventGraph_Hit_K2Node_PlayMontage_0_then pin_exec
     class N_EventGraph_Hit_K2Node_PlayMontage_0_PlayRate pin_float
     class N_EventGraph_K2Node_CallFunction_1_Time,N_EventGraph_K2Node_CallFunction_1_InitialStartDelayVariance,N_EventGraph_K2Node_AIMoveTo_0_AcceptanceRadius pin_float_dim
+    class N_EventGraph_Hit_K2Node_VariableSet_1_Life pin_integer
     class N_EventGraph_Hit_K2Node_Event_1_OtherActor,N_EventGraph_Hit_K2Node_DynamicCast_0_Object,N_EventGraph_Hit_K2Node_PlayMontage_0_InSkeletalMeshComponent,N_EventGraph_Hit_K2Node_CallFunction_6_self pin_object
     class N_EventGraph_K2Node_AIMoveTo_0_Pawn,N_EventGraph_K2Node_AIMoveTo_0_TargetActor pin_object_dim
     class N_EventGraph_K2Node_VariableSet_0_AI_Timer_Handle,N_EventGraph_Hit_K2Node_CallFunction_3_Handle,N_EventGraph_Hit_K2Node_CallFunction_6_Channel,N_EventGraph_Hit_K2Node_CallFunction_6_NewResponse pin_other

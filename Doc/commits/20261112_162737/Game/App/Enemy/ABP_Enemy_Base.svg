@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="my-svg" width="100%" style="max-width: 1024.38px; background-color: transparent;" viewBox="-8 -12 1024.375 101" role="graphics-document document" aria-roledescription="flowchart-v2">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="my-svg" width="100%" style="max-width: 874.375px; background-color: transparent;" viewBox="-8 -12 874.375 95" role="graphics-document document" aria-roledescription="flowchart-v2">
   <metadata>
     <bde:asset xmlns:bde="urn:blueprint-diff-export" package="/Game/App/Enemy/ABP_Enemy_Base" kind="blueprint" class="Blueprint" type="Blueprint Class" new="false" revision="091a9821" parent="/Script/Engine.AnimInstance" part="graph" source="graph/transient/Game/App/Enemy/ABP_Enemy_Base.sexpr"/>
   </metadata>
@@ -74,17 +74,17 @@
     <g class="root">
       <g class="clusters">
         <g class="cluster default flowchart-label" id="N_AnimGraph_AnimGraphNode_Root_0">
-          <rect style="fill:var(--node-body);stroke:var(--border-function);stroke-width:2px;" rx="0" ry="0" x="738.3750275135039" y="-0.000008678436302034243" width="164.9999339103697" height="61.00000321865082"/>
-          <g class="cluster-label" transform="translate(777.5468971252441, 3.999991321563698)">
+          <rect style="fill:var(--node-body);stroke:var(--border-function);stroke-width:2px;" rx="0" ry="0" x="633.3749959468842" y="0.000009489059436873504" width="164.99998998641968" height="61.000004124641464"/>
+          <g class="cluster-label" transform="translate(672.5468551397323, 4.000009489059437)">
             <foreignObject width="86.65625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">Output Pose</span></div></foreignObject>
           </g>
         </g>
       </g>
       <g class="edgePaths">
-        <path d="M127.453,44C154.803,44,154.803,44,182.153,44" id="L-N_AnimGraph_K2Node_VariableGet_0-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_AnimGraph_K2Node_VariableGet_0 LE-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0" style="stroke:var(--pin-float-dim);stroke-width:2px;stroke-dasharray:6 4;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-256b0c)"/>
-        <path d="M456.094,44C483.44399999999996,44,483.44399999999996,44,510.794,44" id="L-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0-N_AnimGraph_AnimGraphNode_Slot_0-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0 LE-N_AnimGraph_AnimGraphNode_Slot_0" style="stroke:var(--pin-other);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-777777)"/>
-        <path d="M648.375,44C690.725,44,690.725,44,733.075,44" id="L-N_AnimGraph_AnimGraphNode_Slot_0-N_AnimGraph_AnimGraphNode_Root_0_Result-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_AnimGraph_AnimGraphNode_Slot_0 LE-N_AnimGraph_AnimGraphNode_Root_0_Result" style="stroke:var(--pin-other);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-777777)"/>
-        <path d="M903.375,44C913.375,44,923.375,44,933.375,44C943.375,44,953.375,44,963.375,44L901.3749614238735,23.999994540214573" id="L-N_AnimGraph_AnimGraphNode_Root_0_Result-N_AnimGraph_AnimGraphNode_Root_0_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_AnimGraph_AnimGraphNode_Root_0_Result LE-N_AnimGraph_AnimGraphNode_Root_0_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M127.453,44C147.453,44,132.153,44,152.153,44" id="L-N_AnimGraph_K2Node_VariableGet_0-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_AnimGraph_K2Node_VariableGet_0 LE-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0" style="stroke:var(--pin-float-dim);stroke-width:2px;stroke-dasharray:6 4;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-256b0c)"/>
+        <path d="M426.094,44C446.094,44,430.794,44,450.794,44" id="L-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0-N_AnimGraph_AnimGraphNode_Slot_0-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0 LE-N_AnimGraph_AnimGraphNode_Slot_0" style="stroke:var(--pin-other);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-777777)"/>
+        <path d="M588.375,44C608.375,44,608.075,44,628.075,44" id="L-N_AnimGraph_AnimGraphNode_Slot_0-N_AnimGraph_AnimGraphNode_Root_0_Result-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_AnimGraph_AnimGraphNode_Slot_0 LE-N_AnimGraph_AnimGraphNode_Root_0_Result" style="stroke:var(--pin-other);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-777777)"/>
+        <path d="M798.375,44C803.375,44,808.375,44,813.375,44C818.375,44,823.375,44,828.375,44L768.3749859333038,43.999999999999886" id="L-N_AnimGraph_AnimGraphNode_Root_0_Result-N_AnimGraph_AnimGraphNode_Root_0_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_AnimGraph_AnimGraphNode_Root_0_Result LE-N_AnimGraph_AnimGraphNode_Root_0_anchor_out" style="stroke-width: 0;fill:none;"/>
       </g>
       <g class="edgeLabels">
         <g class="edgeLabel">
@@ -109,7 +109,7 @@
         </g>
       </g>
       <g class="nodes">
-        <g class="node default pin_other flowchart-label" id="flowchart-N_AnimGraph_AnimGraphNode_Root_0_Result-1" data-node="true" data-id="N_AnimGraph_AnimGraphNode_Root_0_Result" transform="translate(820.875, 44)">
+        <g class="node default pin_other flowchart-label" id="flowchart-N_AnimGraph_AnimGraphNode_Root_0_Result-1" data-node="true" data-id="N_AnimGraph_AnimGraphNode_Root_0_Result" transform="translate(715.875, 44)">
           <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
           <g class="label" style="" transform="translate(-75, -9.5)">
             <rect/>
@@ -123,14 +123,14 @@
             <foreignObject width="112.453125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-float-dim); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-float-dim);">Get Walk Speed</span></div></foreignObject>
           </g>
         </g>
-        <g class="node default default flowchart-label" id="flowchart-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0-3" data-node="true" data-id="N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0" transform="translate(321.7734375, 44)">
+        <g class="node default default flowchart-label" id="flowchart-N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0-3" data-node="true" data-id="N_AnimGraph_AnimGraphNode_BlendSpacePlayer_0" transform="translate(291.7734375, 44)">
           <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-other-dim);stroke-width:2px;stroke-dasharray:5 5;rx:16px;ry:16px;" rx="0" ry="0" x="-134.3203125" y="-17" width="268.640625" height="34"/>
           <g class="label" style="color:var(--pin-other-dim);" transform="translate(-126.8203125, -9.5)">
             <rect/>
             <foreignObject width="253.640625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-other-dim); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-other-dim);">Blendspace Player 'BS_Enemy_Base'</span></div></foreignObject>
           </g>
         </g>
-        <g class="node default default flowchart-label" id="flowchart-N_AnimGraph_AnimGraphNode_Slot_0-5" data-node="true" data-id="N_AnimGraph_AnimGraphNode_Slot_0" transform="translate(582.234375, 44)">
+        <g class="node default default flowchart-label" id="flowchart-N_AnimGraph_AnimGraphNode_Slot_0-5" data-node="true" data-id="N_AnimGraph_AnimGraphNode_Slot_0" transform="translate(522.234375, 44)">
           <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-other);stroke-width:2px;rx:16px;ry:16px;" rx="0" ry="0" x="-66.140625" y="-17" width="132.28125" height="34"/>
           <g class="label" style="color:var(--pin-other);" transform="translate(-58.640625, -9.5)">
             <rect/>
@@ -140,5 +140,5 @@
       </g>
     </g>
   </g>
-  <rect style="fill: none; stroke: var(--border-function); stroke-width: 2px; pointer-events: none;" rx="0" ry="0" x="738.3750275135039" y="-0.000008678436302034243" width="164.9999339103697" height="61.00000321865082" transform="matrix(0.9999999999999999,0,0,0.9999999999999999,-8.881784197001252e-16,0)"/>
+  <rect style="fill: none; stroke: var(--border-function); stroke-width: 2px; pointer-events: none;" rx="0" ry="0" x="633.3749959468842" y="0.000009489059436873504" width="164.99998998641968" height="61.000004124641464" transform="matrix(1,0,0,1,0,0)"/>
 </svg>

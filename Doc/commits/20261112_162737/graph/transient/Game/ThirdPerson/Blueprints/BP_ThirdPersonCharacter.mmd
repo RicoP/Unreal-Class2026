@@ -4,8 +4,8 @@ config:
   themeCSS: "g.node *, g.cluster * { filter: none !important; }"
   flowchart:
     curve: monotoneX
-    nodeSpacing: 20
-    rankSpacing: 60
+    nodeSpacing: 8
+    rankSpacing: 30
     subGraphTitleMargin:
       top: 4
       bottom: 4
@@ -38,6 +38,9 @@ flowchart LR
         N_EventGraph_K2Node_PlayMontage_0_OnCompleted>"<span style='display:inline-block;min-width:150px;text-align:right'>On Completed ▶</span>"]
     end
     subgraph N_EventGraph_K2Node_VariableSet_2["Set Is Attacking"]
+        N_EventGraph_K2Node_VariableSet_2_anchor_in[" "]
+        N_EventGraph_K2Node_VariableSet_2_anchor_out[" "]
+        N_EventGraph_K2Node_VariableSet_2_Is_Attacking["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>false</span> Is Attacking</span>"]
     end
 
     %% Wires
@@ -46,7 +49,7 @@ flowchart LR
     N_EventGraph_K2Node_IfThenElse_0_else ==> N_EventGraph_K2Node_VariableSet_1_anchor_in
     N_EventGraph_K2Node_VariableGet_4 --> N_EventGraph_K2Node_PlayMontage_0_InSkeletalMeshComponent
     N_EventGraph_K2Node_VariableSet_1_anchor_out ==> N_EventGraph_K2Node_PlayMontage_0_anchor_in
-    N_EventGraph_K2Node_PlayMontage_0_OnCompleted ==> N_EventGraph_K2Node_VariableSet_2
+    N_EventGraph_K2Node_PlayMontage_0_OnCompleted ==> N_EventGraph_K2Node_VariableSet_2_anchor_in
 
     %% Keep inputs left of outputs inside each node
     N_EventGraph_K2Node_EnhancedInputAction_2_anchor_in ~~~ N_EventGraph_K2Node_EnhancedInputAction_2_Triggered
@@ -58,6 +61,8 @@ flowchart LR
     N_EventGraph_K2Node_PlayMontage_0_PlayRate ~~~ N_EventGraph_K2Node_PlayMontage_0_OnCompleted
     N_EventGraph_K2Node_PlayMontage_0_bShouldStopAllMontages ~~~ N_EventGraph_K2Node_PlayMontage_0_OnCompleted
     N_EventGraph_K2Node_PlayMontage_0_anchor_in ~~~ N_EventGraph_K2Node_PlayMontage_0_OnCompleted
+    N_EventGraph_K2Node_VariableSet_2_Is_Attacking ~~~ N_EventGraph_K2Node_VariableSet_2_anchor_out
+    N_EventGraph_K2Node_VariableSet_2_anchor_in ~~~ N_EventGraph_K2Node_VariableSet_2_anchor_out
 
     %% Nodes
     style N_EventGraph_K2Node_EnhancedInputAction_2 fill:#151515,stroke:#b3261e,stroke-width:3px,color:#f2f2f2
@@ -74,8 +79,8 @@ flowchart LR
     classDef pin_exec fill:#151515,stroke:#151515,color:#ffffff
     classDef pin_float fill:#151515,stroke:#151515,color:#38d500
     classDef pin_object fill:#151515,stroke:#151515,color:#00aaf5
-    class N_EventGraph_K2Node_EnhancedInputAction_2_anchor_in,N_EventGraph_K2Node_IfThenElse_0_anchor_in,N_EventGraph_K2Node_VariableSet_1_anchor_in,N_EventGraph_K2Node_VariableSet_1_anchor_out,N_EventGraph_K2Node_PlayMontage_0_anchor_in pin_anchor
-    class N_EventGraph_K2Node_IfThenElse_0_Condition,N_EventGraph_K2Node_VariableSet_1_Is_Attacking,N_EventGraph_K2Node_PlayMontage_0_bShouldStopAllMontages pin_boolean
+    class N_EventGraph_K2Node_EnhancedInputAction_2_anchor_in,N_EventGraph_K2Node_IfThenElse_0_anchor_in,N_EventGraph_K2Node_VariableSet_1_anchor_in,N_EventGraph_K2Node_VariableSet_1_anchor_out,N_EventGraph_K2Node_PlayMontage_0_anchor_in,N_EventGraph_K2Node_VariableSet_2_anchor_in,N_EventGraph_K2Node_VariableSet_2_anchor_out pin_anchor
+    class N_EventGraph_K2Node_IfThenElse_0_Condition,N_EventGraph_K2Node_VariableSet_1_Is_Attacking,N_EventGraph_K2Node_PlayMontage_0_bShouldStopAllMontages,N_EventGraph_K2Node_VariableSet_2_Is_Attacking pin_boolean
     class N_EventGraph_K2Node_EnhancedInputAction_2_Triggered,N_EventGraph_K2Node_IfThenElse_0_else,N_EventGraph_K2Node_PlayMontage_0_OnCompleted pin_exec
     class N_EventGraph_K2Node_PlayMontage_0_PlayRate pin_float
     class N_EventGraph_K2Node_PlayMontage_0_InSkeletalMeshComponent pin_object
