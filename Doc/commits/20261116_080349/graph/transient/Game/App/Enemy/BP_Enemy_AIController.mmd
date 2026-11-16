@@ -1,0 +1,81 @@
+---
+config:
+  look: classic
+  themeCSS: "g.node *, g.cluster * { filter: none !important; }"
+  flowchart:
+    curve: monotoneX
+    nodeSpacing: 8
+    rankSpacing: 30
+    subGraphTitleMargin:
+      top: 4
+      bottom: 4
+---
+flowchart LR
+
+    subgraph N_EventGraph_K2Node_ComponentBoundEvent_0["◆ On Target Perception Updated (AIPerception)"]
+        N_EventGraph_K2Node_ComponentBoundEvent_0_anchor_in[" "]
+        N_EventGraph_K2Node_ComponentBoundEvent_0_anchor_out[" "]
+        N_EventGraph_K2Node_ComponentBoundEvent_0_Actor["<span style='display:inline-block;min-width:150px;text-align:right'>Actor ●</span>"]
+        N_EventGraph_K2Node_ComponentBoundEvent_0_Stimulus_bSuccessfullySensed["<span style='display:inline-block;min-width:150px;text-align:right'>Stimulus Successfully Sensed ●</span>"]
+    end
+    subgraph N_EventGraph_K2Node_CallFunction_0["Get Controlled Pawn"]
+    end
+    subgraph N_EventGraph_K2Node_DynamicCast_1["Cast To BP_Enemy_Base (pure)"]
+    end
+    subgraph N_EventGraph_K2Node_DynamicCast_0["Cast To BP_Hero"]
+        N_EventGraph_K2Node_DynamicCast_0_anchor_in[" "]
+        N_EventGraph_K2Node_DynamicCast_0_Object["<span style='display:inline-block;min-width:150px;text-align:left'>● Object</span>"]
+        N_EventGraph_K2Node_DynamicCast_0_then>"<span style='display:inline-block;min-width:150px;text-align:right'>Then ▶</span>"]
+        N_EventGraph_K2Node_DynamicCast_0_AsBP_Hero["<span style='display:inline-block;min-width:150px;text-align:right'>AsBP Hero ●</span>"]
+    end
+    subgraph N_EventGraph_K2Node_CallFunction_1["Set Target"]
+        N_EventGraph_K2Node_CallFunction_1_anchor_in[" "]
+        N_EventGraph_K2Node_CallFunction_1_anchor_out[" "]
+        N_EventGraph_K2Node_CallFunction_1_self["<span style='display:inline-block;min-width:150px;text-align:left'>● Target</span>"]
+        N_EventGraph_K2Node_CallFunction_1_Hero["<span style='display:inline-block;min-width:150px;text-align:left'>● Hero</span>"]
+        N_EventGraph_K2Node_CallFunction_1_Seen["<span style='display:inline-block;min-width:150px;text-align:left'>● Seen</span>"]
+    end
+
+    %% Wires
+    N_EventGraph_K2Node_ComponentBoundEvent_0_Actor --> N_EventGraph_K2Node_DynamicCast_0_Object
+    N_EventGraph_K2Node_ComponentBoundEvent_0_Stimulus_bSuccessfullySensed --> N_EventGraph_K2Node_CallFunction_1_Seen
+    N_EventGraph_K2Node_ComponentBoundEvent_0_anchor_out ==> N_EventGraph_K2Node_DynamicCast_0_anchor_in
+    N_EventGraph_K2Node_CallFunction_0 --> N_EventGraph_K2Node_DynamicCast_1
+    N_EventGraph_K2Node_DynamicCast_1 --> N_EventGraph_K2Node_CallFunction_1_self
+    N_EventGraph_K2Node_DynamicCast_0_AsBP_Hero --> N_EventGraph_K2Node_CallFunction_1_Hero
+    N_EventGraph_K2Node_DynamicCast_0_then ==> N_EventGraph_K2Node_CallFunction_1_anchor_in
+
+    %% Keep inputs left of outputs inside each node
+    N_EventGraph_K2Node_ComponentBoundEvent_0_anchor_in ~~~ N_EventGraph_K2Node_ComponentBoundEvent_0_Actor
+    N_EventGraph_K2Node_ComponentBoundEvent_0_anchor_in ~~~ N_EventGraph_K2Node_ComponentBoundEvent_0_Stimulus_bSuccessfullySensed
+    N_EventGraph_K2Node_ComponentBoundEvent_0_anchor_in ~~~ N_EventGraph_K2Node_ComponentBoundEvent_0_anchor_out
+    N_EventGraph_K2Node_DynamicCast_0_Object ~~~ N_EventGraph_K2Node_DynamicCast_0_then
+    N_EventGraph_K2Node_DynamicCast_0_Object ~~~ N_EventGraph_K2Node_DynamicCast_0_AsBP_Hero
+    N_EventGraph_K2Node_DynamicCast_0_anchor_in ~~~ N_EventGraph_K2Node_DynamicCast_0_then
+    N_EventGraph_K2Node_DynamicCast_0_anchor_in ~~~ N_EventGraph_K2Node_DynamicCast_0_AsBP_Hero
+    N_EventGraph_K2Node_CallFunction_1_self ~~~ N_EventGraph_K2Node_CallFunction_1_anchor_out
+    N_EventGraph_K2Node_CallFunction_1_Hero ~~~ N_EventGraph_K2Node_CallFunction_1_anchor_out
+    N_EventGraph_K2Node_CallFunction_1_Seen ~~~ N_EventGraph_K2Node_CallFunction_1_anchor_out
+    N_EventGraph_K2Node_CallFunction_1_anchor_in ~~~ N_EventGraph_K2Node_CallFunction_1_anchor_out
+
+    %% Nodes
+    style N_EventGraph_K2Node_ComponentBoundEvent_0 fill:#151515,stroke:#b3261e,stroke-width:3px,color:#f2f2f2
+    style N_EventGraph_K2Node_CallFunction_0 fill:#151515,stroke:#00aaf5,stroke-width:2px,color:#00aaf5,rx:16px,ry:16px
+    style N_EventGraph_K2Node_DynamicCast_1 fill:#151515,stroke:#00aaf5,stroke-width:2px,color:#00aaf5,rx:16px,ry:16px
+    style N_EventGraph_K2Node_DynamicCast_0 fill:#151515,stroke:#8a8a8a,stroke-width:2px,color:#f2f2f2
+    style N_EventGraph_K2Node_CallFunction_1 fill:#151515,stroke:#456980,stroke-width:2px,color:#f2f2f2
+
+    %% Pins
+    classDef pin_anchor fill:#151515,stroke:#151515,color:#151515
+    classDef pin_boolean fill:#151515,stroke:#151515,color:#950000
+    classDef pin_exec fill:#151515,stroke:#151515,color:#ffffff
+    classDef pin_object fill:#151515,stroke:#151515,color:#00aaf5
+    class N_EventGraph_K2Node_ComponentBoundEvent_0_anchor_in,N_EventGraph_K2Node_ComponentBoundEvent_0_anchor_out,N_EventGraph_K2Node_DynamicCast_0_anchor_in,N_EventGraph_K2Node_CallFunction_1_anchor_in,N_EventGraph_K2Node_CallFunction_1_anchor_out pin_anchor
+    class N_EventGraph_K2Node_ComponentBoundEvent_0_Stimulus_bSuccessfullySensed,N_EventGraph_K2Node_CallFunction_1_Seen pin_boolean
+    class N_EventGraph_K2Node_DynamicCast_0_then pin_exec
+    class N_EventGraph_K2Node_ComponentBoundEvent_0_Actor,N_EventGraph_K2Node_DynamicCast_0_Object,N_EventGraph_K2Node_DynamicCast_0_AsBP_Hero,N_EventGraph_K2Node_CallFunction_1_self,N_EventGraph_K2Node_CallFunction_1_Hero pin_object
+
+    %% Wire colours (dimmed and dashed between two nodes that aren't part of the change)
+    linkStyle 1 stroke:#950000,stroke-width:2px
+    linkStyle 2,6 stroke:#ffffff,stroke-width:3px
+    linkStyle 0,3,4,5 stroke:#00aaf5,stroke-width:2px

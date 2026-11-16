@@ -1,0 +1,67 @@
+(blueprint-diff "/Game/App/Enemy/BP_Enemy_AIController"
+  (old none)
+  (new working-copy)
+  (parent "/Script/AIModule.AIController")
+  (components
+    (component "AIPerception" (class "AIPerceptionComponent") (kind added) (new)
+      (properties
+        (changed "SensesConfig" (old "") (new "(\"/Script/AIModule.AISenseConfig_Sight'/Game/App/Enemy/BP_Enemy_AIController.BP_Enemy_AIController_C:AIPerception_GEN_VARIABLE.AISenseConfig_Sight_0'\")"))
+        (changed "SensesConfig AI_Sight_config Sight_Radius" (old "3000.000000") (new "1500.000000"))
+        (changed "SensesConfig AI_Sight_config Lose_Sight_Radius" (old "3500.000000") (new "1800.000000"))
+        (changed "SensesConfig AI_Sight_config Peripheral_Vision_Half_Angle" (old "90.000000") (new "45.000000"))
+        (changed "SensesConfig AI_Sight_config Detect_Neutrals" (old "False") (new "True"))
+        (changed "SensesConfig AI_Sight_config Detect_Friendlies" (old "False") (new "True"))
+        (changed "SensesConfig AI_Sight_config Max_Age" (old "0.000000") (new "1.000000")))))
+  (graph "EventGraph" added
+    (node-added addition
+      (node "K2Node_Event_0" "Event BeginPlay" (pos 0 0))
+      (pin out "OutputDelegate" "Delegate")
+      (pin out "then" "Exec"))
+    (node-added addition
+      (node "K2Node_Event_1" "Event Tick" (pos 0 208))
+      (pin out "OutputDelegate" "Delegate")
+      (pin out "then" "Exec")
+      (pin out "DeltaSeconds" "Float (single-precision)" (default "0.0")))
+    (node-added addition
+      (node "K2Node_ComponentBoundEvent_0" "On Target Perception Updated (AIPerception)" (pos 0 464))
+      (pin out "OutputDelegate" "Delegate")
+      (pin out "then" "Exec" (links (pin "K2Node_DynamicCast_0" "execute")))
+      (pin out "Actor" "Actor Object Reference" (links (pin "K2Node_DynamicCast_0" "Object")))
+      (pin out "Stimulus_Age" "Float (single-precision)")
+      (pin out "Stimulus_ExpirationAge" "Float (single-precision)")
+      (pin out "Stimulus_Strength" "Float (single-precision)")
+      (pin out "Stimulus_StimulusLocation" "Vector")
+      (pin out "Stimulus_ReceiverLocation" "Vector")
+      (pin out "Stimulus_Tag" "Name")
+      (pin out "Stimulus_bSuccessfullySensed" "Boolean" (links (pin "K2Node_Knot_1" "InputPin"))))
+    (node-added addition
+      (node "K2Node_DynamicCast_0" "Cast To BP_Hero" (pos 768 464))
+      (pin in "execute" "Exec" (links (pin "K2Node_ComponentBoundEvent_0" "then")))
+      (pin out "then" "Exec" (links (pin "K2Node_CallFunction_1" "execute")))
+      (pin out "CastFailed" "Exec")
+      (pin in "Object" "Object Reference" (links (pin "K2Node_ComponentBoundEvent_0" "Actor")))
+      (pin out "AsBP Hero" "BP Hero Object Reference" (links (pin "K2Node_CallFunction_1" "Hero"))))
+    (node-added addition
+      (node "K2Node_CallFunction_0" "Get Controlled Pawn" (pos 464 624))
+      (pin in "self" "Controller Object Reference")
+      (pin out "ReturnValue" "Pawn Object Reference" (links (pin "K2Node_DynamicCast_1" "Object"))))
+    (node-added addition
+      (node "K2Node_DynamicCast_1" "Cast To BP_Enemy_Base" (pos 736 640))
+      (pin in "Object" "Object Reference" (links (pin "K2Node_CallFunction_0" "ReturnValue")))
+      (pin out "AsBP Enemy Base" "BP Enemy Base Object Reference" (links (pin "K2Node_CallFunction_1" "self")))
+      (pin out "bSuccess" "Boolean"))
+    (node-added addition
+      (node "K2Node_CallFunction_1" "Set Target" (pos 1120 448))
+      (pin in "execute" "Exec" (links (pin "K2Node_DynamicCast_0" "then")))
+      (pin out "then" "Exec")
+      (pin in "self" "BP Enemy Base Object Reference" (links (pin "K2Node_DynamicCast_1" "AsBP Enemy Base")))
+      (pin in "Hero" "BP Hero Object Reference" (links (pin "K2Node_DynamicCast_0" "AsBP Hero")))
+      (pin in "Seen" "Boolean" (links (pin "K2Node_Knot_1" "OutputPin"))))
+    (node-added addition
+      (node "K2Node_Knot_1" "Reroute Node" (pos 432 592))
+      (pin in "InputPin" "Boolean" (links (pin "K2Node_ComponentBoundEvent_0" "Stimulus_bSuccessfullySensed")))
+      (pin out "OutputPin" "Boolean" (links (pin "K2Node_CallFunction_1" "Seen")))))
+  (graph "UserConstructionScript" added
+    (node-added addition
+      (node "K2Node_FunctionEntry_0" "Construction Script" (pos 0 0))
+      (pin out "then" "Exec"))))
