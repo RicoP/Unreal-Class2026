@@ -62,6 +62,8 @@ to rebuild it themselves.
   diagram ("Create a new Blueprint Class ..., then set:" with the parent class
   first, or "change its class defaults and components" with Before/After);
   rows read `Class Defaults › <setting>` and `<component> › <setting>`.
+  A Blueprint class as a value reads as its Blueprint's name, like the
+  editor's class pickers (`BP_Enemy_AIController`, not `..._C`).
   Variables come right after Parent Class: `Add Variable | Walk Speed (Float)`
   (name as typed, type without "(double-precision)"), then the Default Value
   (taken from the class-defaults entry, which is then left out), Category and
@@ -170,6 +172,17 @@ to rebuild it themselves.
   counted per kind, "1 Box, 2 Convex Elements" or "no simple collision") and
   `BodySetup CollisionComplexity` (the editor's display name). The body
   setup's other data isn't listed (its GUID changes on every rebuild).
+- Instanced sub-objects a component holds in an editable property (an AI
+  Perception component's `SensesConfig` entries) are edited inside the
+  component's Details panel, but a property diff only sees the reference to
+  them. `AddInstancedSubobjectEntries` therefore adds their settings that
+  differ from the matching old sub-object (same property and class) or their
+  class defaults, named `<property> <class display name> <setting display
+  name>` with `_` for spaces inside a part: `SensesConfig AI_Sight_config
+  Sight_Radius`. The table reads `AI Perception › Senses Config › AI Sight
+  config › Sight Radius` (`setting_name`: a part with `_` is a display name,
+  only its `_` become spaces). Struct values drop the `b` of their fields
+  (`Detect Enemies: True, ...`).
 - `component-removed` is only written for components the Blueprint added
   itself. An inherited component whose override record disappeared (its
   overrides were reset, or the parent removed it) isn't a removal in the
@@ -537,7 +550,8 @@ what they see on screen.
 
 - Use the pin's display name from the editor: `Target` for `self`,
   `Return Value`, `Action Value`. Boolean pins drop their code prefix `b`
-  (`bLooping` -> `Looping`).
+  (`bLooping` -> `Looping`), also behind a split struct's prefix
+  (`Stimulus_bSuccessfullySensed` -> `Stimulus Successfully Sensed`).
 - Leave out every pin that isn't connected, inputs and outputs alike, except
   unconnected input pins with a value typed in. Those show the value in a box
   instead of the dot (`[50] Min`), framed in the pin's colour via
@@ -664,6 +678,14 @@ becomes a single editor-like curve unless that curve would cross another node
 box; only then does it keep the layout's route. A wire that can't get to the
 left side (it comes from further right) keeps the layout's route. Loop wires
 are left alone.
+
+A node whose title is wider than its pin rows (`On Target Perception Updated
+(AIPerception)`) would grow past the room the layout gave it, which only knew
+the rows, and touch the next node. `tightenNodeBoxes` reports such nodes, and
+`export_svg.mjs` lays the diagram out a second time with a larger `min-width`
+on that node's output rows (input rows if it has none), from a temporary
+`<name>.widened.mmd`; the `.mmd` itself is unchanged. So every node keeps the
+layout's gap (`rankSpacing`) to its neighbours.
 
 Pin rows are stacked tightly from the top of their node (4 px apart,
 `ROW_GAP` in `tightenNodeBoxes`), inputs and outputs each in their own column,

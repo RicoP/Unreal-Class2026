@@ -202,6 +202,10 @@ async function tightenNodeBoxes(page, svgFile, mmdSource) {
     const arrowGap = rowGaps.length ? rowGaps[Math.floor(rowGaps.length / 2)] : 0;
 
     const boxes = new Map(); // cluster id -> { rect, old, now, wireY }
+    // Nodes whose title is wider than their pin rows: the layout only knew the rows, so the box
+    // grows past the room it was given and can touch its neighbour. Their rows get this minimum
+    // width and the diagram is laid out again (see widenForTitles).
+    const widen = {}; // cluster id -> { side: "in" | "out", minWidth }
     for (const cluster of clusters) {
       const pins = members.get(cluster.id);
       const rect = cluster.querySelector(":scope > rect");
@@ -256,6 +260,17 @@ async function tightenNodeBoxes(page, svgFile, mmdSource) {
       const titleMargin = title.top - old.top; // subGraphTitleMargin.top
       // Some room beside the title, where wires to the box itself arrive and leave.
       const width = Math.max(pin.right - pin.left, title.right - title.left + 2 * TITLE_SIDE);
+      const missing = title.right - title.left + 2 * TITLE_SIDE - (pin.right - pin.left);
+      if (missing > 1) {
+        const outputs = pins.filter(isOutput);
+        const side = outputs.length ? "out" : "in";
+        const column = side === "out" ? outputs : pins.filter((row) => !isOutput(row));
+        const labelWidth = Math.max(...column.map((row) => {
+          const span = row.querySelector("span");
+          return span ? localBox(rect, span).right - localBox(rect, span).left : 0;
+        }));
+        widen[cluster.id] = { side, minWidth: Math.ceil(labelWidth + missing) + 2 };
+      }
       const centre = (pin.left + pin.right) / 2;
       const now = {
         left: centre - width / 2,
@@ -630,7 +645,7 @@ async function tightenNodeBoxes(page, svgFile, mmdSource) {
     // Mermaid caps the drawing at its natural width; keep that cap in step.
     if (svg.style.maxWidth) svg.style.maxWidth = `${view.width}px`;
 
-    return new XMLSerializer().serializeToString(svg);
+    return { svg: new XMLSerializer().serializeToString(svg), widen };
   }, pinOrders, commentChildren);
 }
 
@@ -680,6 +695,32 @@ const outputRoot = path.join(repoRoot, "Doc", "commits", "Transient");
 const graphRoot = path.join(outputRoot, "graph", "transient");
 
 /** Files below a folder (absolute paths), recursively. */
+/**
+ * The diagram source with wider pin rows for the nodes in widen (from tightenNodeBoxes): every
+ * row of the given column of such a node gets the given minimum label width, so the layout
+ * leaves room for the node's title and keeps the usual gap to the next node.
+ */
+function widenForTitles(source, widen) {
+  let current = null;
+  return source
+    .split("\n")
+    .map((line) => {
+      const open = /^\s*subgraph\s+([^\s[]+)/.exec(line);
+      if (open) {
+        current = widen[open[1]] ? open[1] : null;
+        return line;
+      }
+      if (/^\s*end\s*$/.test(line)) {
+        current = null;
+        return line;
+      }
+      if (!current) return line;
+      const { side, minWidth } = widen[current];
+      return line.includes(`text-align:${side === "out" ? "right" : "left"}`) ? line.replace(/min-width:[\d.]+px/, `min-width:${minWidth}px`) : line;
+    })
+    .join("\n");
+}
+
 function filesBelow(folder) {
   if (!existsSync(folder)) {
     return [];
@@ -908,17 +949,28 @@ for (const file of sources.filter((f) => f.toLowerCase().endsWith(".mmd"))) {
     continue;
   }
 
-  const result = spawnSync(
-    process.execPath,
-    [cli, "--input", path.join(repoRoot, file), "--output", output, "--backgroundColor", "transparent", "--puppeteerConfigFile", puppeteerConfig, "--quiet"],
-    { encoding: "utf8" },
-  );
+  const render = (input) =>
+    spawnSync(
+      process.execPath,
+      [cli, "--input", input, "--output", output, "--backgroundColor", "transparent", "--puppeteerConfigFile", puppeteerConfig, "--quiet"],
+      { encoding: "utf8" },
+    );
+  let result = render(path.join(repoRoot, file));
   if (result.status === 0) {
     const metadata = assetMetadata(path.join(repoRoot, file), repoRoot);
     browser ??= await puppeteer.launch(JSON.parse(readFileSync(puppeteerConfig, "utf8")));
     const page = await browser.newPage();
-    const mmdSource = readFileSync(path.join(repoRoot, file), "utf8");
-    const tightened = await tightenNodeBoxes(page, output, mmdSource);
+    let mmdSource = readFileSync(path.join(repoRoot, file), "utf8");
+    let { svg: tightened, widen } = await tightenNodeBoxes(page, output, mmdSource);
+    if (Object.keys(widen).length) {
+      // Lay out again with room for the titles; the .mmd itself stays as it is.
+      mmdSource = widenForTitles(mmdSource, widen);
+      const widened = output.replace(/\.svg$/i, ".widened.mmd");
+      writeFileSync(widened, mmdSource, "utf8");
+      result = render(widened);
+      rmSync(widened, { force: true });
+      if (result.status === 0) ({ svg: tightened } = await tightenNodeBoxes(page, output, mmdSource));
+    }
     await page.close();
     const rendered = arrowheadsOnBackEdges(tightened, mmdSource);
     const svg = withPalette(useColourVariables(colourArrowheads(rendered)));

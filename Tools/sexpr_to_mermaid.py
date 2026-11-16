@@ -169,7 +169,8 @@ def display_name(name):
     if name == "self":
         return "Target"
     # Boolean names carry a "b" prefix in code ("bLooping") that the editor hides.
-    name = re.sub(r"^b(?=[A-Z])", "", name)
+    # Also after a split struct pin's prefix: "Stimulus_bSuccessfullySensed" -> "Stimulus Successfully Sensed".
+    name = re.sub(r"(^|_)b(?=[A-Z])", r"\1", name)
     # Split before a capital that starts a word ("ActionValue", "XAxis"), but keep
     # runs of capitals together ("iOS" stays "iOS").
     name = re.sub(r"(?<=[a-z0-9])(?=[A-Z][a-z])|(?<=[A-Z])(?=[A-Z][a-z])", " ", name)

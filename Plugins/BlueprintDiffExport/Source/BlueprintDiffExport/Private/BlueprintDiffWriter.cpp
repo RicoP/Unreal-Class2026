@@ -506,6 +506,111 @@ namespace
 		return Entries;
 	}
 
+	/** A name as the editor shows it, with "_" for spaces so it stays one part of a setting path. */
+	FString PathPart(const FString& DisplayName)
+	{
+		return DisplayName.Replace(TEXT(" "), TEXT("_"));
+	}
+
+	/**
+	 * The instanced sub-objects an object holds in its editable properties, single or in arrays,
+	 * in property order, with the property holding them: a perception component's sense configs
+	 * ("SensesConfig" -> its AISenseConfig_Sight). Their settings are edited in place, inside the
+	 * owner's Details panel, but PropertyEntries only sees the reference to them.
+	 */
+	TArray<TPair<FString, const UObject*>> InstancedSubobjects(const UObject* Object)
+	{
+		TArray<TPair<FString, const UObject*>> Result;
+		if (!Object)
+		{
+			return Result;
+		}
+		for (TFieldIterator<FProperty> It(Object->GetClass()); It; ++It)
+		{
+			const FProperty* Property = *It;
+			if (!Property->HasAnyPropertyFlags(CPF_Edit))
+			{
+				continue;
+			}
+			const auto Add = [&](const FObjectPropertyBase* ObjectProperty, const void* ValuePtr)
+			{
+				const UObject* Value = ObjectProperty->GetObjectPropertyValue(ValuePtr);
+				if (Value && Value->IsIn(Object))
+				{
+					Result.Emplace(Property->GetName(), Value);
+				}
+			};
+			if (const FObjectPropertyBase* ObjectProperty = CastField<FObjectPropertyBase>(Property))
+			{
+				if (ObjectProperty->HasAnyPropertyFlags(CPF_InstancedReference))
+				{
+					Add(ObjectProperty, ObjectProperty->ContainerPtrToValuePtr<void>(const_cast<UObject*>(Object)));
+				}
+			}
+			else if (const FArrayProperty* ArrayProperty = CastField<FArrayProperty>(Property))
+			{
+				const FObjectPropertyBase* Inner = CastField<FObjectPropertyBase>(ArrayProperty->Inner);
+				if (Inner && (Inner->HasAnyPropertyFlags(CPF_InstancedReference) || ArrayProperty->HasAnyPropertyFlags(CPF_InstancedReference)))
+				{
+					FScriptArrayHelper Helper(ArrayProperty, ArrayProperty->ContainerPtrToValuePtr<void>(const_cast<UObject*>(Object)));
+					for (int32 Index = 0; Index < Helper.Num(); ++Index)
+					{
+						Add(Inner, Helper.GetRawPtr(Index));
+					}
+				}
+			}
+		}
+		return Result;
+	}
+
+	/**
+	 * The settings of New's instanced sub-objects that differ from the matching sub-object of Old
+	 * (same property and class), or from their class defaults when Old has none, as entries named
+	 * "<property> <sub-object class> <setting>", for example
+	 * "SensesConfig AI_Sight_config Sight_Radius" (display names, "_" for spaces).
+	 */
+	void AddInstancedSubobjectEntries(const UObject* Old, const UObject* New, bool bReference, int32 Depth,
+		const FString& OldPackage, const FString& NewPackage, TArray<FString>& Entries)
+	{
+		const TArray<TPair<FString, const UObject*>> OldSubobjects = InstancedSubobjects(Old);
+		TSet<int32> Matched;
+		for (const TPair<FString, const UObject*>& Pair : InstancedSubobjects(New))
+		{
+			const UObject* Subobject = Pair.Value;
+			const UObject* Baseline = nullptr;
+			for (int32 Index = 0; Index < OldSubobjects.Num() && !Baseline; ++Index)
+			{
+				if (!Matched.Contains(Index) && OldSubobjects[Index].Key == Pair.Key && OldSubobjects[Index].Value->GetClass() == Subobject->GetClass())
+				{
+					Matched.Add(Index);
+					Baseline = OldSubobjects[Index].Value;
+				}
+			}
+			if (!Baseline)
+			{
+				Baseline = Subobject->GetClass()->GetDefaultObject();
+			}
+			const FString Prefix = Pair.Key + TEXT(" ") + PathPart(Subobject->GetClass()->GetDisplayNameText().ToString()) + TEXT(" ");
+			TArray<FSingleObjectDiffEntry> Differences;
+			DiffUtils::CompareUnrelatedObjects(Baseline, Subobject, Differences);
+			for (const FSingleObjectDiffEntry& Difference : Differences)
+			{
+				if (Difference.DiffType != EPropertyDiffType::PropertyValueChanged)
+				{
+					continue;
+				}
+				const FProperty* Property = Difference.Identifier.Resolve(Subobject).Property;
+				const FString Setting = Property ? PathPart(Property->GetDisplayNameText().ToString()) : Difference.Identifier.ToDisplayName();
+				const FString Name = Quote(Prefix + Setting);
+				const FString NewValue = PropertyValueText(Difference.Identifier, Subobject, OldPackage, NewPackage);
+				Entries.Add(bReference
+					? FString::Printf(TEXT("%s(set %s %s)"), *Indent(Depth), *Name, *NewValue)
+					: FString::Printf(TEXT("%s(changed %s (old %s) (new %s))"), *Indent(Depth), *Name,
+						*PropertyValueText(Difference.Identifier, Baseline, OldPackage, NewPackage), *NewValue));
+			}
+		}
+	}
+
 	/** An asset's import data (source file, and for Interchange imports the import options), or null. */
 	const UAssetImportData* ImportDataOf(const UObject* Asset)
 	{
@@ -747,8 +852,10 @@ namespace
 			{
 				Baseline = Entry.Template->GetClass()->GetDefaultObject<UActorComponent>();
 			}
-			const TArray<FString> Properties = PropertyEntries(Baseline, Entry.Template, bReference, false, 4,
+			TArray<FString> Properties = PropertyEntries(Baseline, Entry.Template, bReference, false, 4,
 				OldPackageOf(Baseline, Entry.Template), NewPackage);
+			// Settings of sub-objects edited inside the component (a perception component's senses).
+			AddInstancedSubobjectEntries(Baseline, Entry.Template, bReference, 4, OldPackageOf(Baseline, Entry.Template), NewPackage, Properties);
 			if (!bNew && Properties.IsEmpty())
 			{
 				continue;

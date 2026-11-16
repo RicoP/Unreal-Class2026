@@ -33,7 +33,11 @@ def setting_name(name):
     code prefix like in the editor ('bOrientRotationToMovement' -> 'Orient Rotation To Movement')."""
     if name in SETTING_NAMES:
         return SETTING_NAMES[name]
-    return " › ".join(words(re.sub(r"^b(?=[A-Z])", "", part)) for part in name.split())
+    # Parts the plugin writes as display names ("AI_Sight_config", a sub-object's class or
+    # setting as the Details panel names it) use "_" for spaces.
+    return " › ".join(
+        part.replace("_", " ") if "_" in part else words(re.sub(r"^b(?=[A-Z])", "", part)) for part in name.split()
+    )
 
 
 # Older properties that the engine keeps next to their replacement, with the same value.
@@ -52,6 +56,9 @@ def shorten(text):
         lambda m: m.group(1),
         text,
     )
+    # A Blueprint class: its Blueprint's name, as the editor's class pickers show it
+    # ("BP_Hero", not the generated class "BP_Hero_C").
+    text = re.sub(r"\"?/Script/[\w.]+\.\w*GeneratedClass'/[\w/-]+\.([\w-]+?)_C'\"?", r"\1", text)
     # References to assets: show the asset name, e.g. "IA_Zoom".
     # Asset names may contain hyphens (character-female-a).
     text = re.sub(r"\"?/Script/[\w.]+'/[\w/-]+\.([\w-]+)(?::[\w.]+)?'\"?", r"\1", text)
@@ -98,7 +105,7 @@ def describe_item(item):
         value = shorten(value)
         if value.startswith("(") and value.endswith(")"):
             value = " + ".join(split_top_level(value[1:-1]))
-        fields.append(f"{words(key)}: {value}")
+        fields.append(f"{words(re.sub(r'^b(?=[A-Z])', '', key))}: {value}")
     return ", ".join(fields)
 
 
