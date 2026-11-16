@@ -564,6 +564,11 @@ def blueprint_settings_markdown(diff, diff_path):
             attach = first(component, "attach-to")
             rows.append(("Add Component", None, f"{label} ({kind}" + (f", attached to {words(attach[1])})" if attach else ")")))
         entries = (first(component, "properties") or ["properties"])[1:]
+        # A sub-object's settings come twice when it existed before: as "SensesConfig[0] Setting"
+        # (the property diff) and as "SensesConfig AI_Sight_config Setting" (the plugin's own
+        # entry, with display names). Keep the readable one.
+        readable = {entry[1].split()[0] for entry in entries if len(entry[1].split()) > 2 and "_" in entry[1].split()[1]}
+        entries = [entry for entry in entries if re.sub(r"\[\d+\]$", "", entry[1].split()[0]) not in readable or "[" not in entry[1].split()[0]]
         names = {entry[1] for entry in entries}
         for entry in entries:
             if SUPERSEDED.get(entry[1]) in names:
@@ -584,6 +589,10 @@ def blueprint_settings_markdown(diff, diff_path):
                              for channel, response in before.items() if channel not in after and response != "Block"]
                 continue
             rows.append((f"{label} › {setting_name(entry[1])}", old, new))
+
+    # A setting that reads the same before and after (the engine reports some unchanged class
+    # defaults as removed, e.g. Hidden True -> True) is nothing to do.
+    rows = [row for row in rows if row[1] is None or row[2] is None or value_cell(row[1]) != value_cell(row[2])]
 
     lines = [f"### {name} (Blueprint Class)", ""]
     # A new Blueprint, or one that gets new components: its component tree first.
