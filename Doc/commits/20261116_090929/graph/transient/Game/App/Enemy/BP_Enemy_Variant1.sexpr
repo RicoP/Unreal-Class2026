@@ -1,0 +1,4 @@
+(blueprint-diff "/Game/App/Enemy/BP_Enemy_Variant1"
+  (old (revision "c9c2541d") (date "2026-11-09T09:57:38.000Z") (description "Give the enemies Kenney characters with shared animations\n\n- Import Kenney's mini characters: character-female-a.fbx with its\n  Skeleton and 32 animations, then 18 more characters as meshes only,\n  sharing that Skeleton and the colormap material.\n- BP_Enemy_Base uses character-female-a (capsule and mesh offset fitted),\n  BP_Enemy_Variant1 the zombie.\n- Lvl_ThirdPerson: level geometry changes (documented as a screenshot).\n- Doc/commits/20261109_105725: documentation of this step.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (parent "/Game/App/Enemy/BP_Enemy_Base.BP_Enemy_Base_C"))

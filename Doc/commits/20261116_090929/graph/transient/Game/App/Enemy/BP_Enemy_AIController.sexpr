@@ -1,0 +1,25 @@
+(blueprint-diff "/Game/App/Enemy/BP_Enemy_AIController"
+  (old (revision "6087b05e") (date "2026-11-16T07:03:59.000Z") (description "Enemies chase the player only while they see them\n\n- BP_Enemy_AIController: new AI controller with an AI Perception\n  component; its sight sees 1500 units (lost at 1800) in a 90 degree\n  cone, detects neutrals and friendlies, and forgets after 1 s. On Target\n  Perception Updated tells the enemy whether it sees the hero.\n- BP_Enemy_Base: uses BP_Enemy_AIController; Set Target stores the hero\n  while seen and clears it otherwise; the AI timer moves to Target only\n  while it is valid, instead of always to the player character.\n- Doc/commits/20261116_080349: documentation of this step.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (parent "/Script/AIModule.AIController")
+  (defaults
+    (removed "bHidden" (old "True") (new "True"))
+    (removed "bRelevantForLevelBounds" (old "True") (new "True"))
+    (removed "bGenerateOverlapEventsDuringLevelStreaming" (old "False") (new "False"))
+    (removed "UpdateOverlapsMethodDuringLevelStreaming" (old "UseConfigDefault") (new "UseConfigDefault"))
+    (removed "DefaultUpdateOverlapsMethodDuringLevelStreaming" (old "OnlyUpdateMovable") (new "OnlyUpdateMovable"))
+    (removed "SpriteScale" (old "1.000000") (new "1.000000")))
+  (components
+    (component "AIPerception" (class "AIPerceptionComponent") (kind added)
+      (properties
+        (changed "SensesConfig[0] PeripheralVisionAngleDegrees" (old "45.000000") (new "75.000000"))
+        (changed "SensesConfig AI_Sight_config Peripheral_Vision_Half_Angle" (old "45.000000") (new "75.000000")))))
+  (graph "EventGraph"
+    (node-moved minor
+      (text "Moved Node 'On Target Perception Updated (AIPerception)'")
+      (old (node "K2Node_ComponentBoundEvent_0" "On Target Perception Updated (AIPerception)" (pos 0 464)))
+      (new (node "K2Node_ComponentBoundEvent_0" "On Target Perception Updated (AIPerception)" (pos -224 464))))
+    (node-moved minor
+      (text "Moved Node 'Cast To BP_Hero'")
+      (old (node "K2Node_DynamicCast_0" "Cast To BP_Hero" (pos 768 464)))
+      (new (node "K2Node_DynamicCast_0" "Cast To BP_Hero" (pos 304 464))))))
