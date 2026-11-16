@@ -64,8 +64,8 @@ config:
   themeCSS: "g.node *, g.cluster * { filter: none !important; }"
   flowchart:
     curve: monotoneX
-    nodeSpacing: 20
-    rankSpacing: 60
+    nodeSpacing: 8
+    rankSpacing: 30
     subGraphTitleMargin:
       top: 4
       bottom: 4

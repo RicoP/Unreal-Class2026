@@ -215,6 +215,30 @@ async function tightenNodeBoxes(page, svgFile, mmdSource) {
         boxes.set(cluster.id, { rect, old: r, now: r, wireY: (r.top + r.bottom) / 2, collapsed: true });
         continue;
       }
+      // The layout puts each pin row level with what it is wired to, which can leave big gaps
+      // inside a node (Branch's True far below Condition). Stack each column (inputs left,
+      // outputs right) tightly from the top instead, like the editor: exec rows first, then
+      // the rest in the order the layout chose (fewest crossings). Wires bend along here and
+      // are redrawn as curves to the rows' new places below.
+      const ROW_GAP = 4; // px between two pin rows
+      const rowY = (row) => Number(row.getAttribute("transform").match(/translate\(\s*[-\d.e]+[ ,]+([-\d.e]+)/)[1]);
+      const isExec = (row) => !!row.querySelector("polygon");
+      const isOutput = (row) => /text-align:\s*right/.test(row.innerHTML);
+      const rowHeight = Math.max(...pins.map((row) => row.getBBox().height));
+      const firstY = Math.min(...pins.map(rowY));
+      for (const column of [pins.filter((row) => !isOutput(row)), pins.filter(isOutput)]) {
+        column
+          .sort((a, b) => isExec(b) - isExec(a) || rowY(a) - rowY(b))
+          .forEach((row, i) => {
+            const dy = firstY + i * (rowHeight + ROW_GAP) - rowY(row);
+            if (Math.abs(dy) < 0.5) return;
+            const [, x, y] = row.getAttribute("transform").match(/translate\(\s*([-\d.e]+)[ ,]+([-\d.e]+)/);
+            row.setAttribute("transform", `translate(${x}, ${Number(y) + dy})`);
+            const id = CSS.escape(row.dataset.id);
+            for (const path of svg.querySelectorAll(`path.flowchart-link.LS-${id}`)) bendWire(path, 0, dy, true);
+            for (const path of svg.querySelectorAll(`path.flowchart-link.LE-${id}`)) bendWire(path, 0, dy, false);
+          });
+      }
       const pinBoxes = pins.map((p) => localBox(rect, p));
       const pin = {
         left: Math.min(...pinBoxes.map((b) => b.left)),
@@ -266,9 +290,11 @@ async function tightenNodeBoxes(page, svgFile, mmdSource) {
     }
     // Pin rows now touch the border and their body-coloured fill would cover it, so draw the
     // borders once more on top of everything.
+    const borderCopies = new Map(); // a node box's rect -> its border drawn on top
     for (const { rect, collapsed } of boxes.values()) {
       if (collapsed) continue;
       const border = rect.cloneNode();
+      borderCopies.set(rect, border);
       border.removeAttribute("id");
       border.style.fill = "none";
       border.style.pointerEvents = "none";
@@ -533,6 +559,50 @@ async function tightenNodeBoxes(page, svgFile, mmdSource) {
       }
     };
     Object.keys(commentChildren).forEach(fitComment);
+
+    // Graph boxes (subgraphs G_..., one per graph when a Blueprint has several): room for the
+    // title above what the box holds. With tight spacing the layout leaves none, and a comment
+    // box that grew upward for its own title takes the rest. Each graph box is a drawing of its
+    // own (g.root) and they are stacked, so a box that grows pushes the ones below it down.
+    const GRAPH_PAD = 6; // px between a graph box's title and its border, and what it holds
+    const graphBoxes = [...svg.querySelectorAll("g.root")]
+      .map((root) => ({ root, cluster: root.querySelector(':scope > g.clusters > g.cluster[id^="G_"]') }))
+      .filter(({ cluster }) => cluster)
+      .sort((a, b) => a.root.getBoundingClientRect().top - b.root.getBoundingClientRect().top);
+    let pushedDown = 0;
+    for (const { root, cluster } of graphBoxes) {
+      const rect = cluster.querySelector(":scope > rect");
+      const label = cluster.querySelector(":scope > g.cluster-label");
+      const held = [...root.querySelectorAll("g.cluster > rect, g.node")].filter((el) => el !== rect);
+      if (!rect || !label || !held.length) continue;
+      const title = localBox(rect, label);
+      const contentTop = Math.min(...held.map((el) => localBox(rect, el).top));
+      const top = rect.y.baseVal.value;
+      const wantedTop = contentTop - GRAPH_PAD - (title.bottom - title.top) - GRAPH_PAD;
+      const grow = Math.max(0, top - wantedTop);
+      const move = (el, dy) => {
+        const [, tx, ty] = (el.getAttribute("transform") ?? "translate(0, 0)").match(/translate\(\s*([-\d.e]+)[ ,]+([-\d.e]+)/);
+        el.setAttribute("transform", `translate(${Number(tx)}, ${Number(ty) + dy})`);
+      };
+      if (grow > 0) {
+        rect.setAttribute("y", top - grow);
+        rect.setAttribute("height", rect.height.baseVal.value + grow);
+      }
+      move(label, top - grow + GRAPH_PAD - title.top);
+      pushedDown += grow;
+      if (pushedDown > 0) {
+        move(root, pushedDown);
+        // The borders drawn on top are outside the box's drawing: move those of its nodes along.
+        for (const [original, border] of borderCopies) {
+          if (!root.contains(original)) continue;
+          const m = border.getAttribute("transform").match(/matrix\(([^)]+)\)/)[1].split(",").map(Number);
+          m[5] += pushedDown;
+          border.setAttribute("transform", `matrix(${m.join(",")})`);
+        }
+      }
+    }
+    svg.viewBox.baseVal.height += pushedDown;
+
     // A comment that grew past the edge of the drawing: let the drawing grow with it.
     const view = svg.viewBox.baseVal;
     const edges = [...fitted]
@@ -573,6 +643,34 @@ if (!existsSync(cli)) {
   console.error("Mermaid CLI is missing. Run `npm install` in Tools/ first.");
   process.exit(1);
 }
+
+/**
+ * Mermaid lays out a subgraph that has no wires to the outside (our graph boxes, and comment
+ * boxes around a whole chain) as a drawing of its own, with a fixed 50 px between rows and
+ * columns ("Todo: set proper spacing" in its source) instead of the diagram's nodeSpacing and
+ * rankSpacing. That made such diagrams far larger than the others. This changes the installed
+ * Mermaid (Tools/node_modules, pinned to one version) so those subgraphs use the spacing of the
+ * drawing around them; it runs before every export, so a fresh `npm install` is patched too.
+ */
+function useDiagramSpacingInSubgraphs() {
+  const file = path.join(toolsDir, "node_modules", "mermaid", "dist", "mermaid.js");
+  const marker = "/* spacing of the surrounding drawing (Tools/export_svg.mjs) */";
+  const source = existsSync(file) ? readFileSync(file, "utf8") : "";
+  if (source.includes(marker)) {
+    return;
+  }
+  const fixed = /nodesep: 50,(\s*)ranksep: 50,/g;
+  if ((source.match(fixed) ?? []).length !== 1) {
+    console.error("Mermaid's subgraph spacing wasn't found (another Mermaid version?); diagrams with graph or comment boxes come out wider spaced.");
+    return;
+  }
+  writeFileSync(
+    file,
+    source.replace(fixed, `${marker}\n          nodesep: graph.graph().nodesep ?? 50,$1ranksep: graph.graph().ranksep ?? 50,`),
+    "utf8",
+  );
+}
+useDiagramSpacingInSubgraphs();
 
 const repoRoot = execFileSync("git", ["rev-parse", "--show-toplevel"], { cwd: toolsDir, encoding: "utf8" }).trim();
 

@@ -385,6 +385,31 @@ what they see on screen.
   curves that don't overshoot horizontally. (Other options in Mermaid 10:
   `basis`, `linear`, `step`, `stepBefore`, `stepAfter`, `bumpX`, `bumpY`,
   `monotoneY`, `cardinal`, `catmullRom`, `natural`, `bundle`.)
+- Spacing is tight, so diagrams aren't larger than needed: the front matter
+  sets `nodeSpacing: 8` (between rows of a column, so between a node's pin
+  rows) and `rankSpacing: 30` (between columns, so between a node's input and
+  output pins and between nodes). Mermaid 10 ignores these inside a subgraph
+  without wires to the outside (every graph box, and a comment box around a
+  whole chain): it lays that out on its own with a fixed 50 px ("Todo: set
+  proper spacing" in its source). `export_svg.mjs`
+  (`useDiagramSpacingInSubgraphs`) therefore patches the installed
+  `Tools/node_modules/mermaid/dist/mermaid.js` before every export so such
+  subgraphs take the spacing of the drawing around them. The patch is marked
+  in that file, is applied again by itself after a fresh `npm install`, and
+  prints a warning if another Mermaid version doesn't have the spot.
+- With tight spacing the layout leaves no room for a graph box's title, so
+  `export_svg.mjs` makes it: each graph box (`G_...`, a drawing of its own,
+  stacked top to bottom) grows upward until its title fits above what it
+  holds, including comment boxes that grew for their own titles, and pushes
+  the graph boxes below it down (the node borders drawn on top move along,
+  and the viewBox grows).
+- Re-rendering a finished step's diagrams after a style rule changed (ask the
+  user first; done for `20261115_084649` when the spacing changed): run
+  `python Tools/sexpr_to_mermaid.py` on the `blueprint-diff` files in
+  `<step>/graph/transient`, `node Tools/export_svg.mjs` on its `.mmd` files
+  (with file arguments each SVG lands next to its source), move those SVGs to
+  `<step>/<package path>.svg`, then `node Tools/export_doc.mjs --regenerate
+  <step>`. This redraws with all current rules, not only the changed one.
 - Don't give the diagram a title.
 - No drop shadows: the front matter sets `look: classic` and a `themeCSS`
   rule `filter: none` on nodes and clusters, because newer Mermaid
@@ -639,6 +664,14 @@ becomes a single editor-like curve unless that curve would cross another node
 box; only then does it keep the layout's route. A wire that can't get to the
 left side (it comes from further right) keeps the layout's route. Loop wires
 are left alone.
+
+Pin rows are stacked tightly from the top of their node (4 px apart,
+`ROW_GAP` in `tightenNodeBoxes`), inputs and outputs each in their own column,
+exec rows first and the rest in the order the layout chose. The layout puts
+each row level with what it is wired to, which left large gaps inside nodes
+(Branch's `True` far below `Condition`); the wires are redrawn to the rows'
+new places. The layout's node positions stay, so this shrinks nodes, not the
+whole drawing.
 
 Exec output rows (Sequence's `Then 0`, `Then 1`, Branch, Switch) are stacked
 in pin order, top to bottom, like in the editor. Dagre sorts rows to reduce
