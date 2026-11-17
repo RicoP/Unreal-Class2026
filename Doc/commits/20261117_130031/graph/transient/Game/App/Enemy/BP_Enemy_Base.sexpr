@@ -1,0 +1,71 @@
+(blueprint-diff "/Game/App/Enemy/BP_Enemy_Base"
+  (old (revision "c48dec7f") (date "2026-11-16T08:09:38.000Z") (description "Enemies chase a ghost of the player once they lose sight\n\n- BP_Ghost: a Character that only collides with the world (capsule ignores\n  everything but WorldStatic and WorldDynamic, so it blocks neither sight\n  nor pawns), possessed by BP_Ghost_AIController, which walks it forward\n  every tick.\n- BP_Enemy_Base: Target is now any Character. When sight is lost, the\n  enemy's ghost is spawned at the player, or moved there if it exists,\n  and becomes the Target.\n- BP_Enemy_AIController: peripheral vision half angle 75 instead of 45.\n- Lvl_ThirdPerson: new walls built with Modeling Mode (two Cube Grid\n  meshes, one with a hole and convex collision, and a box) and two new\n  actors. The level and these meshes aren't documented.\n- BP_Enemy_Variant1: saved again without changes of its own.\n- Doc/commits/20261116_090929: documentation of this step.\n\nCo-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"))
+  (new working-copy)
+  (parent "/Script/Engine.Character")
+  (graph "EventGraph"
+    (node-moved minor
+      (text "Moved Node 'AI MoveTo'")
+      (old (node "K2Node_AIMoveTo_0" "AI MoveTo" (pos -32 448)))
+      (new (node "K2Node_AIMoveTo_0" "AI MoveTo" (pos 64 448))))
+    (pin-links-added addition
+      (text "Added Link to 'then'")
+      (old-pin (pin "K2Node_AIMoveTo_0" "then") (links) (default ""))
+      (new-pin (pin "K2Node_AIMoveTo_0" "then") (links (pin "K2Node_CallFunction_4" "execute")) (default "")))
+    (node-moved minor
+      (text "Moved Node 'Self-Reference'")
+      (old (node "K2Node_Self_0" "Self-Reference" (pos -272 560)))
+      (new (node "K2Node_Self_0" "Self-Reference" (pos -352 656))))
+    (pin-links-added addition
+      (text "Added Link to 'self'")
+      (old-pin (pin "K2Node_Self_0" "self") (links (pin "K2Node_AIMoveTo_0" "Pawn")) (default ""))
+      (new-pin (pin "K2Node_Self_0" "self") (links (pin "K2Node_AIMoveTo_0" "Pawn") (pin "K2Node_CallFunction_2" "self")) (default "")))
+    (pin-links-added addition
+      (text "Added Link to 'Target'")
+      (old-pin (pin "K2Node_VariableGet_0" "Target") (links (pin "K2Node_MacroInstance_0" "InputObject") (pin "K2Node_AIMoveTo_0" "TargetActor")) (default ""))
+      (new-pin (pin "K2Node_VariableGet_0" "Target") (links (pin "K2Node_MacroInstance_0" "InputObject") (pin "K2Node_AIMoveTo_0" "TargetActor") (pin "K2Node_CallFunction_0" "self")) (default "")))
+    (node-moved minor
+      (text "Moved Node 'Is Valid'")
+      (old (node "K2Node_MacroInstance_0" "Is Valid" (pos -304 448)))
+      (new (node "K2Node_MacroInstance_0" "Is Valid" (pos -240 448))))
+    (node-added addition
+      (text "Added Node 'Get Actor Location'")
+      (node "K2Node_CallFunction_0" "Get Actor Location" (pos -192 768))
+      (pin in "self" "Actor Object Reference" (links (pin "K2Node_VariableGet_0" "Target")))
+      (pin out "ReturnValue" "Vector" (links (pin "K2Node_CallFunction_4" "LineEnd"))))
+    (node-added addition
+      (text "Added Node 'Get Actor Location'")
+      (node "K2Node_CallFunction_2" "Get Actor Location" (pos -192 656))
+      (pin in "self" "Actor Object Reference" (links (pin "K2Node_Self_0" "self")))
+      (pin out "ReturnValue" "Vector" (links (pin "K2Node_CallFunction_4" "LineStart"))))
+    (node-added addition
+      (text "Added Node 'DrawDebugLine'")
+      (node "K2Node_CallFunction_4" "DrawDebugLine" (pos 592 448))
+      (pin in "execute" "Exec" (links (pin "K2Node_AIMoveTo_0" "then")))
+      (pin out "then" "Exec")
+      (pin in "LineStart" "Vector" (links (pin "K2Node_CallFunction_2" "ReturnValue")))
+      (pin in "LineEnd" "Vector" (links (pin "K2Node_CallFunction_0" "ReturnValue")))
+      (pin in "LineColor" "Linear Color Structure" (links (pin "K2Node_Select_0" "ReturnValue")))
+      (pin in "Duration" "Float (single-precision)" (default "0.500000"))
+      (pin in "Thickness" "Float (single-precision)" (default "0.000000"))
+      (pin in "DepthPriority" "EDrawDebugSceneDepthPriorityGroup Enum" (default "World")))
+    (node-added addition
+      (text "Added Node 'Get Target'")
+      (node "K2Node_VariableGet_1" "Get Target" (pos -544 992))
+      (pin out "Target" "Character Object Reference" (links (pin "K2Node_PromotableOperator_0" "A"))))
+    (node-added addition
+      (text "Added Node 'Get Ghost'")
+      (node "K2Node_VariableGet_2" "Get Ghost" (pos -544 1057))
+      (pin out "Ghost" "BP Ghost Object Reference" (links (pin "K2Node_PromotableOperator_0" "B"))))
+    (node-added addition
+      (text "Added Node 'Equal (Object)'")
+      (node "K2Node_PromotableOperator_0" "Equal (Object)" (pos -352 992))
+      (pin in "A" "Object Reference" (links (pin "K2Node_VariableGet_1" "Target")))
+      (pin in "B" "Object Reference" (links (pin "K2Node_VariableGet_2" "Ghost")))
+      (pin out "ReturnValue" "Boolean" (links (pin "K2Node_Select_0" "Index"))))
+    (node-added addition
+      (text "Added Node 'Select'")
+      (node "K2Node_Select_0" "Select" (pos -176 914))
+      (pin in "Option 0" "Linear Color Structure" (default "(R=0.017865,G=0.000000,B=1.000000,A=1.000000)"))
+      (pin in "Option 1" "Linear Color Structure" (default "(R=1.000000,G=0.000000,B=0.019477,A=1.000000)"))
+      (pin in "Index" "Boolean" (links (pin "K2Node_PromotableOperator_0" "ReturnValue")))
+      (pin out "ReturnValue" "Linear Color Structure" (links (pin "K2Node_CallFunction_4" "LineColor"))))))
