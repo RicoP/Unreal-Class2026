@@ -108,11 +108,24 @@ to rebuild it themselves.
   `CharacterMesh0`, `CharMoveComp`). Tables drop the boolean `b` prefix, show
   CamelCase enum values as words (`Placed In World Or Spawned`), and skip
   older properties that sit next to their replacement (`SkeletalMesh` next to
-  `SkeletalMeshAsset`, see `SUPERSEDED` in `sexpr_to_table.py`). In
-  `doc.html` this table comes before the graph: the create heading below (or
-  "<path>: Class Defaults and Components"), then "<path>: Graph".
-  Asset metadata has `part="settings"` (the table) or `part="graph"` (the
-  diagram SVG) for Blueprints.
+  `SkeletalMeshAsset`, see `SUPERSEDED` in `sexpr_to_table.py`). The plugin
+  writes the name the Details panel shows for each property last in its entry,
+  `(display "Actor Hidden in Game")` for `bHidden` (`FProperty::GetDisplayNameText`),
+  and `entry_label` in `sexpr_to_table.py` uses it for the last part of a row's
+  label (`Class Defaults › Actor Hidden in Game`). A name taken from a
+  `DisplayName` in the engine's source keeps its spelling there ("Actor Hidden
+  In Game") while the Details panel shows small words in lowercase, as the
+  engine's own name conversion does ("Orient Rotation to Movement"), so
+  `lower_small_words` applies that rule (In, As, To, Or, At, On, If, Be, By, The,
+  For, And, With, When, From; never the first word); exports from before it keep
+  the converted raw name, and the raw name stays what the script's
+  special cases match (`SUPERSEDED`, `ASSET_BOOKKEEPING`, ...). In
+  `doc.html` this table comes before the graphs: the create heading below (or
+  "<path>: Class Defaults and Components"), then one section per graph,
+  "<path>: EventGraph", "<path>: Function Set Target" (event graphs before
+  functions' graphs; steps from before the split have one "<path>: Graph").
+  Asset metadata has `part="settings"` (the table) or `part="graph"` (a
+  diagram SVG, with `graph="<section title>"`) for Blueprints.
 - A Blueprint diff lists its functions like its variables: `(functions
   (added|removed "<name>" (override ..) (pure ..) (const ..) (access ..)
   (category ..) (inputs (param "<name>" (type ..) (default ..)) ...)

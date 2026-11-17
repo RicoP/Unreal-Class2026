@@ -28,6 +28,29 @@ def words(name):
 SETTING_NAMES = {"AnimNotifies": "Notifies"}  # the Notifies track of an animation or montage
 
 
+# Small words the editor writes in lowercase inside a name (FName::NameToDisplayString), "Orient
+# Rotation to Movement". A name taken from a DisplayName in the engine's source ("Actor Hidden In
+# Game") keeps its spelling there, but the Details panel shows it the same way ("Actor Hidden in Game").
+SMALL_WORDS = {"In", "As", "To", "Or", "At", "On", "If", "Be", "By", "The", "For", "And", "With", "When", "From"}
+
+
+def lower_small_words(text):
+    """'Actor Hidden In Game' -> 'Actor Hidden in Game' (never the first word)."""
+    return " ".join(w if i == 0 or w not in SMALL_WORDS else w.lower() for i, w in enumerate(text.split(" ")))
+
+
+def entry_label(entry):
+    """The label of a property entry: its last part is what the plugin wrote as (display "...")
+    when there is one, the name the Details panel shows ("Actor Hidden in Game", for bHidden),
+    otherwise the name converted by setting_name; parts before it (the properties it sits in,
+    "BodyInstance") are converted."""
+    shown = first(entry, "display")
+    if not shown:
+        return setting_name(entry[1])
+    parts = entry[1].split()
+    return " › ".join([setting_name(part) for part in parts[:-1]] + [lower_small_words(shown[1])])
+
+
 def setting_name(name):
     """'DefaultKeyMappings Mappings' -> 'Default Key Mappings › Mappings'; booleans lose their
     code prefix like in the editor ('bOrientRotationToMovement' -> 'Orient Rotation To Movement')."""
@@ -121,9 +144,11 @@ def cell(value):
     return (text or "(empty)").replace("|", "\\|").replace("\n", " ")
 
 
-def change_rows(name, old, new, describe=describe, old_describe=None):
+def change_rows(name, old, new, describe=describe, old_describe=None, label=None):
     """Table rows for one changed setting; lists of structs are compared item by item.
-    describe (old_describe for removed items) turns a list element into text."""
+    describe (old_describe for removed items) turns a list element into text; label
+    (default: the converted name) is what the first column says."""
+    label = label or setting_name(name)
     old_describe = old_describe or describe
     old_items, new_items = list_items(old), list_items(new)
     # An empty array is exported as "", so treat it as an empty list next to a real one.
@@ -132,16 +157,16 @@ def change_rows(name, old, new, describe=describe, old_describe=None):
     if new_items is None and new in ("", None) and old_items is not None:
         new_items = []
     if old_items is None or new_items is None:
-        return [f"| {setting_name(name)} | {cell(old)} | {cell(new)} |"]
+        return [f"| {label} | {cell(old)} | {cell(new)} |"]
     rows = []
     remaining = list(new_items)
     for item in old_items:
         if item in remaining:
             remaining.remove(item)
         else:
-            rows.append(f"| {setting_name(name)}: remove | {cell(old_describe(item))} | — |")
+            rows.append(f"| {label}: remove | {cell(old_describe(item))} | — |")
     for item in remaining:
-        rows.append(f"| {setting_name(name)}: add | — | {cell(describe(item))} |")
+        rows.append(f"| {label}: add | — | {cell(describe(item))} |")
     return rows
 
 
@@ -216,10 +241,10 @@ def to_markdown(diff):
             new = first(entry, "new")[1]
             items = list_items(new)
             if items is None:
-                lines.append(f"| {setting_name(entry[1])} | {cell(new)} |")
+                lines.append(f"| {entry_label(entry)} | {cell(new)} |")
             else:
                 describe_new = describers.get(entry[1], (describe,))[0]
-                lines += [f"| {setting_name(entry[1])}: add | {cell(describe_new(item))} |" for item in items]
+                lines += [f"| {entry_label(entry)}: add | {cell(describe_new(item))} |" for item in items]
     else:
         lines += [
             f"Open `{name}` in `{package.rsplit('/', 1)[0]}` and change:",
@@ -230,7 +255,7 @@ def to_markdown(diff):
         for entry in properties:
             old, new = first(entry, "old"), first(entry, "new")
             lines += change_rows(entry[1], old[1] if old else None, new[1] if new else None,
-                                 *describers.get(entry[1], ()))
+                                 *describers.get(entry[1], ()), label=entry_label(entry))
     return "\n".join(lines) + "\n"
 
 
@@ -291,7 +316,7 @@ def actor_to_markdown(diff):
                 continue  # unrotated: nothing to do
             lines.append(f"| {name} | {value} |")
         for entry in properties:
-            lines.append(f"| {setting_name(entry[1])} | {cell(first(entry, 'new')[1])} |")
+            lines.append(f"| {entry_label(entry)} | {cell(first(entry, 'new')[1])} |")
         return "\n".join(lines) + "\n"
 
     old_transform = transform_rows(first(diff, "old-transform"))
@@ -302,7 +327,7 @@ def actor_to_markdown(diff):
     ]
     for entry in properties:
         old, new = first(entry, "old"), first(entry, "new")
-        rows += change_rows(entry[1], old[1] if old else None, new[1] if new else None)
+        rows += change_rows(entry[1], old[1] if old else None, new[1] if new else None, label=entry_label(entry))
     if not rows:
         lines.append("No changes.")
         return "\n".join(lines) + "\n"
@@ -553,7 +578,7 @@ def blueprint_settings_markdown(diff, diff_path):
     defaults = [entry for entry in defaults if entry[1] not in added_names]
     for entry in defaults:
         old = first(entry, "old")
-        rows.append((f"Class Defaults › {setting_name(entry[1])}", old[1] if old else None, first(entry, "new")[1]))
+        rows.append((f"Class Defaults › {entry_label(entry)}", old[1] if old else None, first(entry, "new")[1]))
     for component in components:
         if component[0] == "component-removed":
             rows.append(("Remove Component", words(component[1]), None))
@@ -588,7 +613,7 @@ def blueprint_settings_markdown(diff, diff_path):
                     rows += [(f"{setting} › {channel}", response, "Block")
                              for channel, response in before.items() if channel not in after and response != "Block"]
                 continue
-            rows.append((f"{label} › {setting_name(entry[1])}", old, new))
+            rows.append((f"{label} › {entry_label(entry)}", old, new))
 
     # A setting that reads the same before and after (the engine reports some unchanged class
     # defaults as removed, e.g. Hidden True -> True) is nothing to do.

@@ -494,14 +494,23 @@ namespace
 			const FString NewValue = PropertyValueText(Difference.Identifier, New, OldPackage, NewPackage);
 			if (bReference)
 			{
-				Entries.Add(FString::Printf(TEXT("%s(set %s %s)"), *Indent(Depth), *Name, *NewValue));
+			// The name the Details panel shows for the property itself (the last part of the path):
+			// "Actor Hidden in Game" for bHidden. Last in the entry, so readers that take the
+			// value by position still find it.
+			const FProperty* Shown = Difference.Identifier.Resolve(New).Property;
+			if (!Shown)
+			{
+				Shown = Difference.Identifier.Resolve(Old).Property;
+			}
+			const FString Display = Shown ? FString::Printf(TEXT(" (display %s)"), *Quote(Shown->GetDisplayNameText().ToString())) : FString();
+				Entries.Add(FString::Printf(TEXT("%s(set %s %s%s)"), *Indent(Depth), *Name, *NewValue, *Display));
 				continue;
 			}
 			const TCHAR* Kind =
 				Difference.DiffType == EPropertyDiffType::PropertyAddedToA ? TEXT("removed") :
 				Difference.DiffType == EPropertyDiffType::PropertyAddedToB ? TEXT("added") : TEXT("changed");
-			Entries.Add(FString::Printf(TEXT("%s(%s %s (old %s) (new %s))"), *Indent(Depth), Kind, *Name,
-				*PropertyValueText(Difference.Identifier, Old, OldPackage, NewPackage), *NewValue));
+			Entries.Add(FString::Printf(TEXT("%s(%s %s (old %s) (new %s)%s)"), *Indent(Depth), Kind, *Name,
+				*PropertyValueText(Difference.Identifier, Old, OldPackage, NewPackage), *NewValue, *Display));
 		}
 		return Entries;
 	}
