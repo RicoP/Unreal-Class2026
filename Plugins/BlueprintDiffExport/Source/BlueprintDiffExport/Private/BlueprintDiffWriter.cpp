@@ -7,6 +7,8 @@
 #include "EdGraph/EdGraphPin.h"
 #include "EdGraphNode_Comment.h"
 #include "EdGraphSchema_K2.h"
+#include "EdGraphUtilities.h"
+#include "HAL/FileManager.h"
 #include "Components/ActorComponent.h"
 #include "Components/SceneComponent.h"
 #include "Engine/Blueprint.h"
@@ -492,8 +494,6 @@ namespace
 			}
 			const FString Name = Quote(Difference.Identifier.ToDisplayName());
 			const FString NewValue = PropertyValueText(Difference.Identifier, New, OldPackage, NewPackage);
-			if (bReference)
-			{
 			// The name the Details panel shows for the property itself (the last part of the path):
 			// "Actor Hidden in Game" for bHidden. Last in the entry, so readers that take the
 			// value by position still find it.
@@ -503,6 +503,8 @@ namespace
 				Shown = Difference.Identifier.Resolve(Old).Property;
 			}
 			const FString Display = Shown ? FString::Printf(TEXT(" (display %s)"), *Quote(Shown->GetDisplayNameText().ToString())) : FString();
+			if (bReference)
+			{
 				Entries.Add(FString::Printf(TEXT("%s(set %s %s%s)"), *Indent(Depth), *Name, *NewValue, *Display));
 				continue;
 			}
@@ -1449,6 +1451,79 @@ bool ExportActorDiff(AActor* Actor, FString& OutPath, FString& OutError)
 		&& WriteLines(Reference, OutputPathFor(FileName, TEXT("Doc/commits/Transient/graph/reference")), OutError);
 }
 
+namespace
+{
+	/** "Set Target" -> "Set_Target": a graph's name as part of a file name (as sexpr_to_mermaid.py does). */
+	FString GraphFilePart(const FString& GraphPath)
+	{
+		FString Result;
+		for (const TCHAR Char : GraphPath)
+		{
+			const bool bKeep = (Char >= 'A' && Char <= 'Z') || (Char >= 'a' && Char <= 'z') || (Char >= '0' && Char <= '9');
+			if (bKeep)
+			{
+				Result.AppendChar(Char);
+			}
+			else if (!Result.IsEmpty() && !Result.EndsWith(TEXT("_")))
+			{
+				Result.AppendChar('_');
+			}
+		}
+		Result.RemoveFromEnd(TEXT("_"));
+		return Result;
+	}
+
+	/**
+	 * Every graph of a Blueprint as the text Unreal copies nodes with (Ctrl+C in the Blueprint
+	 * editor), one file per graph: Doc/commits/Transient/graph/native/<package path>.graph.<graph><Suffix>.txt.
+	 * The doc's editor views are drawn from it (blueprintUE's renderer, Tools/bue-render).
+	 * ReplacePackage: the old revision is loaded under a temporary package name; its text names
+	 * the real package instead, so the two versions only differ where the Blueprint does.
+	 */
+	void WriteNativeGraphs(const UBlueprint* Blueprint, const FString& PackageName, const TCHAR* Suffix, const FString& ReplacePackage)
+	{
+		const FString Base = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(),
+			TEXT("Doc/commits/Transient/graph/native"), PackageName.RightChop(1)));
+		for (const TPair<FString, UEdGraph*>& Pair : GraphsByPath(Blueprint))
+		{
+			TSet<UObject*> Nodes;
+			for (UEdGraphNode* Node : Pair.Value->Nodes)
+			{
+				if (Node)
+				{
+					Nodes.Add(Node);
+				}
+			}
+			const FString Path = FString::Printf(TEXT("%s.graph.%s%s.txt"), *Base, *GraphFilePart(Pair.Key), Suffix);
+			if (Nodes.IsEmpty())
+			{
+				IFileManager::Get().Delete(*Path, false, true, true);
+				continue;
+			}
+			FString Text;
+			FEdGraphUtilities::ExportNodesToText(Nodes, Text);
+			if (!ReplacePackage.IsEmpty())
+			{
+				Text.ReplaceInline(*ReplacePackage, *PackageName);
+			}
+			FFileHelper::SaveStringToFile(Text, *Path, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
+		}
+	}
+
+	/** Remove the native graph texts of an earlier export of this Blueprint (graphs may be gone). */
+	void DeleteNativeGraphs(const FString& PackageName)
+	{
+		const FString Base = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(),
+			TEXT("Doc/commits/Transient/graph/native"), PackageName.RightChop(1)));
+		TArray<FString> Files;
+		IFileManager::Get().FindFiles(Files, *(Base + TEXT(".graph.*.txt")), true, false);
+		for (const FString& File : Files)
+		{
+			IFileManager::Get().Delete(*FPaths::Combine(FPaths::GetPath(Base), File), false, true, true);
+		}
+	}
+}
+
 bool ExportDiff(UBlueprint* Blueprint, FString& OutPath, FString& OutError)
 {
 	if (!Blueprint)
@@ -1493,6 +1568,14 @@ bool ExportDiff(UBlueprint* Blueprint, FString& OutPath, FString& OutError)
 		AddGraphDiffs(Path, OldGraph ? *OldGraph : nullptr, NewGraph ? *NewGraph : nullptr, Lines);
 	}
 	Lines.Last() += TEXT(")");
+
+	// The graphs as Unreal's own node text, now and in the last committed revision.
+	DeleteNativeGraphs(PackageName);
+	WriteNativeGraphs(Blueprint, PackageName, TEXT(""), FString());
+	if (OldBlueprint)
+	{
+		WriteNativeGraphs(OldBlueprint, PackageName, TEXT(".old"), OldBlueprint->GetOutermost()->GetName());
+	}
 
 	return WriteLines(Lines, OutPath, OutError)
 		&& WriteLines(ReferenceLines(Blueprint), OutputPathFor(PackageName, TEXT("Doc/commits/Transient/graph/reference")), OutError);

@@ -1,5 +1,6 @@
-# Publish Doc/ on GitHub Pages. Doc/ is the documentation website as Tools/export_doc.mjs
-# writes it: index.html, doc.js, steps.json and the steps in Doc/commits/<YYYYMMDD_HHmmss>/.
+# Publish Doc/ on GitHub Pages. Doc/ is the documentation website: index.html, palettes.css,
+# bue-palettes.css and steps.js as Tools/export_doc.mjs writes them, doc.css, doc.js and
+# bue-render as they are kept there, and the steps in Doc/commits/<YYYYMMDD_HHmmss>/.
 # Left out: the work in progress (commits/Transient), the source data (graph/) and the separate
 # SVG files, which every doc.html already embeds.
 name: Documentation website
@@ -36,7 +37,7 @@ jobs:
         run: |
           rsync -a --exclude 'commits/Transient/' --exclude 'graph/' --exclude '*.svg' Doc/ _site/
           touch _site/.nojekyll
-      # index.html and steps.json may list the work in progress (commits/Transient) as the last
+      # index.html and steps.js may list the work in progress (commits/Transient) as the last
       # step; write them again from the steps that are published.
       - name: Write the step list
         run: node Tools/export_doc.mjs --site --commits _site/commits

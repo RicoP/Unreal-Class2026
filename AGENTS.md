@@ -266,8 +266,68 @@ to rebuild it themselves.
 - Non-Blueprint assets have no graph, so the lesson shows them as tables.
   Generate one with `python Tools/sexpr_to_table.py <file>.sexpr`; it writes a
   `.md` file next to the diff.
-- Diagrams for a change go next to its diff, with the same base name and the
-  `.mmd` extension. Generate them with
+- Editor views: a graph's section in `doc.html` shows the graph as the
+  Blueprint editor draws it, instead of our own diagram (user decision: the
+  before-and-after view already says what changed), with
+  blueprintUE's renderer (`Doc/bue-render`: `render.js`, `render.css`,
+  `diff.js`, `diff.css` and its MIT `LICENSE`, copied unchanged from
+  `github.com/blueprintue/blueprintue-self-hosted-edition`, `www/bue-render`;
+  the only copy, nothing generates it: the pages load it from there, and the
+  Pages workflow publishes `Doc/` as it is. Update it by replacing these
+  files, and keep our own changes in `Doc/doc.css` (styles) and `Doc/doc.js`
+  (script), not in them). It draws from the
+  text Unreal copies nodes with, which the plugin writes for every graph of
+  an exported Blueprint (`WriteNativeGraphs`,
+  `FEdGraphUtilities::ExportNodesToText`):
+  `Doc/commits/Transient/graph/native/<package path>.graph.<graph>.txt`, and
+  `.old.txt` for the last committed revision (its temporary package name
+  replaced by the real one). The graph part of the name is the same as in the
+  diagram's file name. `editorView` in `export_doc.mjs` embeds the texts in
+  hidden textareas (so the page works from disk) under
+  `<div class="editor-view">`, and `doc.js` starts
+  `blueprintUE.render.Main(text, element, {height})`, or with an old text
+  `blueprintUE.diff.Main(old, new, element, {height})`, its side-by-side
+  comparison with a list of changes. The renderer sizes that list by its
+  longest entry, which took a third of the view, so `Doc/doc.css` pins it
+  to 150 px with smaller text (entries wrap; blueprintUE's own files stay
+  unchanged). A view is `70vh` high (a share of the window, not pixels, so it
+  is as big on every screen; the renderer puts the `height` option into a CSS
+  `height:`), and in a diff the watermark of each pane reads BEFORE and AFTER
+  (`doc.js` sets it from the start callback, because `diff.js` hands both
+  panes the same options). The views are read-only: `doc.css` sets
+  `pointer-events: none` on `.node`, so a node can't be grabbed, moved,
+  selected or have its checkboxes and values changed (the renderer starts in
+  read mode, so wires can't be drawn either); the arrows that fold a node's
+  extra pins stay clickable. The renderer itself pans with the right mouse
+  button only and draws a selection rectangle on a left drag; zooming needs
+  Ctrl + wheel (a plain wheel only shows "Use ctrl + scroll to zoom" and
+  scrolls the page, so a long page isn't trapped by the views; in fullscreen
+  the wheel zooms). `doc.js` makes the left button pan: a capture-phase
+  `mousedown` on the view hands a left press on the canvas (`.layer`, but not
+  the fold arrows) to the renderer as a synthetic right-button press, which
+  it then follows as the mouse moves (the right button still works). In a
+  diff both panes move together until Lock / Unlock is switched. A caption
+  `<p class="hint">` under each view's heading (`editorView`) tells students
+  these controls. A page only loads the renderer when it
+  has such a view. A graph without native text (steps exported before this)
+  keeps showing its diagram SVG. The diagram is still generated and rendered
+  for every graph, because the section, its heading (`%% graph`) and its place
+  in the page come from it; only the page leaves it out. The renderer shows
+  whole graphs with the editor's node positions and has none of our diagram
+  rules (dimming, pure marks, palettes), so the rules under "Mermaid diagram
+  style" only show in steps without editor views.
+- Diagrams for a change go next to its diff, one per graph of the Blueprint:
+  `<name>.graph.<graph>.mmd` (`BP_Enemy_Base.graph.EventGraph.mmd`,
+  `BP_Enemy_Base.graph.Set_Target.mmd`; characters other than letters and
+  digits in the graph's name become `_`), rendered to
+  `<package path>.graph.<graph>.svg`. Each gets its own section in
+  `doc.html`, so graphs of different sizes aren't stacked and centred in one
+  drawing. The diagram's `%% graph <title>` line is its section title
+  (`graph_title`): the graph's name, or for a function's graph `Function
+  <name>` with ` (pure)` or ` (override)`, or `Construction Script`. A graph
+  with nothing to draw gets no file, and files of an earlier run that aren't
+  written again are removed, also the single `<name>.mmd` of steps from before
+  the split (those steps keep working as they are). Generate them with
   `python Tools/sexpr_to_mermaid.py <file>.sexpr` instead of writing them by
   hand. The script applies the style rules below and takes its colours from
   the default palette in `Tools/palette.json`. When a style rule changes, update
@@ -326,24 +386,31 @@ to rebuild it themselves.
   existing export and removes an outdated `doc.md` from before the switch to
   HTML.
 - Layout: `Tools/` holds every documentation tool (Python and Node scripts,
-  `doc_sources.mjs`, `palette.json`, `package.json`, `node_modules`, `doc.js`,
-  `doc.css`); `Doc/` is the documentation website itself and contains only
-  generated files: `Doc/index.html`, `Doc/doc.js`, `Doc/doc.css`,
-  `Doc/steps.json` and the steps in `Doc/commits/<YYYYMMDD_HHmmss>/` (plus
-  `Doc/commits/Transient`, ignored by git). `export_doc.mjs` rewrites the four
-  root files on every run (`--site` writes only them): `index.html` lists the
+  `doc_sources.mjs`, `palette.json`, `package.json`, `node_modules`);
+  `Doc/` is the documentation website itself and contains generated files:
+  `Doc/index.html`, `Doc/palettes.css`, `Doc/bue-palettes.css`,
+  `Doc/steps.js` and the steps in `Doc/commits/<YYYYMMDD_HHmmss>/` (plus
+  `Doc/commits/Transient`, ignored by git), and the hand-maintained
+  things (`Doc/doc.css`, `Doc/doc.js`, `Doc/asset_sources.json`,
+  `Doc/bue-render`; edit those in place, there is no copy in `Tools/`).
+  `export_doc.mjs` rewrites the four
+  generated root files on every run (`--site` writes only them): `index.html` lists the
   finished steps in order, oldest first, as `Step 1`, `Step 2`, ... (the folder
   dates only give the order and aren't shown) with their section headings;
-  `doc.js` is copied from `Tools/doc.js`; `doc.css` is `Tools/doc.css` plus the
-  palettes from `palette.json` (`body[data-palette=...]` rules for the page and
-  its SVGs); `steps.json` is the step folders in order. Edit styles in
-  `Tools/doc.css`, never in `Doc/doc.css`. While `Transient` has a `doc.html`,
+  `doc.js` and `doc.css` are not generated; `palettes.css` is the colour
+  palettes from `palette.json` (`body[data-palette=...]` variable rules for the
+  page and its SVGs), which `doc.css` imports (`@import`), so every page and
+  every finished step gets them through `doc.css` alone; `bue-palettes.css`
+  is the same palettes for blueprintUE's renderer (see "Colours" below), linked
+  by pages with editor views; `steps.js` is the step folders in order. Never
+  edit the two palette files: change `palette.json`. While `Transient` has a `doc.html`,
   it is listed as the last step ("Step N (work in progress)") in `index.html`
-  and `steps.json`, so its layout and step navigation can be checked with the
+  and `steps.js`, so its layout and step navigation can be checked with the
   rest of the website. The Pages workflow publishes without it: after
   collecting the site it runs `node Tools/export_doc.mjs --site --commits
   _site/commits`, which writes the step list from the published steps only.
-- `Doc/asset_sources.json` is the one hand-maintained file in `Doc/`: a lookup
+- `Doc/asset_sources.json` is the one hand-maintained data file in `Doc/`
+  (next to the vendored `Doc/bue-render`, see the editor views above): a lookup
   from an asset file (repo-relative, forward slashes, e.g.
   `Content/itch-assets/StaticMeshes/arrow_A.uasset`) to the page it was
   downloaded from (e.g. `https://kaylousberg.itch.io/fantasy-weapons-bits`).
@@ -377,10 +444,12 @@ to rebuild it themselves.
   hand). `doc.js`: (1) the colour palette switch (applies the page's
   `<select id="palette">`, remembers the choice in localStorage
   `doc-palette`, accepts `?palette=<name>`), on disk and online; (2) step
-  navigation: fetches `steps.json` next to itself (no globals) and puts a
-  "‹ Step 2 · Step 3 of 4 · Step 4 ›" bar into the page's `<header>`
-  (left/right arrow keys work too). Pages opened from disk can't fetch, so
-  they show no bar.
+  navigation: loads `steps.js` next to itself with a `<script>` element;
+  that file calls `docSteps([...])` (defined by `doc.js`) with the step
+  folders, which puts a "‹ Step 2 · Step 3 of 4 · Step 4 ›" bar into the
+  page's `<header>` (left/right arrow keys work too). It is a script and not
+  JSON because a page opened from disk may load scripts but not fetch files,
+  so the bar works on disk and online.
 - Website: `.github/workflows/pages.yml` publishes `Doc/` on GitHub Pages on
   every push to `main` that touches `Doc/` (or by hand, "Run workflow"),
   without `commits/Transient`, `graph/` folders and separate SVG files (the
@@ -600,8 +669,16 @@ what they see on screen.
 
 ### Colours
 
-All colours live in `Tools/palette.json`, the one place to change them. Its
-`default` palette is the Unreal editor look below, used by `.mmd` files and
+All colours live in `Tools/palette.json`, the one place to change them
+(`export_doc.mjs` turns it into `Doc/palettes.css` and `Doc/bue-palettes.css`).
+Its `bue` section says which palette colour stands for which pin types, wire
+colours (blueprintUE's script sets them as `stroke` attributes, so they are
+matched by value), node header classes and the node body of blueprintUE's
+renderer. `bue-palettes.css` repeats, for every palette but `default`, only the
+colours that palette changes, under `body[data-palette=<name>] .editor-view
+.bue-render`, so they win over the renderer's own rules in any file order; the
+default palette leaves the renderer in the Unreal editor look it already has.
+The `default` palette is the Unreal editor look below, used by `.mmd` files and
 built into every SVG. Each default colour must be unique, because
 `export_svg.mjs` maps rendered colours back to their names; text is
 `#f2f2f2` rather than white so it differs from exec pins. Other palettes

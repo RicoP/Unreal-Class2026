@@ -10,6 +10,7 @@ that can't be drawn (such as removed nodes) are listed on stderr.
 """
 
 import argparse
+import glob
 import json
 import re
 import sys
@@ -815,8 +816,30 @@ def is_entry(node):
     return node.role == "event" or node.name.startswith("K2Node_FunctionEntry")
 
 
-def to_mermaid(diff, warnings, reference=None):
-    graphs = lists(diff, "graph")
+def has_function_entry(expr):
+    """Whether a graph expression (from a diff or a reference file) holds a function entry node."""
+    if not isinstance(expr, list):
+        return False
+    if len(expr) > 1 and expr[0] == "node" and str(expr[1]).startswith("K2Node_FunctionEntry"):
+        return True
+    return any(has_function_entry(item) for item in expr)
+
+
+def graph_title(graph_name, diff, reference):
+    """What a graph's section is called: "EventGraph", or for a function's graph
+    "Function GetWeaponHitBoxPoint (pure)", "Function Received_Notify (override)"."""
+    graphs = [g for expr in (diff, reference) if expr for g in lists(expr, "graph") if g[1] == graph_name]
+    if not any(has_function_entry(g) for g in graphs):
+        return graph_name
+    if graph_name == "UserConstructionScript":
+        return "Construction Script"
+    mark = " (override)" if graph_name in OVERRIDES else " (pure)" if graph_name in PURE_FUNCTIONS else ""
+    return f"Function {graph_name}{mark}"
+
+
+def to_mermaid(diff, warnings, reference=None, only=None):
+    """The diagram of a Blueprint diff; with only, of that one graph (None if it has nothing to draw)."""
+    graphs = [g for g in lists(diff, "graph") if only is None or g[1] == only]
     lines, styles, classes, edges, invisible = [], [], {}, [], []
 
     drawable = []  # (graph name, nodes, wires, comments) for graphs with something left to draw
@@ -892,6 +915,9 @@ def to_mermaid(diff, warnings, reference=None):
         lines.append("")
 
     out = [HEADER, ""]
+    if only is not None:
+        # Read by doc_sources.mjs: the heading of this graph's section.
+        out += [f"    %% graph {graph_title(only, diff, reference)}", ""]
     out += lines
     out += ["    %% Wires"]
     back = []
@@ -963,20 +989,30 @@ def main():
             warnings.append("no reference file; only added nodes and their direct neighbours are drawn")
         OVERRIDES.clear()
         OVERRIDES.update(overridden_functions(diff, reference))
-        output = path.with_suffix(".mmd")
-        text = to_mermaid(diff, warnings, reference)
+        # One diagram per graph, <name>.graph.<graph>.mmd, so each gets its own section in the
+        # doc instead of all of them stacked in one drawing. Diagrams from an earlier run that
+        # aren't written again (a graph without changes now, or the single <name>.mmd of older
+        # versions of this script) are removed.
+        stale = {path.with_suffix(".mmd"), *path.parent.glob(f"{glob.escape(path.stem)}.graph.*.mmd")}
+        written = []
+        for graph_name in dict.fromkeys(g[1] for g in lists(diff, "graph")):
+            text = to_mermaid(diff, warnings, reference, only=graph_name)
+            if text is None:
+                continue  # nothing to draw, e.g. only default events
+            safe = re.sub(r"[^A-Za-z0-9]+", "_", graph_name).strip("_")
+            output = path.with_name(f"{path.stem}.graph.{safe}.mmd")
+            output.write_text(text, encoding="utf-8", newline="\n")
+            written.append(output)
+            print(f"Wrote {output}")
         for warning in warnings:
             print(f"{path.name}: {warning}", file=sys.stderr)
         # A Blueprint's parent class, class defaults and components are a table written by
         # sexpr_to_table.py (<name>.settings.md); an older version of this script wrote <name>.md.
         path.with_suffix(".md").unlink(missing_ok=True)
-        if text is None:
-            # Nothing to draw, e.g. a new Blueprint with only its default events.
-            output.unlink(missing_ok=True)
+        for old in stale - set(written):
+            old.unlink(missing_ok=True)
+        if not written:
             print(f"{path}: nothing to draw, no diagram written")
-            continue
-        output.write_text(text, encoding="utf-8", newline="\n")
-        print(f"Wrote {output}")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,9 @@
-/* Shared stylesheet of the documentation website. Tools/export_doc.mjs copies it to Doc/doc.css
-   and appends the colour palettes from Tools/palette.json (CSS variables such as --text, set on
-   <body data-palette="...">). Loaded by Doc/index.html (body.index) and every
-   Doc/commits/<step>/doc.html (body.step) as ../../doc.css. */
+/* The stylesheet of the documentation website, written by hand and edited here (there is no
+   copy in Tools/). Loaded by Doc/index.html (body.index) and every Doc/commits/<step>/doc.html
+   (body.step) as ../../doc.css. The colour palettes are generated (Tools/palette.json) into
+   palettes.css, imported below, which the pages and the finished steps get through this file;
+   pages with editor views also link bue-palettes.css, the palettes for blueprintUE's renderer. */
+@import url("palettes.css");
 
 body {
   margin: 0;
@@ -35,6 +37,25 @@ body.step { padding: 24px 16px; }
 .figure { max-width: 100%; overflow-x: auto; scrollbar-color: #6a6a6a transparent; }
 .figure svg { display: block; max-width: 100%; height: auto; }
 .figure svg[style*="max-width"] { width: 100000px; }
+
+/* The editor view below a diagram: the whole graph, drawn by blueprintUE's renderer, which
+   brings its own look (bue-render/render.css). It pans and zooms inside this box. */
+.editor-view { margin: 12px 0 0; max-width: 100%; }
+.editor-view > p { margin: 0 0 6px; font-size: 13px; color: #bdbdbd; }
+.editor-view > p.hint { margin: -2px 0 8px; font-size: 12px; line-height: 1.5; color: #9a9a9a; }
+.editor-view .bue-graph { border: 1px solid #3a3a3a; border-radius: 6px; overflow: hidden; }
+/* Read-only: the nodes don't take the mouse, so they can't be grabbed, moved or selected, and the
+   checkboxes and values on them can't be changed. What's behind them (the canvas) still pans and
+   zooms, and the arrows that fold a node's extra pins in and out stay clickable. */
+.editor-view .bue-render .node { pointer-events: none; }
+.editor-view .bue-render .node .less, .editor-view .bue-render .node .more { pointer-events: auto; }
+/* The diff view's list of changes: blueprintUE sizes it by its longest entry, which took a
+   third of the view. Keep it narrow with smaller text; long entries wrap. */
+.editor-view .bue-diff .summary { flex: 0 0 150px; width: 150px; box-sizing: border-box; padding: 6px; font-size: 11px; line-height: 1.35; }
+.editor-view .bue-diff .summary__buttons { height: auto; padding-bottom: 8px; align-items: stretch; }
+.editor-view .bue-diff .summary__button { flex: 1 1 0; min-width: 0; height: auto; padding: 4px; font-size: 10px; line-height: 1.2; }
+.editor-view .bue-diff .summary__title { font-size: 13px; }
+.editor-view .bue-diff .summary__list-item { overflow-wrap: anywhere; padding: 1px 0; }
 
 /* Tables (sexpr_to_table.py), drawn like the diagrams: node body, neutral grid, striped rows.
    Wide tables scroll inside their box instead of widening the page. */
@@ -83,10 +104,3 @@ body.step { padding: 24px 16px; }
 /* Asset names link to where the asset was downloaded (Doc/asset_sources.json). */
 .table a, .step .assets a { color: #7cc4ff; text-decoration: none; border-bottom: 1px dotted currentColor; }
 .table a:hover, .step .assets a:hover { border-bottom-style: solid; }
-
-/* Palettes from Tools/palette.json, written by Tools/export_doc.mjs. */
-body[data-palette="default"], body[data-palette="default"] svg { --node-body: #151515; --text: #f2f2f2; --text-muted: #999999; --border-event: #b3261e; --border-setter: #2b5d8f; --border-neutral: #3a3a3a; --border-function: #8a8a8a; --border-call: #456980; --border-context: #555555; --table-header: #262626; --table-stripe: #1c1c1c; --pin-exec: #ffffff; --pin-boolean: #950000; --pin-byte: #006f65; --pin-integer: #1fe3af; --pin-integer64: #ace3af; --pin-float: #38d500; --pin-name: #cd82ff; --pin-string: #ff00d4; --pin-text: #e77caa; --pin-vector: #ffca23; --pin-rotator: #a0b4ff; --pin-transform: #ff7300; --pin-object: #00aaf5; --pin-delegate: #ff3838; --pin-other: #777777; }
-body[data-palette="red-green-safe"], body[data-palette="red-green-safe"] svg { --node-body: #151515; --text: #f2f2f2; --text-muted: #999999; --border-event: #cc79a7; --border-setter: #0072b2; --border-neutral: #3a3a3a; --border-function: #8a8a8a; --border-call: #b8a868; --border-context: #555555; --table-header: #262626; --table-stripe: #1c1c1c; --pin-exec: #ffffff; --pin-boolean: #cc79a7; --pin-byte: #66d9c2; --pin-integer: #009e73; --pin-integer64: #c8f0e0; --pin-float: #e69f00; --pin-name: #b39ddb; --pin-string: #bbbbbb; --pin-text: #f5b8d6; --pin-vector: #f0e442; --pin-rotator: #9fb6ff; --pin-transform: #a6761d; --pin-object: #56b4e9; --pin-delegate: #d55e00; --pin-other: #888888; }
-body[data-palette="blue-yellow-safe"], body[data-palette="blue-yellow-safe"] svg { --node-body: #151515; --text: #f2f2f2; --text-muted: #999999; --border-event: #ff7043; --border-setter: #9fb6ff; --border-neutral: #3a3a3a; --border-function: #8a8a8a; --border-call: #4f7f8f; --border-context: #555555; --table-header: #262626; --table-stripe: #1c1c1c; --pin-exec: #ffffff; --pin-boolean: #ff4f6d; --pin-byte: #b0b0b0; --pin-integer: #888888; --pin-integer64: #c8c8c8; --pin-float: #7dff4d; --pin-name: #ce93d8; --pin-string: #009e73; --pin-text: #ff9de2; --pin-vector: #ffb000; --pin-rotator: #d070ff; --pin-transform: #ff8c1a; --pin-object: #ab47bc; --pin-delegate: #e53935; --pin-other: #777777; }
-body[data-palette="high-contrast"], body[data-palette="high-contrast"] svg { --node-body: #000000; --text: #ffffff; --text-muted: #d0d0d0; --border-event: #ff8c1a; --border-setter: #5aa9ff; --border-neutral: #bfbfbf; --border-function: #e0e0e0; --border-call: #a8c8e8; --border-context: #808080; --table-header: #262626; --table-stripe: #101010; --pin-exec: #ffffff; --pin-boolean: #ff6680; --pin-byte: #00e0d0; --pin-integer: #00ffc8; --pin-integer64: #b8ffe0; --pin-float: #7dff4d; --pin-name: #e0a3ff; --pin-string: #ff66ff; --pin-text: #ffb3d1; --pin-vector: #ffe14d; --pin-rotator: #c0ccff; --pin-transform: #ffad5c; --pin-object: #33d1ff; --pin-delegate: #ff5c5c; --pin-other: #c8c8c8; }
-body[data-palette="greyscale"], body[data-palette="greyscale"] svg { --node-body: #000000; --text: #ffffff; --text-muted: #bdbdbd; --border-event: #ffffff; --border-setter: #808080; --border-neutral: #6e6e6e; --border-function: #bdbdbd; --border-call: #b8b8b8; --border-context: #4a4a4a; --table-header: #262626; --table-stripe: #141414; --pin-exec: #ffffff; --pin-boolean: #5c5c5c; --pin-byte: #8e8e8e; --pin-integer: #c6c6c6; --pin-integer64: #c6c6c6; --pin-float: #c6c6c6; --pin-name: #8e8e8e; --pin-string: #8e8e8e; --pin-text: #8e8e8e; --pin-vector: #ffffff; --pin-rotator: #c6c6c6; --pin-transform: #8e8e8e; --pin-object: #8e8e8e; --pin-delegate: #5c5c5c; --pin-other: #6e6e6e; }

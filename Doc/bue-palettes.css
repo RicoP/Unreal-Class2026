@@ -1,0 +1,287 @@
+/* The colour palettes for blueprintUE's renderer (Doc/bue-render) in the editor views.
+   Generated from Tools/palette.json (its "bue" section) by Tools/export_doc.mjs: don't edit.
+   Linked after bue-render/render.css by pages with editor views. */
+/* Red-green safe (protanopia, deuteranopia) */
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.bool { border-color: #cc79a7; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.bool.filled { background-color: #cc79a7; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .link path[stroke="#950000" i] { stroke: #cc79a7; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.byte { border-color: #66d9c2; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.byte.filled { background-color: #66d9c2; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.enum { border-color: #66d9c2; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.enum.filled { background-color: #66d9c2; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .link path[stroke="#006F65" i] { stroke: #66d9c2; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.int { border-color: #009e73; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.int.filled { background-color: #009e73; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.index { border-color: #009e73; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.index.filled { background-color: #009e73; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .link path[stroke="#1EE4AF" i] { stroke: #009e73; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.int64 { border-color: #c8f0e0; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.int64.filled { background-color: #c8f0e0; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.float { border-color: #e69f00; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.float.filled { background-color: #e69f00; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.double { border-color: #e69f00; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.double.filled { background-color: #e69f00; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.real { border-color: #e69f00; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.real.filled { background-color: #e69f00; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .link path[stroke="#A1FF45" i] { stroke: #e69f00; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .link path[stroke="#38D500" i] { stroke: #e69f00; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.name { border-color: #b39ddb; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.name.filled { background-color: #b39ddb; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .link path[stroke="#CD82FF" i] { stroke: #b39ddb; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.string { border-color: #bbbbbb; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.string.filled { background-color: #bbbbbb; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .link path[stroke="#FF00D5" i] { stroke: #bbbbbb; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.text { border-color: #f5b8d6; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.text.filled { background-color: #f5b8d6; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .link path[stroke="#E87CAA" i] { stroke: #f5b8d6; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.vector { border-color: #f0e442; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.vector.filled { background-color: #f0e442; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .link path[stroke="#FFCA22" i] { stroke: #f0e442; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.rotator { border-color: #9fb6ff; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.rotator.filled { background-color: #9fb6ff; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .link path[stroke="#A1B4FF" i] { stroke: #9fb6ff; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.transform { border-color: #a6761d; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.transform.filled { background-color: #a6761d; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .link path[stroke="#FF7300" i] { stroke: #a6761d; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.object { border-color: #56b4e9; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.object.filled { background-color: #56b4e9; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .link path[stroke="#00AAF5" i] { stroke: #56b4e9; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.delegate { border-color: #d55e00; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.delegate.filled { background-color: #d55e00; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .link path[stroke="#FF3838" i] { stroke: #d55e00; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.default { border-color: #888888; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.default.filled { background-color: #888888; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.wildcard { border-color: #888888; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.wildcard.filled { background-color: #888888; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.struct { border-color: #888888; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.struct.filled { background-color: #888888; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.class { border-color: #888888; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.class.filled { background-color: #888888; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.interface { border-color: #888888; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .pin .connector.interface.filled { background-color: #888888; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .link path[stroke="#E1CCAA" i] { stroke: #888888; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .link path[stroke="#817A7A" i] { stroke: #888888; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .link path[stroke="#0059CC" i] { stroke: #888888; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .link path[stroke="#5900BC" i] { stroke: #888888; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .link path[stroke="#F1FFAA" i] { stroke: #888888; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .node-color.event { background-color: #cc79a7; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .node-color.event.gradient { background: linear-gradient(90deg, rgba(204,121,167,.4) 0, rgba(204,121,167,.1)); }
+body[data-palette="red-green-safe"] .editor-view .bue-render .node-color.function-call { background-color: #b8a868; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .node-color.function-call.gradient { background: linear-gradient(90deg, rgba(184,168,104,.4) 0, rgba(184,168,104,.1)); }
+body[data-palette="red-green-safe"] .editor-view .bue-render .node-color.parent-function-call { background-color: #b8a868; }
+body[data-palette="red-green-safe"] .editor-view .bue-render .node-color.parent-function-call.gradient { background: linear-gradient(90deg, rgba(184,168,104,.4) 0, rgba(184,168,104,.1)); }
+/* Blue-yellow safe (tritanopia) */
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.bool { border-color: #ff4f6d; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.bool.filled { background-color: #ff4f6d; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .link path[stroke="#950000" i] { stroke: #ff4f6d; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.byte { border-color: #b0b0b0; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.byte.filled { background-color: #b0b0b0; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.enum { border-color: #b0b0b0; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.enum.filled { background-color: #b0b0b0; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .link path[stroke="#006F65" i] { stroke: #b0b0b0; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.int { border-color: #888888; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.int.filled { background-color: #888888; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.index { border-color: #888888; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.index.filled { background-color: #888888; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .link path[stroke="#1EE4AF" i] { stroke: #888888; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.int64 { border-color: #c8c8c8; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.int64.filled { background-color: #c8c8c8; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.float { border-color: #7dff4d; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.float.filled { background-color: #7dff4d; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.double { border-color: #7dff4d; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.double.filled { background-color: #7dff4d; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.real { border-color: #7dff4d; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.real.filled { background-color: #7dff4d; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .link path[stroke="#A1FF45" i] { stroke: #7dff4d; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .link path[stroke="#38D500" i] { stroke: #7dff4d; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.name { border-color: #ce93d8; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.name.filled { background-color: #ce93d8; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .link path[stroke="#CD82FF" i] { stroke: #ce93d8; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.string { border-color: #009e73; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.string.filled { background-color: #009e73; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .link path[stroke="#FF00D5" i] { stroke: #009e73; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.text { border-color: #ff9de2; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.text.filled { background-color: #ff9de2; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .link path[stroke="#E87CAA" i] { stroke: #ff9de2; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.vector { border-color: #ffb000; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.vector.filled { background-color: #ffb000; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .link path[stroke="#FFCA22" i] { stroke: #ffb000; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.rotator { border-color: #d070ff; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.rotator.filled { background-color: #d070ff; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .link path[stroke="#A1B4FF" i] { stroke: #d070ff; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.transform { border-color: #ff8c1a; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.transform.filled { background-color: #ff8c1a; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .link path[stroke="#FF7300" i] { stroke: #ff8c1a; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.object { border-color: #ab47bc; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.object.filled { background-color: #ab47bc; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .link path[stroke="#00AAF5" i] { stroke: #ab47bc; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.delegate { border-color: #e53935; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.delegate.filled { background-color: #e53935; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .link path[stroke="#FF3838" i] { stroke: #e53935; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.default { border-color: #777777; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.default.filled { background-color: #777777; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.wildcard { border-color: #777777; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.wildcard.filled { background-color: #777777; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.struct { border-color: #777777; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.struct.filled { background-color: #777777; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.class { border-color: #777777; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.class.filled { background-color: #777777; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.interface { border-color: #777777; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .pin .connector.interface.filled { background-color: #777777; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .link path[stroke="#E1CCAA" i] { stroke: #777777; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .link path[stroke="#817A7A" i] { stroke: #777777; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .link path[stroke="#0059CC" i] { stroke: #777777; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .link path[stroke="#5900BC" i] { stroke: #777777; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .link path[stroke="#F1FFAA" i] { stroke: #777777; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .node-color.event { background-color: #ff7043; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .node-color.event.gradient { background: linear-gradient(90deg, rgba(255,112,67,.4) 0, rgba(255,112,67,.1)); }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .node-color.function-call { background-color: #4f7f8f; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .node-color.function-call.gradient { background: linear-gradient(90deg, rgba(79,127,143,.4) 0, rgba(79,127,143,.1)); }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .node-color.parent-function-call { background-color: #4f7f8f; }
+body[data-palette="blue-yellow-safe"] .editor-view .bue-render .node-color.parent-function-call.gradient { background: linear-gradient(90deg, rgba(79,127,143,.4) 0, rgba(79,127,143,.1)); }
+/* High contrast */
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.exec { border-color: #ffffff; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.exec.filled { background-color: #ffffff; }
+body[data-palette="high-contrast"] .editor-view .bue-render .link path[stroke="#FFFFFF" i] { stroke: #ffffff; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.bool { border-color: #ff6680; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.bool.filled { background-color: #ff6680; }
+body[data-palette="high-contrast"] .editor-view .bue-render .link path[stroke="#950000" i] { stroke: #ff6680; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.byte { border-color: #00e0d0; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.byte.filled { background-color: #00e0d0; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.enum { border-color: #00e0d0; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.enum.filled { background-color: #00e0d0; }
+body[data-palette="high-contrast"] .editor-view .bue-render .link path[stroke="#006F65" i] { stroke: #00e0d0; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.int { border-color: #00ffc8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.int.filled { background-color: #00ffc8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.index { border-color: #00ffc8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.index.filled { background-color: #00ffc8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .link path[stroke="#1EE4AF" i] { stroke: #00ffc8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.int64 { border-color: #b8ffe0; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.int64.filled { background-color: #b8ffe0; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.float { border-color: #7dff4d; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.float.filled { background-color: #7dff4d; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.double { border-color: #7dff4d; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.double.filled { background-color: #7dff4d; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.real { border-color: #7dff4d; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.real.filled { background-color: #7dff4d; }
+body[data-palette="high-contrast"] .editor-view .bue-render .link path[stroke="#A1FF45" i] { stroke: #7dff4d; }
+body[data-palette="high-contrast"] .editor-view .bue-render .link path[stroke="#38D500" i] { stroke: #7dff4d; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.name { border-color: #e0a3ff; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.name.filled { background-color: #e0a3ff; }
+body[data-palette="high-contrast"] .editor-view .bue-render .link path[stroke="#CD82FF" i] { stroke: #e0a3ff; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.string { border-color: #ff66ff; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.string.filled { background-color: #ff66ff; }
+body[data-palette="high-contrast"] .editor-view .bue-render .link path[stroke="#FF00D5" i] { stroke: #ff66ff; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.text { border-color: #ffb3d1; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.text.filled { background-color: #ffb3d1; }
+body[data-palette="high-contrast"] .editor-view .bue-render .link path[stroke="#E87CAA" i] { stroke: #ffb3d1; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.vector { border-color: #ffe14d; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.vector.filled { background-color: #ffe14d; }
+body[data-palette="high-contrast"] .editor-view .bue-render .link path[stroke="#FFCA22" i] { stroke: #ffe14d; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.rotator { border-color: #c0ccff; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.rotator.filled { background-color: #c0ccff; }
+body[data-palette="high-contrast"] .editor-view .bue-render .link path[stroke="#A1B4FF" i] { stroke: #c0ccff; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.transform { border-color: #ffad5c; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.transform.filled { background-color: #ffad5c; }
+body[data-palette="high-contrast"] .editor-view .bue-render .link path[stroke="#FF7300" i] { stroke: #ffad5c; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.object { border-color: #33d1ff; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.object.filled { background-color: #33d1ff; }
+body[data-palette="high-contrast"] .editor-view .bue-render .link path[stroke="#00AAF5" i] { stroke: #33d1ff; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.delegate { border-color: #ff5c5c; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.delegate.filled { background-color: #ff5c5c; }
+body[data-palette="high-contrast"] .editor-view .bue-render .link path[stroke="#FF3838" i] { stroke: #ff5c5c; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.default { border-color: #c8c8c8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.default.filled { background-color: #c8c8c8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.wildcard { border-color: #c8c8c8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.wildcard.filled { background-color: #c8c8c8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.struct { border-color: #c8c8c8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.struct.filled { background-color: #c8c8c8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.class { border-color: #c8c8c8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.class.filled { background-color: #c8c8c8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.interface { border-color: #c8c8c8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .pin .connector.interface.filled { background-color: #c8c8c8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .link path[stroke="#E1CCAA" i] { stroke: #c8c8c8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .link path[stroke="#817A7A" i] { stroke: #c8c8c8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .link path[stroke="#0059CC" i] { stroke: #c8c8c8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .link path[stroke="#5900BC" i] { stroke: #c8c8c8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .link path[stroke="#F1FFAA" i] { stroke: #c8c8c8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .node-color.event { background-color: #ff8c1a; }
+body[data-palette="high-contrast"] .editor-view .bue-render .node-color.event.gradient { background: linear-gradient(90deg, rgba(255,140,26,.4) 0, rgba(255,140,26,.1)); }
+body[data-palette="high-contrast"] .editor-view .bue-render .node-color.function-call { background-color: #a8c8e8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .node-color.function-call.gradient { background: linear-gradient(90deg, rgba(168,200,232,.4) 0, rgba(168,200,232,.1)); }
+body[data-palette="high-contrast"] .editor-view .bue-render .node-color.parent-function-call { background-color: #a8c8e8; }
+body[data-palette="high-contrast"] .editor-view .bue-render .node-color.parent-function-call.gradient { background: linear-gradient(90deg, rgba(168,200,232,.4) 0, rgba(168,200,232,.1)); }
+body[data-palette="high-contrast"] .editor-view .bue-render .node { background-color: color-mix(in srgb, #000000 70%, transparent); }
+/* Greyscale (achromatopsia, print) */
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.exec { border-color: #ffffff; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.exec.filled { background-color: #ffffff; }
+body[data-palette="greyscale"] .editor-view .bue-render .link path[stroke="#FFFFFF" i] { stroke: #ffffff; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.bool { border-color: #5c5c5c; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.bool.filled { background-color: #5c5c5c; }
+body[data-palette="greyscale"] .editor-view .bue-render .link path[stroke="#950000" i] { stroke: #5c5c5c; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.byte { border-color: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.byte.filled { background-color: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.enum { border-color: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.enum.filled { background-color: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .link path[stroke="#006F65" i] { stroke: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.int { border-color: #c6c6c6; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.int.filled { background-color: #c6c6c6; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.index { border-color: #c6c6c6; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.index.filled { background-color: #c6c6c6; }
+body[data-palette="greyscale"] .editor-view .bue-render .link path[stroke="#1EE4AF" i] { stroke: #c6c6c6; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.int64 { border-color: #c6c6c6; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.int64.filled { background-color: #c6c6c6; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.float { border-color: #c6c6c6; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.float.filled { background-color: #c6c6c6; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.double { border-color: #c6c6c6; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.double.filled { background-color: #c6c6c6; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.real { border-color: #c6c6c6; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.real.filled { background-color: #c6c6c6; }
+body[data-palette="greyscale"] .editor-view .bue-render .link path[stroke="#A1FF45" i] { stroke: #c6c6c6; }
+body[data-palette="greyscale"] .editor-view .bue-render .link path[stroke="#38D500" i] { stroke: #c6c6c6; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.name { border-color: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.name.filled { background-color: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .link path[stroke="#CD82FF" i] { stroke: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.string { border-color: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.string.filled { background-color: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .link path[stroke="#FF00D5" i] { stroke: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.text { border-color: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.text.filled { background-color: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .link path[stroke="#E87CAA" i] { stroke: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.vector { border-color: #ffffff; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.vector.filled { background-color: #ffffff; }
+body[data-palette="greyscale"] .editor-view .bue-render .link path[stroke="#FFCA22" i] { stroke: #ffffff; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.rotator { border-color: #c6c6c6; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.rotator.filled { background-color: #c6c6c6; }
+body[data-palette="greyscale"] .editor-view .bue-render .link path[stroke="#A1B4FF" i] { stroke: #c6c6c6; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.transform { border-color: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.transform.filled { background-color: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .link path[stroke="#FF7300" i] { stroke: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.object { border-color: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.object.filled { background-color: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .link path[stroke="#00AAF5" i] { stroke: #8e8e8e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.delegate { border-color: #5c5c5c; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.delegate.filled { background-color: #5c5c5c; }
+body[data-palette="greyscale"] .editor-view .bue-render .link path[stroke="#FF3838" i] { stroke: #5c5c5c; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.default { border-color: #6e6e6e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.default.filled { background-color: #6e6e6e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.wildcard { border-color: #6e6e6e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.wildcard.filled { background-color: #6e6e6e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.struct { border-color: #6e6e6e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.struct.filled { background-color: #6e6e6e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.class { border-color: #6e6e6e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.class.filled { background-color: #6e6e6e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.interface { border-color: #6e6e6e; }
+body[data-palette="greyscale"] .editor-view .bue-render .pin .connector.interface.filled { background-color: #6e6e6e; }
+body[data-palette="greyscale"] .editor-view .bue-render .link path[stroke="#E1CCAA" i] { stroke: #6e6e6e; }
+body[data-palette="greyscale"] .editor-view .bue-render .link path[stroke="#817A7A" i] { stroke: #6e6e6e; }
+body[data-palette="greyscale"] .editor-view .bue-render .link path[stroke="#0059CC" i] { stroke: #6e6e6e; }
+body[data-palette="greyscale"] .editor-view .bue-render .link path[stroke="#5900BC" i] { stroke: #6e6e6e; }
+body[data-palette="greyscale"] .editor-view .bue-render .link path[stroke="#F1FFAA" i] { stroke: #6e6e6e; }
+body[data-palette="greyscale"] .editor-view .bue-render .node-color.event { background-color: #ffffff; }
+body[data-palette="greyscale"] .editor-view .bue-render .node-color.event.gradient { background: linear-gradient(90deg, rgba(255,255,255,.4) 0, rgba(255,255,255,.1)); }
+body[data-palette="greyscale"] .editor-view .bue-render .node-color.function-call { background-color: #b8b8b8; }
+body[data-palette="greyscale"] .editor-view .bue-render .node-color.function-call.gradient { background: linear-gradient(90deg, rgba(184,184,184,.4) 0, rgba(184,184,184,.1)); }
+body[data-palette="greyscale"] .editor-view .bue-render .node-color.parent-function-call { background-color: #b8b8b8; }
+body[data-palette="greyscale"] .editor-view .bue-render .node-color.parent-function-call.gradient { background: linear-gradient(90deg, rgba(184,184,184,.4) 0, rgba(184,184,184,.1)); }
+body[data-palette="greyscale"] .editor-view .bue-render .node { background-color: color-mix(in srgb, #000000 70%, transparent); }

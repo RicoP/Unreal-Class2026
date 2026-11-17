@@ -18,9 +18,12 @@ export function sourcePath(diffFile, root) {
   return relative.join("/");
 }
 
-/** X.mmd, X.md and X.settings.md (a Blueprint's class defaults and components) -> X.sexpr */
+/**
+ * X.mmd, X.md, X.settings.md (a Blueprint's class defaults and components) and
+ * X.graph.<graph>.mmd (one graph of a Blueprint) -> X.sexpr
+ */
 export function diffFileOf(sourceFile) {
-  return sourceFile.replace(/(\.settings)?\.(mmd|md)$/i, ".sexpr");
+  return sourceFile.replace(/(\.settings|\.graph\.[^.\\/]+)?\.(mmd|md)$/i, ".sexpr");
 }
 
 /**
@@ -75,6 +78,11 @@ export function assetMetadata(sourceFile, root = process.cwd()) {
     fields.parent = /\(parent "([^"]*)"\)/.exec(diff)?.[1] ?? "";
     // A Blueprint can have two parts: its class defaults and components (table), and its graph.
     fields.part = /\.settings\.md$/i.test(sourceFile) ? "settings" : "graph";
+    // A diagram of one graph says which: "%% graph EventGraph" (sexpr_to_mermaid.py).
+    const graph = /\.mmd$/i.test(sourceFile) ? /^\s*%% graph (.+)$/m.exec(readFileSync(sourceFile, "utf8"))?.[1] : null;
+    if (graph) {
+      fields.graph = graph.trim();
+    }
   }
   const deletedIn = /\(deleted-in "([^"]+)"\)/.exec(diff)?.[1];
   if (deletedIn) {

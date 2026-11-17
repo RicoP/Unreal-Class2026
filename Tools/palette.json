@@ -26,6 +26,27 @@
       "pin-other"
     ]
   },
+  "bue": {
+    "description": "How the palettes reach blueprintUE's renderer in the editor views (export_doc.mjs writes Doc/bue-palettes.css). For each palette colour <name>: the renderer's pin types it colours (pins), the colours its wires carry as stroke attribute values, set by its script (wires), the node header classes (headers), and whether it is the node body. Only colours a palette changes are written, and nothing for 'default', which already is the Unreal editor look the renderer shows.",
+    "pin-exec": { "pins": ["exec"], "wires": ["FFFFFF"] },
+    "pin-boolean": { "pins": ["bool"], "wires": ["950000"] },
+    "pin-byte": { "pins": ["byte", "enum"], "wires": ["006F65"] },
+    "pin-integer": { "pins": ["int", "index"], "wires": ["1EE4AF"] },
+    "pin-integer64": { "pins": ["int64"], "wires": [] },
+    "pin-float": { "pins": ["float", "double", "real"], "wires": ["A1FF45", "38D500"] },
+    "pin-name": { "pins": ["name"], "wires": ["CD82FF"] },
+    "pin-string": { "pins": ["string"], "wires": ["FF00D5"] },
+    "pin-text": { "pins": ["text"], "wires": ["E87CAA"] },
+    "pin-vector": { "pins": ["vector"], "wires": ["FFCA22"] },
+    "pin-rotator": { "pins": ["rotator"], "wires": ["A1B4FF"] },
+    "pin-transform": { "pins": ["transform"], "wires": ["FF7300"] },
+    "pin-object": { "pins": ["object"], "wires": ["00AAF5"] },
+    "pin-delegate": { "pins": ["delegate"], "wires": ["FF3838"] },
+    "pin-other": { "pins": ["default", "wildcard", "struct", "class", "interface"], "wires": ["E1CCAA", "817A7A", "0059CC", "5900BC", "F1FFAA"] },
+    "border-event": { "headers": ["event"] },
+    "border-call": { "headers": ["function-call", "parent-function-call"] },
+    "node-body": { "body": true }
+  },
   "palettes": {
     "default": {
       "label": "Unreal editor",

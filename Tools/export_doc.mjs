@@ -12,10 +12,11 @@
 // table, and offers the colour palettes from Tools/palette.json. Steps finished before tables
 // became HTML have table SVGs instead; those are still shown.
 // Every run also writes the website's shared files: Doc/index.html (the finished steps as
-// Step 1, Step 2, ...), Doc/doc.js (copied from Tools/doc.js: palette switch and step
-// navigation, loaded by every doc.html as ../../doc.js), Doc/doc.css (Tools/doc.css plus the
-// palettes; the stylesheet of index.html and every new doc.html) and Doc/steps.json (the
-// step order).
+// Step 1, Step 2, ...), Doc/doc.js (kept there by hand, not generated: palette switch and step
+// navigation, loaded by every doc.html as ../../doc.js), Doc/palettes.css (the colour palettes
+// from Tools/palette.json, imported by the hand-written Doc/doc.css), Doc/bue-palettes.css (the
+// same palettes for blueprintUE's renderer, linked by pages with editor views) and Doc/steps.js
+// (the step order).
 // Only what is out of date is regenerated (by file timestamps), so diagrams and tables edited
 // by hand survive until their diff is exported again; --force regenerates everything.
 // --finish renames Transient to Doc/commits/<YYYYMMDD_HHmmss>, ready to commit; the next
@@ -34,7 +35,7 @@
 // --regenerate <export folder> to rewrite doc.html of an existing export without rebuilding.
 
 import { spawnSync } from "node:child_process";
-import { copyFileSync, existsSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { assetMetadata, parseTable } from "./doc_sources.mjs";
@@ -42,7 +43,7 @@ import { assetMetadata, parseTable } from "./doc_sources.mjs";
 const toolsDir = path.dirname(fileURLToPath(import.meta.url));
 const argIndex = process.argv.indexOf("--commits");
 const commitsDir = argIndex > 0 ? path.resolve(process.argv[argIndex + 1]) : path.join(toolsDir, "..", "Doc", "commits");
-// The website root: index.html, doc.js and steps.json next to the commits folder.
+// The website root: index.html, palettes.css, bue-palettes.css and steps.js (written here) next to the commits folder.
 const siteDir = path.dirname(commitsDir);
 const transient = path.join(commitsDir, "Transient");
 
@@ -136,6 +137,10 @@ function headingFor(meta, shownPath, hasSettings) {
   if (meta.kind === "blueprint" && meta.part === "settings") {
     return `${shownPath}: Class Defaults and Components`;
   }
+  if (meta.kind === "blueprint" && meta.graph) {
+    // One section per graph: "<path>: EventGraph", "<path>: Function Set Target".
+    return `${shownPath}: ${meta.graph}`;
+  }
   if (meta.kind === "blueprint" && hasSettings) {
     // The settings section above already says what to create; this one shows the graph.
     return `${shownPath}: Graph`;
@@ -183,6 +188,56 @@ function paletteCss() {
       return `body[data-palette="${name}"], body[data-palette="${name}"] svg { ${variables} }`;
     })
     .join("\n");
+}
+
+/** "#c6c6c6" or "#fff" -> [198, 198, 198] */
+function rgbOf(hex) {
+  const digits = hex.replace("#", "");
+  const full = digits.length === 3 ? [...digits].map((d) => d + d).join("") : digits;
+  return [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16));
+}
+
+/**
+ * The palettes for blueprintUE's renderer (Doc/bue-palettes.css): for every palette except
+ * 'default' (the Unreal editor look the renderer already has), the colours it changes, applied to
+ * the pin types, wires, node headers and node body they stand for. What stands for what is in
+ * the "bue" section of Tools/palette.json. Wires carry their colour as an attribute set by the
+ * renderer's script, so they are matched by that value. The selectors start with the palette
+ * and .editor-view, so they win over the renderer's own rules whatever the order of the files.
+ */
+function bueCss() {
+  const config = JSON.parse(readFileSync(path.join(toolsDir, "palette.json"), "utf8"));
+  const mapping = Object.entries(config.bue).filter(([key]) => key !== "description");
+  const rules = [];
+  for (const [name, palette] of Object.entries(config.palettes)) {
+    if (name === "default") {
+      continue;
+    }
+    const scope = `body[data-palette="${name}"] .editor-view .bue-render`;
+    rules.push(`/* ${palette.label ?? name} */`);
+    for (const [key, targets] of mapping) {
+      const color = palette.colors[key];
+      if (!color) {
+        continue; // this palette leaves it as it is
+      }
+      for (const pin of targets.pins ?? []) {
+        rules.push(`${scope} .pin .connector.${pin} { border-color: ${color}; }`);
+        rules.push(`${scope} .pin .connector.${pin}.filled { background-color: ${color}; }`);
+      }
+      for (const wire of targets.wires ?? []) {
+        rules.push(`${scope} .link path[stroke="#${wire}" i] { stroke: ${color}; }`);
+      }
+      for (const header of targets.headers ?? []) {
+        const [r, g, b] = rgbOf(color);
+        rules.push(`${scope} .node-color.${header} { background-color: ${color}; }`);
+        rules.push(`${scope} .node-color.${header}.gradient { background: linear-gradient(90deg, rgba(${r},${g},${b},.4) 0, rgba(${r},${g},${b},.1)); }`);
+      }
+      if (targets.body) {
+        rules.push(`${scope} .node { background-color: color-mix(in srgb, ${color} 70%, transparent); }`);
+      }
+    }
+  }
+  return rules.join("\n");
 }
 
 /**
@@ -307,6 +362,15 @@ function dependencyOrder(files, metas, folder) {
     }
     units.get(key).files.push(file);
   }
+  // Within an asset: its settings table first, then its graphs (the event graphs before the
+  // functions' graphs), whatever their file names sort like.
+  const rank = (file) => {
+    const meta = metas.get(file);
+    return meta.part === "settings" ? 0 : /^(Function |Construction Script)/.test(meta.graph ?? "") ? 2 : 1;
+  };
+  for (const unit of units.values()) {
+    unit.files.sort((a, b) => rank(a) - rank(b));
+  }
   const quoted = String.raw`"(?:[^"\\]|\\.)*"`;
   const textOf = ({ meta }) => {
     if (!meta.source) {
@@ -365,6 +429,36 @@ function dependencyOrder(files, metas, folder) {
     ordered.push(...next.files);
   }
   return ordered;
+}
+
+/**
+ * The "editor view" of one graph, below its diagram: the whole graph as the Blueprint editor
+ * shows it, drawn in the browser by blueprintUE's renderer (Doc/bue-render) from the text
+ * Unreal itself uses to copy nodes. The plugin writes that text per graph next to the diffs:
+ * graph/native/<package path>.graph.<graph>.txt, and .old.txt for the last committed revision.
+ * With both, the page shows blueprintUE's side-by-side comparison. doc.js starts the renderer;
+ * the texts are embedded in the page (hidden textareas), so it works from disk too.
+ * [] when the graph has no such text (steps exported before the plugin wrote it).
+ */
+function editorView(folder, svgFile) {
+  const base = path.join(folder, "graph", "native", svgFile.replace(/\.svg$/i, ""));
+  if (!existsSync(`${base}.txt`)) {
+    return [];
+  }
+  const area = (kind, file) => `        <textarea class="bue-${kind}" hidden>${html(readFileSync(file, "utf8"))}</textarea>`;
+  const previous = existsSync(`${base}.old.txt`) ? [area("previous", `${base}.old.txt`)] : [];
+  return [
+    `      <div class="editor-view">`,
+    `        <p>${previous.length ? "Before (left) and after (right), with the list of changes" : "The graph to build"}</p>`,
+    // How to move around in it (the renderer's own controls; doc.js makes the left button pan).
+    `        <p class="hint">Move: hold the left mouse button and drag. Zoom: hold Ctrl and scroll the wheel. ` +
+      `Reset and Fullscreen are in the top bar${previous.length ? "; both sides move together, Lock / Unlock switches that off and on" : ""}. ` +
+      `Touch screen: drag with one finger, pinch with two.</p>`,
+    `        <div class="bue-graph"></div>`,
+    area("current", `${base}.txt`),
+    ...previous,
+    "      </div>",
+  ];
 }
 
 function writeDoc(folder) {
@@ -443,6 +537,13 @@ function writeDoc(folder) {
     if (tables.has(file)) {
       return ["    <section>", `      <h2>${html(heading)}</h2>`, tableHtml(parseTable(readFileSync(tables.get(file), "utf8"))), "    </section>"].join("\n");
     }
+    // A graph with an editor view shows only that: its before-and-after comparison already
+    // says what changed, so our own diagram of the same change would repeat it. The diagram
+    // is still rendered (the section, its heading and its place in the page come from it).
+    const view = editorView(folder, file);
+    if (view.length) {
+      return ["    <section>", `      <h2>${html(heading)}</h2>`, ...view, "    </section>"].join("\n");
+    }
     const svg = uniqueIds(readFileSync(path.join(folder, file), "utf8").replace(/<\?xml[^>]*\?>\s*/, ""), `s${index + 1}`);
     return [
       "    <section>",
@@ -453,6 +554,7 @@ function writeDoc(folder) {
       "    </section>",
     ].join("\n");
   });
+  const withEditorView = sections.some((section) => section.includes('class="editor-view"'));
 
   const page = `<!doctype html>
 <html lang="en">
@@ -460,15 +562,21 @@ function writeDoc(folder) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>${html(title)}</title>
-    <!-- Shared stylesheet with the palettes: Doc/doc.css (from Tools/doc.css) -->
-    <link rel="stylesheet" href="../../doc.css">
+    <!-- Shared stylesheet, written by hand: Doc/doc.css (it imports the palettes, Doc/palettes.css) -->
+    <link rel="stylesheet" href="../../doc.css">${withEditorView ? `
+    <!-- The editor views: blueprintUE's renderer, kept as it is in Doc/bue-render, then the palettes for it -->
+    <link rel="stylesheet" href="../../bue-render/render.css">
+    <link rel="stylesheet" href="../../bue-render/diff.css">
+    <link rel="stylesheet" href="../../bue-palettes.css">` : ""}
   </head>
   <body class="step" data-palette="default">
     <header>
       <label>Colours <select id="palette">${paletteOptions()}</select></label>
     </header>
 ${sections.join("\n")}
-    <!-- Palette switch and step navigation: Doc/doc.js (from Tools/doc.js) -->
+${withEditorView ? `    <script src="../../bue-render/render.js"></script>
+    <script src="../../bue-render/diff.js"></script>
+` : ""}    <!-- Palette switch and step navigation: Doc/doc.js -->
     <script src="../../doc.js"></script>
   </body>
 </html>
@@ -510,7 +618,13 @@ const modified = (file) => (existsSync(file) ? statSync(file).mtimeMs : 0);
  * use --force after a style rule changes.
  */
 function needsGenerating(diff) {
-  const outputs = [".mmd", ".md", ".settings.md"].map((ext) => modified(diff.replace(/\.sexpr$/, ext))).filter(Boolean);
+  // A Blueprint's diagrams are one file per graph: <name>.graph.<graph>.mmd.
+  const stem = path.basename(diff).replace(/\.sexpr$/, "");
+  const graphs = readdirSync(path.dirname(diff)).filter((name) => name.startsWith(`${stem}.graph.`) && name.endsWith(".mmd"));
+  const outputs = [
+    ...[".mmd", ".md", ".settings.md"].map((ext) => modified(diff.replace(/\.sexpr$/, ext))),
+    ...graphs.map((name) => modified(path.join(path.dirname(diff), name))),
+  ].filter(Boolean);
   if (outputs.length === 0) {
     return true;
   }
@@ -553,8 +667,9 @@ function build(force) {
 /**
  * Write the website's shared files into the site root (Doc/): index.html listing the finished
  * steps in order as Step 1, Step 2, ... with their section headings (the dated folder names
- * only give the order), doc.js (Tools/doc.js), doc.css (Tools/doc.css plus the palettes) and
- * steps.json (the step folders in order).
+ * only give the order), palettes.css and bue-palettes.css (the colour palettes from
+ * Tools/palette.json, for the site and for blueprintUE's renderer; doc.css itself is written by
+ * hand) and steps.js (the step folders in order, as a call of doc.js's docSteps).
  * While Transient has a doc.html, it is the last step, marked as work in progress, so its layout
  * can be checked with the rest of the website. The published website leaves it out: the Pages
  * workflow runs --site again on the steps it publishes.
@@ -598,15 +713,23 @@ ${entries.join("\n")}
 </html>
 `;
   writeFileSync(path.join(siteDir, "index.html"), index, "utf8");
-  copyFileSync(path.join(toolsDir, "doc.js"), path.join(siteDir, "doc.js"));
-  const css = readFileSync(path.join(toolsDir, "doc.css"), "utf8").trimEnd();
+  // Generated from Tools/palette.json; doc.css (written by hand) imports the first, pages with
+  // editor views link the second.
   writeFileSync(
-    path.join(siteDir, "doc.css"),
-    `${css}\n\n/* Palettes from Tools/palette.json, written by Tools/export_doc.mjs. */\n${paletteCss()}\n`,
+    path.join(siteDir, "palettes.css"),
+    `/* The colour palettes of the site (variables such as --pin-float, set on <body data-palette="...">).\n   Generated from Tools/palette.json by Tools/export_doc.mjs: don't edit. Imported by doc.css. */\n${paletteCss()}\n`,
     "utf8",
   );
-  writeFileSync(path.join(siteDir, "steps.json"), JSON.stringify(steps, null, 2) + "\n", "utf8");
-  console.log(`Wrote ${path.relative(process.cwd(), siteDir)}: index.html, doc.js, doc.css, steps.json (${steps.length} steps)`);
+  writeFileSync(
+    path.join(siteDir, "bue-palettes.css"),
+    `/* The colour palettes for blueprintUE's renderer (Doc/bue-render) in the editor views.\n   Generated from Tools/palette.json (its "bue" section) by Tools/export_doc.mjs: don't edit.\n   Linked after bue-render/render.css by pages with editor views. */\n${bueCss()}\n`,
+    "utf8",
+  );
+  // The step order as a script (doc.js loads it with a <script> element and it calls docSteps),
+  // not as JSON to fetch: pages opened from disk aren't allowed to fetch files.
+  writeFileSync(path.join(siteDir, "steps.js"), `docSteps(${JSON.stringify(steps, null, 2)});\n`, "utf8");
+  rmSync(path.join(siteDir, "steps.json"), { force: true }); // its predecessor
+  console.log(`Wrote ${path.relative(process.cwd(), siteDir)}: index.html, palettes.css, bue-palettes.css, steps.js (${steps.length} steps)`);
 }
 
 /** Rename Transient to Doc/commits/<YYYYMMDD_HHmmss>, ready to commit. */
@@ -631,7 +754,7 @@ if (regenerateIndex > 0) {
 } else if (process.argv.includes("--finish")) {
   finish();
 } else if (process.argv.includes("--site")) {
-  // Only the website's shared files (index.html, doc.js, doc.css, steps.json).
+  // Only the website's shared files (index.html, palettes.css, bue-palettes.css, steps.js).
 } else {
   build(process.argv.includes("--force"));
 }

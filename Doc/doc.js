@@ -1,13 +1,14 @@
-// Shared script of the documentation pages. Tools/export_doc.mjs copies it to Doc/doc.js, the
-// website root; every Doc/commits/<step>/doc.html loads it as ../../doc.js, on disk and online.
+// Shared script of the documentation pages. Edited here, in Doc/doc.js, the website root (not generated,
+// no copy in Tools/); every Doc/commits/<step>/doc.html loads it as ../../doc.js, on disk and online.
 //
 // 1. Colour palette switch: applies the palette picked in the page's <select id="palette">
 //    (palette CSS and options are written into each page from Tools/palette.json), remembers it
 //    per browser (localStorage "doc-palette") and accepts ?palette=<name> in the address.
 // 2. Step navigation: "‹ Step 2 · Step 3 of 4 · Step 4 ›" in the page's <header>, with
-//    left/right arrow keys. The order of the steps comes from steps.json next to this script
-//    (Doc/steps.json). Browsers don't let pages opened from disk load it, so there the page
-//    shows no bar; on the website it does.
+//    left/right arrow keys. The order of the steps comes from steps.js next to this script
+//    (Doc/steps.js), a script that calls docSteps([...]) with the step folders. It is loaded
+//    with a <script> element, not fetched, because browsers don't let a page opened from disk
+//    fetch files; so the bar works on disk and on the website alike.
 
 // Where this script was loaded from; only known while it first runs.
 const docScriptUrl = document.currentScript?.src ?? new URL("../../doc.js", location.href).href;
@@ -30,14 +31,60 @@ const docScriptUrl = document.currentScript?.src ?? new URL("../../doc.js", loca
   select.addEventListener("change", () => apply(select.value));
 })();
 
-(async function stepNavigation() {
-  let steps;
-  try {
-    const response = await fetch(new URL("steps.json", docScriptUrl));
-    steps = await response.json();
-  } catch {
-    return; // no step list: a page opened from disk
+// 3. Editor views: a graph as the Blueprint editor shows it, drawn by blueprintUE's renderer
+//    (Doc/bue-render) from the Blueprint text embedded in the page, in a hidden textarea next
+//    to each <div class="bue-graph">. With a previous version too, its side-by-side diff.
+(function editorViews() {
+  const bue = window.blueprintUE;
+  if (!bue?.render) {
+    return; // a page without editor views doesn't load the renderer
   }
+  for (const view of document.querySelectorAll(".editor-view")) {
+    const target = view.querySelector(".bue-graph");
+    const current = view.querySelector(".bue-current")?.value;
+    const previous = view.querySelector(".bue-previous")?.value;
+    if (!target || !current) {
+      continue;
+    }
+    // The renderer pans with the right mouse button only (and draws a selection rectangle on a left
+    // drag). Here the left button pans: its press on the canvas is handed to the renderer as a
+    // right-button press, and it then follows the mouse as it moves. Presses on a node's fold arrows
+    // (and everything outside the canvas: toolbar, buttons, change list) are left alone.
+    target.addEventListener("mousedown", (event) => {
+      const hit = event.target;
+      if (event.button !== 0 || !event.isTrusted || !hit.closest?.(".layer") || hit.closest(".less, .more")) {
+        return;
+      }
+      event.stopImmediatePropagation();
+      event.preventDefault();
+      hit.dispatchEvent(new MouseEvent("mousedown", {
+        bubbles: true, cancelable: true, composed: true, view: window, button: 2, buttons: 2,
+        clientX: event.clientX, clientY: event.clientY, screenX: event.screenX, screenY: event.screenY,
+        ctrlKey: event.ctrlKey, shiftKey: event.shiftKey, altKey: event.altKey, metaKey: event.metaKey,
+      }));
+    }, true);
+    try {
+      // A share of the window's height, not pixels, so a view is as big on a small screen as on a large one.
+      const options = { height: "70vh" };
+      const comparing = Boolean(previous && bue.diff);
+      (comparing ? new bue.diff.Main(previous, current, target, options) : new bue.render.Main(current, target, options)).start(() => {
+        if (comparing) {
+          // The watermark in each pane says which version it is (the renderer only knows one text for both).
+          const marks = target.querySelectorAll(".blueprint-type");
+          if (marks.length === 2) {
+            marks[0].textContent = "Before";
+            marks[1].textContent = "After";
+          }
+        }
+      });
+    } catch (error) {
+      target.textContent = `The editor view could not be drawn: ${error}`;
+    }
+  }
+})();
+
+// Called by steps.js with the step folders in order.
+window.docSteps = function stepNavigation(steps) {
   const parts = location.pathname.split("/").filter(Boolean);
   const index = steps.indexOf(decodeURIComponent(parts[parts.length - 2] || ""));
   if (index < 0) {
@@ -95,4 +142,11 @@ const docScriptUrl = document.currentScript?.src ?? new URL("../../doc.js", loca
       location.href = `../${steps[target]}/doc.html`;
     }
   });
-})();
+};
+
+// Load the step list. Without it (an old copy of the site) the page simply has no step bar.
+{
+  const stepList = document.createElement("script");
+  stepList.src = new URL("steps.js", docScriptUrl).href;
+  document.head.appendChild(stepList);
+}
