@@ -1,0 +1,14 @@
+(asset "/Game/Extern_Assets/UAL1_Standard/SkeletalMeshes/UAL1_StandardCrouch_Idle_Loop_RETARGET"
+  (class "AnimSequence")
+  (revision working-copy)
+  (properties
+    (set "BoneCompressionSettings" "/Script/Engine.AnimBoneCompressionSettings'/ACLPlugin/ACLAnimBoneCompressionSettings.ACLAnimBoneCompressionSettings'" (display "Bone Compression Settings"))
+    (set "CurveCompressionSettings" "/Script/Engine.AnimCurveCompressionSettings'/ACLPlugin/ACLAnimCurveCompressionSettings.ACLAnimCurveCompressionSettings'" (display "Curve Compression Settings"))
+    (set "VariableFrameStrippingSettings" "/Script/Engine.VariableFrameStrippingSettings'/Engine/Animation/DefaultVariableFrameStrippingSettings.DefaultVariableFrameStrippingSettings'" (display "Variable Frame Stripping Settings"))
+    (set "RetargetSourceAsset" "/Game/Characters/Mannequins/Meshes/SKM_Quinn_Simple.SKM_Quinn_Simple" (display "Retarget Source Asset"))
+    (set "NumberOfSampledKeys" "89" (display "Number Of Sampled Keys"))
+    (set "NumberOfSampledFrames" "88" (display "Number Of Sampled Frames"))
+    (set "DataModelInterface" "AnimationSequencerDataModel'/Game/Extern_Assets/UAL1_Standard/SkeletalMeshes/UAL1_StandardCrouch_Idle_Loop_RETARGET.UAL1_StandardCrouch_Idle_Loop_RETARGET:AnimationSequencerDataModel'" (display "Data Model Interface"))
+    (set "Controller" "AnimSequencerController'/Engine/Transient.AnimSequencerController_117'" (display "Controller"))
+    (set "Skeleton" "/Script/Engine.Skeleton'/Game/Characters/Mannequins/Meshes/SK_Mannequin.SK_Mannequin'" (display "Skeleton"))
+    (set "AssetUserData" "(\"/Script/AnimationModifiers.AnimationModifiersAssetUserData'/Game/Extern_Assets/UAL1_Standard/SkeletalMeshes/UAL1_StandardCrouch_Idle_Loop_RETARGET.UAL1_StandardCrouch_Idle_Loop_RETARGET:AnimationModifiersAssetUserData_0'\")" (display "Asset User Data"))))

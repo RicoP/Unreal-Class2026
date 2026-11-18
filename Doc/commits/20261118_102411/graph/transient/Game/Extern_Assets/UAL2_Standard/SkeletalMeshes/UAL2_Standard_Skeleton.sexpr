@@ -1,0 +1,8 @@
+(asset-diff "/Game/Extern_Assets/UAL2_Standard/SkeletalMeshes/UAL2_Standard_Skeleton"
+  (class "Skeleton")
+  (old none)
+  (baseline class-default)
+  (new working-copy)
+  (properties
+    (changed "BoneTree" (old "") (new "((),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),())") (display "Bone Tree"))
+    (changed "AssetUserData" (old "") (new "(\"/Script/Engine.AnimCurveMetaData'/Game/Extern_Assets/UAL2_Standard/SkeletalMeshes/UAL2_Standard_Skeleton.UAL2_Standard_Skeleton:AnimCurveMetaData_0'\")") (display "Asset User Data"))))

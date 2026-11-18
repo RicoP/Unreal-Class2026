@@ -1,0 +1,6 @@
+(asset "/Game/Extern_Assets/UAL2_Standard/SkeletalMeshes/UAL2_Standard_Skeleton"
+  (class "Skeleton")
+  (revision working-copy)
+  (properties
+    (set "BoneTree" "((),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),(),())" (display "Bone Tree"))
+    (set "AssetUserData" "(\"/Script/Engine.AnimCurveMetaData'/Game/Extern_Assets/UAL2_Standard/SkeletalMeshes/UAL2_Standard_Skeleton.UAL2_Standard_Skeleton:AnimCurveMetaData_0'\")" (display "Asset User Data"))))

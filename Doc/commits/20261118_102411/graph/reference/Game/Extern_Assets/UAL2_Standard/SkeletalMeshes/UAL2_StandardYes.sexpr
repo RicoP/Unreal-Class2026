@@ -1,0 +1,13 @@
+(asset "/Game/Extern_Assets/UAL2_Standard/SkeletalMeshes/UAL2_StandardYes"
+  (class "AnimSequence")
+  (revision working-copy)
+  (properties
+    (set "BoneCompressionSettings" "/Script/Engine.AnimBoneCompressionSettings'/ACLPlugin/ACLAnimBoneCompressionSettings.ACLAnimBoneCompressionSettings'" (display "Bone Compression Settings"))
+    (set "CurveCompressionSettings" "/Script/Engine.AnimCurveCompressionSettings'/ACLPlugin/ACLAnimCurveCompressionSettings.ACLAnimCurveCompressionSettings'" (display "Curve Compression Settings"))
+    (set "VariableFrameStrippingSettings" "/Script/Engine.VariableFrameStrippingSettings'/Engine/Animation/DefaultVariableFrameStrippingSettings.DefaultVariableFrameStrippingSettings'" (display "Variable Frame Stripping Settings"))
+    (set "NumberOfSampledKeys" "76" (display "Number Of Sampled Keys"))
+    (set "NumberOfSampledFrames" "75" (display "Number Of Sampled Frames"))
+    (set "DataModelInterface" "AnimationSequencerDataModel'/Game/Extern_Assets/UAL2_Standard/SkeletalMeshes/UAL2_StandardYes.UAL2_StandardYes:AnimationSequencerDataModel'" (display "Data Model Interface"))
+    (set "Controller" "AnimSequencerController'/Engine/Transient.AnimSequencerController_106'" (display "Controller"))
+    (set "Skeleton" "/Script/Engine.Skeleton'/Game/Extern_Assets/UAL2_Standard/SkeletalMeshes/UAL2_Standard_Skeleton.UAL2_Standard_Skeleton'" (display "Skeleton"))
+    (set "AssetUserData" "(\"/Script/AnimationModifiers.AnimationModifiersAssetUserData'/Game/Extern_Assets/UAL2_Standard/SkeletalMeshes/UAL2_StandardYes.UAL2_StandardYes:AnimationModifiersAssetUserData_0'\")" (display "Asset User Data"))))
