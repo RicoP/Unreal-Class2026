@@ -250,6 +250,17 @@ to rebuild it themselves.
   have unsaved changes, it first lists them in a message box and asks whether
   to export anyway (default: No), because revision control only sees saved
   files.
+- Assets with a `Retarget Source Asset` set (retargeted animations) aren't
+  documented one by one, and not as imports even though they keep their
+  source's import data: `retarget_tables` in `sexpr_to_table.py` writes one
+  `<folder>/<first asset>.retarget.md` per folder, asset type, skeleton and
+  Retarget Source Asset (`Assets` as `N in all: a, b, …, z`, `Retarget Source
+  Asset`, `Skeleton`, and `Retargeted from`, the originals listed the same way, when every name is
+  `<original>_RETARGET` and the original's diff is in the step). Its first
+  line is `<!-- retarget: folder="..." type="..." count="..." -->`
+  (`assetMetadata`, `kind="retarget"`); the heading reads "Retarget <N>
+  <type> assets in <folder>", and these sections come right after the
+  import steps.
 - Section order in `doc.html` (`dependencyOrder` in `export_doc.mjs`): import
   steps first, then every asset after the assets of the same doc it refers
   to, so students build what is needed before what needs it (`BP_Hero` before

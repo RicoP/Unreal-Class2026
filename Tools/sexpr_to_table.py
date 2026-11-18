@@ -680,6 +680,20 @@ TYPE_SUBFOLDERS = {"SkeletalMeshes", "StaticMeshes", "Materials", "Textures", "A
 IMAGE_SOURCES = (".png", ".jpg", ".jpeg", ".tga", ".bmp", ".exr", ".hdr", ".tif", ".tiff", ".psd")
 
 
+def short_list(names):
+    """'a, b, c' or, for long lists, '18 in all: a, b, …, z' so the table stays narrow."""
+    return ", ".join(names) if len(names) <= 3 else f"{len(names)} in all: {names[0]}, {names[1]}, …, {names[-1]}"
+
+
+def property_after(diff, name):
+    """The value a changed property of an asset diff got, or None if it isn't listed or is empty."""
+    for entry in (first(diff, "properties") or ["properties"])[1:]:
+        if isinstance(entry, list) and len(entry) > 1 and entry[0] == "changed" and entry[1] == name:
+            new = first(entry, "new")
+            return new[1] if new and new[1] not in ("", "None", "none") else None
+    return None
+
+
 def import_options(diff):
     """The import options that differ from the preset, without duplicates, in their order."""
     options = {}
@@ -722,6 +736,8 @@ def import_tables(paths):
             continue
         if first(diff, "old") != ["old", "none"]:
             continue  # imported in an earlier step; changes to it get a normal table
+        if property_after(diff, "RetargetSourceAsset"):
+            continue  # a retarget copy keeps its source's import data, but it isn't imported
         source = import_source(path, diff)
         if not source:
             continue
@@ -759,10 +775,6 @@ def import_tables(paths):
         if output.exists() and output.stat().st_mtime >= newest:
             continue  # up to date (and possibly edited by hand)
         title = f"Import {sources[0]}" if len(sources) == 1 else f"Import {len(sources)} files"
-        def short_list(names):
-            """'a, b, c' or, for long lists, '18 in all: a, b, …, z' so the table stays narrow."""
-            return ", ".join(names) if len(names) <= 3 else f"{len(names)} in all: {names[0]}, {names[1]}, …, {names[-1]}"
-
         rows = [("Files", short_list(sources))]
         rows += [(setting_name(name), value_cell(value)) for name, value in options]
         created = {}
@@ -786,6 +798,54 @@ def import_tables(paths):
     return covered
 
 
+def retarget_tables(paths):
+    """
+    One table per folder, asset type, skeleton and Retarget Source Asset for the assets that have
+    a Retarget Source Asset set, instead of one table per asset. Writes
+    <folder>/<first asset>.retarget.md; returns the diffs it covers.
+    """
+    groups = {}  # (folder, package folder, type, skeleton, retarget source) -> [(name, diff file)]
+    covered = set()
+    for path in paths:
+        diff = parse(path.read_text(encoding="utf-8"))
+        if not (isinstance(diff, list) and diff[0] == "asset-diff"):
+            continue
+        source = property_after(diff, "RetargetSourceAsset")
+        if not source:
+            continue
+        covered.add(path)
+        skeleton = property_after(diff, "Skeleton")
+        key = (path.parent, diff[1].rsplit("/", 1)[0], words(first(diff, "class")[1]),
+               shorten(skeleton) if skeleton else "", shorten(source))
+        groups.setdefault(key, []).append((diff[1].rsplit("/", 1)[-1], path))
+
+    for (folder, package_folder, asset_type, skeleton, source), assets in groups.items():
+        assets.sort()
+        names = [name for name, _ in assets]
+        output = folder / (names[0] + ".retarget.md")
+        if output.exists() and output.stat().st_mtime >= max(file.stat().st_mtime for _, file in assets):
+            continue  # up to date (and possibly edited by hand)
+        rows = [("Assets", short_list(names)), ("Retarget Source Asset", source)]
+        if skeleton:
+            rows.append(("Skeleton", skeleton))
+        # A copy named <original>_RETARGET says where it comes from, when the original is in this step.
+        if all(name.endswith("_RETARGET") and (folder / (name.removesuffix("_RETARGET") + ".sexpr")).exists() for name in names):
+            rows.append(("Retargeted from", short_list([name.removesuffix("_RETARGET") for name in names])))
+        lines = [
+            f"<!-- retarget: folder=\"{package_folder}\" type=\"{asset_type}\" count=\"{len(names)}\" -->",
+            f"### Retarget {len(names)} {asset_type} assets",
+            "",
+            f"These {asset_type} assets in `{package_folder}` have a Retarget Source Asset set:",
+            "",
+            "| Setting | Value |",
+            "|---|---|",
+            *[f"| {setting} | {value} |" for setting, value in rows],
+        ]
+        output.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+        print(f"Wrote {output}")
+    return covered
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("files", nargs="*", type=Path, help="asset or actor diff .sexpr files")
@@ -796,7 +856,8 @@ def main():
 
     # Imported assets are documented per import step, not one by one.
     everything = sorted(args.all_in.rglob("*.sexpr")) if args.all_in else args.files
-    imported = import_tables([path.resolve() for path in everything])
+    resolved = [path.resolve() for path in everything]
+    imported = import_tables(resolved) | retarget_tables(resolved)
     args.files = [path.resolve() for path in args.files]
     for path in imported:
         path.with_suffix(".md").unlink(missing_ok=True)

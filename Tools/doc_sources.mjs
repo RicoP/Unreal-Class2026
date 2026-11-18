@@ -37,6 +37,11 @@ export function assetMetadata(sourceFile, root = process.cwd()) {
     const header = /<!-- import: folder="([^"]*)" files="([^"]*)" -->/.exec(readFileSync(sourceFile, "utf8"));
     return header ? { kind: "import", package: header[1], files: header[2], source: sourcePath(sourceFile, root) } : null;
   }
+  if (/\.retarget\.md$/i.test(sourceFile)) {
+    // The assets with a Retarget Source Asset (sexpr_to_table.py): folder, asset type and count, from its first line.
+    const header = /<!-- retarget: folder="([^"]*)" type="([^"]*)" count="([^"]*)" -->/.exec(readFileSync(sourceFile, "utf8"));
+    return header ? { kind: "retarget", package: header[1], type: header[2], count: header[3], source: sourcePath(sourceFile, root) } : null;
+  }
   const diffFile = diffFileOf(sourceFile);
   if (!existsSync(diffFile)) {
     return null;

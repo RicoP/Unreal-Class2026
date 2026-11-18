@@ -39,3 +39,6 @@ Doc/commits/Transient/
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# Python bytecode the documentation tools generate
+__pycache__/

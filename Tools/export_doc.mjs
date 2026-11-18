@@ -131,6 +131,9 @@ function headingFor(meta, shownPath, hasSettings) {
     const what = files.length === 1 ? files[0] : `${files.length} files`;
     return `Import ${what} into ${shownPath}`;
   }
+  if (meta.kind === "retarget") {
+    return `Retarget ${meta.count} ${meta.type} ${Number(meta.count) === 1 ? "asset" : "assets"} in ${shownPath}`;
+  }
   if (meta.kind === "blueprint" && meta.new === "true" && (meta.part === "settings" || !hasSettings)) {
     return createBlueprintHeading(meta, shownPath);
   }
@@ -480,7 +483,9 @@ function writeDoc(folder) {
   // The rest in dependency order: what an asset refers to comes before it.
   const files = [
     ...allFiles.filter((file) => metas.get(file).kind === "import"),
-    ...dependencyOrder(allFiles.filter((file) => metas.get(file).kind !== "import"), metas, folder),
+    // Retargets work on what the imports bring in; the rest may use the retargeted animations.
+    ...allFiles.filter((file) => metas.get(file).kind === "retarget"),
+    ...dependencyOrder(allFiles.filter((file) => !["import", "retarget"].includes(metas.get(file).kind)), metas, folder),
   ];
   const withSettings = new Set([...metas.values()].filter((meta) => meta.part === "settings").map((meta) => meta.package));
 
