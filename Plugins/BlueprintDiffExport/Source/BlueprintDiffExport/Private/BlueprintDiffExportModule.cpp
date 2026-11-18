@@ -231,8 +231,11 @@ namespace
 		return FMessageDialog::Open(EAppMsgType::YesNo, EAppReturnType::No, Message, LOCTEXT("UnsavedTitle", "Unsaved changes")) == EAppReturnType::Yes;
 	}
 
-	/** Export a diff for every project asset that revision control reports as new or modified. */
-	void ExportChanged()
+	/**
+	 * Export a diff for every asset that revision control reports as new or modified, in the given
+	 * content folders (and their sub-folders), e.g. "/Game" for the whole project.
+	 */
+	void ExportChanged(const TArray<FString>& Roots)
 	{
 		if (GEditor && GEditor->PlayWorld)
 		{
@@ -252,9 +255,12 @@ namespace
 		}
 		ISourceControlProvider& Provider = SourceControl.GetProvider();
 
-		// All project assets, except the per-actor files of levels.
+		// All assets in the folders, except the per-actor files of levels.
 		TArray<FAssetData> Assets;
-		FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get().GetAssetsByPath(FName("/Game"), Assets, true);
+		for (const FString& Root : Roots)
+		{
+			FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get().GetAssetsByPath(FName(*Root), Assets, true);
+		}
 		TMap<FString, FAssetData> AssetsByFile;
 		for (const FAssetData& Asset : Assets)
 		{
@@ -344,6 +350,21 @@ namespace
 			Failures.IsEmpty(),
 			TransientFolder);
 	}
+
+	void ExportChangedProject()
+	{
+		ExportChanged({TEXT("/Game")});
+	}
+
+	/** Right-click on a folder in the Content Browser: the changed assets in it and below it. */
+	void ExportChangedInFolders(const FToolMenuContext& MenuContext)
+	{
+		const UContentBrowserFolderContext* Context = MenuContext.FindContext<UContentBrowserFolderContext>();
+		if (Context && !Context->GetSelectedPackagePaths().IsEmpty())
+		{
+			ExportChanged(Context->GetSelectedPackagePaths());
+		}
+	}
 }
 
 class FBlueprintDiffExportModule : public IModuleInterface
@@ -367,8 +388,10 @@ private:
 
 		// Every asset type's context menu inherits from this base menu (there is no ".Object" level),
 		// so registering here adds the entry for all assets. Blueprints get a graph diff.
+		// The Documentation sections go first in every menu they are in.
+		const FToolMenuInsert AtTop(NAME_None, EToolMenuInsertType::First);
 		UToolMenu* AssetMenu = UToolMenus::Get()->ExtendMenu("ContentBrowser.AssetContextMenu");
-		FToolMenuSection& AssetSection = AssetMenu->FindOrAddSection("GetAssetActions");
+		FToolMenuSection& AssetSection = AssetMenu->FindOrAddSection("BlueprintDiffExport", LOCTEXT("AssetSection", "Documentation"), AtTop);
 		AssetSection.AddMenuEntry(
 			"ExportBlueprintDiff",
 			LOCTEXT("ExportLabel", "Export Diff Against Depot"),
@@ -376,9 +399,19 @@ private:
 			FSlateIcon(),
 			FToolUIAction(FToolMenuExecuteAction::CreateStatic(&ExportSelected)));
 
+		// Right-click on a folder: every new or modified asset in it and below it.
+		UToolMenu* FolderMenu = UToolMenus::Get()->ExtendMenu("ContentBrowser.FolderContextMenu");
+		FToolMenuSection& FolderSection = FolderMenu->FindOrAddSection("BlueprintDiffExport", LOCTEXT("FolderSection", "Documentation"), AtTop);
+		FolderSection.AddMenuEntry(
+			"ExportFolderDiffs",
+			LOCTEXT("ExportFolderLabel", "Export Diffs of Changed Assets"),
+			LOCTEXT("ExportFolderTooltip", "Export a diff (and full reference) of every asset in this folder and its sub-folders that revision control reports as new or modified. Levels are skipped."),
+			FSlateIcon(),
+			FToolUIAction(FToolMenuExecuteAction::CreateStatic(&ExportChangedInFolders)));
+
 		// Right-click on actors, in the viewport and in the Outliner (whose menu includes this one).
 		UToolMenu* ActorMenu = UToolMenus::Get()->ExtendMenu("LevelEditor.ActorContextMenu");
-		FToolMenuSection& ActorSection = ActorMenu->FindOrAddSection("BlueprintDiffExport", LOCTEXT("ActorSection", "Documentation"));
+		FToolMenuSection& ActorSection = ActorMenu->FindOrAddSection("BlueprintDiffExport", LOCTEXT("ActorSection", "Documentation"), AtTop);
 		ActorSection.AddMenuEntry(
 			"ExportActorDiff",
 			LOCTEXT("ExportActorLabel", "Export Diff Against Depot"),
@@ -391,13 +424,13 @@ private:
 				FIsActionButtonVisible::CreateStatic(&AnyExternalActorSelected)));
 
 		UToolMenu* ToolsMenu = UToolMenus::Get()->ExtendMenu("LevelEditor.MainMenu.Tools");
-		FToolMenuSection& ToolsSection = ToolsMenu->FindOrAddSection("BlueprintDiffExport", LOCTEXT("ToolsSection", "Documentation"));
+		FToolMenuSection& ToolsSection = ToolsMenu->FindOrAddSection("BlueprintDiffExport", LOCTEXT("ToolsSection", "Documentation"), AtTop);
 		ToolsSection.AddMenuEntry(
 			"ExportChangedDiffs",
 			LOCTEXT("ExportChangedLabel", "Export Diffs of Changed Assets"),
 			LOCTEXT("ExportChangedTooltip", "Export a diff (and full reference) of every project asset that revision control reports as new or modified. Levels are skipped."),
 			FSlateIcon(),
-			FUIAction(FExecuteAction::CreateStatic(&ExportChanged)));
+			FUIAction(FExecuteAction::CreateStatic(&ExportChangedProject)));
 		ToolsSection.AddMenuEntry(
 			"SaveLevelScreenshot",
 			LOCTEXT("SaveScreenshotLabel", "Save Level Screenshot"),

@@ -386,19 +386,65 @@ namespace
 		return Result;
 	}
 
-	void AddFunctionDiffs(const UBlueprint* OldBlueprint, const UBlueprint* NewBlueprint, TArray<FString>& Lines)
+	/**
+	 * Functions that were renamed: one that is gone and one that is new, with the same signature
+	 * (override, pure, const, access, category, inputs, outputs), matched in order. Old name -> new name.
+	 * A rename that also changes the signature can't be told from a removal plus an addition.
+	 */
+	TMap<FString, FString> FunctionRenames(const UBlueprint* OldBlueprint, const UBlueprint* NewBlueprint)
 	{
 		TArray<FString> OldOrder, NewOrder;
 		const TMap<FString, FString> OldFunctions = FunctionExprs(OldBlueprint, &OldOrder);
 		const TMap<FString, FString> NewFunctions = FunctionExprs(NewBlueprint, &NewOrder);
+		const auto Signature = [](const FString& Name, const FString& Expr) { return Expr.RightChop(Quote(Name).Len()); };
+
+		TMap<FString, FString> Result;
+		TSet<FString> Taken;
+		for (const FString& OldName : OldOrder)
+		{
+			if (NewFunctions.Contains(OldName))
+			{
+				continue;
+			}
+			for (const FString& NewName : NewOrder)
+			{
+				if (!OldFunctions.Contains(NewName) && !Taken.Contains(NewName)
+					&& Signature(OldName, OldFunctions[OldName]) == Signature(NewName, NewFunctions[NewName]))
+				{
+					Result.Add(OldName, NewName);
+					Taken.Add(NewName);
+					break;
+				}
+			}
+		}
+		return Result;
+	}
+
+	void AddFunctionDiffs(const UBlueprint* OldBlueprint, const UBlueprint* NewBlueprint, const TMap<FString, FString>& Renames, TArray<FString>& Lines)
+	{
+		TArray<FString> OldOrder, NewOrder;
+		const TMap<FString, FString> OldFunctions = FunctionExprs(OldBlueprint, &OldOrder);
+		const TMap<FString, FString> NewFunctions = FunctionExprs(NewBlueprint, &NewOrder);
+		TSet<FString> RenamedTo;
+		for (const TPair<FString, FString>& Pair : Renames)
+		{
+			RenamedTo.Add(Pair.Value);
+		}
 
 		TArray<FString> Entries;
+		for (const TPair<FString, FString>& Pair : Renames)
+		{
+			Entries.Add(Indent(2) + TEXT("(renamed ") + Quote(Pair.Key) + TEXT(" ") + Quote(Pair.Value) + TEXT(")"));
+		}
 		for (const FString& Name : NewOrder)
 		{
 			const FString* Old = OldFunctions.Find(Name);
 			if (!Old)
 			{
-				Entries.Add(Indent(2) + TEXT("(added ") + NewFunctions[Name] + TEXT(")"));
+				if (!RenamedTo.Contains(Name))
+				{
+					Entries.Add(Indent(2) + TEXT("(added ") + NewFunctions[Name] + TEXT(")"));
+				}
 			}
 			else if (*Old != NewFunctions[Name])
 			{
@@ -409,7 +455,7 @@ namespace
 		}
 		for (const FString& Name : OldOrder)
 		{
-			if (!NewFunctions.Contains(Name))
+			if (!NewFunctions.Contains(Name) && !Renames.Contains(Name))
 			{
 				Entries.Add(Indent(2) + TEXT("(removed ") + OldFunctions[Name] + TEXT(")"));
 			}
@@ -1480,7 +1526,7 @@ namespace
 	 * ReplacePackage: the old revision is loaded under a temporary package name; its text names
 	 * the real package instead, so the two versions only differ where the Blueprint does.
 	 */
-	void WriteNativeGraphs(const UBlueprint* Blueprint, const FString& PackageName, const TCHAR* Suffix, const FString& ReplacePackage)
+	void WriteNativeGraphs(const UBlueprint* Blueprint, const FString& PackageName, const TCHAR* Suffix, const FString& ReplacePackage, const TMap<FString, FString>& Renames = TMap<FString, FString>())
 	{
 		const FString Base = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(),
 			TEXT("Doc/commits/Transient/graph/native"), PackageName.RightChop(1)));
@@ -1494,7 +1540,9 @@ namespace
 					Nodes.Add(Node);
 				}
 			}
-			const FString Path = FString::Printf(TEXT("%s.graph.%s%s.txt"), *Base, *GraphFilePart(Pair.Key), Suffix);
+			// An old function graph that was renamed is written under its new name, to pair with it.
+			const FString* RenamedTo = Renames.Find(Pair.Key);
+			const FString Path = FString::Printf(TEXT("%s.graph.%s%s.txt"), *Base, *GraphFilePart(RenamedTo ? *RenamedTo : Pair.Key), Suffix);
 			if (Nodes.IsEmpty())
 			{
 				IFileManager::Get().Delete(*Path, false, true, true);
@@ -1549,11 +1597,21 @@ bool ExportDiff(UBlueprint* Blueprint, FString& OutPath, FString& OutError)
 	Lines.Add(Indent(1) + TEXT("(parent ") + Quote(Blueprint->ParentClass ? Blueprint->ParentClass->GetPathName() : FString()) + TEXT(")"));
 
 	AddVariableDiffs(OldBlueprint, Blueprint, Lines);
-	AddFunctionDiffs(OldBlueprint, Blueprint, Lines);
+	const TMap<FString, FString> Renames = FunctionRenames(OldBlueprint, Blueprint);
+	AddFunctionDiffs(OldBlueprint, Blueprint, Renames, Lines);
 	AddDefaultsDiffs(OldBlueprint, Blueprint, false, Lines);
 	AddComponentDiffs(OldBlueprint, Blueprint, false, Lines);
 
-	const TMap<FString, UEdGraph*> OldGraphs = GraphsByPath(OldBlueprint);
+	// A renamed function's old graph is compared with its new one, so only what changed shows.
+	TMap<FString, UEdGraph*> OldGraphs = GraphsByPath(OldBlueprint);
+	for (const TPair<FString, FString>& Rename : Renames)
+	{
+		UEdGraph* RenamedGraph = nullptr;
+		if (OldGraphs.RemoveAndCopyValue(Rename.Key, RenamedGraph))
+		{
+			OldGraphs.Add(Rename.Value, RenamedGraph);
+		}
+	}
 	const TMap<FString, UEdGraph*> NewGraphs = GraphsByPath(Blueprint);
 	TSet<FString> Paths;
 	for (const TPair<FString, UEdGraph*>& Pair : OldGraphs) { Paths.Add(Pair.Key); }
@@ -1574,7 +1632,7 @@ bool ExportDiff(UBlueprint* Blueprint, FString& OutPath, FString& OutError)
 	WriteNativeGraphs(Blueprint, PackageName, TEXT(""), FString());
 	if (OldBlueprint)
 	{
-		WriteNativeGraphs(OldBlueprint, PackageName, TEXT(".old"), OldBlueprint->GetOutermost()->GetName());
+		WriteNativeGraphs(OldBlueprint, PackageName, TEXT(".old"), OldBlueprint->GetOutermost()->GetName(), Renames);
 	}
 
 	return WriteLines(Lines, OutPath, OutError)

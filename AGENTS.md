@@ -139,6 +139,10 @@ to rebuild it themselves.
   (Transform)`), and `Pure`, `Const`, `Access Specifier` and `Category` rows
   only where they differ from a fresh function; `Override Function | Received
   Notify` (no further rows: the parent decides the rest); `Remove Function`;
+  `Rename Function | Old | New` for a removed and an added function with the
+  same signature (`(renamed "Old" "New")` in the diff, `FunctionRenames` in the
+  plugin: its old graph is compared with the new one, and the old native text
+  is written as the new graph's `.old.txt`, so the editor view has a BEFORE);
   and `Function <name> › <field> | old | new` for changes (`Inputs` and
   `Outputs` as one list each). The function's graph is still drawn in the
   Blueprint's diagram.
@@ -238,7 +242,11 @@ to rebuild it themselves.
   section) does the same for every project asset that revision control
   reports as new, added or modified, skipping levels and their `__External…`
   files. It refuses to run during a Play session, shows progress, and lists
-  failures in the notification and the Output Log. If any assets or levels
+  failures in the notification and the Output Log. Right-clicking a folder in
+  the Content Browser (**Export Diffs of Changed Assets**, "Documentation"
+  section) does the same for the changed assets in that folder and its
+  sub-folders. The "Documentation" sections are first in every menu they are
+  in (Tools, asset, folder and actor context menus). If any assets or levels
   have unsaved changes, it first lists them in a message box and asks whether
   to export anyway (default: No), because revision control only sees saved
   files.

@@ -110,9 +110,10 @@ def list_items(value):
     """Elements of an exported Unreal array, e.g. '((A=1),(A=2))' or '("x","y")', or None."""
     if not isinstance(value, str) or not value.startswith("(") or not value.endswith(")"):
         return None
-    if not value.startswith("((") and "=" in split_top_level(value[1:-1])[0]:
+    items = split_top_level(value[1:-1])
+    if items and not value.startswith("((") and "=" in items[0]:
         return None  # a single struct such as '(X=1,Y=2)', not a list
-    return split_top_level(value[1:-1])
+    return items  # an empty '()' is an empty list
 
 
 def describe(item):
@@ -547,6 +548,8 @@ def function_rows(functions):
                     rows.append((f"{name} › {field}", None, value))
         elif entry[0] == "removed":
             rows.append(("Remove Function", f"`{entry[1]}`", None))
+        elif entry[0] == "renamed":
+            rows.append(("Rename Function", f"`{entry[1]}`", f"`{entry[2]}`"))
         elif entry[0] == "changed" and not overrides:
             old, new = function_fields(first(entry, "old")), function_fields(first(entry, "new"))
             rows += [(f"Function {name} › {field}", old[field], new[field]) for field in old if old[field] != new[field]]
@@ -575,7 +578,9 @@ def blueprint_settings_markdown(diff, diff_path):
     added_names = {entry[1] for entry in variables if entry[0] == "added"}
     rows += variable_rows(variables, added_defaults)
     rows += function_rows(functions)
-    defaults = [entry for entry in defaults if entry[1] not in added_names]
+    # A removed variable's value goes with it: no row for its class default either.
+    removed_names = {entry[1] for entry in variables if entry[0] == "removed"}
+    defaults = [entry for entry in defaults if entry[1] not in added_names | removed_names]
     for entry in defaults:
         old = first(entry, "old")
         rows.append((f"Class Defaults › {entry_label(entry)}", old[1] if old else None, first(entry, "new")[1]))
