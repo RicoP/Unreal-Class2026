@@ -1,0 +1,16 @@
+(blueprint-diff "/Game/App/Enemy/BP_Enemy_AIController"
+  (old (revision "c48dec7f") (date "2026-11-16T08:09:38.000Z") (description "Enemies chase a ghost of the player once they lose sight\n\n- BP_Ghost: a Character that only collides with the world (capsule ignores\n  everything but WorldStatic and WorldDynamic, so it blocks neither sight\n  nor pawns), possessed by BP_Ghost_AIController, which walks it forward\n  every tick.\n- BP_Enemy_Base: Target is now any Character. When sight is lost, the\n  enemy's ghost is spawned at the player, or moved there if it exists,\n  and becomes the Target.\n- BP_Enemy_AIController: peripheral vision half angle 75 instead of 45.\n- Lvl_ThirdPerson: new walls built with Modeling Mode (two Cube Grid\n  meshes, one with a hole and convex collision, and a box) and two new\n  actors. The level and these meshes aren't documented.\n- BP_Enemy_Variant1: saved again without changes of its own.\n- Doc/commits/20261116_090929: documentation of this step.\n\nCo-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"))
+  (new working-copy)
+  (parent "/Script/AIModule.AIController")
+  (defaults
+    (removed "bHidden" (old "True") (new "True") (display "Actor Hidden In Game"))
+    (removed "bRelevantForLevelBounds" (old "True") (new "True") (display "Relevant for Level Bounds"))
+    (removed "bGenerateOverlapEventsDuringLevelStreaming" (old "False") (new "False") (display "Generate Overlap Events During Level Streaming"))
+    (removed "UpdateOverlapsMethodDuringLevelStreaming" (old "UseConfigDefault") (new "UseConfigDefault") (display "Update Overlaps Method During Level Streaming"))
+    (removed "DefaultUpdateOverlapsMethodDuringLevelStreaming" (old "OnlyUpdateMovable") (new "OnlyUpdateMovable") (display "Default Update Overlaps Method During Level Streaming"))
+    (removed "SpriteScale" (old "1.000000") (new "1.000000") (display "Editor Billboard Scale")))
+  (components
+    (component "AIPerception" (class "AIPerceptionComponent") (kind added)
+      (properties
+        (changed "SensesConfig[0] LoseSightRadius" (old "1800.000000") (new "5000.000000") (display "Lose Sight Radius"))
+        (changed "SensesConfig AI_Sight_config Lose_Sight_Radius" (old "1800.000000") (new "5000.000000"))))))

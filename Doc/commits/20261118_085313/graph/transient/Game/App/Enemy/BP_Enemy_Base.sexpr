@@ -1,0 +1,271 @@
+(blueprint-diff "/Game/App/Enemy/BP_Enemy_Base"
+  (old (revision "279f3ffb") (date "2026-11-17T12:01:33.000Z") (description "Draw a debug line to the enemy's target\n\n- BP_Enemy_Base: before AI MoveTo, a Draw Debug Line from the enemy to\n  its target, red when the target is the ghost and blue when it is the\n  player; AI MoveTo gets the target's location as its destination.\n- BP_Ghost: Actor Hidden in Game is on, so the ghost isn't drawn.\n- Doc/commits/20261117_130031: documentation of this step.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (parent "/Script/Engine.Character")
+  (variables
+    (removed "AI Timer Handle" (type "Timer Handle Structure") (category "Default") (default "") (instance-editable false)))
+  (functions
+    (renamed "Set Target" "Set Hero Seen"))
+  (defaults
+    (removed "AI Timer Handle" (old "()") (new none) (display "AI Timer Handle")))
+  (graph "EventGraph"
+    (node-moved minor
+      (text "Moved Node 'AI MoveTo'")
+      (old (node "K2Node_AIMoveTo_0" "AI MoveTo" (pos 64 448)))
+      (new (node "K2Node_AIMoveTo_0" "AI MoveTo" (pos 368 448))))
+    (pin-relinked-node modification
+      (text "Link Moved  'execute' ['Is Valid' -> 'Branch']")
+      (old (node "K2Node_MacroInstance_0" "Is Valid" (pos -240 448)))
+      (new (node "K2Node_IfThenElse_0" "Branch" (pos -16 448)))
+      (old-pin (pin "K2Node_AIMoveTo_0" "execute") (links (pin "K2Node_MacroInstance_0" "Is Valid")) (default ""))
+      (new-pin (pin "K2Node_AIMoveTo_0" "execute") (links (pin "K2Node_IfThenElse_0" "then")) (default "")))
+    (pin-links-removed subtraction
+      (text "Removed Link to 'then'")
+      (old-pin (pin "K2Node_AIMoveTo_0" "then") (links (pin "K2Node_CallFunction_4" "execute")) (default ""))
+      (new-pin (pin "K2Node_AIMoveTo_0" "then") (links) (default "")))
+    (pin-links-added addition
+      (text "Added Link to 'OnSuccess'")
+      (old-pin (pin "K2Node_AIMoveTo_0" "OnSuccess") (links) (default ""))
+      (new-pin (pin "K2Node_AIMoveTo_0" "OnSuccess") (links (pin "K2Node_CallFunction_8" "execute")) (default "")))
+    (pin-links-added addition
+      (text "Added Link to 'OnFail'")
+      (old-pin (pin "K2Node_AIMoveTo_0" "OnFail") (links) (default ""))
+      (new-pin (pin "K2Node_AIMoveTo_0" "OnFail") (links (pin "K2Node_CallFunction_12" "execute")) (default "")))
+    (pin-links-added addition
+      (text "Added Link to 'Destination'")
+      (old-pin (pin "K2Node_AIMoveTo_0" "Destination") (links) (default "0, 0, 0"))
+      (new-pin (pin "K2Node_AIMoveTo_0" "Destination") (links (pin "K2Node_CallFunction_11" "ProjectedLocation")) (default "0, 0, 0")))
+    (pin-links-removed subtraction
+      (text "Removed Link to 'TargetActor'")
+      (old-pin (pin "K2Node_AIMoveTo_0" "TargetActor") (links (pin "K2Node_VariableGet_0" "Target")) (default ""))
+      (new-pin (pin "K2Node_AIMoveTo_0" "TargetActor") (links) (default "")))
+    (node-moved minor
+      (text "Moved Node 'Self-Reference'")
+      (old (node "K2Node_Self_0" "Self-Reference" (pos -352 656)))
+      (new (node "K2Node_Self_0" "Self-Reference" (pos 176 528))))
+    (pin-links-removed subtraction
+      (text "Removed Link to 'self'")
+      (old-pin (pin "K2Node_Self_0" "self") (links (pin "K2Node_AIMoveTo_0" "Pawn") (pin "K2Node_CallFunction_2" "self")) (default ""))
+      (new-pin (pin "K2Node_Self_0" "self") (links (pin "K2Node_AIMoveTo_0" "Pawn")) (default "")))
+    (node-moved minor
+      (text "Moved Node 'AI Move To Target'")
+      (old (node "K2Node_CustomEvent_0" "CustomEvent" (pos -464 432)))
+      (new (node "K2Node_CustomEvent_0" "AI Move To Target" (pos -960 432))))
+    (pin-links-removed subtraction
+      (text "Removed Link to 'OutputDelegate'")
+      (old-pin (pin "K2Node_CustomEvent_0" "OutputDelegate") (links (pin "K2Node_CallFunction_1" "Delegate")) (default ""))
+      (new-pin (pin "K2Node_CustomEvent_0" "OutputDelegate") (links) (default "")))
+    (pin-relinked-node modification
+      (text "Link Moved  'then' ['Is Valid' -> 'Branch']")
+      (old (node "K2Node_MacroInstance_0" "Is Valid" (pos -240 448)))
+      (new (node "K2Node_IfThenElse_1" "Branch" (pos -752 448)))
+      (old-pin (pin "K2Node_CustomEvent_0" "then") (links (pin "K2Node_MacroInstance_0" "exec")) (default ""))
+      (new-pin (pin "K2Node_CustomEvent_0" "then") (links (pin "K2Node_IfThenElse_1" "execute")) (default "")))
+    (node-moved minor
+      (text "Moved Node 'Get Target'")
+      (old (node "K2Node_VariableGet_0" "Get Target" (pos -592 592)))
+      (new (node "K2Node_VariableGet_0" "Get Target" (pos -912 645))))
+    (pin-links-removed subtraction
+      (text "Removed Link to 'Target'")
+      (old-pin (pin "K2Node_VariableGet_0" "Target") (links (pin "K2Node_MacroInstance_0" "InputObject") (pin "K2Node_AIMoveTo_0" "TargetActor") (pin "K2Node_CallFunction_0" "self")) (default ""))
+      (new-pin (pin "K2Node_VariableGet_0" "Target") (links (pin "K2Node_MacroInstance_0" "InputObject") (pin "K2Node_CallFunction_0" "self")) (default "")))
+    (node-moved minor
+      (text "Moved Node 'Is Valid'")
+      (old (node "K2Node_MacroInstance_0" "Is Valid" (pos -240 448)))
+      (new (node "K2Node_MacroInstance_0" "Is Valid" (pos -448 448))))
+    (pin-relinked-node modification
+      (text "Link Moved  'exec' ['CustomEvent' -> 'Branch']")
+      (old (node "K2Node_CustomEvent_0" "CustomEvent" (pos -464 432)))
+      (new (node "K2Node_IfThenElse_1" "Branch" (pos -752 448)))
+      (old-pin (pin "K2Node_MacroInstance_0" "exec") (links (pin "K2Node_CustomEvent_0" "then")) (default ""))
+      (new-pin (pin "K2Node_MacroInstance_0" "exec") (links (pin "K2Node_IfThenElse_1" "then")) (default "")))
+    (pin-relinked-node modification
+      (text "Link Moved  'Is Valid' ['AI MoveTo' -> 'Branch']")
+      (old (node "K2Node_AIMoveTo_0" "AI MoveTo" (pos 64 448)))
+      (new (node "K2Node_IfThenElse_0" "Branch" (pos -16 448)))
+      (old-pin (pin "K2Node_MacroInstance_0" "Is Valid") (links (pin "K2Node_AIMoveTo_0" "execute")) (default ""))
+      (new-pin (pin "K2Node_MacroInstance_0" "Is Valid") (links (pin "K2Node_IfThenElse_0" "execute")) (default "")))
+    (node-moved minor
+      (text "Moved Node 'Get Actor Location'")
+      (old (node "K2Node_CallFunction_0" "Get Actor Location" (pos -192 768)))
+      (new (node "K2Node_CallFunction_0" "Get Actor Location" (pos -704 608))))
+    (pin-relinked-node modification
+      (text "Link Moved  'ReturnValue' ['DrawDebugLine' -> 'Project Point to Navigation']")
+      (old (node "K2Node_CallFunction_4" "DrawDebugLine" (pos 592 448)))
+      (new (node "K2Node_CallFunction_11" "Project Point to Navigation" (pos -416 544)))
+      (old-pin (pin "K2Node_CallFunction_0" "ReturnValue") (links (pin "K2Node_CallFunction_4" "LineEnd")) (default "0, 0, 0"))
+      (new-pin (pin "K2Node_CallFunction_0" "ReturnValue") (links (pin "K2Node_CallFunction_11" "Point")) (default "0, 0, 0")))
+    (node-added addition
+      (text "Added Node 'AI Move To Target'")
+      (node "K2Node_CallFunction_8" "AI Move To Target" (pos 1168 464))
+      (pin in "execute" "Exec" (links (pin "K2Node_AIMoveTo_0" "OnSuccess")))
+      (pin out "then" "Exec")
+      (pin in "self" "Self Object Reference"))
+    (node-added addition
+      (text "Added Node 'Project Point to Navigation'")
+      (node "K2Node_CallFunction_11" "Project Point to Navigation" (pos -416 544))
+      (pin in "Point" "Vector (by ref)" (links (pin "K2Node_CallFunction_0" "ReturnValue")))
+      (pin out "ProjectedLocation" "Vector" (links (pin "K2Node_AIMoveTo_0" "Destination")))
+      (pin in "NavData" "Navigation Data Object Reference")
+      (pin in "FilterClass" "Navigation Query Filter Class Reference")
+      (pin in "QueryExtent" "Vector" (default "300.000000,300.000000,300.000000"))
+      (pin out "ReturnValue" "Boolean" (links (pin "K2Node_IfThenElse_0" "Condition"))))
+    (node-added addition
+      (text "Added Node 'Branch'")
+      (node "K2Node_IfThenElse_0" "Branch" (pos -16 448))
+      (pin in "execute" "Exec" (links (pin "K2Node_MacroInstance_0" "Is Valid")))
+      (pin in "Condition" "Boolean" (links (pin "K2Node_CallFunction_11" "ReturnValue")))
+      (pin out "then" "Exec" (links (pin "K2Node_AIMoveTo_0" "execute")))
+      (pin out "else" "Exec"))
+    (node-added addition
+      (text "Added Node 'Delay'")
+      (node "K2Node_CallFunction_12" "Delay" (pos 864 640))
+      (pin in "execute" "Exec" (links (pin "K2Node_AIMoveTo_0" "OnFail")))
+      (pin out "then" "Exec" (links (pin "K2Node_CallFunction_13" "execute")))
+      (pin in "Duration" "Float (single-precision)" (default "0.2")))
+    (node-added addition
+      (text "Added Node 'AI Move To Target'")
+      (node "K2Node_CallFunction_13" "AI Move To Target" (pos 1168 624))
+      (pin in "execute" "Exec" (links (pin "K2Node_CallFunction_12" "then")))
+      (pin out "then" "Exec")
+      (pin in "self" "Self Object Reference"))
+    (node-added addition
+      (text "Added Node 'Get Life'")
+      (node "K2Node_VariableGet_3" "Get Life" (pos -1280 608))
+      (pin out "Life" "Integer" (links (pin "K2Node_PromotableOperator_0" "A"))))
+    (node-added addition
+      (text "Added Node 'integer > integer'")
+      (node "K2Node_PromotableOperator_0" "integer > integer" (pos -1088 608))
+      (pin in "A" "Integer" (links (pin "K2Node_VariableGet_3" "Life")))
+      (pin in "B" "Integer")
+      (pin out "ReturnValue" "Boolean" (links (pin "K2Node_IfThenElse_1" "Condition"))))
+    (node-added addition
+      (text "Added Node 'Branch'")
+      (node "K2Node_IfThenElse_1" "Branch" (pos -752 448))
+      (pin in "execute" "Exec" (links (pin "K2Node_CustomEvent_0" "then")))
+      (pin in "Condition" "Boolean" (links (pin "K2Node_PromotableOperator_0" "ReturnValue")))
+      (pin out "then" "Exec" (links (pin "K2Node_MacroInstance_0" "exec")))
+      (pin out "else" "Exec"))
+    (node-removed subtraction
+      (text "Removed Node 'Event BeginPlay'")
+      (node "K2Node_Event_0" "Event BeginPlay" (pos -480 16))
+      (pin out "OutputDelegate" "Delegate")
+      (pin out "then" "Exec" (links (pin "K2Node_CallFunction_1" "execute"))))
+    (node-removed subtraction
+      (text "Removed Node 'Set Timer by Event'")
+      (node "K2Node_CallFunction_1" "Set Timer by Event" (pos -224 16))
+      (pin in "execute" "Exec" (links (pin "K2Node_Event_0" "then")))
+      (pin out "then" "Exec" (links (pin "K2Node_VariableSet_0" "execute")))
+      (pin in "Delegate" "Delegate" (links (pin "K2Node_CustomEvent_0" "OutputDelegate")))
+      (pin in "Time" "Float (single-precision)" (default "0.500000"))
+      (pin in "bLooping" "Boolean" (default "true"))
+      (pin in "bMaxOncePerFrame" "Boolean" (default "false"))
+      (pin in "InitialStartDelay" "Float (single-precision)" (default "0.000000"))
+      (pin in "InitialStartDelayVariance" "Float (single-precision)" (default "0.200000"))
+      (pin out "ReturnValue" "Timer Handle Structure" (links (pin "K2Node_VariableSet_0" "AI Timer Handle"))))
+    (node-removed subtraction
+      (text "Removed Node 'Set AI Timer Handle'")
+      (node "K2Node_VariableSet_0" "Set AI Timer Handle" (pos 160 32))
+      (pin in "execute" "Exec" (links (pin "K2Node_CallFunction_1" "then")))
+      (pin out "then" "Exec")
+      (pin in "AI Timer Handle" "Timer Handle Structure" (links (pin "K2Node_CallFunction_1" "ReturnValue")))
+      (pin out "Output_Get" "Timer Handle Structure"))
+    (node-removed subtraction
+      (text "Removed Node 'Get Actor Location'")
+      (node "K2Node_CallFunction_2" "Get Actor Location" (pos -192 656))
+      (pin in "self" "Actor Object Reference" (links (pin "K2Node_Self_0" "self")))
+      (pin out "ReturnValue" "Vector" (links (pin "K2Node_CallFunction_4" "LineStart"))))
+    (node-removed subtraction
+      (text "Removed Node 'DrawDebugLine'")
+      (node "K2Node_CallFunction_4" "DrawDebugLine" (pos 592 448))
+      (pin in "execute" "Exec" (links (pin "K2Node_AIMoveTo_0" "then")))
+      (pin out "then" "Exec")
+      (pin in "LineStart" "Vector" (links (pin "K2Node_CallFunction_2" "ReturnValue")))
+      (pin in "LineEnd" "Vector" (links (pin "K2Node_CallFunction_0" "ReturnValue")))
+      (pin in "LineColor" "Linear Color Structure" (links (pin "K2Node_Select_0" "ReturnValue")))
+      (pin in "Duration" "Float (single-precision)" (default "0.500000"))
+      (pin in "Thickness" "Float (single-precision)" (default "0.000000"))
+      (pin in "DepthPriority" "EDrawDebugSceneDepthPriorityGroup Enum" (default "World")))
+    (node-removed subtraction
+      (text "Removed Node 'Get Target'")
+      (node "K2Node_VariableGet_1" "Get Target" (pos -544 992))
+      (pin out "Target" "Character Object Reference" (links (pin "K2Node_PromotableOperator_0" "A"))))
+    (node-removed subtraction
+      (text "Removed Node 'Get Ghost'")
+      (node "K2Node_VariableGet_2" "Get Ghost" (pos -544 1057))
+      (pin out "Ghost" "BP Ghost Object Reference" (links (pin "K2Node_PromotableOperator_0" "B"))))
+    (node-removed subtraction
+      (text "Removed Node 'Equal (Object)'")
+      (node "K2Node_PromotableOperator_0" "Equal (Object)" (pos -352 992))
+      (pin in "A" "Object Reference" (links (pin "K2Node_VariableGet_1" "Target")))
+      (pin in "B" "Object Reference" (links (pin "K2Node_VariableGet_2" "Ghost")))
+      (pin out "ReturnValue" "Boolean" (links (pin "K2Node_Select_0" "Index"))))
+    (node-removed subtraction
+      (text "Removed Node 'Select'")
+      (node "K2Node_Select_0" "Select" (pos -176 914))
+      (pin in "Option 0" "Linear Color Structure" (default "(R=0.017865,G=0.000000,B=1.000000,A=1.000000)"))
+      (pin in "Option 1" "Linear Color Structure" (default "(R=1.000000,G=0.000000,B=0.019477,A=1.000000)"))
+      (pin in "Index" "Boolean" (links (pin "K2Node_PromotableOperator_0" "ReturnValue")))
+      (pin out "ReturnValue" "Linear Color Structure" (links (pin "K2Node_CallFunction_4" "LineColor")))))
+  (graph "EventGraph Hit"
+    (pin-relinked-node modification
+      (text "Link Moved  'execute' ['Clear and Invalidate Timer by Handle' -> 'StopMovementImmediately']")
+      (old (node "K2Node_CallFunction_3" "Clear and Invalidate Timer by Handle" (pos 400 384)))
+      (new (node "K2Node_CallFunction_0" "StopMovementImmediately" (pos 208 366)))
+      (old-pin (pin "K2Node_PlayMontage_0" "execute") (links (pin "K2Node_CallFunction_3" "then")) (default ""))
+      (new-pin (pin "K2Node_PlayMontage_0" "execute") (links (pin "K2Node_CallFunction_0" "then")) (default "")))
+    (pin-relinked-node modification
+      (text "Link Moved  'then' ['Clear and Invalidate Timer by Handle' -> 'StopMovementImmediately']")
+      (old (node "K2Node_CallFunction_3" "Clear and Invalidate Timer by Handle" (pos 400 384)))
+      (new (node "K2Node_CallFunction_0" "StopMovementImmediately" (pos 208 366)))
+      (old-pin (pin "K2Node_IfThenElse_0" "then") (links (pin "K2Node_CallFunction_3" "execute")) (default ""))
+      (new-pin (pin "K2Node_IfThenElse_0" "then") (links (pin "K2Node_CallFunction_0" "execute")) (default "")))
+    (node-moved minor
+      (text "Moved Node 'SetCollisionResponseToChannel'")
+      (old (node "K2Node_CallFunction_6" "SetCollisionResponseToChannel" (pos 1744 368)))
+      (new (node "K2Node_CallFunction_6" "SetCollisionResponseToChannel" (pos 1744 366))))
+    (node-added addition
+      (text "Added Node 'StopMovementImmediately'")
+      (node "K2Node_CallFunction_0" "StopMovementImmediately" (pos 208 366))
+      (pin in "execute" "Exec" (links (pin "K2Node_IfThenElse_0" "then")))
+      (pin out "then" "Exec" (links (pin "K2Node_PlayMontage_0" "execute")))
+      (pin in "self" "Movement Component Object Reference" (links (pin "K2Node_VariableGet_4" "CharacterMovement"))))
+    (node-added addition
+      (text "Added Node 'Get CharacterMovement'")
+      (node "K2Node_VariableGet_4" "Get CharacterMovement" (pos -20 521))
+      (pin out "CharacterMovement" "Character Movement Component Object Reference" (links (pin "K2Node_CallFunction_0" "self"))))
+    (node-removed subtraction
+      (text "Removed Node 'Get AI Timer Handle'")
+      (node "K2Node_VariableGet_0" "Get AI Timer Handle" (pos 176 608))
+      (pin out "AI Timer Handle" "Timer Handle Structure" (links (pin "K2Node_CallFunction_3" "Handle"))))
+    (node-removed subtraction
+      (text "Removed Node 'Clear and Invalidate Timer by Handle'")
+      (node "K2Node_CallFunction_3" "Clear and Invalidate Timer by Handle" (pos 400 384))
+      (pin in "execute" "Exec" (links (pin "K2Node_IfThenElse_0" "then")))
+      (pin out "then" "Exec" (links (pin "K2Node_PlayMontage_0" "execute")))
+      (pin in "Handle" "Timer Handle Structure (by ref)" (links (pin "K2Node_VariableGet_0" "AI Timer Handle")))))
+  (graph "Set Hero Seen"
+    (node-moved minor
+      (text "Moved Node 'Set Hero Seen'")
+      (old (node "K2Node_FunctionEntry_0" "Set Target" (pos 0 -48)))
+      (new (node "K2Node_FunctionEntry_0" "Set Hero Seen" (pos -96 -48))))
+    (pin-links-added addition
+      (text "Added Link to 'then'")
+      (old-pin (pin "K2Node_VariableSet_2" "then") (links) (default ""))
+      (new-pin (pin "K2Node_VariableSet_2" "then") (links (pin "K2Node_CallFunction_0" "execute")) (default "")))
+    (pin-links-added addition
+      (text "Added Link to 'then'")
+      (old-pin (pin "K2Node_VariableSet_3" "then") (links) (default ""))
+      (new-pin (pin "K2Node_VariableSet_3" "then") (links (pin "K2Node_CallFunction_3" "execute")) (default "")))
+    (node-added addition
+      (text "Added Node 'AI Move To Target'")
+      (node "K2Node_CallFunction_0" "AI Move To Target" (pos 832 -64))
+      (pin in "execute" "Exec" (links (pin "K2Node_VariableSet_2" "then")))
+      (pin out "then" "Exec")
+      (pin in "self" "Self Object Reference"))
+    (node-added addition
+      (text "Added Node 'AI Move To Target'")
+      (node "K2Node_CallFunction_3" "AI Move To Target" (pos 2592 80))
+      (pin in "execute" "Exec" (links (pin "K2Node_VariableSet_3" "then")))
+      (pin out "then" "Exec")
+      (pin in "self" "Self Object Reference"))))

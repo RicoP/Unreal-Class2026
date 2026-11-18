@@ -1,0 +1,183 @@
+---
+config:
+  look: classic
+  themeCSS: "g.node *, g.cluster * { filter: none !important; }"
+  flowchart:
+    curve: monotoneX
+    nodeSpacing: 8
+    rankSpacing: 30
+    subGraphTitleMargin:
+      top: 4
+      bottom: 4
+---
+flowchart LR
+
+    %% graph Function Set Hero Seen
+
+    subgraph N_Set_Hero_Seen_K2Node_FunctionEntry_0["Set Hero Seen"]
+        N_Set_Hero_Seen_K2Node_FunctionEntry_0_anchor_in[" "]
+        N_Set_Hero_Seen_K2Node_FunctionEntry_0_anchor_out[" "]
+        N_Set_Hero_Seen_K2Node_FunctionEntry_0_Hero["<span style='display:inline-block;min-width:150px;text-align:right'>Hero ●</span>"]
+        N_Set_Hero_Seen_K2Node_FunctionEntry_0_Seen["<span style='display:inline-block;min-width:150px;text-align:right'>Seen ●</span>"]
+    end
+    subgraph N_Set_Hero_Seen_K2Node_IfThenElse_0["Branch"]
+        N_Set_Hero_Seen_K2Node_IfThenElse_0_anchor_in[" "]
+        N_Set_Hero_Seen_K2Node_IfThenElse_0_Condition["<span style='display:inline-block;min-width:150px;text-align:left'>● Condition</span>"]
+        N_Set_Hero_Seen_K2Node_IfThenElse_0_then>"<span style='display:inline-block;min-width:150px;text-align:right'>True ▶</span>"]
+        N_Set_Hero_Seen_K2Node_IfThenElse_0_else>"<span style='display:inline-block;min-width:150px;text-align:right'>False ▶</span>"]
+        %% pin-order N_Set_Hero_Seen_K2Node_IfThenElse_0_then N_Set_Hero_Seen_K2Node_IfThenElse_0_else
+    end
+    subgraph N_Set_Hero_Seen_K2Node_VariableGet_0["Get Target"]
+    end
+    subgraph N_Set_Hero_Seen_K2Node_VariableSet_2["Set Target"]
+        N_Set_Hero_Seen_K2Node_VariableSet_2_anchor_in[" "]
+        N_Set_Hero_Seen_K2Node_VariableSet_2_anchor_out[" "]
+        N_Set_Hero_Seen_K2Node_VariableSet_2_Target["<span style='display:inline-block;min-width:150px;text-align:left'>● Target</span>"]
+    end
+    subgraph N_Set_Hero_Seen_K2Node_MacroInstance_0["Is Valid"]
+        N_Set_Hero_Seen_K2Node_MacroInstance_0_anchor_in[" "]
+        N_Set_Hero_Seen_K2Node_MacroInstance_0_InputObject["<span style='display:inline-block;min-width:150px;text-align:left'>● Input Object</span>"]
+        N_Set_Hero_Seen_K2Node_MacroInstance_0_Is_Valid>"<span style='display:inline-block;min-width:150px;text-align:right'>Is Valid ▶</span>"]
+    end
+    subgraph N_Set_Hero_Seen_K2Node_VariableGet_5["Get Target"]
+    end
+    subgraph N_Set_Hero_Seen_K2Node_VariableGet_1["Get Ghost"]
+    end
+    subgraph N_Set_Hero_Seen_K2Node_CallFunction_2["Get Actor Transform"]
+    end
+    subgraph N_Set_Hero_Seen_K2Node_CallFunction_0["AI Move To Target"]
+    end
+    subgraph N_Set_Hero_Seen_K2Node_MacroInstance_1["Is Valid"]
+        N_Set_Hero_Seen_K2Node_MacroInstance_1_anchor_in[" "]
+        N_Set_Hero_Seen_K2Node_MacroInstance_1_InputObject["<span style='display:inline-block;min-width:150px;text-align:left'>● Input Object</span>"]
+        N_Set_Hero_Seen_K2Node_MacroInstance_1_Is_Valid>"<span style='display:inline-block;min-width:150px;text-align:right'>Is Valid ▶</span>"]
+        N_Set_Hero_Seen_K2Node_MacroInstance_1_Is_Not_Valid>"<span style='display:inline-block;min-width:150px;text-align:right'>Is Not Valid ▶</span>"]
+        %% pin-order N_Set_Hero_Seen_K2Node_MacroInstance_1_Is_Valid N_Set_Hero_Seen_K2Node_MacroInstance_1_Is_Not_Valid
+    end
+    subgraph N_Set_Hero_Seen_K2Node_VariableGet_4["Get Ghost"]
+    end
+    subgraph N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0["SpawnActor BP Ghost"]
+        N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_anchor_in[" "]
+        N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_anchor_out[" "]
+        N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_SpawnTransform["<span style='display:inline-block;min-width:150px;text-align:left'>● Spawn Transform</span>"]
+        N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_CollisionHandlingOverride["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>Undefined</span> Collision Handling Override</span>"]
+        N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_TransformScaleMethod["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>MultiplyWithRoot</span> Transform Scale Method</span>"]
+        N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_ReturnValue["<span style='display:inline-block;min-width:150px;text-align:right'>Return Value ●</span>"]
+    end
+    subgraph N_Set_Hero_Seen_K2Node_CallFunction_1["Set Actor Transform"]
+        N_Set_Hero_Seen_K2Node_CallFunction_1_anchor_in[" "]
+        N_Set_Hero_Seen_K2Node_CallFunction_1_anchor_out[" "]
+        N_Set_Hero_Seen_K2Node_CallFunction_1_self["<span style='display:inline-block;min-width:150px;text-align:left'>● Target</span>"]
+        N_Set_Hero_Seen_K2Node_CallFunction_1_NewTransform["<span style='display:inline-block;min-width:150px;text-align:left'>● New Transform</span>"]
+        N_Set_Hero_Seen_K2Node_CallFunction_1_bTeleport["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>true</span> Teleport</span>"]
+    end
+    subgraph N_Set_Hero_Seen_K2Node_VariableSet_4["Set Ghost"]
+        N_Set_Hero_Seen_K2Node_VariableSet_4_anchor_in[" "]
+        N_Set_Hero_Seen_K2Node_VariableSet_4_anchor_out[" "]
+        N_Set_Hero_Seen_K2Node_VariableSet_4_Ghost["<span style='display:inline-block;min-width:150px;text-align:left'>● Ghost</span>"]
+    end
+    subgraph N_Set_Hero_Seen_K2Node_VariableGet_2["Get Ghost"]
+    end
+    subgraph N_Set_Hero_Seen_K2Node_VariableSet_3["Set Target"]
+        N_Set_Hero_Seen_K2Node_VariableSet_3_anchor_in[" "]
+        N_Set_Hero_Seen_K2Node_VariableSet_3_anchor_out[" "]
+        N_Set_Hero_Seen_K2Node_VariableSet_3_Target["<span style='display:inline-block;min-width:150px;text-align:left'>● Target</span>"]
+    end
+    subgraph N_Set_Hero_Seen_K2Node_CallFunction_3["AI Move To Target"]
+    end
+
+    %% Wires
+    N_Set_Hero_Seen_K2Node_FunctionEntry_0_Hero --> N_Set_Hero_Seen_K2Node_VariableSet_2_Target
+    N_Set_Hero_Seen_K2Node_FunctionEntry_0_Seen --> N_Set_Hero_Seen_K2Node_IfThenElse_0_Condition
+    N_Set_Hero_Seen_K2Node_FunctionEntry_0_anchor_out ==> N_Set_Hero_Seen_K2Node_IfThenElse_0_anchor_in
+    N_Set_Hero_Seen_K2Node_IfThenElse_0_else ==> N_Set_Hero_Seen_K2Node_MacroInstance_0_anchor_in
+    N_Set_Hero_Seen_K2Node_IfThenElse_0_then ==> N_Set_Hero_Seen_K2Node_VariableSet_2_anchor_in
+    N_Set_Hero_Seen_K2Node_VariableGet_0 --> N_Set_Hero_Seen_K2Node_MacroInstance_0_InputObject
+    N_Set_Hero_Seen_K2Node_VariableSet_2_anchor_out ==> N_Set_Hero_Seen_K2Node_CallFunction_0
+    N_Set_Hero_Seen_K2Node_MacroInstance_0_Is_Valid ==> N_Set_Hero_Seen_K2Node_MacroInstance_1_anchor_in
+    N_Set_Hero_Seen_K2Node_VariableGet_5 --> N_Set_Hero_Seen_K2Node_CallFunction_2
+    N_Set_Hero_Seen_K2Node_VariableGet_1 --> N_Set_Hero_Seen_K2Node_MacroInstance_1_InputObject
+    N_Set_Hero_Seen_K2Node_CallFunction_2 --> N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_SpawnTransform
+    N_Set_Hero_Seen_K2Node_CallFunction_2 --> N_Set_Hero_Seen_K2Node_CallFunction_1_NewTransform
+    N_Set_Hero_Seen_K2Node_MacroInstance_1_Is_Not_Valid ==> N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_anchor_in
+    N_Set_Hero_Seen_K2Node_MacroInstance_1_Is_Valid ==> N_Set_Hero_Seen_K2Node_CallFunction_1_anchor_in
+    N_Set_Hero_Seen_K2Node_VariableGet_4 --> N_Set_Hero_Seen_K2Node_CallFunction_1_self
+    N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_ReturnValue --> N_Set_Hero_Seen_K2Node_VariableSet_4_Ghost
+    N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_anchor_out ==> N_Set_Hero_Seen_K2Node_VariableSet_4_anchor_in
+    N_Set_Hero_Seen_K2Node_CallFunction_1_anchor_out ==> N_Set_Hero_Seen_K2Node_VariableSet_3_anchor_in
+    N_Set_Hero_Seen_K2Node_VariableSet_4_anchor_out ==> N_Set_Hero_Seen_K2Node_VariableSet_3_anchor_in
+    N_Set_Hero_Seen_K2Node_VariableGet_2 --> N_Set_Hero_Seen_K2Node_VariableSet_3_Target
+    N_Set_Hero_Seen_K2Node_VariableSet_3_anchor_out ==> N_Set_Hero_Seen_K2Node_CallFunction_3
+
+    %% Keep inputs left of outputs inside each node
+    N_Set_Hero_Seen_K2Node_FunctionEntry_0_anchor_in ~~~ N_Set_Hero_Seen_K2Node_FunctionEntry_0_Hero
+    N_Set_Hero_Seen_K2Node_FunctionEntry_0_anchor_in ~~~ N_Set_Hero_Seen_K2Node_FunctionEntry_0_Seen
+    N_Set_Hero_Seen_K2Node_FunctionEntry_0_anchor_in ~~~ N_Set_Hero_Seen_K2Node_FunctionEntry_0_anchor_out
+    N_Set_Hero_Seen_K2Node_IfThenElse_0_Condition ~~~ N_Set_Hero_Seen_K2Node_IfThenElse_0_then
+    N_Set_Hero_Seen_K2Node_IfThenElse_0_Condition ~~~ N_Set_Hero_Seen_K2Node_IfThenElse_0_else
+    N_Set_Hero_Seen_K2Node_IfThenElse_0_anchor_in ~~~ N_Set_Hero_Seen_K2Node_IfThenElse_0_then
+    N_Set_Hero_Seen_K2Node_IfThenElse_0_anchor_in ~~~ N_Set_Hero_Seen_K2Node_IfThenElse_0_else
+    N_Set_Hero_Seen_K2Node_VariableSet_2_Target ~~~ N_Set_Hero_Seen_K2Node_VariableSet_2_anchor_out
+    N_Set_Hero_Seen_K2Node_VariableSet_2_anchor_in ~~~ N_Set_Hero_Seen_K2Node_VariableSet_2_anchor_out
+    N_Set_Hero_Seen_K2Node_MacroInstance_0_InputObject ~~~ N_Set_Hero_Seen_K2Node_MacroInstance_0_Is_Valid
+    N_Set_Hero_Seen_K2Node_MacroInstance_0_anchor_in ~~~ N_Set_Hero_Seen_K2Node_MacroInstance_0_Is_Valid
+    N_Set_Hero_Seen_K2Node_MacroInstance_1_InputObject ~~~ N_Set_Hero_Seen_K2Node_MacroInstance_1_Is_Valid
+    N_Set_Hero_Seen_K2Node_MacroInstance_1_InputObject ~~~ N_Set_Hero_Seen_K2Node_MacroInstance_1_Is_Not_Valid
+    N_Set_Hero_Seen_K2Node_MacroInstance_1_anchor_in ~~~ N_Set_Hero_Seen_K2Node_MacroInstance_1_Is_Valid
+    N_Set_Hero_Seen_K2Node_MacroInstance_1_anchor_in ~~~ N_Set_Hero_Seen_K2Node_MacroInstance_1_Is_Not_Valid
+    N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_SpawnTransform ~~~ N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_ReturnValue
+    N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_SpawnTransform ~~~ N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_anchor_out
+    N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_CollisionHandlingOverride ~~~ N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_ReturnValue
+    N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_CollisionHandlingOverride ~~~ N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_anchor_out
+    N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_TransformScaleMethod ~~~ N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_ReturnValue
+    N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_TransformScaleMethod ~~~ N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_anchor_out
+    N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_anchor_in ~~~ N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_ReturnValue
+    N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_anchor_in ~~~ N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_anchor_out
+    N_Set_Hero_Seen_K2Node_CallFunction_1_self ~~~ N_Set_Hero_Seen_K2Node_CallFunction_1_anchor_out
+    N_Set_Hero_Seen_K2Node_CallFunction_1_NewTransform ~~~ N_Set_Hero_Seen_K2Node_CallFunction_1_anchor_out
+    N_Set_Hero_Seen_K2Node_CallFunction_1_bTeleport ~~~ N_Set_Hero_Seen_K2Node_CallFunction_1_anchor_out
+    N_Set_Hero_Seen_K2Node_CallFunction_1_anchor_in ~~~ N_Set_Hero_Seen_K2Node_CallFunction_1_anchor_out
+    N_Set_Hero_Seen_K2Node_VariableSet_4_Ghost ~~~ N_Set_Hero_Seen_K2Node_VariableSet_4_anchor_out
+    N_Set_Hero_Seen_K2Node_VariableSet_4_anchor_in ~~~ N_Set_Hero_Seen_K2Node_VariableSet_4_anchor_out
+    N_Set_Hero_Seen_K2Node_VariableSet_3_Target ~~~ N_Set_Hero_Seen_K2Node_VariableSet_3_anchor_out
+    N_Set_Hero_Seen_K2Node_VariableSet_3_anchor_in ~~~ N_Set_Hero_Seen_K2Node_VariableSet_3_anchor_out
+
+    %% Nodes
+    style N_Set_Hero_Seen_K2Node_FunctionEntry_0 fill:#151515,stroke:#4a4a4a,stroke-width:2px,color:#787878,stroke-dasharray:5 5
+    style N_Set_Hero_Seen_K2Node_IfThenElse_0 fill:#151515,stroke:#4a4a4a,stroke-width:2px,color:#787878,stroke-dasharray:5 5
+    style N_Set_Hero_Seen_K2Node_VariableGet_0 fill:#151515,stroke:#0c587a,stroke-width:2px,color:#0c587a,stroke-dasharray:5 5,rx:16px,ry:16px
+    style N_Set_Hero_Seen_K2Node_VariableSet_2 fill:#151515,stroke:#1f354c,stroke-width:3px,color:#787878,stroke-dasharray:5 5
+    style N_Set_Hero_Seen_K2Node_MacroInstance_0 fill:#151515,stroke:#4a4a4a,stroke-width:2px,color:#787878,stroke-dasharray:5 5
+    style N_Set_Hero_Seen_K2Node_VariableGet_5 fill:#151515,stroke:#0c587a,stroke-width:2px,color:#0c587a,stroke-dasharray:5 5,rx:16px,ry:16px
+    style N_Set_Hero_Seen_K2Node_VariableGet_1 fill:#151515,stroke:#0c587a,stroke-width:2px,color:#0c587a,stroke-dasharray:5 5,rx:16px,ry:16px
+    style N_Set_Hero_Seen_K2Node_CallFunction_2 fill:#151515,stroke:#7e3f0c,stroke-width:2px,color:#7e3f0c,stroke-dasharray:5 5,rx:16px,ry:16px
+    style N_Set_Hero_Seen_K2Node_CallFunction_0 fill:#151515,stroke:#456980,stroke-width:2px,color:#f2f2f2
+    style N_Set_Hero_Seen_K2Node_MacroInstance_1 fill:#151515,stroke:#4a4a4a,stroke-width:2px,color:#787878,stroke-dasharray:5 5
+    style N_Set_Hero_Seen_K2Node_VariableGet_4 fill:#151515,stroke:#0c587a,stroke-width:2px,color:#0c587a,stroke-dasharray:5 5,rx:16px,ry:16px
+    style N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0 fill:#151515,stroke:#2b3b45,stroke-width:2px,color:#787878,stroke-dasharray:5 5
+    style N_Set_Hero_Seen_K2Node_CallFunction_1 fill:#151515,stroke:#2b3b45,stroke-width:2px,color:#787878,stroke-dasharray:5 5
+    style N_Set_Hero_Seen_K2Node_VariableSet_4 fill:#151515,stroke:#1f354c,stroke-width:3px,color:#787878,stroke-dasharray:5 5
+    style N_Set_Hero_Seen_K2Node_VariableGet_2 fill:#151515,stroke:#0c587a,stroke-width:2px,color:#0c587a,stroke-dasharray:5 5,rx:16px,ry:16px
+    style N_Set_Hero_Seen_K2Node_VariableSet_3 fill:#151515,stroke:#1f354c,stroke-width:3px,color:#787878,stroke-dasharray:5 5
+    style N_Set_Hero_Seen_K2Node_CallFunction_3 fill:#151515,stroke:#456980,stroke-width:2px,color:#f2f2f2
+
+    %% Pins
+    classDef pin_anchor fill:#151515,stroke:#151515,color:#151515
+    classDef pin_boolean_dim fill:#151515,stroke:#151515,color:#4f0c0c
+    classDef pin_exec_dim fill:#151515,stroke:#151515,color:#7e7e7e
+    classDef pin_object_dim fill:#151515,stroke:#151515,color:#0c587a
+    classDef pin_other_dim fill:#151515,stroke:#151515,color:#414141
+    classDef pin_transform_dim fill:#151515,stroke:#151515,color:#7e3f0c
+    class N_Set_Hero_Seen_K2Node_FunctionEntry_0_anchor_in,N_Set_Hero_Seen_K2Node_FunctionEntry_0_anchor_out,N_Set_Hero_Seen_K2Node_IfThenElse_0_anchor_in,N_Set_Hero_Seen_K2Node_VariableSet_2_anchor_in,N_Set_Hero_Seen_K2Node_VariableSet_2_anchor_out,N_Set_Hero_Seen_K2Node_MacroInstance_0_anchor_in,N_Set_Hero_Seen_K2Node_MacroInstance_1_anchor_in,N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_anchor_in,N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_anchor_out,N_Set_Hero_Seen_K2Node_CallFunction_1_anchor_in,N_Set_Hero_Seen_K2Node_CallFunction_1_anchor_out,N_Set_Hero_Seen_K2Node_VariableSet_4_anchor_in,N_Set_Hero_Seen_K2Node_VariableSet_4_anchor_out,N_Set_Hero_Seen_K2Node_VariableSet_3_anchor_in,N_Set_Hero_Seen_K2Node_VariableSet_3_anchor_out pin_anchor
+    class N_Set_Hero_Seen_K2Node_FunctionEntry_0_Seen,N_Set_Hero_Seen_K2Node_IfThenElse_0_Condition,N_Set_Hero_Seen_K2Node_CallFunction_1_bTeleport pin_boolean_dim
+    class N_Set_Hero_Seen_K2Node_IfThenElse_0_then,N_Set_Hero_Seen_K2Node_IfThenElse_0_else,N_Set_Hero_Seen_K2Node_MacroInstance_0_Is_Valid,N_Set_Hero_Seen_K2Node_MacroInstance_1_Is_Valid,N_Set_Hero_Seen_K2Node_MacroInstance_1_Is_Not_Valid pin_exec_dim
+    class N_Set_Hero_Seen_K2Node_FunctionEntry_0_Hero,N_Set_Hero_Seen_K2Node_VariableSet_2_Target,N_Set_Hero_Seen_K2Node_MacroInstance_0_InputObject,N_Set_Hero_Seen_K2Node_MacroInstance_1_InputObject,N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_ReturnValue,N_Set_Hero_Seen_K2Node_CallFunction_1_self,N_Set_Hero_Seen_K2Node_VariableSet_4_Ghost,N_Set_Hero_Seen_K2Node_VariableSet_3_Target pin_object_dim
+    class N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_CollisionHandlingOverride,N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_TransformScaleMethod pin_other_dim
+    class N_Set_Hero_Seen_K2Node_SpawnActorFromClass_0_SpawnTransform,N_Set_Hero_Seen_K2Node_CallFunction_1_NewTransform pin_transform_dim
+
+    %% Wire colours (dimmed and dashed between two nodes that aren't part of the change)
+    linkStyle 1 stroke:#4f0c0c,stroke-width:2px,stroke-dasharray:6 4
+    linkStyle 6,20 stroke:#ffffff,stroke-width:3px
+    linkStyle 2,3,4,7,12,13,16,17,18 stroke:#7e7e7e,stroke-width:3px,stroke-dasharray:6 4
+    linkStyle 0,5,8,9,14,15,19 stroke:#0c587a,stroke-width:2px,stroke-dasharray:6 4
+    linkStyle 10,11 stroke:#7e3f0c,stroke-width:2px,stroke-dasharray:6 4

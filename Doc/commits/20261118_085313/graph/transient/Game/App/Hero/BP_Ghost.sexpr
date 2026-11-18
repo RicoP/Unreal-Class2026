@@ -1,0 +1,10 @@
+(blueprint-diff "/Game/App/Hero/BP_Ghost"
+  (old (revision "279f3ffb") (date "2026-11-17T12:01:33.000Z") (description "Draw a debug line to the enemy's target\n\n- BP_Enemy_Base: before AI MoveTo, a Draw Debug Line from the enemy to\n  its target, red when the target is the ghost and blue when it is the\n  player; AI MoveTo gets the target's location as its destination.\n- BP_Ghost: Actor Hidden in Game is on, so the ghost isn't drawn.\n- Doc/commits/20261117_130031: documentation of this step.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (parent "/Script/Engine.Character")
+  (defaults
+    (changed "bHidden" (old "True") (new "False") (display "Actor Hidden In Game")))
+  (components
+    (component "CharacterMovement" (class "CharacterMovementComponent") (kind native)
+      (properties
+        (changed "bCanWalkOffLedges" (old "True") (new "False") (display "Can Walk Off Ledges"))))))

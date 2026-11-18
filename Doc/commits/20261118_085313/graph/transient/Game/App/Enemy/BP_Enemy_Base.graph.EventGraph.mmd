@@ -1,0 +1,149 @@
+---
+config:
+  look: classic
+  themeCSS: "g.node *, g.cluster * { filter: none !important; }"
+  flowchart:
+    curve: monotoneX
+    nodeSpacing: 8
+    rankSpacing: 30
+    subGraphTitleMargin:
+      top: 4
+      bottom: 4
+---
+flowchart LR
+
+    %% graph EventGraph
+
+    subgraph N_EventGraph_K2Node_VariableGet_3["Get Life"]
+    end
+    subgraph N_EventGraph_K2Node_PromotableOperator_0["integer > integer"]
+    end
+    subgraph N_EventGraph_K2Node_CustomEvent_0["◆ AI Move To Target"]
+    end
+    subgraph N_EventGraph_K2Node_VariableGet_0["Get Target"]
+    end
+    subgraph N_EventGraph_K2Node_IfThenElse_1["Branch"]
+        N_EventGraph_K2Node_IfThenElse_1_anchor_in[" "]
+        N_EventGraph_K2Node_IfThenElse_1_Condition["<span style='display:inline-block;min-width:150px;text-align:left'>● Condition</span>"]
+        N_EventGraph_K2Node_IfThenElse_1_then>"<span style='display:inline-block;min-width:150px;text-align:right'>True ▶</span>"]
+    end
+    subgraph N_EventGraph_K2Node_CallFunction_0["Get Actor Location"]
+    end
+    subgraph N_EventGraph_K2Node_MacroInstance_0["Is Valid"]
+        N_EventGraph_K2Node_MacroInstance_0_anchor_in[" "]
+        N_EventGraph_K2Node_MacroInstance_0_InputObject["<span style='display:inline-block;min-width:150px;text-align:left'>● Input Object</span>"]
+        N_EventGraph_K2Node_MacroInstance_0_Is_Valid>"<span style='display:inline-block;min-width:150px;text-align:right'>Is Valid ▶</span>"]
+    end
+    subgraph N_EventGraph_K2Node_CallFunction_11["Project Point to Navigation"]
+        N_EventGraph_K2Node_CallFunction_11_Point["<span style='display:inline-block;min-width:150px;text-align:left'>● Point</span>"]
+        N_EventGraph_K2Node_CallFunction_11_QueryExtent["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>300,300,300</span> Query Extent</span>"]
+        N_EventGraph_K2Node_CallFunction_11_ProjectedLocation["<span style='display:inline-block;min-width:150px;text-align:right'>Projected Location ●</span>"]
+        N_EventGraph_K2Node_CallFunction_11_ReturnValue["<span style='display:inline-block;min-width:150px;text-align:right'>Return Value ●</span>"]
+    end
+    subgraph N_EventGraph_K2Node_IfThenElse_0["Branch"]
+        N_EventGraph_K2Node_IfThenElse_0_anchor_in[" "]
+        N_EventGraph_K2Node_IfThenElse_0_Condition["<span style='display:inline-block;min-width:150px;text-align:left'>● Condition</span>"]
+        N_EventGraph_K2Node_IfThenElse_0_then>"<span style='display:inline-block;min-width:150px;text-align:right'>True ▶</span>"]
+    end
+    subgraph N_EventGraph_K2Node_Self_0["Self"]
+    end
+    subgraph N_EventGraph_K2Node_AIMoveTo_0["AI MoveTo"]
+        N_EventGraph_K2Node_AIMoveTo_0_anchor_in[" "]
+        N_EventGraph_K2Node_AIMoveTo_0_Pawn["<span style='display:inline-block;min-width:150px;text-align:left'>● Pawn</span>"]
+        N_EventGraph_K2Node_AIMoveTo_0_Destination["<span style='display:inline-block;min-width:150px;text-align:left'>● Destination</span>"]
+        N_EventGraph_K2Node_AIMoveTo_0_AcceptanceRadius["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>50</span> Acceptance Radius</span>"]
+        N_EventGraph_K2Node_AIMoveTo_0_OnSuccess>"<span style='display:inline-block;min-width:150px;text-align:right'>On Success ▶</span>"]
+        N_EventGraph_K2Node_AIMoveTo_0_OnFail>"<span style='display:inline-block;min-width:150px;text-align:right'>On Fail ▶</span>"]
+        %% pin-order N_EventGraph_K2Node_AIMoveTo_0_OnSuccess N_EventGraph_K2Node_AIMoveTo_0_OnFail
+    end
+    subgraph N_EventGraph_K2Node_CallFunction_12["Delay"]
+        N_EventGraph_K2Node_CallFunction_12_anchor_in[" "]
+        N_EventGraph_K2Node_CallFunction_12_anchor_out[" "]
+        N_EventGraph_K2Node_CallFunction_12_Duration["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>0.2</span> Duration</span>"]
+    end
+    subgraph N_EventGraph_K2Node_CallFunction_8["AI Move To Target"]
+    end
+    subgraph N_EventGraph_K2Node_CallFunction_13["AI Move To Target"]
+    end
+
+    %% Wires
+    N_EventGraph_K2Node_VariableGet_3 --> N_EventGraph_K2Node_PromotableOperator_0
+    N_EventGraph_K2Node_PromotableOperator_0 --> N_EventGraph_K2Node_IfThenElse_1_Condition
+    N_EventGraph_K2Node_CustomEvent_0 ==> N_EventGraph_K2Node_IfThenElse_1_anchor_in
+    N_EventGraph_K2Node_VariableGet_0 --> N_EventGraph_K2Node_CallFunction_0
+    N_EventGraph_K2Node_VariableGet_0 --> N_EventGraph_K2Node_MacroInstance_0_InputObject
+    N_EventGraph_K2Node_IfThenElse_1_then ==> N_EventGraph_K2Node_MacroInstance_0_anchor_in
+    N_EventGraph_K2Node_CallFunction_0 --> N_EventGraph_K2Node_CallFunction_11_Point
+    N_EventGraph_K2Node_MacroInstance_0_Is_Valid ==> N_EventGraph_K2Node_IfThenElse_0_anchor_in
+    N_EventGraph_K2Node_CallFunction_11_ProjectedLocation --> N_EventGraph_K2Node_AIMoveTo_0_Destination
+    N_EventGraph_K2Node_CallFunction_11_ReturnValue --> N_EventGraph_K2Node_IfThenElse_0_Condition
+    N_EventGraph_K2Node_IfThenElse_0_then ==> N_EventGraph_K2Node_AIMoveTo_0_anchor_in
+    N_EventGraph_K2Node_Self_0 --> N_EventGraph_K2Node_AIMoveTo_0_Pawn
+    N_EventGraph_K2Node_AIMoveTo_0_OnFail ==> N_EventGraph_K2Node_CallFunction_12_anchor_in
+    N_EventGraph_K2Node_AIMoveTo_0_OnSuccess ==> N_EventGraph_K2Node_CallFunction_8
+    N_EventGraph_K2Node_CallFunction_12_anchor_out ==> N_EventGraph_K2Node_CallFunction_13
+
+    %% Keep inputs left of outputs inside each node
+    N_EventGraph_K2Node_IfThenElse_1_Condition ~~~ N_EventGraph_K2Node_IfThenElse_1_then
+    N_EventGraph_K2Node_IfThenElse_1_anchor_in ~~~ N_EventGraph_K2Node_IfThenElse_1_then
+    N_EventGraph_K2Node_MacroInstance_0_InputObject ~~~ N_EventGraph_K2Node_MacroInstance_0_Is_Valid
+    N_EventGraph_K2Node_MacroInstance_0_anchor_in ~~~ N_EventGraph_K2Node_MacroInstance_0_Is_Valid
+    N_EventGraph_K2Node_CallFunction_11_Point ~~~ N_EventGraph_K2Node_CallFunction_11_ProjectedLocation
+    N_EventGraph_K2Node_CallFunction_11_Point ~~~ N_EventGraph_K2Node_CallFunction_11_ReturnValue
+    N_EventGraph_K2Node_CallFunction_11_QueryExtent ~~~ N_EventGraph_K2Node_CallFunction_11_ProjectedLocation
+    N_EventGraph_K2Node_CallFunction_11_QueryExtent ~~~ N_EventGraph_K2Node_CallFunction_11_ReturnValue
+    N_EventGraph_K2Node_IfThenElse_0_Condition ~~~ N_EventGraph_K2Node_IfThenElse_0_then
+    N_EventGraph_K2Node_IfThenElse_0_anchor_in ~~~ N_EventGraph_K2Node_IfThenElse_0_then
+    N_EventGraph_K2Node_AIMoveTo_0_Pawn ~~~ N_EventGraph_K2Node_AIMoveTo_0_OnSuccess
+    N_EventGraph_K2Node_AIMoveTo_0_Pawn ~~~ N_EventGraph_K2Node_AIMoveTo_0_OnFail
+    N_EventGraph_K2Node_AIMoveTo_0_Destination ~~~ N_EventGraph_K2Node_AIMoveTo_0_OnSuccess
+    N_EventGraph_K2Node_AIMoveTo_0_Destination ~~~ N_EventGraph_K2Node_AIMoveTo_0_OnFail
+    N_EventGraph_K2Node_AIMoveTo_0_AcceptanceRadius ~~~ N_EventGraph_K2Node_AIMoveTo_0_OnSuccess
+    N_EventGraph_K2Node_AIMoveTo_0_AcceptanceRadius ~~~ N_EventGraph_K2Node_AIMoveTo_0_OnFail
+    N_EventGraph_K2Node_AIMoveTo_0_anchor_in ~~~ N_EventGraph_K2Node_AIMoveTo_0_OnSuccess
+    N_EventGraph_K2Node_AIMoveTo_0_anchor_in ~~~ N_EventGraph_K2Node_AIMoveTo_0_OnFail
+    N_EventGraph_K2Node_CallFunction_12_Duration ~~~ N_EventGraph_K2Node_CallFunction_12_anchor_out
+    N_EventGraph_K2Node_CallFunction_12_anchor_in ~~~ N_EventGraph_K2Node_CallFunction_12_anchor_out
+
+    %% Nodes
+    style N_EventGraph_K2Node_VariableGet_3 fill:#151515,stroke:#1fe3af,stroke-width:2px,color:#1fe3af,rx:16px,ry:16px
+    style N_EventGraph_K2Node_PromotableOperator_0 fill:#151515,stroke:#950000,stroke-width:2px,color:#950000,rx:16px,ry:16px
+    style N_EventGraph_K2Node_CustomEvent_0 fill:#151515,stroke:#5c1d19,stroke-width:3px,color:#787878,stroke-dasharray:5 5
+    style N_EventGraph_K2Node_VariableGet_0 fill:#151515,stroke:#0c587a,stroke-width:2px,color:#0c587a,stroke-dasharray:5 5,rx:16px,ry:16px
+    style N_EventGraph_K2Node_IfThenElse_1 fill:#151515,stroke:#8a8a8a,stroke-width:2px,color:#f2f2f2
+    style N_EventGraph_K2Node_CallFunction_0 fill:#151515,stroke:#7e661b,stroke-width:2px,color:#7e661b,stroke-dasharray:5 5,rx:16px,ry:16px
+    style N_EventGraph_K2Node_MacroInstance_0 fill:#151515,stroke:#4a4a4a,stroke-width:2px,color:#787878,stroke-dasharray:5 5
+    style N_EventGraph_K2Node_CallFunction_11 fill:#151515,stroke:#456980,stroke-width:2px,color:#f2f2f2
+    style N_EventGraph_K2Node_IfThenElse_0 fill:#151515,stroke:#8a8a8a,stroke-width:2px,color:#f2f2f2
+    style N_EventGraph_K2Node_Self_0 fill:#151515,stroke:#0c587a,stroke-width:2px,color:#0c587a,stroke-dasharray:5 5,rx:16px,ry:16px
+    style N_EventGraph_K2Node_AIMoveTo_0 fill:#151515,stroke:#2b3b45,stroke-width:2px,color:#787878,stroke-dasharray:5 5
+    style N_EventGraph_K2Node_CallFunction_12 fill:#151515,stroke:#456980,stroke-width:2px,color:#f2f2f2
+    style N_EventGraph_K2Node_CallFunction_8 fill:#151515,stroke:#456980,stroke-width:2px,color:#f2f2f2
+    style N_EventGraph_K2Node_CallFunction_13 fill:#151515,stroke:#456980,stroke-width:2px,color:#f2f2f2
+
+    %% Pins
+    classDef pin_anchor fill:#151515,stroke:#151515,color:#151515
+    classDef pin_boolean fill:#151515,stroke:#151515,color:#950000
+    classDef pin_exec fill:#151515,stroke:#151515,color:#ffffff
+    classDef pin_exec_dim fill:#151515,stroke:#151515,color:#7e7e7e
+    classDef pin_float fill:#151515,stroke:#151515,color:#38d500
+    classDef pin_float_dim fill:#151515,stroke:#151515,color:#256b0c
+    classDef pin_object_dim fill:#151515,stroke:#151515,color:#0c587a
+    classDef pin_vector fill:#151515,stroke:#151515,color:#ffca23
+    classDef pin_vector_dim fill:#151515,stroke:#151515,color:#7e661b
+    class N_EventGraph_K2Node_IfThenElse_1_anchor_in,N_EventGraph_K2Node_MacroInstance_0_anchor_in,N_EventGraph_K2Node_IfThenElse_0_anchor_in,N_EventGraph_K2Node_AIMoveTo_0_anchor_in,N_EventGraph_K2Node_CallFunction_12_anchor_in,N_EventGraph_K2Node_CallFunction_12_anchor_out pin_anchor
+    class N_EventGraph_K2Node_IfThenElse_1_Condition,N_EventGraph_K2Node_CallFunction_11_ReturnValue,N_EventGraph_K2Node_IfThenElse_0_Condition pin_boolean
+    class N_EventGraph_K2Node_IfThenElse_1_then,N_EventGraph_K2Node_IfThenElse_0_then pin_exec
+    class N_EventGraph_K2Node_MacroInstance_0_Is_Valid,N_EventGraph_K2Node_AIMoveTo_0_OnSuccess,N_EventGraph_K2Node_AIMoveTo_0_OnFail pin_exec_dim
+    class N_EventGraph_K2Node_CallFunction_12_Duration pin_float
+    class N_EventGraph_K2Node_AIMoveTo_0_AcceptanceRadius pin_float_dim
+    class N_EventGraph_K2Node_MacroInstance_0_InputObject,N_EventGraph_K2Node_AIMoveTo_0_Pawn pin_object_dim
+    class N_EventGraph_K2Node_CallFunction_11_Point,N_EventGraph_K2Node_CallFunction_11_QueryExtent,N_EventGraph_K2Node_CallFunction_11_ProjectedLocation pin_vector
+    class N_EventGraph_K2Node_AIMoveTo_0_Destination pin_vector_dim
+
+    %% Wire colours (dimmed and dashed between two nodes that aren't part of the change)
+    linkStyle 1,9 stroke:#950000,stroke-width:2px
+    linkStyle 2,5,7,10,12,13,14 stroke:#ffffff,stroke-width:3px
+    linkStyle 0 stroke:#1fe3af,stroke-width:2px
+    linkStyle 3,4,11 stroke:#0c587a,stroke-width:2px,stroke-dasharray:6 4
+    linkStyle 6,8 stroke:#ffca23,stroke-width:2px
