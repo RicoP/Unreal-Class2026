@@ -1,0 +1,10 @@
+(asset-diff "/Game/App/Pickups/S_WeaponRow"
+  (class "UserDefinedStruct")
+  (old none)
+  (baseline class-default)
+  (new working-copy)
+  (struct-fields
+    (field "Weapon Class" "BP Weapon Base Class Reference")
+    (field "Strength" "IntProperty")
+    (field "Hit Animation" "Anim Montage Object Reference"))
+  (properties))

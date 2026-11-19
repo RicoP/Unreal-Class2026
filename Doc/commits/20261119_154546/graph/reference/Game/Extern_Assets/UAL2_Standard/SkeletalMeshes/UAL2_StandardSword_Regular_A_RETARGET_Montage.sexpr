@@ -1,0 +1,9 @@
+(asset "/Game/Extern_Assets/UAL2_Standard/SkeletalMeshes/UAL2_StandardSword_Regular_A_RETARGET_Montage"
+  (class "AnimMontage")
+  (revision working-copy)
+  (properties
+    (set "CommonTargetFrameRate" "(Numerator=30,Denominator=1)" (display "Common Target Frame Rate"))
+    (set "DataModelInterface" "AnimDataModel'/Game/Extern_Assets/UAL2_Standard/SkeletalMeshes/UAL2_StandardSword_Regular_A_RETARGET_Montage.UAL2_StandardSword_Regular_A_RETARGET_Montage:AnimDataModel'" (display "Data Model Interface"))
+    (set "Controller" "AnimDataController'/Engine/Transient.AnimDataController_4'" (display "Controller"))
+    (set "Skeleton" "/Script/Engine.Skeleton'/Game/Characters/Mannequins/Meshes/SK_Mannequin.SK_Mannequin'" (display "Skeleton"))
+    (set "MontageSlots" "DefaultGroup.DefaultSlot: UAL2_StandardSword_Regular_A_RETARGET")))

@@ -1,0 +1,56 @@
+---
+config:
+  look: classic
+  themeCSS: "g.node *, g.cluster * { filter: none !important; }"
+  flowchart:
+    curve: monotoneX
+    nodeSpacing: 8
+    rankSpacing: 30
+    subGraphTitleMargin:
+      top: 4
+      bottom: 4
+---
+flowchart LR
+
+    %% graph EventGraph
+
+    subgraph N_EventGraph_K2Node_Event_1["◆ Event ActorBeginOverlap"]
+        N_EventGraph_K2Node_Event_1_anchor_in[" "]
+        N_EventGraph_K2Node_Event_1_anchor_out[" "]
+        N_EventGraph_K2Node_Event_1_OtherActor["<span style='display:inline-block;min-width:150px;text-align:right'>Other Actor ●</span>"]
+    end
+    subgraph N_EventGraph_K2Node_DynamicCast_0["Cast To BP_Hero"]
+        N_EventGraph_K2Node_DynamicCast_0_anchor_in[" "]
+        N_EventGraph_K2Node_DynamicCast_0_Object["<span style='display:inline-block;min-width:150px;text-align:left'>● Object</span>"]
+        N_EventGraph_K2Node_DynamicCast_0_then>"<span style='display:inline-block;min-width:150px;text-align:right'>Then ▶</span>"]
+    end
+    subgraph N_EventGraph_K2Node_CallFunction_0["Destroy Actor"]
+    end
+
+    %% Wires
+    N_EventGraph_K2Node_Event_1_OtherActor --> N_EventGraph_K2Node_DynamicCast_0_Object
+    N_EventGraph_K2Node_Event_1_anchor_out ==> N_EventGraph_K2Node_DynamicCast_0_anchor_in
+    N_EventGraph_K2Node_DynamicCast_0_then ==> N_EventGraph_K2Node_CallFunction_0
+
+    %% Keep inputs left of outputs inside each node
+    N_EventGraph_K2Node_Event_1_anchor_in ~~~ N_EventGraph_K2Node_Event_1_OtherActor
+    N_EventGraph_K2Node_Event_1_anchor_in ~~~ N_EventGraph_K2Node_Event_1_anchor_out
+    N_EventGraph_K2Node_DynamicCast_0_Object ~~~ N_EventGraph_K2Node_DynamicCast_0_then
+    N_EventGraph_K2Node_DynamicCast_0_anchor_in ~~~ N_EventGraph_K2Node_DynamicCast_0_then
+
+    %% Nodes
+    style N_EventGraph_K2Node_Event_1 fill:#151515,stroke:#b3261e,stroke-width:3px,color:#f2f2f2
+    style N_EventGraph_K2Node_DynamicCast_0 fill:#151515,stroke:#8a8a8a,stroke-width:2px,color:#f2f2f2
+    style N_EventGraph_K2Node_CallFunction_0 fill:#151515,stroke:#456980,stroke-width:2px,color:#f2f2f2
+
+    %% Pins
+    classDef pin_anchor fill:#151515,stroke:#151515,color:#151515
+    classDef pin_exec fill:#151515,stroke:#151515,color:#ffffff
+    classDef pin_object fill:#151515,stroke:#151515,color:#00aaf5
+    class N_EventGraph_K2Node_Event_1_anchor_in,N_EventGraph_K2Node_Event_1_anchor_out,N_EventGraph_K2Node_DynamicCast_0_anchor_in pin_anchor
+    class N_EventGraph_K2Node_DynamicCast_0_then pin_exec
+    class N_EventGraph_K2Node_Event_1_OtherActor,N_EventGraph_K2Node_DynamicCast_0_Object pin_object
+
+    %% Wire colours (dimmed and dashed between two nodes that aren't part of the change)
+    linkStyle 1,2 stroke:#ffffff,stroke-width:3px
+    linkStyle 0 stroke:#00aaf5,stroke-width:2px

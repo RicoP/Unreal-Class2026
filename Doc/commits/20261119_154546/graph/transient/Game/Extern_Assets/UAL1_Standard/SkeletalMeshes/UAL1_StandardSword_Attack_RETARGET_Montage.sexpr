@@ -1,0 +1,11 @@
+(asset-diff "/Game/Extern_Assets/UAL1_Standard/SkeletalMeshes/UAL1_StandardSword_Attack_RETARGET_Montage"
+  (class "AnimMontage")
+  (old none)
+  (baseline class-default)
+  (new working-copy)
+  (properties
+    (changed "CommonTargetFrameRate" (old "(Numerator=60000,Denominator=1)") (new "(Numerator=30,Denominator=1)") (display "Common Target Frame Rate"))
+    (changed "DataModelInterface" (old "None") (new "AnimDataModel'/Game/Extern_Assets/UAL1_Standard/SkeletalMeshes/UAL1_StandardSword_Attack_RETARGET_Montage.UAL1_StandardSword_Attack_RETARGET_Montage:AnimDataModel'") (display "Data Model Interface"))
+    (changed "Controller" (old "None") (new "AnimDataController'/Engine/Transient.AnimDataController_5'") (display "Controller"))
+    (changed "Skeleton" (old "None") (new "/Script/Engine.Skeleton'/Game/Characters/Mannequins/Meshes/SK_Mannequin.SK_Mannequin'") (display "Skeleton"))
+    (changed "MontageSlots" (old "DefaultSlot: no animation") (new "DefaultGroup.DefaultSlot: UAL1_StandardSword_Attack_RETARGET"))))

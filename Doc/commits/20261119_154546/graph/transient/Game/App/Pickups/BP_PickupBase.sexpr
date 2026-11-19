@@ -1,0 +1,111 @@
+(blueprint-diff "/Game/App/Pickups/BP_PickupBase"
+  (old none)
+  (new working-copy)
+  (parent "/Script/Engine.Actor")
+  (variables
+    (added "Weapon Row" (type "Data Table Row Handle Structure") (category "App") (default "") (instance-editable true)))
+  (functions
+    (added "Spawn Weapon" (override false) (pure false) (const false) (access "Public") (category "App") (inputs (param "Instigator" (type "Pawn Object Reference") (default ""))) (outputs (param "ReturnValue" (type "BP Weapon Base Object Reference") (default "")) (param "Out Row Strength" (type "Integer") (default "")) (param "Out Row Hit Animation" (type "Anim Montage Object Reference") (default "")))))
+  (components
+    (component "DefaultSceneRoot" (class "SceneComponent") (kind added) (new)
+      (properties))
+    (component "RotatingMovement" (class "RotatingMovementComponent") (kind added) (new)
+      (properties))
+    (component "Sphere" (class "SphereComponent") (kind added) (attach-to "DefaultSceneRoot") (new)
+      (properties
+        (changed "RelativeLocation" (old "(X=0.000000,Y=0.000000,Z=0.000000)") (new "(X=0.000000,Y=0.000000,Z=30.000000)") (display "Relative Location"))))
+    (component "StaticMesh" (class "StaticMeshComponent") (kind added) (attach-to "Sphere") (new)
+      (properties
+        (changed "StaticMesh" (old "None") (new "/Script/Engine.StaticMesh'/Game/Kenney-Assets/mini-characters/StaticMeshes/item-luggage.item-luggage'") (display "Static Mesh")))))
+  (graph "EventGraph" added
+    (node-added addition
+      (node "K2Node_Event_0" "Event BeginPlay" (pos 0 0))
+      (pin out "OutputDelegate" "Delegate")
+      (pin out "then" "Exec"))
+    (node-added addition
+      (node "K2Node_Event_1" "Event ActorBeginOverlap" (pos 0 208))
+      (pin out "OutputDelegate" "Delegate")
+      (pin out "then" "Exec" (links (pin "K2Node_DynamicCast_0" "execute")))
+      (pin out "OtherActor" "Actor Object Reference" (links (pin "K2Node_DynamicCast_0" "Object"))))
+    (node-added addition
+      (node "K2Node_Event_2" "Event Tick" (pos 0 416))
+      (pin out "OutputDelegate" "Delegate")
+      (pin out "then" "Exec")
+      (pin out "DeltaSeconds" "Float (single-precision)" (default "0.0")))
+    (node-added addition
+      (node "K2Node_DynamicCast_0" "Cast To BP_Hero" (pos 352 208))
+      (pin in "execute" "Exec" (links (pin "K2Node_Event_1" "then")))
+      (pin out "then" "Exec" (links (pin "K2Node_CallFunction_0" "execute")))
+      (pin out "CastFailed" "Exec")
+      (pin in "Object" "Object Reference" (links (pin "K2Node_Event_1" "OtherActor")))
+      (pin out "AsBP Hero" "BP Hero Object Reference"))
+    (node-added addition
+      (node "K2Node_CallFunction_0" "Destroy Actor" (pos 752 192))
+      (pin in "execute" "Exec" (links (pin "K2Node_DynamicCast_0" "then")))
+      (pin out "then" "Exec")
+      (pin in "self" "Actor Object Reference")))
+  (graph "Spawn Weapon" added
+    (node-added addition
+      (node "K2Node_FunctionEntry_0" "Spawn Weapon" (pos -176 0))
+      (pin out "then" "Exec" (links (pin "K2Node_GetDataTableRow_0" "execute")))
+      (pin out "Instigator" "Pawn Object Reference" (links (pin "K2Node_Knot_0" "InputPin"))))
+    (node-added addition
+      (node "K2Node_VariableGet_0" "Get" (pos -192 128))
+      (pin out "Weapon Row_DataTable" "Data Table Object Reference")
+      (pin out "Weapon Row_RowName" "Name" (links (pin "K2Node_GetDataTableRow_0" "RowName") (pin "K2Node_FormatText_0" "ROW NAME"))))
+    (node-added addition
+      (node "K2Node_GetDataTableRow_0" "Get Data Table Row DT_WeaponPickups" (pos 224 0))
+      (pin in "execute" "Exec" (links (pin "K2Node_FunctionEntry_0" "then")))
+      (pin out "then" "Exec" (links (pin "K2Node_SpawnActorFromClass_0" "execute")))
+      (pin out "RowNotFound" "Exec" (links (pin "K2Node_CallFunction_1" "execute")))
+      (pin in "DataTable" "Data Table Object Reference")
+      (pin in "RowName" "Name" (links (pin "K2Node_VariableGet_0" "Weapon Row_RowName")))
+      (pin out "ReturnValue_WeaponClass_4_6D43A17A4FF2BF9BA9E3DA95599DD08A" "BP Weapon Base Class Reference" (links (pin "K2Node_SpawnActorFromClass_0" "Class")))
+      (pin out "ReturnValue_Strength_7_04CD1A7D4FF79D8A470B3295FB00628C" "Integer" (links (pin "K2Node_FunctionResult_1" "Out Row Strength")))
+      (pin out "ReturnValue_HitAnimation_11_E038B3E74F4BD31EA6AB6D84B8ED55FD" "Anim Montage Object Reference" (links (pin "K2Node_FunctionResult_1" "Out Row Hit Animation"))))
+    (node-added addition
+      (node "K2Node_SpawnActorFromClass_0" "SpawnActor" (pos 768 0))
+      (pin in "execute" "Exec" (links (pin "K2Node_GetDataTableRow_0" "then")))
+      (pin out "then" "Exec" (links (pin "K2Node_FunctionResult_1" "execute")))
+      (pin in "Class" "Actor Class Reference" (links (pin "K2Node_GetDataTableRow_0" "ReturnValue_WeaponClass_4_6D43A17A4FF2BF9BA9E3DA95599DD08A")))
+      (pin out "ReturnValue" "BP Weapon Base Object Reference" (links (pin "K2Node_FunctionResult_1" "ReturnValue")))
+      (pin in "SpawnTransform" "Transform" (links (pin "K2Node_CallFunction_2" "ReturnValue")))
+      (pin in "CollisionHandlingOverride" "ESpawnActorCollisionHandlingMethod Enum" (default "Undefined"))
+      (pin in "TransformScaleMethod" "ESpawnActorScaleMethod Enum" (default "MultiplyWithRoot"))
+      (pin in "Owner" "Actor Object Reference" (links (pin "K2Node_Knot_0" "OutputPin")))
+      (pin in "Instigator" "Pawn Object Reference" (links (pin "K2Node_Knot_0" "OutputPin"))))
+    (node-added addition
+      (node "K2Node_FunctionResult_1" "Return Node" (pos 1264 0))
+      (pin in "execute" "Exec" (links (pin "K2Node_SpawnActorFromClass_0" "then")))
+      (pin in "ReturnValue" "BP Weapon Base Object Reference" (links (pin "K2Node_SpawnActorFromClass_0" "ReturnValue")))
+      (pin in "Out Row Strength" "Integer" (links (pin "K2Node_GetDataTableRow_0" "ReturnValue_Strength_7_04CD1A7D4FF79D8A470B3295FB00628C")))
+      (pin in "Out Row Hit Animation" "Anim Montage Object Reference" (links (pin "K2Node_GetDataTableRow_0" "ReturnValue_HitAnimation_11_E038B3E74F4BD31EA6AB6D84B8ED55FD"))))
+    (node-added addition
+      (node "K2Node_CallFunction_1" "PrintText" (pos 784 400))
+      (pin in "execute" "Exec" (links (pin "K2Node_GetDataTableRow_0" "RowNotFound")))
+      (pin out "then" "Exec")
+      (pin in "InText" "Text" (links (pin "K2Node_FormatText_0" "Result")))
+      (pin in "bPrintToScreen" "Boolean" (default "true"))
+      (pin in "bPrintToLog" "Boolean" (default "true"))
+      (pin in "TextColor" "Linear Color Structure" (default "(R=0.000000,G=0.660000,B=1.000000,A=1.000000)"))
+      (pin in "Duration" "Float (single-precision)" (default "2.000000"))
+      (pin in "Key" "Name" (default "None")))
+    (node-added addition
+      (node "K2Node_FormatText_0" "Format Text" (pos 304 480))
+      (pin in "Format" "Text")
+      (pin out "Result" "Text" (links (pin "K2Node_CallFunction_1" "InText")))
+      (pin in "ROW NAME" "Name" (links (pin "K2Node_VariableGet_0" "Weapon Row_RowName"))))
+    (node-added addition
+      (node "K2Node_Knot_0" "Reroute Node" (pos 336 272))
+      (pin in "InputPin" "Pawn Object Reference" (links (pin "K2Node_FunctionEntry_0" "Instigator")))
+      (pin out "OutputPin" "Pawn Object Reference" (links (pin "K2Node_SpawnActorFromClass_0" "Instigator") (pin "K2Node_SpawnActorFromClass_0" "Owner"))))
+    (node-added addition
+      (node "K2Node_CallFunction_2" "MakeTransform" (pos 224 -272))
+      (pin in "Location" "Vector" (default "0, 0, 0"))
+      (pin in "Rotation" "Rotator" (default "0, 0, 0"))
+      (pin in "Scale" "Vector" (default "1.000000,1.000000,1.000000"))
+      (pin out "ReturnValue" "Transform" (links (pin "K2Node_SpawnActorFromClass_0" "SpawnTransform")))))
+  (graph "UserConstructionScript" added
+    (node-added addition
+      (node "K2Node_FunctionEntry_0" "Construction Script" (pos 0 0))
+      (pin out "then" "Exec"))))

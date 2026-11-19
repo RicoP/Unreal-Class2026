@@ -1,0 +1,164 @@
+---
+config:
+  look: classic
+  themeCSS: "g.node *, g.cluster * { filter: none !important; }"
+  flowchart:
+    curve: monotoneX
+    nodeSpacing: 8
+    rankSpacing: 30
+    subGraphTitleMargin:
+      top: 4
+      bottom: 4
+---
+flowchart LR
+
+    %% graph Function Spawn Weapon
+
+    subgraph N_Spawn_Weapon_K2Node_VariableGet_0["Get"]
+    end
+    subgraph N_Spawn_Weapon_K2Node_FunctionEntry_0["Spawn Weapon"]
+        N_Spawn_Weapon_K2Node_FunctionEntry_0_anchor_in[" "]
+        N_Spawn_Weapon_K2Node_FunctionEntry_0_anchor_out[" "]
+        N_Spawn_Weapon_K2Node_FunctionEntry_0_Instigator["<span style='display:inline-block;min-width:150px;text-align:right'>Instigator ●</span>"]
+    end
+    subgraph N_Spawn_Weapon_K2Node_CallFunction_2["Make Transform"]
+        N_Spawn_Weapon_K2Node_CallFunction_2_Scale["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>1,1,1</span> Scale</span>"]
+        N_Spawn_Weapon_K2Node_CallFunction_2_ReturnValue["<span style='display:inline-block;min-width:150px;text-align:right'>Return Value ●</span>"]
+    end
+    subgraph N_Spawn_Weapon_K2Node_GetDataTableRow_0["Get Data Table Row DT_WeaponPickups"]
+        N_Spawn_Weapon_K2Node_GetDataTableRow_0_anchor_in[" "]
+        N_Spawn_Weapon_K2Node_GetDataTableRow_0_RowName["<span style='display:inline-block;min-width:150px;text-align:left'>● Row Name</span>"]
+        N_Spawn_Weapon_K2Node_GetDataTableRow_0_then>"<span style='display:inline-block;min-width:150px;text-align:right'>Then ▶</span>"]
+        N_Spawn_Weapon_K2Node_GetDataTableRow_0_RowNotFound>"<span style='display:inline-block;min-width:150px;text-align:right'>Row Not Found ▶</span>"]
+        N_Spawn_Weapon_K2Node_GetDataTableRow_0_ReturnValue_WeaponClass_4_6D43A17A4FF2BF9BA9E3DA95599DD08A["<span style='display:inline-block;min-width:150px;text-align:right'>Return Value Weapon Class 4 6D43A17A4FF2BF9BA9E3DA95599DD08A ●</span>"]
+        N_Spawn_Weapon_K2Node_GetDataTableRow_0_ReturnValue_Strength_7_04CD1A7D4FF79D8A470B3295FB00628C["<span style='display:inline-block;min-width:150px;text-align:right'>Return Value Strength 7 04CD1A7D4FF79D8A470B3295FB00628C ●</span>"]
+        N_Spawn_Weapon_K2Node_GetDataTableRow_0_ReturnValue_HitAnimation_11_E038B3E74F4BD31EA6AB6D84B8ED55FD["<span style='display:inline-block;min-width:150px;text-align:right'>Return Value Hit Animation 11 E038B3E74F4BD31EA6AB6D84B8ED55FD ●</span>"]
+        %% pin-order N_Spawn_Weapon_K2Node_GetDataTableRow_0_then N_Spawn_Weapon_K2Node_GetDataTableRow_0_RowNotFound
+    end
+    subgraph N_Spawn_Weapon_K2Node_FormatText_0["Format Text"]
+    end
+    subgraph N_Spawn_Weapon_K2Node_SpawnActorFromClass_0["Spawn Actor"]
+        N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_anchor_in[" "]
+        N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_anchor_out[" "]
+        N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_Class["<span style='display:inline-block;min-width:150px;text-align:left'>● Class</span>"]
+        N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_SpawnTransform["<span style='display:inline-block;min-width:150px;text-align:left'>● Spawn Transform</span>"]
+        N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_CollisionHandlingOverride["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>Undefined</span> Collision Handling Override</span>"]
+        N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_TransformScaleMethod["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>MultiplyWithRoot</span> Transform Scale Method</span>"]
+        N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_Owner["<span style='display:inline-block;min-width:150px;text-align:left'>● Owner</span>"]
+        N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_Instigator["<span style='display:inline-block;min-width:150px;text-align:left'>● Instigator</span>"]
+        N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_ReturnValue["<span style='display:inline-block;min-width:150px;text-align:right'>Return Value ●</span>"]
+    end
+    subgraph N_Spawn_Weapon_K2Node_CallFunction_1["Print Text"]
+        N_Spawn_Weapon_K2Node_CallFunction_1_anchor_in[" "]
+        N_Spawn_Weapon_K2Node_CallFunction_1_anchor_out[" "]
+        N_Spawn_Weapon_K2Node_CallFunction_1_InText["<span style='display:inline-block;min-width:150px;text-align:left'>● In Text</span>"]
+        N_Spawn_Weapon_K2Node_CallFunction_1_bPrintToScreen["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>true</span> Print To Screen</span>"]
+        N_Spawn_Weapon_K2Node_CallFunction_1_bPrintToLog["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>true</span> Print To Log</span>"]
+        N_Spawn_Weapon_K2Node_CallFunction_1_TextColor["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>(R=0,G=0.66,B=1,A=1)</span> Text Color</span>"]
+        N_Spawn_Weapon_K2Node_CallFunction_1_Duration["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>2</span> Duration</span>"]
+    end
+    subgraph N_Spawn_Weapon_K2Node_FunctionResult_1["Return Node"]
+        N_Spawn_Weapon_K2Node_FunctionResult_1_anchor_in[" "]
+        N_Spawn_Weapon_K2Node_FunctionResult_1_anchor_out[" "]
+        N_Spawn_Weapon_K2Node_FunctionResult_1_ReturnValue["<span style='display:inline-block;min-width:150px;text-align:left'>● Return Value</span>"]
+        N_Spawn_Weapon_K2Node_FunctionResult_1_Out_Row_Strength["<span style='display:inline-block;min-width:150px;text-align:left'>● Out Row Strength</span>"]
+        N_Spawn_Weapon_K2Node_FunctionResult_1_Out_Row_Hit_Animation["<span style='display:inline-block;min-width:150px;text-align:left'>● Out Row Hit Animation</span>"]
+    end
+
+    %% Wires
+    N_Spawn_Weapon_K2Node_VariableGet_0 --> N_Spawn_Weapon_K2Node_GetDataTableRow_0_RowName
+    N_Spawn_Weapon_K2Node_VariableGet_0 --> N_Spawn_Weapon_K2Node_FormatText_0
+    N_Spawn_Weapon_K2Node_FunctionEntry_0_Instigator --> N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_Instigator
+    N_Spawn_Weapon_K2Node_FunctionEntry_0_Instigator --> N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_Owner
+    N_Spawn_Weapon_K2Node_FunctionEntry_0_anchor_out ==> N_Spawn_Weapon_K2Node_GetDataTableRow_0_anchor_in
+    N_Spawn_Weapon_K2Node_CallFunction_2_ReturnValue --> N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_SpawnTransform
+    N_Spawn_Weapon_K2Node_GetDataTableRow_0_ReturnValue_HitAnimation_11_E038B3E74F4BD31EA6AB6D84B8ED55FD --> N_Spawn_Weapon_K2Node_FunctionResult_1_Out_Row_Hit_Animation
+    N_Spawn_Weapon_K2Node_GetDataTableRow_0_ReturnValue_Strength_7_04CD1A7D4FF79D8A470B3295FB00628C --> N_Spawn_Weapon_K2Node_FunctionResult_1_Out_Row_Strength
+    N_Spawn_Weapon_K2Node_GetDataTableRow_0_ReturnValue_WeaponClass_4_6D43A17A4FF2BF9BA9E3DA95599DD08A --> N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_Class
+    N_Spawn_Weapon_K2Node_GetDataTableRow_0_RowNotFound ==> N_Spawn_Weapon_K2Node_CallFunction_1_anchor_in
+    N_Spawn_Weapon_K2Node_GetDataTableRow_0_then ==> N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_anchor_in
+    N_Spawn_Weapon_K2Node_FormatText_0 --> N_Spawn_Weapon_K2Node_CallFunction_1_InText
+    N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_ReturnValue --> N_Spawn_Weapon_K2Node_FunctionResult_1_ReturnValue
+    N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_anchor_out ==> N_Spawn_Weapon_K2Node_FunctionResult_1_anchor_in
+
+    %% Keep inputs left of outputs inside each node
+    N_Spawn_Weapon_K2Node_FunctionEntry_0_anchor_in ~~~ N_Spawn_Weapon_K2Node_FunctionEntry_0_Instigator
+    N_Spawn_Weapon_K2Node_FunctionEntry_0_anchor_in ~~~ N_Spawn_Weapon_K2Node_FunctionEntry_0_anchor_out
+    N_Spawn_Weapon_K2Node_CallFunction_2_Scale ~~~ N_Spawn_Weapon_K2Node_CallFunction_2_ReturnValue
+    N_Spawn_Weapon_K2Node_GetDataTableRow_0_RowName ~~~ N_Spawn_Weapon_K2Node_GetDataTableRow_0_then
+    N_Spawn_Weapon_K2Node_GetDataTableRow_0_RowName ~~~ N_Spawn_Weapon_K2Node_GetDataTableRow_0_RowNotFound
+    N_Spawn_Weapon_K2Node_GetDataTableRow_0_RowName ~~~ N_Spawn_Weapon_K2Node_GetDataTableRow_0_ReturnValue_WeaponClass_4_6D43A17A4FF2BF9BA9E3DA95599DD08A
+    N_Spawn_Weapon_K2Node_GetDataTableRow_0_RowName ~~~ N_Spawn_Weapon_K2Node_GetDataTableRow_0_ReturnValue_Strength_7_04CD1A7D4FF79D8A470B3295FB00628C
+    N_Spawn_Weapon_K2Node_GetDataTableRow_0_RowName ~~~ N_Spawn_Weapon_K2Node_GetDataTableRow_0_ReturnValue_HitAnimation_11_E038B3E74F4BD31EA6AB6D84B8ED55FD
+    N_Spawn_Weapon_K2Node_GetDataTableRow_0_anchor_in ~~~ N_Spawn_Weapon_K2Node_GetDataTableRow_0_then
+    N_Spawn_Weapon_K2Node_GetDataTableRow_0_anchor_in ~~~ N_Spawn_Weapon_K2Node_GetDataTableRow_0_RowNotFound
+    N_Spawn_Weapon_K2Node_GetDataTableRow_0_anchor_in ~~~ N_Spawn_Weapon_K2Node_GetDataTableRow_0_ReturnValue_WeaponClass_4_6D43A17A4FF2BF9BA9E3DA95599DD08A
+    N_Spawn_Weapon_K2Node_GetDataTableRow_0_anchor_in ~~~ N_Spawn_Weapon_K2Node_GetDataTableRow_0_ReturnValue_Strength_7_04CD1A7D4FF79D8A470B3295FB00628C
+    N_Spawn_Weapon_K2Node_GetDataTableRow_0_anchor_in ~~~ N_Spawn_Weapon_K2Node_GetDataTableRow_0_ReturnValue_HitAnimation_11_E038B3E74F4BD31EA6AB6D84B8ED55FD
+    N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_Class ~~~ N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_ReturnValue
+    N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_Class ~~~ N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_anchor_out
+    N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_SpawnTransform ~~~ N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_ReturnValue
+    N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_SpawnTransform ~~~ N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_anchor_out
+    N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_CollisionHandlingOverride ~~~ N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_ReturnValue
+    N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_CollisionHandlingOverride ~~~ N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_anchor_out
+    N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_TransformScaleMethod ~~~ N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_ReturnValue
+    N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_TransformScaleMethod ~~~ N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_anchor_out
+    N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_Owner ~~~ N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_ReturnValue
+    N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_Owner ~~~ N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_anchor_out
+    N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_Instigator ~~~ N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_ReturnValue
+    N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_Instigator ~~~ N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_anchor_out
+    N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_anchor_in ~~~ N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_ReturnValue
+    N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_anchor_in ~~~ N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_anchor_out
+    N_Spawn_Weapon_K2Node_CallFunction_1_InText ~~~ N_Spawn_Weapon_K2Node_CallFunction_1_anchor_out
+    N_Spawn_Weapon_K2Node_CallFunction_1_bPrintToScreen ~~~ N_Spawn_Weapon_K2Node_CallFunction_1_anchor_out
+    N_Spawn_Weapon_K2Node_CallFunction_1_bPrintToLog ~~~ N_Spawn_Weapon_K2Node_CallFunction_1_anchor_out
+    N_Spawn_Weapon_K2Node_CallFunction_1_TextColor ~~~ N_Spawn_Weapon_K2Node_CallFunction_1_anchor_out
+    N_Spawn_Weapon_K2Node_CallFunction_1_Duration ~~~ N_Spawn_Weapon_K2Node_CallFunction_1_anchor_out
+    N_Spawn_Weapon_K2Node_CallFunction_1_anchor_in ~~~ N_Spawn_Weapon_K2Node_CallFunction_1_anchor_out
+    N_Spawn_Weapon_K2Node_FunctionResult_1_ReturnValue ~~~ N_Spawn_Weapon_K2Node_FunctionResult_1_anchor_out
+    N_Spawn_Weapon_K2Node_FunctionResult_1_Out_Row_Strength ~~~ N_Spawn_Weapon_K2Node_FunctionResult_1_anchor_out
+    N_Spawn_Weapon_K2Node_FunctionResult_1_Out_Row_Hit_Animation ~~~ N_Spawn_Weapon_K2Node_FunctionResult_1_anchor_out
+    N_Spawn_Weapon_K2Node_FunctionResult_1_anchor_in ~~~ N_Spawn_Weapon_K2Node_FunctionResult_1_anchor_out
+
+    %% Nodes
+    style N_Spawn_Weapon_K2Node_VariableGet_0 fill:#151515,stroke:#cd82ff,stroke-width:2px,color:#cd82ff,rx:16px,ry:16px
+    style N_Spawn_Weapon_K2Node_FunctionEntry_0 fill:#151515,stroke:#8a8a8a,stroke-width:2px,color:#f2f2f2
+    style N_Spawn_Weapon_K2Node_CallFunction_2 fill:#151515,stroke:#ff7300,stroke-width:2px,color:#ff7300,rx:16px,ry:16px
+    style N_Spawn_Weapon_K2Node_GetDataTableRow_0 fill:#151515,stroke:#8a8a8a,stroke-width:2px,color:#f2f2f2
+    style N_Spawn_Weapon_K2Node_FormatText_0 fill:#151515,stroke:#e77caa,stroke-width:2px,color:#e77caa,rx:16px,ry:16px
+    style N_Spawn_Weapon_K2Node_SpawnActorFromClass_0 fill:#151515,stroke:#456980,stroke-width:2px,color:#f2f2f2
+    style N_Spawn_Weapon_K2Node_CallFunction_1 fill:#151515,stroke:#456980,stroke-width:2px,color:#f2f2f2
+    style N_Spawn_Weapon_K2Node_FunctionResult_1 fill:#151515,stroke:#8a8a8a,stroke-width:2px,color:#f2f2f2
+
+    %% Pins
+    classDef pin_anchor fill:#151515,stroke:#151515,color:#151515
+    classDef pin_boolean fill:#151515,stroke:#151515,color:#950000
+    classDef pin_exec fill:#151515,stroke:#151515,color:#ffffff
+    classDef pin_float fill:#151515,stroke:#151515,color:#38d500
+    classDef pin_integer fill:#151515,stroke:#151515,color:#1fe3af
+    classDef pin_name fill:#151515,stroke:#151515,color:#cd82ff
+    classDef pin_object fill:#151515,stroke:#151515,color:#00aaf5
+    classDef pin_other fill:#151515,stroke:#151515,color:#777777
+    classDef pin_text fill:#151515,stroke:#151515,color:#e77caa
+    classDef pin_transform fill:#151515,stroke:#151515,color:#ff7300
+    classDef pin_vector fill:#151515,stroke:#151515,color:#ffca23
+    class N_Spawn_Weapon_K2Node_FunctionEntry_0_anchor_in,N_Spawn_Weapon_K2Node_FunctionEntry_0_anchor_out,N_Spawn_Weapon_K2Node_GetDataTableRow_0_anchor_in,N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_anchor_in,N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_anchor_out,N_Spawn_Weapon_K2Node_CallFunction_1_anchor_in,N_Spawn_Weapon_K2Node_CallFunction_1_anchor_out,N_Spawn_Weapon_K2Node_FunctionResult_1_anchor_in,N_Spawn_Weapon_K2Node_FunctionResult_1_anchor_out pin_anchor
+    class N_Spawn_Weapon_K2Node_CallFunction_1_bPrintToScreen,N_Spawn_Weapon_K2Node_CallFunction_1_bPrintToLog pin_boolean
+    class N_Spawn_Weapon_K2Node_GetDataTableRow_0_then,N_Spawn_Weapon_K2Node_GetDataTableRow_0_RowNotFound pin_exec
+    class N_Spawn_Weapon_K2Node_CallFunction_1_Duration pin_float
+    class N_Spawn_Weapon_K2Node_GetDataTableRow_0_ReturnValue_Strength_7_04CD1A7D4FF79D8A470B3295FB00628C,N_Spawn_Weapon_K2Node_FunctionResult_1_Out_Row_Strength pin_integer
+    class N_Spawn_Weapon_K2Node_GetDataTableRow_0_RowName pin_name
+    class N_Spawn_Weapon_K2Node_FunctionEntry_0_Instigator,N_Spawn_Weapon_K2Node_GetDataTableRow_0_ReturnValue_HitAnimation_11_E038B3E74F4BD31EA6AB6D84B8ED55FD,N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_Owner,N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_Instigator,N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_ReturnValue,N_Spawn_Weapon_K2Node_FunctionResult_1_ReturnValue,N_Spawn_Weapon_K2Node_FunctionResult_1_Out_Row_Hit_Animation pin_object
+    class N_Spawn_Weapon_K2Node_GetDataTableRow_0_ReturnValue_WeaponClass_4_6D43A17A4FF2BF9BA9E3DA95599DD08A,N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_Class,N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_CollisionHandlingOverride,N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_TransformScaleMethod,N_Spawn_Weapon_K2Node_CallFunction_1_TextColor pin_other
+    class N_Spawn_Weapon_K2Node_CallFunction_1_InText pin_text
+    class N_Spawn_Weapon_K2Node_CallFunction_2_ReturnValue,N_Spawn_Weapon_K2Node_SpawnActorFromClass_0_SpawnTransform pin_transform
+    class N_Spawn_Weapon_K2Node_CallFunction_2_Scale pin_vector
+
+    %% Wire colours (dimmed and dashed between two nodes that aren't part of the change)
+    linkStyle 4,9,10,13 stroke:#ffffff,stroke-width:3px
+    linkStyle 7 stroke:#1fe3af,stroke-width:2px
+    linkStyle 0,1 stroke:#cd82ff,stroke-width:2px
+    linkStyle 2,3,6,12 stroke:#00aaf5,stroke-width:2px
+    linkStyle 8 stroke:#777777,stroke-width:2px
+    linkStyle 11 stroke:#e77caa,stroke-width:2px
+    linkStyle 5 stroke:#ff7300,stroke-width:2px

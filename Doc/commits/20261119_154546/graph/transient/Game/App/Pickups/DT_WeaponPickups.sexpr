@@ -1,0 +1,12 @@
+(asset-diff "/Game/App/Pickups/DT_WeaponPickups"
+  (class "DataTable")
+  (old none)
+  (baseline class-default)
+  (new working-copy)
+  (data-table
+    (row-struct "S_WeaponRow")
+    (columns "Weapon Class" "Strength" "Hit Animation")
+    (row "Sword" "/Script/Engine.BlueprintGeneratedClass'/Game/App/Weapons/BP_Weapons_Sword.BP_Weapons_Sword_C'" "40" "/Script/Engine.AnimMontage'/Game/Extern_Assets/UAL2_Standard/SkeletalMeshes/UAL2_StandardSword_Regular_A_RETARGET_Montage.UAL2_StandardSword_Regular_A_RETARGET_Montage'")
+    (row "Mace" "/Script/Engine.BlueprintGeneratedClass'/Game/App/Weapons/BP_Weapon_Mace.BP_Weapon_Mace_C'" "70" "/Script/Engine.AnimMontage'/Game/Extern_Assets/UAL1_Standard/SkeletalMeshes/UAL1_StandardSword_Attack_RETARGET_Montage.UAL1_StandardSword_Attack_RETARGET_Montage'"))
+  (properties
+    (changed "RowStruct" (old "None") (new "/Script/CoreUObject.UserDefinedStruct'/Game/App/Pickups/S_WeaponRow.S_WeaponRow'") (display "Row Struct"))))

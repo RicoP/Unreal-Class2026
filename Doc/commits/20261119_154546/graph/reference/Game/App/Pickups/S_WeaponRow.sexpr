@@ -1,0 +1,8 @@
+(asset "/Game/App/Pickups/S_WeaponRow"
+  (class "UserDefinedStruct")
+  (revision working-copy)
+  (struct-fields
+    (field "Weapon Class" "BP Weapon Base Class Reference")
+    (field "Strength" "IntProperty")
+    (field "Hit Animation" "Anim Montage Object Reference"))
+  (properties))
