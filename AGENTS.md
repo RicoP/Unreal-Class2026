@@ -250,6 +250,43 @@ to rebuild it themselves.
   have unsaved changes, it first lists them in a message box and asks whether
   to export anyway (default: No), because revision control only sees saved
   files.
+- A User Defined Struct and a Data Table get their contents in the diff
+  (`AddTableInfo` in the plugin): `(struct-fields (field "Name" "Type") ...)` and
+  `(data-table (row-struct "S_Row") (columns ...) (row "RowName" "value" ...) ...)`.
+  `sexpr_to_table.py` shows them 1:1: a struct as a `Name | Type` table, a data
+  table as `Row Name | <column> ...` with one line per row. The heading of a new
+  data table reads `Create Data Table at <path> (of rowtype <struct>)`
+  (`meta.rowtype`, from `assetMetadata`). Both need a re-export after the plugin
+  is built.
+- Default events (`K2Node_Event`: Event BeginPlay, ActorBeginOverlap, Tick, ...)
+  that only lost their place in a change aren't part of the code to show: when
+  such an event was removed, or was only moved (nothing else of it changed), and
+  had no children before (a Parent call on it doesn't count; a Parent call that
+  is connected to nothing is as idle), `editorView` in
+  `export_doc.mjs` (`withoutIdleDefaultEvents`) takes it out of the Before and
+  After texts, with its Parent call, so the editor view's change list doesn't
+  list it. The same events, added with nothing attached (a new Blueprint's
+  BeginPlay and Tick), are left out of the After text. Events that gained or
+  lost children are kept.
+- blueprintUE's diff view crashes while it writes its summary when a comment box
+  was added, removed or changed (it reads a title such a node doesn't have), and
+  then the summary list is empty. `withoutIdleDefaultEvents` therefore leaves
+  those comment boxes out of both texts; unchanged ones stay. The renderer files
+  stay as they are.
+- A `doc.html` with more than one section starts with a `Contents` list
+  (`<nav class="toc">`) of links to its sections: `writeDoc` gives every
+  `<section>` an `id` made from its heading (made unique) and links to it.
+  The headings stay plain `<h2>` without attributes, because the site index
+  reads them. Finished steps get the list when they are regenerated.
+- Types named in tables get a dot (`◉`) in the colour of their pin before the
+  name (`pinColorOf` / `withTypeDots` in `export_doc.mjs`, `.pin-dot` in
+  `doc.css`, colours `--pin-*` from `palette.json`, so every palette applies):
+  the cells of a `Type` column, a variable's type, and the `(Type)` of added
+  variables, inputs and outputs. Basic types by name (Boolean, Integer, Float,
+  ...), `... Object Reference`, `... Class Reference` (`pin-class`, deep purple),
+  `... Interface Reference`, `... Structure` (`pin-struct`, deep blue). Other
+  names get no dot. The class, struct and interface colours are the editor's
+  `GraphEditorSettings`, converted to sRGB; the other palettes keep them.
 - Assets with a `Retarget Source Asset` set (retargeted animations) aren't
   documented one by one, and not as imports even though they keep their
   source's import data: `retarget_tables` in `sexpr_to_table.py` writes one

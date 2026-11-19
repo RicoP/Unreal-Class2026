@@ -76,6 +76,9 @@
         "pin-transform": "#ff7300",
         "pin-object": "#00aaf5",
         "pin-delegate": "#ff3838",
+        "pin-class": "#5900bc",
+        "pin-struct": "#0059cb",
+        "pin-interface": "#f1ffaa",
         "pin-other": "#777777"
       }
     },

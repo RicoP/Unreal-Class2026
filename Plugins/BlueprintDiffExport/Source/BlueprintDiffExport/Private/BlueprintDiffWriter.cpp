@@ -12,6 +12,8 @@
 #include "Components/ActorComponent.h"
 #include "Components/SceneComponent.h"
 #include "Engine/Blueprint.h"
+#include "Engine/DataTable.h"
+#include "StructUtils/UserDefinedStruct.h"
 #include "Engine/InheritableComponentHandler.h"
 #include "Engine/Level.h"
 #include "Engine/SCS_Node.h"
@@ -747,6 +749,60 @@ namespace
 		}
 	}
 
+	/** The name a field has where the user typed it: a User Defined Struct's variable, not its mangled name. */
+	FString FieldName(const UStruct* Struct, const FProperty* Property)
+	{
+		const FString Authored = Struct->GetAuthoredNameForField(Property);
+		return Authored.IsEmpty() ? Property->GetName() : Authored;
+	}
+
+	/**
+	 * What a User Defined Struct holds and what a Data Table's rows say, as plain lists:
+	 * (struct-fields (field "Name" "Type") ...) and
+	 * (data-table (row-struct "S_Row") (columns "Name" ...) (row "RowName" "value" ...) ...).
+	 * Nothing for other assets. The doc shows them 1:1 as tables.
+	 */
+	void AddTableInfo(const UObject* Asset, TArray<FString>& Lines)
+	{
+		if (const UUserDefinedStruct* Struct = Cast<UUserDefinedStruct>(Asset))
+		{
+			Lines.Add(Indent(1) + TEXT("(struct-fields"));
+			for (const FProperty* Property : TFieldRange<FProperty>(Struct))
+			{
+				Lines.Add(FString::Printf(TEXT("%s(field %s %s)"), *Indent(2), *Quote(FieldName(Struct, Property)), *Quote(UEdGraphSchema_K2::TypeToText(Property).ToString())));
+			}
+			Lines.Last() += TEXT(")");
+		}
+		else if (const UDataTable* Table = Cast<UDataTable>(Asset))
+		{
+			const UScriptStruct* RowStruct = Table->GetRowStruct();
+			if (!RowStruct)
+			{
+				return;
+			}
+			Lines.Add(Indent(1) + TEXT("(data-table"));
+			Lines.Add(Indent(2) + TEXT("(row-struct ") + Quote(RowStruct->GetName()) + TEXT(")"));
+			FString Columns = Indent(2) + TEXT("(columns");
+			for (const FProperty* Property : TFieldRange<FProperty>(RowStruct))
+			{
+				Columns += TEXT(" ") + Quote(FieldName(RowStruct, Property));
+			}
+			Lines.Add(Columns + TEXT(")"));
+			for (const TPair<FName, uint8*>& Row : Table->GetRowMap())
+			{
+				FString Line = Indent(2) + TEXT("(row ") + Quote(Row.Key.ToString());
+				for (const FProperty* Property : TFieldRange<FProperty>(RowStruct))
+				{
+					FString Value;
+					Property->ExportText_Direct(Value, Property->ContainerPtrToValuePtr<void>(Row.Value), nullptr, nullptr, PPF_None);
+					Line += TEXT(" ") + Quote(Value);
+				}
+				Lines.Add(Line + TEXT(")"));
+			}
+			Lines.Last() += TEXT(")");
+		}
+	}
+
 	/**
 	 * The package name to replace in values of an older revision: the temporary package it was
 	 * loaded into for diffing, so its references read like the real asset's. "" otherwise (for
@@ -1374,6 +1430,7 @@ bool ExportAssetDiff(UObject* Asset, FString& OutPath, FString& OutError)
 	}
 	Lines.Add(Indent(1) + TEXT("(new working-copy)"));
 	AddImportInfo(Asset, Lines);
+	AddTableInfo(Asset, Lines);
 	AddPropertyDiffs(Old ? Old : ClassDefault, Asset, false, Lines);
 	Lines.Last() += TEXT(")");
 
@@ -1381,6 +1438,7 @@ bool ExportAssetDiff(UObject* Asset, FString& OutPath, FString& OutError)
 	Reference.Add(TEXT("(asset ") + Quote(PackageName));
 	Reference.Add(Indent(1) + TEXT("(class ") + Quote(Asset->GetClass()->GetName()) + TEXT(")"));
 	Reference.Add(Indent(1) + TEXT("(revision working-copy)"));
+	AddTableInfo(Asset, Reference);
 	AddPropertyDiffs(ClassDefault, Asset, true, Reference);
 	Reference.Last() += TEXT(")");
 

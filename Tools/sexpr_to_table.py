@@ -202,6 +202,13 @@ def blend_sample(item, axis_max):
 ASSET_BOOKKEEPING = {"DataModelInterface", "Controller", "CommonTargetFrameRate"}
 
 
+# The plugin names a struct variable's type with Unreal's own text; basic types come out as the
+# property class ("IntProperty"), where the editor's pickers say "Integer".
+BASIC_TYPES = {"IntProperty": "Integer", "Int64Property": "Integer64", "FloatProperty": "Float",
+               "DoubleProperty": "Float", "BoolProperty": "Boolean", "NameProperty": "Name",
+               "StrProperty": "String", "TextProperty": "Text", "ByteProperty": "Byte"}
+
+
 def to_markdown(diff):
     package = diff[1]
     name = package.rsplit("/", 1)[-1]
@@ -218,6 +225,32 @@ def to_markdown(diff):
         describers["SampleData"] = (lambda item: blend_sample(item, new_max), lambda item: blend_sample(item, old_max))
 
     lines = [f"### {name} ({asset_class})", ""]
+    folder = package.rsplit("/", 1)[0]
+    fields, data_table = first(diff, "struct-fields"), first(diff, "data-table")
+    if fields is not None:
+        # A User Defined Struct: its variables, as name and type.
+        rows = [f"| {cell(entry[1])} | {cell(BASIC_TYPES.get(entry[2], entry[2]))} |" for entry in fields[1:] if isinstance(entry, list)]
+        lines += [
+            f"{'Create a new' if is_new else 'Open'} {asset_class} {'named' if is_new else ''} `{name}` in `{folder}` {'with these variables' if is_new else 'and set its variables to'}:".replace("  ", " "),
+            "",
+            "| Name | Type |",
+            "|---|---|",
+            *(rows or ["| (none) | |"]),
+        ]
+        return "\n".join(lines) + "\n"
+    if data_table is not None:
+        # A Data Table: its rows, 1:1 (the row type is in the heading).
+        columns = first(data_table, "columns")[1:]
+        rows = [entry for entry in data_table[1:] if isinstance(entry, list) and entry[0] == "row"]
+        lines += [
+            f"{'Create a new' if is_new else 'Open'} {asset_class} {'named' if is_new else ''} `{name}` in `{folder}` (of rowtype `{first(data_table, 'row-struct')[1]}`) with these rows:".replace("  ", " "),
+            "",
+            "| Row Name | " + " | ".join(cell(column) for column in columns) + " |",
+            "|---|" + "---|" * len(columns),
+            *(["| " + " | ".join(cell(value) for value in row[1:]) + " |" for row in rows]
+              or ["| (none) |" + " |" * len(columns)]),
+        ]
+        return "\n".join(lines) + "\n"
     if not properties and is_new:
         # One row, so doc.html shows the step (it leaves out tables without rows).
         lines += [

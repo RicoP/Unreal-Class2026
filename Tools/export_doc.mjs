@@ -152,7 +152,8 @@ function headingFor(meta, shownPath, hasSettings) {
     const named = meta.label && meta.label.replace(/\s/g, "") !== meta.type.replace(/\s/g, "") ? ` named ${meta.label}` : "";
     return meta.new === "true" ? `Place ${meta.type}${named} in ${shownPath}` : `Change ${meta.label || meta.type} in ${shownPath}`;
   }
-  return meta.new === "true" ? `Create ${meta.type} at ${shownPath}` : shownPath;
+  const rowType = meta.rowtype ? ` (of rowtype ${meta.rowtype})` : "";
+  return meta.new === "true" ? `Create ${meta.type} at ${shownPath}${rowType}` : shownPath;
 }
 
 function html(text) {
@@ -286,6 +287,46 @@ function cellHtml(text, links = true) {
   return links ? linkAssets(cell) : cell;
 }
 
+/**
+ * The pin colour of a type as the table names it ("Float", "BP Weapon Base Class Reference",
+ * "Timer Handle Structure"), as a palette variable, or null for a name that isn't a type. The
+ * colours are the editor's (Tools/palette.json), so a dot next to the name matches the pin.
+ */
+function pinColorOf(type) {
+  const basic = {
+    Boolean: "boolean", Byte: "byte", Integer: "integer", Integer64: "integer64", Float: "float", Name: "name",
+    String: "string", Text: "text", Vector: "vector", Rotator: "rotator", Transform: "transform",
+  };
+  if (basic[type]) {
+    return `--pin-${basic[type]}`;
+  }
+  if (/ Class References?$/.test(type)) return "--pin-class";
+  if (/ Object References?$/.test(type)) return "--pin-object";
+  if (/ Interface References?$/.test(type)) return "--pin-interface";
+  if (/ Structure$/.test(type)) return "--pin-struct";
+  return null;
+}
+
+const typeDot = (type) => {
+  const color = pinColorOf(type);
+  return color ? `<span class="pin-dot" style="color: var(${color})">◉</span>` : "";
+};
+
+/**
+ * Put a dot in the type's colour before every type a cell names: the whole cell in a Type
+ * column or a variable type row, "(Float)" at the end of a name in the rows that add a variable,
+ * input or output.
+ */
+function withTypeDots(text, cell, { wholeCell, parenthesized }) {
+  if (wholeCell && typeDot(text)) {
+    return `${typeDot(text)} ${cell}`;
+  }
+  if (parenthesized) {
+    return cell.replace(/\(([^()<>]+)\)/g, (match, type) => (typeDot(type) ? `(${typeDot(type)} ${type})` : match));
+  }
+  return cell;
+}
+
 /** A component tree ([depth, "name (type)"] items) as nested lists, like the Components panel. */
 function treeHtml(tree) {
   const lines = [];
@@ -315,12 +356,23 @@ function treeHtml(tree) {
 function tableHtml({ title, tree, rows }) {
   const [header, ...body] = rows;
   // The first column names settings; only the values link assets.
-  const cells = (row, tag) =>
-    row
-      .map((value, column) =>
-        value === "—" ? `<${tag} class="none">—</${tag}>` : `<${tag}>${cellHtml(value, tag === "td" && column > 0)}</${tag}>`,
-      )
+  const typeColumns = header.map((name) => /(^|\s)Type$/.test(name));
+  const cells = (row, tag) => {
+    // Rows that name types: a variable's type, and variables, inputs and outputs being added.
+    const typeRow = /(Variable Type|^Add (Variable|Input|Output)|› Add (Input|Output)|Inputs|Outputs)$/.test(row[0]);
+    return row
+      .map((value, column) => {
+        if (value === "—") {
+          return `<${tag} class="none">—</${tag}>`;
+        }
+        const cell = cellHtml(value, tag === "td" && column > 0);
+        const dotted = tag === "td" && column > 0
+          ? withTypeDots(value, cell, { wholeCell: typeColumns[column] || /(Variable Type|Inputs|Outputs)$/.test(row[0]), parenthesized: typeRow })
+          : cell;
+        return `<${tag}>${dotted}</${tag}>`;
+      })
       .join("");
+  };
   return [
     ...(tree.length ? [treeHtml(tree)] : []),
     `      <div class="table">`,
@@ -443,13 +495,122 @@ function dependencyOrder(files, metas, folder) {
  * the texts are embedded in the page (hidden textareas), so it works from disk too.
  * [] when the graph has no such text (steps exported before the plugin wrote it).
  */
+/** The nodes of a graph's native text: name, class, position, text and the nodes its pins lead to. */
+function nativeNodes(text) {
+  const nodes = new Map();
+  for (const block of text.match(/^Begin Object [^\n]*\n(?:(?!End Object)[^\n]*\n)*?End Object[^\n]*\n?/gm) ?? []) {
+    const name = /Name="([^"]+)"/.exec(block)?.[1];
+    const position = (axis) => Number(new RegExp(`NodePos${axis}=(-?\\d+)`).exec(block)?.[1] ?? 0);
+    const targets = (list) => list.split(",").map((entry) => entry.trim().split(" ")[0]).filter(Boolean);
+    const output = [...block.matchAll(/Direction="EGPD_Output"[^\n]*?LinkedTo=\(([^)]*)\)/g)].flatMap((m) => targets(m[1]));
+    const linked = [...block.matchAll(/LinkedTo=\(([^)]*)\)/g)].flatMap((m) => targets(m[1]));
+    nodes.set(name, {
+      name,
+      cls: /Class=\S+?\.(\w+)\s/.exec(block)?.[1],
+      x: position("X"),
+      y: position("Y"),
+      block,
+      links: output,
+      linked,
+    });
+  }
+  return nodes;
+}
+
+/**
+ * The default events of a Blueprint (Event BeginPlay, ActorBeginOverlap, Tick, ...) that only
+ * lost their place in a change: they were removed, or only moved, and had nothing attached (a call
+ * of the parent's version doesn't count). Left in, they show up in the change list of the editor
+ * view as removed or moved nodes, which says nothing about the code. They are taken out of both
+ * texts, together with the Parent call that sat on them.
+ */
+function withoutIdleDefaultEvents(oldText, newText) {
+  // No old text: a new Blueprint (or graph); everything in it counts as added.
+  const before = nativeNodes(oldText ?? ""), after = nativeNodes(newText);
+  const isParentCall = (node) => node?.cls === "K2Node_CallParentFunction";
+  const children = (node, nodes) => node.links.filter((name) => !isParentCall(nodes.get(name)));
+  const withoutPosition = (node) => node.block.replace(/^\s*NodePos[XY]=-?\d+\n/gm, "");
+  const dropOld = new Set(), dropNew = new Set();
+  const addWithParentCalls = (set, node, nodes) => {
+    set.add(node.name);
+    for (const name of node.links) {
+      // The Parent call goes along when it is connected to nothing but this event.
+      if (isParentCall(nodes.get(name)) && nodes.get(name).linked.every((other) => other === node.name)) {
+        set.add(name);
+      }
+    }
+  };
+  for (const node of before.values()) {
+    if (node.cls !== "K2Node_Event" || children(node, before).length) {
+      continue;
+    }
+    const now = after.get(node.name);
+    if (!now) {
+      addWithParentCalls(dropOld, node, before);
+    } else if (
+      now.cls === "K2Node_Event" && !children(now, after).length &&
+      (now.x !== node.x || now.y !== node.y) && withoutPosition(node) === withoutPosition(now)
+    ) {
+      addWithParentCalls(dropOld, node, before);
+      addWithParentCalls(dropNew, now, after);
+    }
+  }
+  // A Parent call (Parent: Receive Actor Begin Overlap) that is connected to nothing is as idle.
+  for (const node of before.values()) {
+    if (!isParentCall(node) || node.linked.length || dropOld.has(node.name)) {
+      continue;
+    }
+    const now = after.get(node.name);
+    if (!now) {
+      dropOld.add(node.name);
+    } else if (isParentCall(now) && !now.linked.length && (now.x !== node.x || now.y !== node.y) && withoutPosition(node) === withoutPosition(now)) {
+      dropOld.add(node.name);
+      dropNew.add(now.name);
+    }
+  }
+  // Added ones with nothing attached (the BeginPlay, Tick, ... a new Blueprint starts with).
+  for (const node of after.values()) {
+    if (before.has(node.name)) {
+      continue;
+    }
+    if (node.cls === "K2Node_Event" && !children(node, after).length) {
+      addWithParentCalls(dropNew, node, after);
+    } else if (isParentCall(node) && !node.linked.length) {
+      dropNew.add(node.name);
+    }
+  }
+  // blueprintUE's diff fails on a comment box that was added, removed or changed (it reads a title
+  // such a node doesn't have), and then lists nothing at all. Those boxes are left out of both texts;
+  // unchanged ones stay.
+  const comments = (nodes) => [...nodes.values()].filter((node) => node.cls === "EdGraphNode_Comment");
+  for (const node of comments(before)) {
+    const now = after.get(node.name);
+    if (!now || now.block !== node.block) {
+      dropOld.add(node.name);
+      if (now) {
+        dropNew.add(node.name);
+      }
+    }
+  }
+  for (const node of comments(after)) {
+    if (!before.has(node.name)) {
+      dropNew.add(node.name);
+    }
+  }
+  const strip = (text, nodes, names) => [...names].reduce((rest, name) => rest.replace(nodes.get(name).block, ""), text);
+  return [strip(oldText, before, dropOld), strip(newText, after, dropNew)];
+}
+
 function editorView(folder, svgFile) {
   const base = path.join(folder, "graph", "native", svgFile.replace(/\.svg$/i, ""));
   if (!existsSync(`${base}.txt`)) {
     return [];
   }
-  const area = (kind, file) => `        <textarea class="bue-${kind}" hidden>${html(readFileSync(file, "utf8"))}</textarea>`;
-  const previous = existsSync(`${base}.old.txt`) ? [area("previous", `${base}.old.txt`)] : [];
+  const area = (kind, text) => `        <textarea class="bue-${kind}" hidden>${html(text)}</textarea>`;
+  let current = readFileSync(`${base}.txt`, "utf8");
+  let before = existsSync(`${base}.old.txt`) ? readFileSync(`${base}.old.txt`, "utf8") : null;
+  [before, current] = withoutIdleDefaultEvents(before, current);
+  const previous = before !== null ? [area("previous", before)] : [];
   return [
     `      <div class="editor-view">`,
     `        <p>${previous.length ? "Before (left) and after (right), with the list of changes" : "The graph to build"}</p>`,
@@ -458,7 +619,7 @@ function editorView(folder, svgFile) {
       `Reset and Fullscreen are in the top bar${previous.length ? "; both sides move together, Lock / Unlock switches that off and on" : ""}. ` +
       `Touch screen: drag with one finger, pinch with two.</p>`,
     `        <div class="bue-graph"></div>`,
-    area("current", `${base}.txt`),
+    area("current", current),
     ...previous,
     "      </div>",
   ];
@@ -561,6 +722,28 @@ function writeDoc(folder) {
   });
   const withEditorView = sections.some((section) => section.includes('class="editor-view"'));
 
+  // A list of links to the sections at the top of the page: every section gets an id (from its
+  // heading, made unique) and the list jumps to it. The headings stay plain <h2> (the site index
+  // reads them).
+  const taken = new Set();
+  const contents = [];
+  sections.forEach((section, index) => {
+    const heading = /<h2>([\s\S]*?)<\/h2>/.exec(section)?.[1];
+    if (heading === undefined) {
+      return;
+    }
+    const base = heading.replace(/&[a-z]+;/g, " ").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80) || "section";
+    let id = base;
+    for (let n = 2; taken.has(id); n++) {
+      id = `${base}-${n}`;
+    }
+    taken.add(id);
+    sections[index] = section.replace("<section>", `<section id="${id}">`);
+    contents.push(`        <li><a href="#${id}">${heading.trim()}</a></li>`);
+  });
+  const contentsHtml = contents.length > 1
+    ? ["    <nav class=\"toc\">", "      <p>Contents</p>", "      <ol>", ...contents, "      </ol>", "    </nav>"].join("\n") + "\n"
+    : "";
   const page = `<!doctype html>
 <html lang="en">
   <head>
@@ -578,7 +761,7 @@ function writeDoc(folder) {
     <header>
       <label>Colours <select id="palette">${paletteOptions()}</select></label>
     </header>
-${sections.join("\n")}
+${contentsHtml}${sections.join("\n")}
 ${withEditorView ? `    <script src="../../bue-render/render.js"></script>
     <script src="../../bue-render/diff.js"></script>
 ` : ""}    <!-- Palette switch and step navigation: Doc/doc.js -->

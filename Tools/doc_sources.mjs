@@ -89,6 +89,11 @@ export function assetMetadata(sourceFile, root = process.cwd()) {
       fields.graph = graph.trim();
     }
   }
+  // A Data Table says what its rows are: "(row-struct "S_WeaponRow")" (sexpr_to_table.py shows the rows).
+  const rowType = /\(row-struct "([^"]+)"\)/.exec(diff)?.[1];
+  if (rowType) {
+    fields.rowtype = rowType;
+  }
   const deletedIn = /\(deleted-in "([^"]+)"\)/.exec(diff)?.[1];
   if (deletedIn) {
     fields["deleted-in"] = deletedIn;
