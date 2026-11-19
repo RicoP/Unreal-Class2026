@@ -2,9 +2,9 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "MeshCollisionRemover",
+	"FriendlyName": "Mesh Collision Remover",
 	"Description": "Editor-only utility that removes all collision from the selected static meshes. Blueprint only.",
-	"Category": "Other",
+	"Category": "Editor Tools",
 	"CreatedBy": "",
 	"CreatedByURL": "",
 	"DocsURL": "",
@@ -13,5 +13,11 @@
 	"CanContainContent": true,
 	"IsBetaVersion": false,
 	"IsExperimentalVersion": false,
-	"Installed": false
+	"Installed": false,
+	"Plugins": [
+		{
+			"Name": "EditorScriptingUtilities",
+			"Enabled": true
+		}
+	]
 }
