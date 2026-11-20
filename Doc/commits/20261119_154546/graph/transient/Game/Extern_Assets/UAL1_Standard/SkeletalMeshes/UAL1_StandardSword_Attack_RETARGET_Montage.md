@@ -6,3 +6,4 @@ Create a new Anim Montage named `UAL1_StandardSword_Attack_RETARGET_Montage` in 
 |---|---|
 | Skeleton | SK_Mannequin |
 | Montage Slots | DefaultGroup.DefaultSlot: UAL1_StandardSword_Attack_RETARGET |
+| Notifies | BP_AnimNotify_Spawn_HitBox at 0.407 s (Actor to Spawn: BP_HitBox_Sword) |

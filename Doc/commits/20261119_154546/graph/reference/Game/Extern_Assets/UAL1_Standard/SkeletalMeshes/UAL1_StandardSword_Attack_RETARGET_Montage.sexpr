@@ -4,6 +4,7 @@
   (properties
     (set "CommonTargetFrameRate" "(Numerator=30,Denominator=1)" (display "Common Target Frame Rate"))
     (set "DataModelInterface" "AnimDataModel'/Game/Extern_Assets/UAL1_Standard/SkeletalMeshes/UAL1_StandardSword_Attack_RETARGET_Montage.UAL1_StandardSword_Attack_RETARGET_Montage:AnimDataModel'" (display "Data Model Interface"))
-    (set "Controller" "AnimDataController'/Engine/Transient.AnimDataController_5'" (display "Controller"))
+    (set "Controller" "AnimDataController'/Engine/Transient.AnimDataController_0'" (display "Controller"))
     (set "Skeleton" "/Script/Engine.Skeleton'/Game/Characters/Mannequins/Meshes/SK_Mannequin.SK_Mannequin'" (display "Skeleton"))
-    (set "MontageSlots" "DefaultGroup.DefaultSlot: UAL1_StandardSword_Attack_RETARGET")))
+    (set "MontageSlots" "DefaultGroup.DefaultSlot: UAL1_StandardSword_Attack_RETARGET")
+    (set "AnimNotifies" "BP_AnimNotify_Spawn_HitBox at 0.407 s (Actor to Spawn: BP_HitBox_Sword)")))

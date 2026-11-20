@@ -8,4 +8,5 @@
     (changed "DataModelInterface" (old "None") (new "AnimDataModel'/Game/Extern_Assets/UAL2_Standard/SkeletalMeshes/UAL2_StandardSword_Regular_A_RETARGET_Montage.UAL2_StandardSword_Regular_A_RETARGET_Montage:AnimDataModel'") (display "Data Model Interface"))
     (changed "Controller" (old "None") (new "AnimDataController'/Engine/Transient.AnimDataController_4'") (display "Controller"))
     (changed "Skeleton" (old "None") (new "/Script/Engine.Skeleton'/Game/Characters/Mannequins/Meshes/SK_Mannequin.SK_Mannequin'") (display "Skeleton"))
-    (changed "MontageSlots" (old "DefaultSlot: no animation") (new "DefaultGroup.DefaultSlot: UAL2_StandardSword_Regular_A_RETARGET"))))
+    (changed "MontageSlots" (old "DefaultSlot: no animation") (new "DefaultGroup.DefaultSlot: UAL2_StandardSword_Regular_A_RETARGET"))
+    (changed "AnimNotifies" (old "none") (new "BP_AnimNotify_Spawn_HitBox at 0.230 s (Actor to Spawn: BP_HitBox_Sword)"))))
