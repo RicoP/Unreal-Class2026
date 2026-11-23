@@ -233,7 +233,8 @@ namespace
 
 	/**
 	 * Export a diff for every asset that revision control reports as new or modified, in the given
-	 * content folders (and their sub-folders), e.g. "/Game" for the whole project.
+	 * content folders (and their sub-folders), e.g. "/Game" for the whole project. The Developers
+	 * folder (/Game/Developers, everyone's test content) is left out unless a root lies inside it.
 	 */
 	void ExportChanged(const TArray<FString>& Roots)
 	{
@@ -261,11 +262,17 @@ namespace
 		{
 			FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get().GetAssetsByPath(FName(*Root), Assets, true);
 		}
+		const FString DevelopersFolder = TEXT("/Game/Developers");
+		const auto InDevelopers = [&DevelopersFolder](const FString& Path)
+		{
+			return Path == DevelopersFolder || Path.StartsWith(DevelopersFolder + TEXT("/"));
+		};
+		const bool bRootInDevelopers = Roots.ContainsByPredicate(InDevelopers);
 		TMap<FString, FAssetData> AssetsByFile;
 		for (const FAssetData& Asset : Assets)
 		{
 			const FString PackageName = Asset.PackageName.ToString();
-			if (PackageName.Contains(TEXT("/__External")))
+			if (PackageName.Contains(TEXT("/__External")) || (!bRootInDevelopers && InDevelopers(PackageName)))
 			{
 				continue;
 			}

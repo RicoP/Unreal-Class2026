@@ -283,8 +283,30 @@ function linkAssets(text) {
  * to their source.
  */
 function cellHtml(text, links = true) {
-  const cell = html(text).replace(/`([^`]+)`/g, "<code>$1</code>");
+  const cell = withColorSquares(html(text).replace(/`([^`]+)`/g, "<code>$1</code>"));
   return links ? linkAssets(cell) : cell;
+}
+
+/**
+ * A color value gets a square in that color before it (`.color-square` in doc.css shows the `i`
+ * as the square). Both of the engine's color types: an FLinearColor, `(R=0.312449,G=0.703082,
+ * B=0.433200,A=1.000000)`, has decimals and linear values, converted to the sRGB color the editor's
+ * swatch shows; an FColor, `(R=151,G=255,B=0,A=255)` (`color_text` in sexpr_to_table.py puts its
+ * fields in this order), has whole numbers 0-255 that are sRGB already.
+ */
+function withColorSquares(cell) {
+  const srgb = (c) => {
+    const v = Math.min(1, Math.max(0, c));
+    return Math.round(255 * (v <= 0.0031308 ? v * 12.92 : 1.055 * Math.pow(v, 1 / 2.4) - 0.055));
+  };
+  return cell.replace(/\(R=(-?[\d.]+),G=(-?[\d.]+),B=(-?[\d.]+)(?:,A=(-?[\d.]+))?\)/g, (match, r, g, b, a) => {
+    const linear = /\./.test(match);
+    const byte = (c) => Math.min(255, Math.max(0, Math.round(Number(c))));
+    const channel = (c) => (linear ? srgb(Number(c)) : byte(c));
+    const alpha = a === undefined ? 1 : Math.min(1, Math.max(0, linear ? Number(a) : Number(a) / 255));
+    const color = `rgba(${channel(r)}, ${channel(g)}, ${channel(b)}, ${alpha})`;
+    return `<span class="color-square" style="background-color: ${color}">i</span> ${match}`;
+  });
 }
 
 /**
@@ -364,6 +386,11 @@ function tableHtml({ title, tree, rows }) {
       .map((value, column) => {
         if (value === "—") {
           return `<${tag} class="none">—</${tag}>`;
+        }
+        // A Notifies cell holds one entry per notify, separated by "; ": shown as a list.
+        if (tag === "td" && column > 0 && /Notifies$/.test(row[0])) {
+          const items = value.split("; ").map((item) => `<li>${cellHtml(item)}</li>`);
+          return `<td><ul class="notifies">${items.join("")}</ul></td>`;
         }
         const cell = cellHtml(value, tag === "td" && column > 0);
         const dotted = tag === "td" && column > 0

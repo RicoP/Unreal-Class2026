@@ -89,6 +89,9 @@ body.step { padding: 24px 16px; }
 .table tbody tr:nth-child(even) { background: var(--table-stripe); }
 /* Setting names stay on one line; long values (collision response lists) wrap, but never so
    narrow that a value breaks into single words. On a phone, names wrap too. */
+/* A color value gets a square in that color (export_doc.mjs writes the background); the i is hidden. */
+.color-square { display: inline-block; width: 1.4em; height: 1.4em; vertical-align: middle; border: 1px solid #000; border-radius: 2px; color: transparent; overflow: hidden; user-select: none; }
+.table ul.notifies { margin: 0; padding-left: 18px; }
 .table td:first-child { white-space: nowrap; }
 .table td:not(:first-child) { min-width: 16ch; max-width: 60ch; overflow-wrap: anywhere; }
 @media (max-width: 600px) {

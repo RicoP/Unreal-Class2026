@@ -245,7 +245,8 @@ to rebuild it themselves.
   failures in the notification and the Output Log. Right-clicking a folder in
   the Content Browser (**Export Diffs of Changed Assets**, "Documentation"
   section) does the same for the changed assets in that folder and its
-  sub-folders. The "Documentation" sections are first in every menu they are
+  sub-folders. Both leave out `/Game/Developers` (All/Content/Developers, everyone's test content)
+  unless the folder you right-clicked is inside it. The "Documentation" sections are first in every menu they are
   in (Tools, asset, folder and actor context menus). If any assets or levels
   have unsaved changes, it first lists them in a message box and asks whether
   to export anyway (default: No), because revision control only sees saved
@@ -278,6 +279,13 @@ to rebuild it themselves.
   `<section>` an `id` made from its heading (made unique) and links to it.
   The headings stay plain `<h2>` without attributes, because the site index
   reads them. Finished steps get the list when they are regenerated.
+- `Plugins/ColorBlindFriendlyBlueprints` (editor plugin, C++) switches the Blueprint editor's pin
+  and node title colours between the documentation's palettes (`Tools/palette.json`, hard-coded
+  in a table at the top of `Source/ColorBlindFriendlyBlueprintsSettings.cpp`; change both together): a dropdown
+  (`EColorBlindPalette`) in Editor Preferences > Plugins > Color Blind Friendly Blueprints. It sets the colours of `UGraphEditorSettings`
+  (`ApplyPalette`; the colour mapping is `Mappings()`) and redraws; a palette's `pin-*` and
+  `border-event`/`border-call` colours are used, the rest is the editor's. After changing the
+  plugin, close the editor and build it.
 - Types named in tables get a dot (`◉`) in the colour of their pin before the
   name (`pinColorOf` / `withTypeDots` in `export_doc.mjs`, `.pin-dot` in
   `doc.css`, colours `--pin-*` from `palette.json`, so every palette applies):

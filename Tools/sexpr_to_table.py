@@ -121,13 +121,37 @@ def describe(item):
     return describe_item(item) if item.startswith("(") else shorten(item).strip('"')
 
 
+def color_text(item):
+    """A color, FColor '(B=0,G=255,R=151,A=255)' (0-255, sRGB) or FLinearColor
+    '(R=0.3,G=0.7,B=0.4,A=1.0)', as '(R=151,G=255,B=0,A=255)': the fields in the order a color is
+    read, so the doc can show a square in that color. None for anything else."""
+    if not (item.startswith("(") and item.endswith(")")):
+        return None
+    fields = {}
+    for field in split_top_level(item[1:-1]):
+        key, _, value = field.partition("=")
+        fields[key.strip()] = value.strip()
+    if set(fields) not in ({"R", "G", "B", "A"}, {"R", "G", "B"}):
+        return None
+    try:
+        for value in fields.values():
+            float(value)
+    except ValueError:
+        return None
+    return "(" + ",".join(f"{key}={fields[key]}" for key in "RGBA" if key in fields) + ")"
+
+
 def describe_item(item):
-    """'(Action=...,Key=W)' -> 'Action: IA_Move, Key: W'."""
+    """'(Action=...,Key=W)' -> 'Action: IA_Move, Key: W'. A color stays '(R=..,G=..,B=..,A=..)'."""
+    if color_text(item):
+        return color_text(item)
     fields = []
     for field in split_top_level(item[1:-1]):
         key, _, value = field.partition("=")
         value = shorten(value)
-        if value.startswith("(") and value.endswith(")"):
+        if color_text(value):
+            value = color_text(value)
+        elif value.startswith("(") and value.endswith(")"):
             value = " + ".join(split_top_level(value[1:-1]))
         fields.append(f"{words(re.sub(r'^b(?=[A-Z])', '', key))}: {value}")
     return ", ".join(fields)

@@ -42,3 +42,6 @@ Desktop.ini
 
 # Python bytecode the documentation tools generate
 __pycache__/
+
+# The Color Blind Friendly Blueprints plugin has its own repository (git@github.com:RicoP/ColorBlindFriendlyBlueprints.git)
+/Plugins/ColorBlindFriendlyBlueprints/
