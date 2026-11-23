@@ -1,0 +1,9 @@
+(asset-diff "/Game/Characters/Mannequins/Anims/Unarmed/Jog/MF_Unarmed_Jog_Fwd"
+  (class "AnimSequence")
+  (old (revision "c6120a53") (date "2026-11-07T04:51:09.000Z") (description "Initial commit: Platforming1 Unreal project\n\nAdd project files, config and content, with Git LFS tracking for\nbinary assets and a .gitignore for Unreal generated folders.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (imported-from "B:/Unreal/Build/ArtSource/UE5/Characters/Mannequin/Feminine/Animation/FBX/MF_Unarmed_Jog_Fwd.fbx")
+  (properties
+    (changed "DataModelInterface" (old "AnimationSequencerDataModel'/Game/Characters/Mannequins/Anims/Unarmed/Jog/MF_Unarmed_Jog_Fwd.MF_Unarmed_Jog_Fwd:AnimationSequencerDataModel'") (new "AnimationSequencerDataModel'/Game/Characters/Mannequins/Anims/Unarmed/Jog/MF_Unarmed_Jog_Fwd.MF_Unarmed_Jog_Fwd:AnimationSequencerDataModel'") (display "Data Model Interface"))
+    (changed "Controller" (old "AnimSequencerController'/Engine/Transient.AnimSequencerController_25'") (new "AnimSequencerController'/Engine/Transient.AnimSequencerController_20'") (display "Controller"))
+    (changed "AnimNotifies" (old "none") (new "BP_AnimNotify_Footstep_R at 0.274 s; BP_AnimNotify_Footstep_L at 0.565 s; BP_AnimNotify_Footstep_R at 0.849 s; BP_AnimNotify_Footstep_L at 1.150 s; BP_AnimNotify_Footstep_R at 1.405 s; BP_AnimNotify_Footstep_L at 1.728 s"))))

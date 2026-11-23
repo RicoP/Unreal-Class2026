@@ -1,0 +1,8 @@
+(blueprint "/Game/App/Animations/BP_AnimNotify_Footstep_R"
+  (revision working-copy)
+  (parent "/Game/App/Animations/BP_AnimNotify_Footstep_L.BP_AnimNotify_Footstep_L_C")
+  (variables)
+  (functions)
+  (defaults (baseline parent-class)
+    (set "SocketName" "foot_r_Socket" (display "Socket Name"))
+    (set "NotifyColor" "(B=121,G=15,R=152,A=255)" (display "Notify Color"))))

@@ -1,0 +1,7 @@
+(blueprint-diff "/Game/App/Animations/BP_AnimNotify_Footstep_R"
+  (old none)
+  (new working-copy)
+  (parent "/Game/App/Animations/BP_AnimNotify_Footstep_L.BP_AnimNotify_Footstep_L_C")
+  (defaults (baseline parent-class)
+    (changed "SocketName" (old "foot_l_Socket") (new "foot_r_Socket") (display "Socket Name"))
+    (changed "NotifyColor" (old "(B=144,G=152,R=15,A=255)") (new "(B=121,G=15,R=152,A=255)") (display "Notify Color"))))

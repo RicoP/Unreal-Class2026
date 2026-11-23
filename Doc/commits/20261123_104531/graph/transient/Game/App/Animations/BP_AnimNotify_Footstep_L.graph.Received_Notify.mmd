@@ -1,0 +1,100 @@
+---
+config:
+  look: classic
+  themeCSS: "g.node *, g.cluster * { filter: none !important; }"
+  flowchart:
+    curve: monotoneX
+    nodeSpacing: 8
+    rankSpacing: 30
+    subGraphTitleMargin:
+      top: 4
+      bottom: 4
+---
+flowchart LR
+
+    %% graph Function Received_Notify (override)
+
+    subgraph N_Received_Notify_K2Node_VariableGet_1["Get Socket Name"]
+    end
+    subgraph N_Received_Notify_K2Node_FunctionEntry_0["Received_Notify (override)"]
+        N_Received_Notify_K2Node_FunctionEntry_0_anchor_in[" "]
+        N_Received_Notify_K2Node_FunctionEntry_0_anchor_out[" "]
+        N_Received_Notify_K2Node_FunctionEntry_0_MeshComp["<span style='display:inline-block;min-width:150px;text-align:right'>Mesh Comp ●</span>"]
+    end
+    subgraph N_Received_Notify_K2Node_CallFunction_1["Get Socket Transform"]
+        N_Received_Notify_K2Node_CallFunction_1_self["<span style='display:inline-block;min-width:150px;text-align:left'>● Target</span>"]
+        N_Received_Notify_K2Node_CallFunction_1_InSocketName["<span style='display:inline-block;min-width:150px;text-align:left'>● In Socket Name</span>"]
+        N_Received_Notify_K2Node_CallFunction_1_TransformSpace["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>RTS_World</span> Transform Space</span>"]
+        N_Received_Notify_K2Node_CallFunction_1_ReturnValue_Location["<span style='display:inline-block;min-width:150px;text-align:right'>Return Value Location ●</span>"]
+    end
+    subgraph N_Received_Notify_K2Node_VariableGet_3["Get Notify Color"]
+    end
+    subgraph N_Received_Notify_K2Node_CallFunction_8["To LinearColor (Color)"]
+    end
+    subgraph N_Received_Notify_K2Node_CallFunction_2["Draw Debug Sphere"]
+        N_Received_Notify_K2Node_CallFunction_2_anchor_in[" "]
+        N_Received_Notify_K2Node_CallFunction_2_anchor_out[" "]
+        N_Received_Notify_K2Node_CallFunction_2_Center["<span style='display:inline-block;min-width:150px;text-align:left'>● Center</span>"]
+        N_Received_Notify_K2Node_CallFunction_2_Radius["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>100</span> Radius</span>"]
+        N_Received_Notify_K2Node_CallFunction_2_Segments["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>12</span> Segments</span>"]
+        N_Received_Notify_K2Node_CallFunction_2_LineColor["<span style='display:inline-block;min-width:150px;text-align:left'>● Line Color</span>"]
+        N_Received_Notify_K2Node_CallFunction_2_Duration["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>0.5</span> Duration</span>"]
+        N_Received_Notify_K2Node_CallFunction_2_DepthPriority["<span style='display:inline-block;min-width:150px;text-align:left'><span style='border:1px solid currentColor;border-radius:3px;padding:0 5px'>World</span> Depth Priority</span>"]
+    end
+    subgraph N_Received_Notify_K2Node_FunctionResult_0["Return Node"]
+    end
+
+    %% Wires
+    N_Received_Notify_K2Node_VariableGet_1 --> N_Received_Notify_K2Node_CallFunction_1_InSocketName
+    N_Received_Notify_K2Node_FunctionEntry_0_MeshComp --> N_Received_Notify_K2Node_CallFunction_1_self
+    N_Received_Notify_K2Node_FunctionEntry_0_anchor_out ==> N_Received_Notify_K2Node_CallFunction_2_anchor_in
+    N_Received_Notify_K2Node_CallFunction_1_ReturnValue_Location --> N_Received_Notify_K2Node_CallFunction_2_Center
+    N_Received_Notify_K2Node_VariableGet_3 --> N_Received_Notify_K2Node_CallFunction_8
+    N_Received_Notify_K2Node_CallFunction_8 --> N_Received_Notify_K2Node_CallFunction_2_LineColor
+    N_Received_Notify_K2Node_CallFunction_2_anchor_out ==> N_Received_Notify_K2Node_FunctionResult_0
+
+    %% Keep inputs left of outputs inside each node
+    N_Received_Notify_K2Node_FunctionEntry_0_anchor_in ~~~ N_Received_Notify_K2Node_FunctionEntry_0_MeshComp
+    N_Received_Notify_K2Node_FunctionEntry_0_anchor_in ~~~ N_Received_Notify_K2Node_FunctionEntry_0_anchor_out
+    N_Received_Notify_K2Node_CallFunction_1_self ~~~ N_Received_Notify_K2Node_CallFunction_1_ReturnValue_Location
+    N_Received_Notify_K2Node_CallFunction_1_InSocketName ~~~ N_Received_Notify_K2Node_CallFunction_1_ReturnValue_Location
+    N_Received_Notify_K2Node_CallFunction_1_TransformSpace ~~~ N_Received_Notify_K2Node_CallFunction_1_ReturnValue_Location
+    N_Received_Notify_K2Node_CallFunction_2_Center ~~~ N_Received_Notify_K2Node_CallFunction_2_anchor_out
+    N_Received_Notify_K2Node_CallFunction_2_Radius ~~~ N_Received_Notify_K2Node_CallFunction_2_anchor_out
+    N_Received_Notify_K2Node_CallFunction_2_Segments ~~~ N_Received_Notify_K2Node_CallFunction_2_anchor_out
+    N_Received_Notify_K2Node_CallFunction_2_LineColor ~~~ N_Received_Notify_K2Node_CallFunction_2_anchor_out
+    N_Received_Notify_K2Node_CallFunction_2_Duration ~~~ N_Received_Notify_K2Node_CallFunction_2_anchor_out
+    N_Received_Notify_K2Node_CallFunction_2_DepthPriority ~~~ N_Received_Notify_K2Node_CallFunction_2_anchor_out
+    N_Received_Notify_K2Node_CallFunction_2_anchor_in ~~~ N_Received_Notify_K2Node_CallFunction_2_anchor_out
+
+    %% Nodes
+    style N_Received_Notify_K2Node_VariableGet_1 fill:#151515,stroke:#cd82ff,stroke-width:2px,color:#cd82ff,rx:16px,ry:16px
+    style N_Received_Notify_K2Node_FunctionEntry_0 fill:#151515,stroke:#8a8a8a,stroke-width:2px,color:#f2f2f2
+    style N_Received_Notify_K2Node_CallFunction_1 fill:#151515,stroke:#456980,stroke-width:2px,color:#f2f2f2
+    style N_Received_Notify_K2Node_VariableGet_3 fill:#151515,stroke:#777777,stroke-width:2px,color:#777777,rx:16px,ry:16px
+    style N_Received_Notify_K2Node_CallFunction_8 fill:#151515,stroke:#777777,stroke-width:2px,color:#777777,rx:16px,ry:16px
+    style N_Received_Notify_K2Node_CallFunction_2 fill:#151515,stroke:#456980,stroke-width:2px,color:#f2f2f2
+    style N_Received_Notify_K2Node_FunctionResult_0 fill:#151515,stroke:#8a8a8a,stroke-width:2px,color:#f2f2f2
+
+    %% Pins
+    classDef pin_anchor fill:#151515,stroke:#151515,color:#151515
+    classDef pin_float fill:#151515,stroke:#151515,color:#38d500
+    classDef pin_integer fill:#151515,stroke:#151515,color:#1fe3af
+    classDef pin_name fill:#151515,stroke:#151515,color:#cd82ff
+    classDef pin_object fill:#151515,stroke:#151515,color:#00aaf5
+    classDef pin_other fill:#151515,stroke:#151515,color:#777777
+    classDef pin_vector fill:#151515,stroke:#151515,color:#ffca23
+    class N_Received_Notify_K2Node_FunctionEntry_0_anchor_in,N_Received_Notify_K2Node_FunctionEntry_0_anchor_out,N_Received_Notify_K2Node_CallFunction_2_anchor_in,N_Received_Notify_K2Node_CallFunction_2_anchor_out pin_anchor
+    class N_Received_Notify_K2Node_CallFunction_2_Radius,N_Received_Notify_K2Node_CallFunction_2_Duration pin_float
+    class N_Received_Notify_K2Node_CallFunction_2_Segments pin_integer
+    class N_Received_Notify_K2Node_CallFunction_1_InSocketName pin_name
+    class N_Received_Notify_K2Node_FunctionEntry_0_MeshComp,N_Received_Notify_K2Node_CallFunction_1_self pin_object
+    class N_Received_Notify_K2Node_CallFunction_1_TransformSpace,N_Received_Notify_K2Node_CallFunction_2_LineColor,N_Received_Notify_K2Node_CallFunction_2_DepthPriority pin_other
+    class N_Received_Notify_K2Node_CallFunction_1_ReturnValue_Location,N_Received_Notify_K2Node_CallFunction_2_Center pin_vector
+
+    %% Wire colours (dimmed and dashed between two nodes that aren't part of the change)
+    linkStyle 2,6 stroke:#ffffff,stroke-width:3px
+    linkStyle 0 stroke:#cd82ff,stroke-width:2px
+    linkStyle 1 stroke:#00aaf5,stroke-width:2px
+    linkStyle 4,5 stroke:#777777,stroke-width:2px
+    linkStyle 3 stroke:#ffca23,stroke-width:2px

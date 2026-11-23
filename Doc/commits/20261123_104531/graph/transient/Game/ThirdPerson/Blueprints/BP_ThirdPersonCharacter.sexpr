@@ -1,0 +1,33 @@
+(blueprint-diff "/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"
+  (old (revision "f5f3a6dd") (date "2026-11-19T14:45:49.000Z") (description "Weapon pickups: a data table of weapons, pickup Blueprints, retargeted montages\n\n- S_WeaponRow and DT_WeaponPickups list the weapons, their strength and\n  hit animation; BP_PickupBase spawns the weapon of its row, with the\n  children BP_PickupSword and BP_PickupMace; BP_Weapon_Mace.\n- BP_Hero: Active Weapon Strength and Hit Animation.\n- Sword attack montages for the retargeted animations.\n- Kenney's mini-characters meshes without collision.\n- Doc/commits: documentation of this step.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (parent "/Script/Engine.Character")
+  (graph "EventGraph"
+    (node-moved minor
+      (text "Moved Node 'EnhancedInputAction IA_Zoom'")
+      (old (node "K2Node_EnhancedInputAction_0" "EnhancedInputAction IA_Zoom" (pos -1776 -352)))
+      (new (node "K2Node_EnhancedInputAction_0" "EnhancedInputAction IA_Zoom" (pos -1840 -464))))
+    (node-moved minor
+      (text "Moved Node 'Get CameraBoom'")
+      (old (node "K2Node_VariableGet_0" "Get CameraBoom" (pos -1584 -147)))
+      (new (node "K2Node_VariableGet_0" "Get CameraBoom" (pos -1648 -259))))
+    (node-moved minor
+      (text "Moved Node 'Get TargetArmLength'")
+      (old (node "K2Node_VariableGet_1" "Get TargetArmLength" (pos -1392 -147)))
+      (new (node "K2Node_VariableGet_1" "Get TargetArmLength" (pos -1456 -259))))
+    (node-moved minor
+      (text "Moved Node 'float + float'")
+      (old (node "K2Node_PromotableOperator_0" "float + float" (pos -1104 -176)))
+      (new (node "K2Node_PromotableOperator_0" "float + float" (pos -1168 -288))))
+    (node-moved minor
+      (text "Moved Node 'Set TargetArmLength'")
+      (old (node "K2Node_VariableSet_0" "Set TargetArmLength" (pos -464 -336)))
+      (new (node "K2Node_VariableSet_0" "Set TargetArmLength" (pos -528 -448))))
+    (node-moved minor
+      (text "Moved Node 'Reroute Node'")
+      (old (node "K2Node_Knot_0" "Reroute Node" (pos -1392 -256)))
+      (new (node "K2Node_Knot_0" "Reroute Node" (pos -1456 -368))))
+    (node-moved minor
+      (text "Moved Node 'Clamp (Float)'")
+      (old (node "K2Node_CallFunction_5" "Clamp (Float)" (pos -800 -160)))
+      (new (node "K2Node_CallFunction_5" "Clamp (Float)" (pos -864 -272))))))

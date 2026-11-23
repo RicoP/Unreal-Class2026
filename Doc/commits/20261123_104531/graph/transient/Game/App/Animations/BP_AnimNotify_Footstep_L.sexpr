@@ -1,0 +1,50 @@
+(blueprint-diff "/Game/App/Animations/BP_AnimNotify_Footstep_L"
+  (old none)
+  (new working-copy)
+  (parent "/Script/Engine.AnimNotify")
+  (variables
+    (added "SocketName" (type "Name") (category "Default") (default "") (instance-editable false)))
+  (functions
+    (added "Received_Notify" (override true) (pure false) (const true) (access "Public") (category "") (inputs) (outputs)))
+  (defaults (baseline parent-class)
+    (changed "NotifyColor" (old "(B=200,G=200,R=255,A=255)") (new "(B=144,G=152,R=15,A=255)") (display "Notify Color")))
+  (graph "Received_Notify" added
+    (node-added addition
+      (node "K2Node_FunctionEntry_0" "Received_Notify" (pos -528 0))
+      (pin out "then" "Exec" (links (pin "K2Node_CallFunction_2" "execute")))
+      (pin out "MeshComp" "Skeletal Mesh Component Object Reference" (links (pin "K2Node_CallFunction_1" "self")))
+      (pin out "Animation" "Anim Sequence Base Object Reference")
+      (pin out "EventReference" "Anim Notify Event Reference Structure (by ref)"))
+    (node-added addition
+      (node "K2Node_FunctionResult_0" "Return Node" (pos 560 0))
+      (pin in "execute" "Exec" (links (pin "K2Node_CallFunction_2" "then")))
+      (pin in "ReturnValue" "Boolean" (default "false")))
+    (node-added addition
+      (node "K2Node_CallFunction_1" "GetSocketTransform" (pos -320 96))
+      (pin in "self" "Scene Component Object Reference" (links (pin "K2Node_FunctionEntry_0" "MeshComp")))
+      (pin in "InSocketName" "Name" (links (pin "K2Node_VariableGet_1" "SocketName")))
+      (pin in "TransformSpace" "ERelativeTransformSpace Enum" (default "RTS_World"))
+      (pin out "ReturnValue_Location" "Vector" (links (pin "K2Node_CallFunction_2" "Center")))
+      (pin out "ReturnValue_Rotation" "Rotator" (default "0, 0, 0"))
+      (pin out "ReturnValue_Scale" "Vector" (default "0, 0, 0")))
+    (node-added addition
+      (node "K2Node_VariableGet_1" "Get SocketName" (pos -544 256))
+      (pin out "SocketName" "Name" (links (pin "K2Node_CallFunction_1" "InSocketName"))))
+    (node-added addition
+      (node "K2Node_CallFunction_2" "DrawDebugSphere" (pos 176 0))
+      (pin in "execute" "Exec" (links (pin "K2Node_FunctionEntry_0" "then")))
+      (pin out "then" "Exec" (links (pin "K2Node_FunctionResult_0" "execute")))
+      (pin in "Center" "Vector" (links (pin "K2Node_CallFunction_1" "ReturnValue_Location")))
+      (pin in "Radius" "Float (single-precision)" (default "100.000000"))
+      (pin in "Segments" "Integer" (default "12"))
+      (pin in "LineColor" "Linear Color Structure" (links (pin "K2Node_CallFunction_8" "ReturnValue")))
+      (pin in "Duration" "Float (single-precision)" (default "0.500000"))
+      (pin in "Thickness" "Float (single-precision)" (default "0.000000"))
+      (pin in "DepthPriority" "EDrawDebugSceneDepthPriorityGroup Enum" (default "World")))
+    (node-added addition
+      (node "K2Node_VariableGet_3" "Get NotifyColor" (pos -192 416))
+      (pin out "NotifyColor" "Color Structure" (links (pin "K2Node_CallFunction_8" "InColor"))))
+    (node-added addition
+      (node "K2Node_CallFunction_8" "To LinearColor (Color)" (pos -32 416))
+      (pin in "InColor" "Color Structure" (links (pin "K2Node_VariableGet_3" "NotifyColor")))
+      (pin out "ReturnValue" "Linear Color Structure" (links (pin "K2Node_CallFunction_2" "LineColor"))))))

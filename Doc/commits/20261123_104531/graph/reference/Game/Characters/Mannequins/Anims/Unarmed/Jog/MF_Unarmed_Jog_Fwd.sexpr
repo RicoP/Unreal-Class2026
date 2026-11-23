@@ -1,0 +1,18 @@
+(asset "/Game/Characters/Mannequins/Anims/Unarmed/Jog/MF_Unarmed_Jog_Fwd"
+  (class "AnimSequence")
+  (revision working-copy)
+  (properties
+    (set "BoneCompressionSettings" "/Script/Engine.AnimBoneCompressionSettings'/Engine/Animation/DefaultAnimBoneCompressionSettings.DefaultAnimBoneCompressionSettings'" (display "Bone Compression Settings"))
+    (set "CurveCompressionSettings" "/Script/Engine.AnimCurveCompressionSettings'/Engine/Animation/DefaultAnimCurveCompressionSettings.DefaultAnimCurveCompressionSettings'" (display "Curve Compression Settings"))
+    (set "VariableFrameStrippingSettings" "/Script/Engine.VariableFrameStrippingSettings'/Engine/Animation/DefaultVariableFrameStrippingSettings.DefaultVariableFrameStrippingSettings'" (display "Variable Frame Stripping Settings"))
+    (set "RetargetSource" "SKM_Quinn" (display "Retarget Source"))
+    (set "RetargetSourceAsset" "/Game/Characters/Mannequins/Meshes/SKM_Quinn_Simple.SKM_Quinn_Simple" (display "Retarget Source Asset"))
+    (set "bEnableRootMotion" "True" (display "Enable Root Motion"))
+    (set "bForceRootLock" "True" (display "Force Root Lock"))
+    (set "NumberOfSampledKeys" "54" (display "Number Of Sampled Keys"))
+    (set "NumberOfSampledFrames" "53" (display "Number Of Sampled Frames"))
+    (set "DataModelInterface" "AnimationSequencerDataModel'/Game/Characters/Mannequins/Anims/Unarmed/Jog/MF_Unarmed_Jog_Fwd.MF_Unarmed_Jog_Fwd:AnimationSequencerDataModel'" (display "Data Model Interface"))
+    (set "Controller" "AnimSequencerController'/Engine/Transient.AnimSequencerController_20'" (display "Controller"))
+    (set "Skeleton" "/Script/Engine.Skeleton'/Game/Characters/Mannequins/Meshes/SK_Mannequin.SK_Mannequin'" (display "Skeleton"))
+    (set "AssetUserData" "(\"/Script/AnimationModifiers.AnimationModifiersAssetUserData'/Game/Characters/Mannequins/Anims/Unarmed/Jog/MF_Unarmed_Jog_Fwd.MF_Unarmed_Jog_Fwd:AnimationModifiersAssetUserData_0'\")" (display "Asset User Data"))
+    (set "AnimNotifies" "BP_AnimNotify_Footstep_R at 0.274 s; BP_AnimNotify_Footstep_L at 0.565 s; BP_AnimNotify_Footstep_R at 0.849 s; BP_AnimNotify_Footstep_L at 1.150 s; BP_AnimNotify_Footstep_R at 1.405 s; BP_AnimNotify_Footstep_L at 1.728 s")))
