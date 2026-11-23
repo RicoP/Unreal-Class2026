@@ -1,0 +1,7 @@
+(asset-diff "/Game/App/World/PM_Metal"
+  (class "PhysicalMaterial")
+  (old none)
+  (baseline class-default)
+  (new working-copy)
+  (properties
+    (changed "DebugColor" (old "(R=0.000000,G=0.000000,B=0.000000,A=0.000000)") (new "(R=0.312449,G=0.703082,B=0.433200,A=1.000000)") (display "Debug Color"))))

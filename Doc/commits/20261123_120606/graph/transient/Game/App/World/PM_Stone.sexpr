@@ -1,0 +1,7 @@
+(asset-diff "/Game/App/World/PM_Stone"
+  (class "PhysicalMaterial")
+  (old none)
+  (baseline class-default)
+  (new working-copy)
+  (properties
+    (changed "DebugColor" (old "(R=0.000000,G=0.000000,B=0.000000,A=0.000000)") (new "(R=0.849409,G=0.663834,B=0.541983,A=1.000000)") (display "Debug Color"))))

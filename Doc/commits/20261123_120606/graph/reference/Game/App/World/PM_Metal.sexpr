@@ -1,0 +1,5 @@
+(asset "/Game/App/World/PM_Metal"
+  (class "PhysicalMaterial")
+  (revision working-copy)
+  (properties
+    (set "DebugColor" "(R=0.312449,G=0.703082,B=0.433200,A=1.000000)" (display "Debug Color"))))

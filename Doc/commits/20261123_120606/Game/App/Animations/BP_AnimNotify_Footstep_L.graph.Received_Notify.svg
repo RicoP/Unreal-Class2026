@@ -1,0 +1,1367 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="my-svg" width="100%" style="max-width: 4127px; background-color: transparent;" viewBox="-8 -12 4127 1406" role="graphics-document document" aria-roledescription="flowchart-v2">
+  <metadata>
+    <bde:asset xmlns:bde="urn:blueprint-diff-export" package="/Game/App/Animations/BP_AnimNotify_Footstep_L" kind="blueprint" class="Blueprint" type="Blueprint Class" new="false" revision="31baf2ea" parent="/Script/Engine.AnimNotify" part="graph" graph="Function Received_Notify (override)" source="graph/transient/Game/App/Animations/BP_AnimNotify_Footstep_L.sexpr"/>
+  </metadata>
+  <style>
+    :where(svg){--node-body:#151515;--text:#f2f2f2;--text-muted:#999999;--border-event:#b3261e;--border-setter:#2b5d8f;--border-neutral:#3a3a3a;--border-function:#8a8a8a;--border-call:#456980;--border-context:#555555;--table-header:#262626;--table-stripe:#1c1c1c;--pin-exec:#ffffff;--pin-boolean:#950000;--pin-byte:#006f65;--pin-integer:#1fe3af;--pin-integer64:#ace3af;--pin-float:#38d500;--pin-name:#cd82ff;--pin-string:#ff00d4;--pin-text:#e77caa;--pin-vector:#ffca23;--pin-rotator:#a0b4ff;--pin-transform:#ff7300;--pin-object:#00aaf5;--pin-delegate:#ff3838;--pin-class:#5900bc;--pin-struct:#0059cb;--pin-interface:#f1ffaa;--pin-other:#777777;--text-dim:color-mix(in srgb, var(--text) 45%, var(--node-body));--border-event-dim:color-mix(in srgb, var(--border-event) 45%, var(--node-body));--border-setter-dim:color-mix(in srgb, var(--border-setter) 45%, var(--node-body));--border-function-dim:color-mix(in srgb, var(--border-function) 45%, var(--node-body));--border-call-dim:color-mix(in srgb, var(--border-call) 45%, var(--node-body));--pin-exec-dim:color-mix(in srgb, var(--pin-exec) 45%, var(--node-body));--pin-boolean-dim:color-mix(in srgb, var(--pin-boolean) 45%, var(--node-body));--pin-byte-dim:color-mix(in srgb, var(--pin-byte) 45%, var(--node-body));--pin-integer-dim:color-mix(in srgb, var(--pin-integer) 45%, var(--node-body));--pin-integer64-dim:color-mix(in srgb, var(--pin-integer64) 45%, var(--node-body));--pin-float-dim:color-mix(in srgb, var(--pin-float) 45%, var(--node-body));--pin-name-dim:color-mix(in srgb, var(--pin-name) 45%, var(--node-body));--pin-string-dim:color-mix(in srgb, var(--pin-string) 45%, var(--node-body));--pin-text-dim:color-mix(in srgb, var(--pin-text) 45%, var(--node-body));--pin-vector-dim:color-mix(in srgb, var(--pin-vector) 45%, var(--node-body));--pin-rotator-dim:color-mix(in srgb, var(--pin-rotator) 45%, var(--node-body));--pin-transform-dim:color-mix(in srgb, var(--pin-transform) 45%, var(--node-body));--pin-object-dim:color-mix(in srgb, var(--pin-object) 45%, var(--node-body));--pin-delegate-dim:color-mix(in srgb, var(--pin-delegate) 45%, var(--node-body));--pin-other-dim:color-mix(in srgb, var(--pin-other) 45%, var(--node-body));}
+  </style>
+  <style>
+    #my-svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#333;}
+    #my-svg .error-icon{fill:#552222;}
+    #my-svg .error-text{fill:#552222;stroke:#552222;}
+    #my-svg .edge-thickness-normal{stroke-width:2px;}
+    #my-svg .edge-thickness-thick{stroke-width:3.5px;}
+    #my-svg .edge-pattern-solid{stroke-dasharray:0;}
+    #my-svg .edge-pattern-dashed{stroke-dasharray:3;}
+    #my-svg .edge-pattern-dotted{stroke-dasharray:2;}
+    #my-svg .marker{fill:#333333;stroke:#333333;}
+    #my-svg .marker.cross{stroke:#333333;}
+    #my-svg svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}
+    #my-svg .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#333;}
+    #my-svg .cluster-label text{fill:#333;}
+    #my-svg .cluster-label span,#my-svg p{color:#333;}
+    #my-svg .label text,#my-svg span,#my-svg p{fill:#333;color:#333;}
+    #my-svg .node rect,#my-svg .node circle,#my-svg .node ellipse,#my-svg .node polygon,#my-svg .node path{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}
+    #my-svg .flowchart-label text{text-anchor:middle;}
+    #my-svg .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}
+    #my-svg .node .label{text-align:center;}
+    #my-svg .node.clickable{cursor:pointer;}
+    #my-svg .arrowheadPath{fill:#333333;}
+    #my-svg .edgePath .path{stroke:#333333;stroke-width:2.0px;}
+    #my-svg .flowchart-link{stroke:#333333;fill:none;}
+    #my-svg .edgeLabel{background-color:#e8e8e8;text-align:center;}
+    #my-svg .edgeLabel rect{opacity:0.5;background-color:#e8e8e8;fill:#e8e8e8;}
+    #my-svg .labelBkg{background-color:rgba(232, 232, 232, 0.5);}
+    #my-svg .cluster rect{fill:#ffffde;stroke:#aaaa33;stroke-width:1px;}
+    #my-svg .cluster text{fill:#333;}
+    #my-svg .cluster span,#my-svg p{color:#333;}
+    #my-svg div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(80, 100%, 96.2745098039%);border:1px solid #aaaa33;border-radius:2px;pointer-events:none;z-index:100;}
+    #my-svg .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#333;}
+    #my-svg g.node *,#my-svg g.cluster *{filter:none!important;}
+    #my-svg :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}
+    #my-svg .pin_anchor&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--node-body)!important;}
+    #my-svg .pin_anchor span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--node-body)!important;}
+    #my-svg .pin_anchor tspan{fill:var(--node-body)!important;}
+    #my-svg .pin_boolean&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-boolean)!important;}
+    #my-svg .pin_boolean span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-boolean)!important;}
+    #my-svg .pin_boolean tspan{fill:var(--pin-boolean)!important;}
+    #my-svg .pin_exec&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-exec)!important;}
+    #my-svg .pin_exec span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-exec)!important;}
+    #my-svg .pin_exec tspan{fill:var(--pin-exec)!important;}
+    #my-svg .pin_float&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-float)!important;}
+    #my-svg .pin_float span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-float)!important;}
+    #my-svg .pin_float tspan{fill:var(--pin-float)!important;}
+    #my-svg .pin_name&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-name)!important;}
+    #my-svg .pin_name span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-name)!important;}
+    #my-svg .pin_name tspan{fill:var(--pin-name)!important;}
+    #my-svg .pin_name_dim&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-name-dim)!important;}
+    #my-svg .pin_name_dim span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-name-dim)!important;}
+    #my-svg .pin_name_dim tspan{fill:var(--pin-name-dim)!important;}
+    #my-svg .pin_object&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-object)!important;}
+    #my-svg .pin_object span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-object)!important;}
+    #my-svg .pin_object tspan{fill:var(--pin-object)!important;}
+    #my-svg .pin_object_dim&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-object-dim)!important;}
+    #my-svg .pin_object_dim span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-object-dim)!important;}
+    #my-svg .pin_object_dim tspan{fill:var(--pin-object-dim)!important;}
+    #my-svg .pin_other&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-other)!important;}
+    #my-svg .pin_other span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-other)!important;}
+    #my-svg .pin_other tspan{fill:var(--pin-other)!important;}
+    #my-svg .pin_other_dim&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-other-dim)!important;}
+    #my-svg .pin_other_dim span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-other-dim)!important;}
+    #my-svg .pin_other_dim tspan{fill:var(--pin-other-dim)!important;}
+    #my-svg .pin_string&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-string)!important;}
+    #my-svg .pin_string span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-string)!important;}
+    #my-svg .pin_string tspan{fill:var(--pin-string)!important;}
+    #my-svg .pin_text&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-text)!important;}
+    #my-svg .pin_text span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-text)!important;}
+    #my-svg .pin_text tspan{fill:var(--pin-text)!important;}
+    #my-svg .pin_vector&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-vector)!important;}
+    #my-svg .pin_vector span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-vector)!important;}
+    #my-svg .pin_vector tspan{fill:var(--pin-vector)!important;}
+    #my-svg .pin_vector_dim&gt;*{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-vector-dim)!important;}
+    #my-svg .pin_vector_dim span{fill:var(--node-body)!important;stroke:var(--node-body)!important;color:var(--pin-vector-dim)!important;}
+    #my-svg .pin_vector_dim tspan{fill:var(--pin-vector-dim)!important;}
+  </style>
+  <g>
+    <marker id="my-svg_flowchart-pointEnd" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-pointEnd-00aaf5" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-object);stroke:var(--pin-object);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-pointEnd-ffffff" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-exec);stroke:var(--pin-exec);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-pointEnd-68467e" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-name-dim);stroke:var(--pin-name-dim);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-pointEnd-ffca23" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-vector);stroke:var(--pin-vector);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-pointEnd-777777" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-other);stroke:var(--pin-other);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-pointEnd-414141" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-other-dim);stroke:var(--pin-other-dim);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-pointEnd-38d500" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-float);stroke:var(--pin-float);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-pointEnd-cd82ff" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-name);stroke:var(--pin-name);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-pointEnd-ff00d4" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-string);stroke:var(--pin-string);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-pointEnd-e77caa" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="fill:var(--pin-text);stroke:var(--pin-text);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-pointStart" class="marker flowchart" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-pointStart-ffffff" class="marker flowchart" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="fill:var(--pin-exec);stroke:var(--pin-exec);stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-circleEnd" class="marker flowchart" viewBox="0 0 10 10" refX="11" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto">
+      <circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-circleStart" class="marker flowchart" viewBox="0 0 10 10" refX="-1" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto">
+      <circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-crossEnd" class="marker cross flowchart" viewBox="0 0 11 11" refX="12" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto">
+      <path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <marker id="my-svg_flowchart-crossStart" class="marker cross flowchart" viewBox="0 0 11 11" refX="-1" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto">
+      <path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/>
+    </marker>
+    <g class="root">
+      <g class="clusters">
+        <g class="cluster default flowchart-label" id="N_Received_Notify_K2Node_VariableSet_3">
+          <rect style="fill:var(--node-body);stroke:var(--border-setter);stroke-width:3px;" rx="0" ry="0" x="3886.0001317596434" y="558.2500174140929" width="165.00002426147512" height="60.99993768692036"/>
+          <g class="cluster-label" transform="translate(3909.429741439819, 562.2500174140929)">
+            <foreignObject width="118.140625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">Set Impact Point</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="cluster default flowchart-label" id="N_Received_Notify_K2Node_CallFunction_19">
+          <rect style="fill:var(--node-body);stroke:var(--border-call);stroke-width:2px;" rx="0" ry="0" x="3167.374984588623" y="60.00001094818106" width="343.6248916625973" height="213.00002204895043"/>
+          <g class="cluster-label" transform="translate(3273.3358340072627, 64.00001094818106)">
+            <foreignObject width="131.703125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">Draw Debug Arrow</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="cluster default flowchart-label" id="N_Received_Notify_K2Node_VariableSet_1">
+          <rect style="fill:var(--node-body);stroke:var(--border-setter);stroke-width:3px;" rx="0" ry="0" x="3616.0001493072514" y="908.4999319839474" width="164.99970939636205" height="60.999991607666516"/>
+          <g class="cluster-label" transform="translate(3649.8359914398193, 912.4999319839474)">
+            <foreignObject width="97.328125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">Set Up vector</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="cluster default flowchart-label" id="N_Received_Notify_K2Node_PromotableOperator_5">
+          <rect style="fill:var(--node-body);stroke:var(--pin-vector);stroke-width:2px;" rx="0" ry="0" x="2343.1952443313603" y="130.99997474670408" width="469.57833591461167" height="99.0000318908692"/>
+          <g class="cluster-label" transform="translate(2524.5938052368165, 134.99997474670408)">
+            <foreignObject width="106.78125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-vector); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-vector);">vector * vector</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="cluster default flowchart-label" id="N_Received_Notify_K2Node_VariableSet_0">
+          <rect style="fill:var(--node-body);stroke:var(--border-setter);stroke-width:3px;" rx="0" ry="0" x="3256.6874182891843" y="1199.7500179672243" width="165.00002426147512" height="60.99997707366947"/>
+          <g class="cluster-label" transform="translate(3294.2889590072627, 1203.7500179672243)">
+            <foreignObject width="89.796875" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">Set Phys Mat</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="cluster default flowchart-label" id="N_Received_Notify_K2Node_CallFunction_23">
+          <rect style="fill:var(--node-body);stroke:var(--border-call);stroke-width:2px;" rx="0" ry="0" x="2599.1719218444823" y="294.9999620819092" width="262.20297767639204" height="212.99996234893797"/>
+          <g class="cluster-label" transform="translate(2695.7968655014038, 298.9999620819092)">
+            <foreignObject width="68.953125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">Print Text</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="cluster default flowchart-label" id="N_Received_Notify_K2Node_MacroInstance_1">
+          <rect style="fill:var(--node-body);stroke:var(--border-function);stroke-width:2px;" rx="0" ry="0" x="2647.773555984497" y="1258.7499402999874" width="441.60146865844763" height="63.00013240814269"/>
+          <g class="cluster-label" transform="translate(2843.324307632446, 1262.7499402999874)">
+            <foreignObject width="50.5" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">Is Valid</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="cluster default flowchart-label" id="N_Received_Notify_K2Node_FormatText_0">
+          <rect style="fill:var(--node-body);stroke:var(--border-function);stroke-width:2px;" rx="0" ry="0" x="2084.218689460754" y="273.9999694633484" width="423.9765791320806" height="99.00004245758055"/>
+          <g class="cluster-label" transform="translate(2253.128919563293, 277.9999694633484)">
+            <foreignObject width="86.15625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">Format Text</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="cluster default flowchart-label" id="N_Received_Notify_K2Node_MacroInstance_0">
+          <rect style="fill:var(--node-body);stroke:var(--border-function);stroke-width:2px;" rx="0" ry="0" x="2066.2187955856325" y="497.2499985313416" width="472.9530601882934" height="222.0000142097474"/>
+          <g class="cluster-label" transform="translate(2211.523516216278, 501.2499985313416)">
+            <foreignObject width="182.34375" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">For Each Loop with Break</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="cluster default flowchart-label" id="N_Received_Notify_K2Node_CallFunction_9">
+          <rect style="fill:var(--node-body);stroke:var(--border-call);stroke-width:2px;" rx="0" ry="0" x="1563.2499591064454" y="611.7500679397581" width="442.96877040863046" height="402.9999081039432"/>
+          <g class="cluster-label" transform="translate(1674.343671283722, 615.7500679397581)">
+            <foreignObject width="220.78125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">Multi Sphere Trace For Objects</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="cluster default flowchart-label" id="N_Received_Notify_K2Node_VariableSet_2">
+          <rect style="fill:var(--node-body);stroke:var(--border-setter);stroke-width:3px;" rx="0" ry="0" x="1091.82029504776" y="1107.4999857330322" width="165.00002426147466" height="61.000041542053395"/>
+          <g class="cluster-label" transform="translate(1125.6562341690064, 1111.4999857330322)">
+            <foreignObject width="97.328125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">Set Up vector</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="cluster default flowchart-label" id="N_Received_Notify_K2Node_VariableSet_4">
+          <rect style="fill:var(--node-body);stroke:var(--border-setter);stroke-width:3px;" rx="0" ry="0" x="648.5000170993806" y="1178.4999495315549" width="164.99998490333564" height="61.00011394500757"/>
+          <g class="cluster-label" transform="translate(671.9296772241594, 1182.4999495315549)">
+            <foreignObject width="118.140625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">Set Impact Point</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="cluster default flowchart-label" id="N_Received_Notify_K2Node_MakeArray_1">
+          <rect style="fill:var(--node-body);stroke:var(--border-function);stroke-width:2px;" rx="0" ry="0" x="1082.1796763229372" y="798.7500513839723" width="410.29694946289055" height="98.99998474121094"/>
+          <g class="cluster-label" transform="translate(1247.9922424030306, 802.7500513839723)">
+            <foreignObject width="78.671875" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">Make Array</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="cluster default flowchart-label" id="N_Received_Notify_K2Node_CallFunction_1">
+          <rect style="fill:var(--node-body);stroke:var(--border-call-dim);stroke-width:2px;stroke-dasharray:5 5;" rx="0" ry="0" x="1061.937470550537" y="590.7499958801268" width="441.3125799179079" height="136.99995800018337"/>
+          <g class="cluster-label" transform="translate(1205.609335641861, 594.7499958801268)">
+            <foreignObject width="153.96875" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text-dim); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text-dim);">Get Socket Transform</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="cluster default flowchart-label" id="N_Received_Notify_K2Node_FunctionEntry_0">
+          <rect style="fill:var(--node-body);stroke:var(--border-function);stroke-width:2px;" rx="0" ry="0" x="60.00000141143801" y="892.2500287628172" width="226.99999545097353" height="61.00002124786397"/>
+          <g class="cluster-label" transform="translate(77.3281202578545, 896.2500287628172)">
+            <foreignObject width="192.34375" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text);">Received_Notify (override)</span></div></foreignObject>
+          </g>
+        </g>
+      </g>
+      <g class="edgePaths">
+        <path d="M286.99999686241154,936.2500102996828C308.9862924240241,936.2500102996828,308.9862924240241,1187.0000056648255,330.9725879856366,1187.0000056648255" id="L-N_Received_Notify_K2Node_FunctionEntry_0_MeshComp-N_Received_Notify_K2Node_CallFunction_15-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_FunctionEntry_0_MeshComp LE-N_Received_Notify_K2Node_CallFunction_15" style="stroke:var(--pin-object);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-00aaf5)"/>
+        <path d="M286.99999686241154,936.2500102996828C673.9550241706977,936.2500102996828,673.9550241706977,634.7499774169924,1060.9100514789839,634.7499774169924" id="L-N_Received_Notify_K2Node_FunctionEntry_0_MeshComp-N_Received_Notify_K2Node_CallFunction_1_self-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_FunctionEntry_0_MeshComp LE-N_Received_Notify_K2Node_CallFunction_1_self" style="stroke:var(--pin-object);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-00aaf5)"/>
+        <path d="M286.99999686241154,905.7499996757508C467.2362974451194,905.7499996757508,467.2362974451194,1191.9999667930601,647.4725980278273,1191.9999667930601" id="L-N_Received_Notify_K2Node_FunctionEntry_0_anchor_out-N_Received_Notify_K2Node_VariableSet_4_anchor_in-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_FunctionEntry_0_anchor_out LE-N_Received_Notify_K2Node_VariableSet_4_anchor_in" style="stroke-width: 3.5px;fill:none;stroke:var(--pin-exec);stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffffff)"/>
+        <path d="M991.969,676.75C1026.439525739492,676.75,1026.439525739492,672.75002450943,1060.9100514789839,672.75002450943" id="L-N_Received_Notify_K2Node_VariableGet_1-N_Received_Notify_K2Node_CallFunction_1_InSocketName-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableGet_1 LE-N_Received_Notify_K2Node_CallFunction_1_InSocketName" style="stroke:var(--pin-name-dim);stroke-width:2px;stroke-dasharray:6 4;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-68467e)"/>
+        <path d="M407.281,1204C430.17366848737095,1204,430.17366848737095,1222.500023765564,453.06633697474183,1222.500023765564" id="L-N_Received_Notify_K2Node_CallFunction_15-N_Received_Notify_K2Node_CallFunction_22-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_15 LE-N_Received_Notify_K2Node_CallFunction_22" style="stroke:var(--pin-object);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-00aaf5)"/>
+        <path d="M424.0937623691559,1187.0000056648255C633.2831891677985,1187.0000056648255,633.2831891677985,1151.4999875640872,842.472615966441,1151.4999875640872" id="L-N_Received_Notify_K2Node_CallFunction_15-N_Received_Notify_K2Node_CallFunction_16-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_15 LE-N_Received_Notify_K2Node_CallFunction_16" style="stroke:var(--pin-object);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-00aaf5)"/>
+        <path d="M1503.250050468445,634.7499774169924C1532.7362952516685,634.7499774169924,1532.7362952516685,693.7500318908692,1562.222540034892,693.7500318908692" id="L-N_Received_Notify_K2Node_CallFunction_1_ReturnValue_Location-N_Received_Notify_K2Node_CallFunction_9_End-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_1_ReturnValue_Location LE-N_Received_Notify_K2Node_CallFunction_9_End" style="stroke:var(--pin-vector);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffca23)"/>
+        <path d="M1503.250050468445,634.7499774169924C1532.7362952516685,634.7499774169924,1532.7362952516685,655.7499847984316,1562.222540034892,655.7499847984316" id="L-N_Received_Notify_K2Node_CallFunction_1_ReturnValue_Location-N_Received_Notify_K2Node_CallFunction_9_Start-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_1_ReturnValue_Location LE-N_Received_Notify_K2Node_CallFunction_9_Start" style="stroke:var(--pin-vector);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffca23)"/>
+        <path d="M1492.477,842.75C1527.3497700174462,842.75,1527.3497700174462,769.7499686431886,1562.222540034892,769.7499686431886" id="L-N_Received_Notify_K2Node_MakeArray_1_Array-N_Received_Notify_K2Node_CallFunction_9_ObjectTypes-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MakeArray_1_Array LE-N_Received_Notify_K2Node_CallFunction_9_ObjectTypes" style="stroke:var(--pin-other);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-777777)"/>
+        <path d="M603.5,1222.5C625.4862990139136,1222.5,625.4862990139136,1222.500023765564,647.4725980278272,1222.500023765564" id="L-N_Received_Notify_K2Node_CallFunction_22-N_Received_Notify_K2Node_VariableSet_4_Impact_Point-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_22 LE-N_Received_Notify_K2Node_VariableSet_4_Impact_Point" style="stroke:var(--pin-vector);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffca23)"/>
+        <path d="M1001.938,1151.5C1046.3654379881034,1151.5,1046.3654379881034,1151.4999875640872,1090.7928759762067,1151.4999875640872" id="L-N_Received_Notify_K2Node_CallFunction_16-N_Received_Notify_K2Node_VariableSet_2_Up_vector-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_16 LE-N_Received_Notify_K2Node_VariableSet_2_Up_vector" style="stroke:var(--pin-vector);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffca23)"/>
+        <path d="M813.5000020027163,1191.9999667930601C952.1464389894616,1191.9999667930601,952.1464389894616,1120.9999667930604,1090.7928759762067,1120.9999667930604" id="L-N_Received_Notify_K2Node_VariableSet_4_anchor_out-N_Received_Notify_K2Node_VariableSet_2_anchor_in-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableSet_4_anchor_out LE-N_Received_Notify_K2Node_VariableSet_2_anchor_in" style="stroke-width: 3.5px;fill:none;stroke:var(--pin-exec);stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffffff)"/>
+        <path d="M1256.8203193092347,1120.9999667930604C1337.1486596546174,1120.9999667930604,1337.1486596546174,1203.25,1417.477,1203.25C1451.068,1203.25,1484.659,1203.25,1518.25,1203.25C1540.236270017446,1203.25,1540.236270017446,625.2500458717348,1562.222540034892,625.2500458717348" id="L-N_Received_Notify_K2Node_VariableSet_2_anchor_out-N_Received_Notify_K2Node_CallFunction_9_anchor_in-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableSet_2_anchor_out LE-N_Received_Notify_K2Node_CallFunction_9_anchor_in" style="stroke-width: 3.5px;fill:none;stroke:var(--pin-exec);stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffffff)"/>
+        <path d="M1240.18,1078.75C1281.4668840311178,1078.75,1281.4668840311178,1078.7500097846987,1322.7537680622358,1078.7500097846987" id="L-N_Received_Notify_K2Node_VariableGet_2-N_Received_Notify_K2Node_CallFunction_10-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableGet_2 LE-N_Received_Notify_K2Node_CallFunction_10" style="stroke:var(--pin-other-dim);stroke-width:2px;stroke-dasharray:6 4;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-414141)"/>
+        <path d="M1482.961,780.75C1522.591770017446,780.75,1522.591770017446,731.750000267029,1562.222540034892,731.750000267029" id="L-N_Received_Notify_K2Node_VariableGet_0-N_Received_Notify_K2Node_CallFunction_9_Radius-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableGet_0 LE-N_Received_Notify_K2Node_CallFunction_9_Radius" style="stroke:var(--pin-float);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-38d500)"/>
+        <path d="M1496.172,1078.75C1529.197270017446,1078.75,1529.197270017446,959.7499679565431,1562.222540034892,959.7499679565431" id="L-N_Received_Notify_K2Node_CallFunction_10-N_Received_Notify_K2Node_CallFunction_9_TraceHitColor-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_10 LE-N_Received_Notify_K2Node_CallFunction_9_TraceHitColor" style="stroke:var(--pin-other);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-777777)"/>
+        <path d="M2006.219,655.75C2035.7051882570395,655.75,2035.7051882570395,622.2499898910523,2065.191376514079,622.2499898910523" id="L-N_Received_Notify_K2Node_CallFunction_9_OutHits-N_Received_Notify_K2Node_MacroInstance_0_Array-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_OutHits LE-N_Received_Notify_K2Node_MacroInstance_0_Array" style="stroke:var(--pin-other);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-777777)"/>
+        <path d="M2006.218729515076,625.2500458717348C2035.7050530145775,625.2500458717348,2035.7050530145775,582.2499983215332,2065.191376514079,582.2499983215332" id="L-N_Received_Notify_K2Node_CallFunction_9_anchor_out-N_Received_Notify_K2Node_MacroInstance_0_Exec-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_anchor_out LE-N_Received_Notify_K2Node_MacroInstance_0_Exec" style="stroke-width: 3.5px;fill:none;stroke:var(--pin-exec);stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffffff)"/>
+        <path d="M1741.195,360C1796.4587955949912,360,1796.4587955949912,359.99997923851015,1851.7225911899825,359.99997923851015" id="L-N_Received_Notify_K2Node_VariableGet_4-N_Received_Notify_K2Node_CallFunction_17-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableGet_4 LE-N_Received_Notify_K2Node_CallFunction_17" style="stroke:var(--pin-object);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-00aaf5)"/>
+        <path d="M1992.969,318C2038.0801351946006,318,2038.0801351946006,317.9999644756317,2083.1912703892012,317.9999644756317" id="L-N_Received_Notify_K2Node_VariableGet_5-N_Received_Notify_K2Node_FormatText_0_A-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableGet_5 LE-N_Received_Notify_K2Node_FormatText_0_A" style="stroke:var(--pin-name);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-cd82ff)"/>
+        <path d="M2539.172,622.25C3212.072356344045,622.25,3212.072356344045,602.2499941062929,3884.9727126880907,602.2499941062929" id="L-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_ImpactPoint-N_Received_Notify_K2Node_VariableSet_3_Impact_Point-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_ImpactPoint LE-N_Received_Notify_K2Node_VariableSet_3_Impact_Point" style="stroke:var(--pin-vector);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffca23)"/>
+        <path d="M2539.171411994934,662.25C3077.072071115316,662.25,3077.072071115316,952.4999625968935,3614.972730235698,952.4999625968935" id="L-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_Normal-N_Received_Notify_K2Node_VariableSet_1_Up_vector-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_Normal LE-N_Received_Notify_K2Node_VariableSet_1_Up_vector" style="stroke:var(--pin-vector);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffca23)"/>
+        <path d="M2539.171855773926,702.2499730300904C2592.958996343435,702.2499730300904,2592.958996343435,1303.7500214004517,2646.746136912944,1303.7500214004517" id="L-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_PhysMat-N_Received_Notify_K2Node_MacroInstance_1_InputObject-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_PhysMat LE-N_Received_Notify_K2Node_MacroInstance_1_InputObject" style="stroke:var(--pin-object);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-00aaf5)"/>
+        <path d="M2539.171855773926,702.2499730300904C2897.4159274957788,702.2499730300904,2897.4159274957788,1243.7500340461734,3255.6599992176316,1243.7500340461734" id="L-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_PhysMat-N_Received_Notify_K2Node_VariableSet_0_Phys_Mat-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_PhysMat LE-N_Received_Notify_K2Node_VariableSet_0_Phys_Mat" style="stroke:var(--pin-object);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-00aaf5)"/>
+        <path d="M2539.6715871810916,582.75C2568.90804497701,582.75,2568.90804497701,308.49996679306037,2598.1445027729287,308.49996679306037" id="L-N_Received_Notify_K2Node_MacroInstance_0_Completed-N_Received_Notify_K2Node_CallFunction_23_anchor_in-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Completed LE-N_Received_Notify_K2Node_CallFunction_23_anchor_in" style="stroke-width: 3.5px;fill:none;stroke:var(--pin-exec);stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffffff)"/>
+        <path d="M2539.6715871810916,542.75C2593.2088620470176,542.75,2593.2088620470176,1272.2499551963806,2646.746136912944,1272.2499551963806" id="L-N_Received_Notify_K2Node_MacroInstance_0_LoopBody-N_Received_Notify_K2Node_MacroInstance_1_anchor_in-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_LoopBody LE-N_Received_Notify_K2Node_MacroInstance_1_anchor_in" style="stroke-width: 3.5px;fill:none;stroke:var(--pin-exec);stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffffff)"/>
+        <path d="M1994.688,360C2038.9396351946007,360,2038.9396351946007,356.00001156806957,2083.1912703892012,356.00001156806957" id="L-N_Received_Notify_K2Node_CallFunction_17-N_Received_Notify_K2Node_FormatText_0_B-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_17 LE-N_Received_Notify_K2Node_FormatText_0_B" style="stroke:var(--pin-string);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ff00d4)"/>
+        <path d="M2508.195,318C2553.1697513864647,318,2553.1697513864647,338.99997185707093,2598.1445027729296,338.99997185707093" id="L-N_Received_Notify_K2Node_FormatText_0_Result-N_Received_Notify_K2Node_CallFunction_23_InText-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_FormatText_0_Result LE-N_Received_Notify_K2Node_CallFunction_23_InText" style="stroke:var(--pin-text);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-e77caa)"/>
+        <path d="M3089.875,1304.25C3172.7674996088153,1304.25,3172.7674996088153,1213.250045509339,3255.6599992176307,1213.250045509339" id="L-N_Received_Notify_K2Node_MacroInstance_1_Is_Valid-N_Received_Notify_K2Node_VariableSet_0_anchor_in-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_1_Is_Valid LE-N_Received_Notify_K2Node_VariableSet_0_anchor_in" style="stroke-width: 3.5px;fill:none;stroke:var(--pin-exec);stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffffff)"/>
+        <path d="M2224.445,175C2283.306412629903,175,2283.306412629903,175.00003790855408,2342.1678252598067,175.00003790855408" id="L-N_Received_Notify_K2Node_VariableGet_7-N_Received_Notify_K2Node_PromotableOperator_5_A-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableGet_7 LE-N_Received_Notify_K2Node_PromotableOperator_5_A" style="stroke:var(--pin-vector);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffca23)"/>
+        <path d="M2861.3748995208744,308.49996679306037C3013.861232518972,308.49996679306037,3013.861232518972,73.50000615119939,3166.3475655170696,73.50000615119939" id="L-N_Received_Notify_K2Node_CallFunction_23_anchor_out-N_Received_Notify_K2Node_CallFunction_19_anchor_in-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_23_anchor_out LE-N_Received_Notify_K2Node_CallFunction_19_anchor_in" style="stroke-width: 3.5px;fill:none;stroke:var(--pin-exec);stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffffff)"/>
+        <path d="M3421.6874425506594,1213.250045509339C3518.330086393179,1213.250045509339,3518.330086393179,921.9999667930601,3614.9727302356987,921.9999667930601" id="L-N_Received_Notify_K2Node_VariableSet_0_anchor_out-N_Received_Notify_K2Node_VariableSet_1_anchor_in-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableSet_0_anchor_out LE-N_Received_Notify_K2Node_VariableSet_1_anchor_in" style="stroke-width: 3.5px;fill:none;stroke:var(--pin-exec);stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffffff)"/>
+        <path d="M2812.773,175C2878.2361013544214,175,2878.2361013544214,221.5000261402131,2943.6992027088427,221.5000261402131" id="L-N_Received_Notify_K2Node_PromotableOperator_5_ReturnValue-N_Received_Notify_K2Node_PromotableOperator_6-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_PromotableOperator_5_ReturnValue LE-N_Received_Notify_K2Node_PromotableOperator_6" style="stroke:var(--pin-vector);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffca23)"/>
+        <path d="M2798.406285171509,104.0000017070771C2871.052743940176,104.0000017070771,2871.052743940176,221.5000261402131,2943.6992027088427,221.5000261402131" id="L-N_Received_Notify_K2Node_VariableGet_6-N_Received_Notify_K2Node_PromotableOperator_6-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableGet_6 LE-N_Received_Notify_K2Node_PromotableOperator_6" style="stroke:var(--pin-vector);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffca23)"/>
+        <path d="M2798.406,104C2982.376782758535,104,2982.376782758535,104.0000017070771,3166.3475655170696,104.0000017070771" id="L-N_Received_Notify_K2Node_VariableGet_6-N_Received_Notify_K2Node_CallFunction_19_LineStart-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableGet_6 LE-N_Received_Notify_K2Node_CallFunction_19_LineStart" style="stroke:var(--pin-vector);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffca23)"/>
+        <path d="M3069.023,221.5C3117.685282758535,221.5,3117.685282758535,141.9999700832368,3166.3475655170696,141.9999700832368" id="L-N_Received_Notify_K2Node_PromotableOperator_6-N_Received_Notify_K2Node_CallFunction_19_LineEnd-0" class="edge-thickness-normal edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_PromotableOperator_6 LE-N_Received_Notify_K2Node_CallFunction_19_LineEnd" style="stroke:var(--pin-vector);stroke-width:2px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffca23)"/>
+        <path d="M3780.9998587036134,921.9999667930601C3832.986285695852,921.9999667930601,3832.986285695852,571.7500252628329,3884.9727126880907,571.7500252628329" id="L-N_Received_Notify_K2Node_VariableSet_1_anchor_out-N_Received_Notify_K2Node_VariableSet_3_anchor_in-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableSet_1_anchor_out LE-N_Received_Notify_K2Node_VariableSet_3_anchor_in" style="stroke-width: 3.5px;fill:none;stroke:var(--pin-exec);stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffffff)"/>
+        <path d="M3510.9998762512205,73.50000615119939C3578.310473394216,73.50000615119939,3578.310473394216,277.4999671077728,3645.6210705372114,277.4999671077728" id="L-N_Received_Notify_K2Node_CallFunction_19_anchor_out-N_Received_Notify_K2Node_FunctionResult_0-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_19_anchor_out LE-N_Received_Notify_K2Node_FunctionResult_0" style="stroke-width: 3.5px;fill:none;stroke:var(--pin-exec);stroke-width:3px;fill:none;" marker-end="url(#my-svg_flowchart-pointEnd-ffffff)"/>
+        <path d="M2182.619,524.75C2215.819,555,2249.019,496.25,2282.219,496.25C2287.219,496.25,2292.219,496.25,2297.219,496.25C2340.044,496.25,2382.87,496.25,2425.695,496.25C2468.521,496.25,2511.346,496.25,2554.172,496.25C2559.172,496.25,2564.172,44,2569.172,44C2574.172,44,2579.172,44,2584.172,44C2632.872,44,2681.573,44,2730.273,44C2778.974,44,2827.674,44,2876.375,44C2881.375,44,2886.375,44,2891.375,44C2929.875,44,2968.375,44,3006.875,44C3045.375,44,3083.875,44,3122.375,44C3127.375,44,3132.375,44,3137.375,44C3142.375,44,3147.375,44,3152.375,44C3214.646,44,3276.917,44,3339.188,44C3401.458,44,3463.729,44,3526,44C3533.5,44,3541,44,3548.5,44C3556,44,3563.5,44,3571,44C3576,44,3581,44,3586,44C3591,44,3596,44,3601,44C3633.5,44,3666,44,3698.5,44C3731,44,3763.5,44,3796,44C3803.5,44,3811,44,3818.5,44C3826,44,3833.5,44,3841,44C3846,44,3851,44,3856,44C3861,44,3866,44,3871,44C3903.5,44,3936,44,3968.5,44C4001,44,4033.5,44,4066,44C4073.419,44,4080.837,385.5,4088.256,727L4028.256156021119,617.2499551010133" id="L-N_Received_Notify_K2Node_MacroInstance_0_Break-N_Received_Notify_K2Node_VariableSet_3_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Break LE-N_Received_Notify_K2Node_VariableSet_3_anchor_out" style="stroke-width: 3.5px;fill:none;stroke:var(--pin-exec);stroke-width:3px;fill:none;" marker-start="url(#my-svg_flowchart-pointStart-ffffff)"/>
+        <path d="M90.000001411438,947.0830000000003L30,947.083C35,941.667,40,936.25,45,936.25C50,936.25,55,936.25,60,936.25" id="L-N_Received_Notify_K2Node_FunctionEntry_0_anchor_in-N_Received_Notify_K2Node_FunctionEntry_0_MeshComp-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_FunctionEntry_0_anchor_in LE-N_Received_Notify_K2Node_FunctionEntry_0_MeshComp" style="stroke-width: 0;fill:none;"/>
+        <path d="M83.05800141143801,951.2500500106812L23.058,960C30.372,1107.5,37.686,1255,45,1255C85.333,1255,125.667,1255,166,1255L166,931.7500500106817" id="L-N_Received_Notify_K2Node_FunctionEntry_0_anchor_in-N_Received_Notify_K2Node_FunctionEntry_0_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_FunctionEntry_0_anchor_in LE-N_Received_Notify_K2Node_FunctionEntry_0_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M1226.9371755027769,634.75C1247.088328528388,634.75,1273.161103000582,634.75,1298.4674720124,634.75C1323.358,632.5031420645739,1345.013,621.8354706566962,1366.667,617.75" id="L-N_Received_Notify_K2Node_CallFunction_1_self-N_Received_Notify_K2Node_CallFunction_1_ReturnValue_Location-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_1_self LE-N_Received_Notify_K2Node_CallFunction_1_ReturnValue_Location" style="stroke-width: 0;fill:none;"/>
+        <path d="M1226.9371755027769,672.75C1250.9275030859058,674.7480342700497,1281.3698599221025,676.7481844555169,1301.703,655.4213250265778C1306.703,645.2220743893829,1311.703,637.4186356538953,1316.703,634.319" id="L-N_Received_Notify_K2Node_CallFunction_1_InSocketName-N_Received_Notify_K2Node_CallFunction_1_ReturnValue_Location-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_1_InSocketName LE-N_Received_Notify_K2Node_CallFunction_1_ReturnValue_Location" style="stroke-width: 0;fill:none;"/>
+        <path d="M1286.703,710.75C1291.703,711.0529658476103,1296.703,711.8593306587352,1301.703,713.0152953358156C1323.01,718.2619497152812,1344.317,689.7546056750222,1365.624,651.75" id="L-N_Received_Notify_K2Node_CallFunction_1_TransformSpace-N_Received_Notify_K2Node_CallFunction_1_ReturnValue_Location-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_1_TransformSpace LE-N_Received_Notify_K2Node_CallFunction_1_ReturnValue_Location" style="stroke-width: 0;fill:none;"/>
+        <path d="M1266.461,842.75C1278.208,842.75,1289.956,842.75,1301.703,842.75C1314.196,837.6164276894539,1326.689,828.8419679847158,1339.182,825.75" id="L-N_Received_Notify_K2Node_MakeArray_1__0_-N_Received_Notify_K2Node_MakeArray_1_Array-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MakeArray_1__0_ LE-N_Received_Notify_K2Node_MakeArray_1_Array" style="stroke-width: 0;fill:none;"/>
+        <path d="M1266.461,880.75C1278.208,882.0575935091148,1289.956,884.1906782700972,1301.703,883.1471640548584C1310.294,874.4776050862552,1318.885,861.984831106709,1327.477,854.941" id="L-N_Received_Notify_K2Node_MakeArray_1__1_-N_Received_Notify_K2Node_MakeArray_1_Array-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MakeArray_1__1_ LE-N_Received_Notify_K2Node_MakeArray_1_Array" style="stroke-width: 0;fill:none;"/>
+        <path d="M813.5,1222.5C818.5,1222.5,823.5,1222.5,828.5,1222.5C857.406,1222.5,886.313,1229.978,915.219,1237.456L811.5000020027161,1200.4560634765626" id="L-N_Received_Notify_K2Node_VariableSet_4_Impact_Point-N_Received_Notify_K2Node_VariableSet_4_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableSet_4_Impact_Point LE-N_Received_Notify_K2Node_VariableSet_4_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M738.5,1218.000063476563L738.5,1255C768.5,1255,798.5,1255,828.5,1255C857.406,1255,886.313,1247.522,915.219,1240.044L811.5000020027161,1203.0440634765628" id="L-N_Received_Notify_K2Node_VariableSet_4_anchor_in-N_Received_Notify_K2Node_VariableSet_4_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableSet_4_anchor_in LE-N_Received_Notify_K2Node_VariableSet_4_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M1256.82,1151.5C1271.781,1151.5,1286.742,1151.5,1301.703,1151.5C1335.294,1151.5,1368.885,1175.583,1402.477,1199.665L1254.8203193092347,1107.9150272750858" id="L-N_Received_Notify_K2Node_VariableSet_2_Up_vector-N_Received_Notify_K2Node_VariableSet_2_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableSet_2_Up_vector LE-N_Received_Notify_K2Node_VariableSet_2_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M1181.82,1147.000027275086L1181.82,1238.75C1221.781,1238.75,1261.742,1238.75,1301.703,1238.75C1335.294,1238.75,1368.885,1222.23,1402.477,1205.709L1254.8203193092347,1113.9590272750856" id="L-N_Received_Notify_K2Node_VariableSet_2_anchor_in-N_Received_Notify_K2Node_VariableSet_2_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableSet_2_anchor_in LE-N_Received_Notify_K2Node_VariableSet_2_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M1656.9605768585204,672.75C1741.037,722.122,1783.628,771.494,1826.219,866.5C1856.651,934.384,1887.084,1025.567,1917.517,638.75" id="L-N_Received_Notify_K2Node_CallFunction_9_Start-N_Received_Notify_K2Node_CallFunction_9_OutHits-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_Start LE-N_Received_Notify_K2Node_CallFunction_9_OutHits" style="stroke-width: 0;fill:none;"/>
+        <path d="M1662.7475768585205,638.75C1744.895,577.75,1785.557,516.75,1826.219,516.75C1857.181,516.75,1888.143,592.25,1919.105,667.75L1904.1049795150761,667.75" id="L-N_Received_Notify_K2Node_CallFunction_9_Start-N_Received_Notify_K2Node_CallFunction_9_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_Start LE-N_Received_Notify_K2Node_CallFunction_9_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M1657.5785768585206,710.75C1741.448,763.46,1783.833,812.17,1826.219,897.5C1856.38,958.221,1886.542,1037.485,1916.703,638.75" id="L-N_Received_Notify_K2Node_CallFunction_9_End-N_Received_Notify_K2Node_CallFunction_9_OutHits-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_End LE-N_Received_Notify_K2Node_CallFunction_9_OutHits" style="stroke-width: 0;fill:none;"/>
+        <path d="M1662.1005768585205,676.75C1744.463,617,1785.341,553.25,1826.219,553.25C1856.721,553.25,1887.223,610.5,1917.725,667.75L1902.724979515076,667.75" id="L-N_Received_Notify_K2Node_CallFunction_9_End-N_Received_Notify_K2Node_CallFunction_9_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_End LE-N_Received_Notify_K2Node_CallFunction_9_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M1658.9675768585205,748.75C1742.375,845.487,1784.297,893.224,1826.219,959.5C1855.548,1005.867,1884.877,1061.309,1914.207,638.75" id="L-N_Received_Notify_K2Node_CallFunction_9_Radius-N_Received_Notify_K2Node_CallFunction_9_OutHits-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_Radius LE-N_Received_Notify_K2Node_CallFunction_9_OutHits" style="stroke-width: 0;fill:none;"/>
+        <path d="M1658.0555768585205,714.75C1741.4927173430358,676.25,1783.993,588.75,1826.219,588.75C1856.219,588.75,1886.219,628.673,1916.219,668.596L1901.2189795150762,668.5960000000002" id="L-N_Received_Notify_K2Node_CallFunction_9_Radius-N_Received_Notify_K2Node_CallFunction_9_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_Radius LE-N_Received_Notify_K2Node_CallFunction_9_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M1661.2175768585205,786.75C1743.874,930.356,1785.047,974.962,1826.219,1021.5C1853.797,1052.672,1881.375,984.1957723251344,1908.953,638.75" id="L-N_Received_Notify_K2Node_CallFunction_9_ObjectTypes-N_Received_Notify_K2Node_CallFunction_9_OutHits-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_ObjectTypes LE-N_Received_Notify_K2Node_CallFunction_9_OutHits" style="stroke-width: 0;fill:none;"/>
+        <path d="M1655.8255768585204,752.75C1733.0537766550108,743,1783.249,634.25,1826.219,634.25C1856.219,634.25,1886.219,653.173,1916.219,672.096L1901.2189795150762,672.0960000000002" id="L-N_Received_Notify_K2Node_CallFunction_9_ObjectTypes-N_Received_Notify_K2Node_CallFunction_9_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_ObjectTypes LE-N_Received_Notify_K2Node_CallFunction_9_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M1663.4185884552003,824.75C1744.675,971.6655138720229,1785.447,1015.582,1826.219,1052.5C1851.919,1075.77,1877.619,891.4326348901423,1903.319,638.75" id="L-N_Received_Notify_K2Node_CallFunction_9_bTraceComplex-N_Received_Notify_K2Node_CallFunction_9_OutHits-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_bTraceComplex LE-N_Received_Notify_K2Node_CallFunction_9_OutHits" style="stroke-width: 0;fill:none;"/>
+        <path d="M1656.3745884552002,790.75C1733.3187133464744,779.5,1783.099,665.25,1826.219,665.25C1856.219,665.25,1886.219,669.865,1916.219,674.481L1901.2189795150762,674.4810000000002" id="L-N_Received_Notify_K2Node_CallFunction_9_bTraceComplex-N_Received_Notify_K2Node_CallFunction_9_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_bTraceComplex LE-N_Received_Notify_K2Node_CallFunction_9_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M1700.9924499893189,862.75C1745.61,1013.2134506726378,1785.914,1056.763,1826.219,1083.5C1847.724,1040.2794558263647,1869.229,791.8743305374609,1890.734,638.75" id="L-N_Received_Notify_K2Node_CallFunction_9_DrawDebugType-N_Received_Notify_K2Node_CallFunction_9_OutHits-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_DrawDebugType LE-N_Received_Notify_K2Node_CallFunction_9_OutHits" style="stroke-width: 0;fill:none;"/>
+        <path d="M1692.1334499893187,828.75C1738.8947479432413,825.317,1782.961,714.884,1826.219,696.25C1856.219,683.327,1886.219,680.096,1916.219,676.865L1901.2189795150762,676.865" id="L-N_Received_Notify_K2Node_CallFunction_9_DrawDebugType-N_Received_Notify_K2Node_CallFunction_9_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_DrawDebugType LE-N_Received_Notify_K2Node_CallFunction_9_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M1665.4805768585204,900.75C1746.716,1057.726,1786.467,1099.015889601628,1826.219,713.9754283653945C1831.219,674.118345417711,1836.219,648.2998146405472,1841.219,639.462" id="L-N_Received_Notify_K2Node_CallFunction_9_bIgnoreSelf-N_Received_Notify_K2Node_CallFunction_9_OutHits-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_bIgnoreSelf LE-N_Received_Notify_K2Node_CallFunction_9_OutHits" style="stroke-width: 0;fill:none;"/>
+        <path d="M1654.5825768585205,866.75C1732.4042734705642,875.638,1782.835,773.526,1826.219,727.25C1856.219,695.25,1886.219,687.25,1916.219,679.25L1901.2189795150762,679.25" id="L-N_Received_Notify_K2Node_CallFunction_9_bIgnoreSelf-N_Received_Notify_K2Node_CallFunction_9_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_bIgnoreSelf LE-N_Received_Notify_K2Node_CallFunction_9_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M1708.961,938.75C1748.047,1099.625,1787.133,1133.163763304947,1826.219,743.64579675319C1831.219,703.9907247059728,1836.219,676.29926944158,1841.219,665.692" id="L-N_Received_Notify_K2Node_CallFunction_9_TraceColor-N_Received_Notify_K2Node_CallFunction_9_OutHits-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_TraceColor LE-N_Received_Notify_K2Node_CallFunction_9_OutHits" style="stroke-width: 0;fill:none;"/>
+        <path d="M1695.718,904.75C1739.218,917.747,1782.719,815.744,1826.219,758.25C1856.219,718.599,1886.219,700.117,1916.219,681.635L1901.2189795150762,681.6350000000004" id="L-N_Received_Notify_K2Node_CallFunction_9_TraceColor-N_Received_Notify_K2Node_CallFunction_9_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_TraceColor LE-N_Received_Notify_K2Node_CallFunction_9_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M1669.9215768585204,976.75C1749.677,1134.3239946870967,1787.948,1176.5,1826.219,1176.5C1845.795,1117.7723861847614,1865.371,847.3736406389266,1884.947,672.75" id="L-N_Received_Notify_K2Node_CallFunction_9_TraceHitColor-N_Received_Notify_K2Node_CallFunction_9_OutHits-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_TraceHitColor LE-N_Received_Notify_K2Node_CallFunction_9_OutHits" style="stroke-width: 0;fill:none;"/>
+        <path d="M1653.9115768585204,942.75C1733.7171403983614,959.171,1782.611,856.593,1826.219,789.25C1856.581,742.363,1886.942,712.556,1917.304,682.75L1902.3039795150762,682.75" id="L-N_Received_Notify_K2Node_CallFunction_9_TraceHitColor-N_Received_Notify_K2Node_CallFunction_9_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_TraceHitColor LE-N_Received_Notify_K2Node_CallFunction_9_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M1672.9865768585205,1014.75C1751.72,1165.195023514074,1788.969,1207.5,1826.219,1207.5C1851.227,1207.5,1876.236,1031.4851942419778,1901.244,672.75" id="L-N_Received_Notify_K2Node_CallFunction_9_DrawTime-N_Received_Notify_K2Node_CallFunction_9_OutHits-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_DrawTime LE-N_Received_Notify_K2Node_CallFunction_9_OutHits" style="stroke-width: 0;fill:none;"/>
+        <path d="M1653.6125768585205,980.75C1734.4918622494527,1000.6,1782.512,897.449,1826.219,820.25C1857.038,765.815,1887.857,724.282,1918.676,682.75L1903.6759795150758,682.75" id="L-N_Received_Notify_K2Node_CallFunction_9_DrawTime-N_Received_Notify_K2Node_CallFunction_9_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_DrawTime LE-N_Received_Notify_K2Node_CallFunction_9_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M1694.7340000000002,917.8439760437018L1694.734,1207.594C1738.563,1245.672,1782.391,1283.75,1826.219,1283.75C1855.035,1283.75,1883.852,1217.25,1912.669,672.75" id="L-N_Received_Notify_K2Node_CallFunction_9_anchor_in-N_Received_Notify_K2Node_CallFunction_9_OutHits-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_anchor_in LE-N_Received_Notify_K2Node_CallFunction_9_OutHits" style="stroke-width: 0;fill:none;"/>
+        <path d="M1690.156,905.9999760437013L1690.156,1195.75C1735.51,1068.428,1780.865,941.106,1826.219,846.5C1857.295,781.676,1888.372,732.213,1919.449,682.75L1904.4489795150762,682.75" id="L-N_Received_Notify_K2Node_CallFunction_9_anchor_in-N_Received_Notify_K2Node_CallFunction_9_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_9_anchor_in LE-N_Received_Notify_K2Node_CallFunction_9_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M2170.443,600.75C2207.702,1006.875,2244.96,1320,2282.219,1320C2287.219,1320,2292.219,1319.4350387491083,2297.219,1297.9549346273836C2314.516,1050.7485863072402,2331.813,699.6402590315074,2380.0855871810913,524.75" id="L-N_Received_Notify_K2Node_MacroInstance_0_Exec-N_Received_Notify_K2Node_MacroInstance_0_LoopBody-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Exec LE-N_Received_Notify_K2Node_MacroInstance_0_LoopBody" style="stroke-width: 0;fill:none;"/>
+        <path d="M2180.807,564.75C2214.611,590,2248.415,522.25,2282.219,620.5853397650205C2287.219,697.9712895835778,2292.219,788.7373425673866,2297.219,887.2741237164468C2307.641,1093.0941414461402,2318.063,1264.1227452392159,2359.4615871810915,567.539" id="L-N_Received_Notify_K2Node_MacroInstance_0_Exec-N_Received_Notify_K2Node_MacroInstance_0_Completed-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Exec LE-N_Received_Notify_K2Node_MacroInstance_0_Completed" style="stroke-width: 0;fill:none;"/>
+        <path d="M2189.574,564.75C2220.455,611.4484913365901,2251.337,582.25,2282.219,589.9599078171823C2287.219,592.4416760296995,2292.219,594.9127949942072,2297.219,597.2343758218162C2303.643,599.7744498815739,2310.066,603.0778663414288,2316.49,605.25" id="L-N_Received_Notify_K2Node_MacroInstance_0_Exec-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_ImpactPoint-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Exec LE-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_ImpactPoint" style="stroke-width: 0;fill:none;"/>
+        <path d="M2238.908,564.75C2253.345,574.4839165279029,2267.782,602.2595968332256,2282.219,632.6095587731319C2287.219,640.0148041435577,2292.219,644.769954726646,2297.219,646.25C2337.667,646.25,2378.115,790.875,2438.1264119949337,645.25" id="L-N_Received_Notify_K2Node_MacroInstance_0_Exec-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_Normal-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Exec LE-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_Normal" style="stroke-width: 0;fill:none;"/>
+        <path d="M2171.079,600.75C2208.126,953.75,2245.172,1213.75,2282.219,1213.75C2287.219,1213.75,2292.219,1213.75,2297.219,1213.75C2326.562,1213.75,2355.906,1015.2379804317983,2399.4209212722776,685.25" id="L-N_Received_Notify_K2Node_MacroInstance_0_Exec-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_PhysMat-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Exec LE-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_PhysMat" style="stroke-width: 0;fill:none;"/>
+        <path d="M2170.152,560.75C2207.508,994.875,2244.863,1340,2282.219,1322.5253796231227C2287.219,1277.3271812531102,2292.219,1209.9726250235508,2297.219,1126.071085934444C2310.39,867.3296596727432,2323.561,635.341775368165,2367.7085871810914,535.787" id="L-N_Received_Notify_K2Node_MacroInstance_0_Break-N_Received_Notify_K2Node_MacroInstance_0_LoopBody-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Break LE-N_Received_Notify_K2Node_MacroInstance_0_LoopBody" style="stroke-width: 0;fill:none;"/>
+        <path d="M2190.578,524.75C2221.125,567.3113516344708,2251.672,542.25,2282.219,542.25C2287.219,550.263938056596,2292.219,586.4864358677013,2297.219,646.8068469097142C2312.711,926.1801007248107,2328.203,1216.4757827693493,2374.6715871810916,582.75" id="L-N_Received_Notify_K2Node_MacroInstance_0_Break-N_Received_Notify_K2Node_MacroInstance_0_Completed-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Break LE-N_Received_Notify_K2Node_MacroInstance_0_Completed" style="stroke-width: 0;fill:none;"/>
+        <path d="M2238.908,524.75C2253.345,551.8166351832218,2267.782,597.5661297087661,2282.219,612.25C2287.219,614.7268518518518,2292.219,617.0648148148148,2297.219,619.125C2302.219,620.7685185185185,2307.219,621.8564814814815,2312.219,622.25" id="L-N_Received_Notify_K2Node_MacroInstance_0_Break-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_ImpactPoint-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Break LE-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_ImpactPoint" style="stroke-width: 0;fill:none;"/>
+        <path d="M2175.332,560.75C2210.961,768.625,2246.59,887.5,2282.219,887.5C2287.219,887.5,2292.219,887.5,2297.219,887.5C2328.844,887.5,2360.469,834.311959112674,2411.656411994934,645.25" id="L-N_Received_Notify_K2Node_MacroInstance_0_Break-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_Normal-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Break LE-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_Normal" style="stroke-width: 0;fill:none;"/>
+        <path d="M2170.669,560.75C2207.852,941.75,2245.036,1233.75,2282.219,1233.75C2287.219,1233.75,2292.219,1233.75,2297.219,1233.75C2318.632,1156.518387900388,2340.044,862.8465921472222,2375.6289212722777,685.25" id="L-N_Received_Notify_K2Node_MacroInstance_0_Break-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_PhysMat-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Break LE-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_PhysMat" style="stroke-width: 0;fill:none;"/>
+        <path d="M2157.397106124878,639.25C2211.004,1255.375,2246.612,1360,2282.219,1341.7794987178038C2287.219,1296.0111015937223,2292.219,1228.2148152171337,2297.219,1144.000014588038C2310.39,885.0483232313744,2323.561,651.5092769530827,2367.7085871810914,549.713" id="L-N_Received_Notify_K2Node_MacroInstance_0_Array-N_Received_Notify_K2Node_MacroInstance_0_LoopBody-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Array LE-N_Received_Notify_K2Node_MacroInstance_0_LoopBody" style="stroke-width: 0;fill:none;"/>
+        <path d="M2152.154106124878,605.25C2207.509,839.5,2244.864,562.25,2282.219,663.6858016540724C2287.219,741.7907618879453,2292.219,833.0246798664314,2297.219,931.7781805895307C2307.641,1137.242606154061,2318.063,1300.6569286783656,2359.4615871810915,597.961" id="L-N_Received_Notify_K2Node_MacroInstance_0_Array-N_Received_Notify_K2Node_MacroInstance_0_Completed-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Array LE-N_Received_Notify_K2Node_MacroInstance_0_Completed" style="stroke-width: 0;fill:none;"/>
+        <path d="M2152.573106124878,605.25C2207.788,870.5,2245.003,624.25,2282.219,627.4386539212924C2287.219,629.5105034621369,2292.219,631.8554332624791,2297.219,634.3345544334302C2306.952,639.0212553792047,2316.685,640.2548961807339,2326.418,639.25" id="L-N_Received_Notify_K2Node_MacroInstance_0_Array-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_ImpactPoint-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Array LE-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_ImpactPoint" style="stroke-width: 0;fill:none;"/>
+        <path d="M2181.444106124878,639.25C2227.035,979.5813264380873,2254.627,1193.75,2282.219,1193.75C2287.219,1193.75,2292.219,1193.75,2297.219,1193.75C2337.027,1193.75,2376.834,1081.625,2436.2044119949337,679.25" id="L-N_Received_Notify_K2Node_MacroInstance_0_Array-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_Normal-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Array LE-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_Normal" style="stroke-width: 0;fill:none;"/>
+        <path d="M2160.529106124878,639.25C2213.092,1225.375,2247.656,1300,2282.219,1300C2287.219,1300,2292.219,1300,2297.219,1300C2317.47,1192.698030533606,2337.72,894.4809880782047,2372.142921272278,719.25" id="L-N_Received_Notify_K2Node_MacroInstance_0_Array-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_PhysMat-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_0_Array LE-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_PhysMat" style="stroke-width: 0;fill:none;"/>
+        <path d="M2249.219,318C2260.219,318,2271.219,318,2282.219,318C2287.219,318,2292.219,318,2297.219,317.9913501911916C2312.544,312.51471621572614,2327.87,306.1817016734714,2343.195,304.515" id="L-N_Received_Notify_K2Node_FormatText_0_A-N_Received_Notify_K2Node_FormatText_0_Result-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_FormatText_0_A LE-N_Received_Notify_K2Node_FormatText_0_Result" style="stroke-width: 0;fill:none;"/>
+        <path d="M2249.219,356C2260.219,356.54540282510874,2271.219,357.78273194608937,2282.219,359.11366833142324C2287.219,359.5877546260106,2292.219,359.9013708868562,2297.219,359.9881052837695C2312.544,354.4761323118052,2327.87,340.64650327629096,2343.195,331.485" id="L-N_Received_Notify_K2Node_FormatText_0_B-N_Received_Notify_K2Node_FormatText_0_Result-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_FormatText_0_B LE-N_Received_Notify_K2Node_FormatText_0_Result" style="stroke-width: 0;fill:none;"/>
+        <path d="M2812.773,1303.75C2833.974,1303.75,2855.174,1303.75,2876.375,1301.9712723665714C2881.375,1299.7697478071077,2886.375,1296.982954212236,2891.375,1293.8331118069473C2901.167,1287.4621531291502,2910.958,1285.2535837330015,2920.75,1286.25" id="L-N_Received_Notify_K2Node_MacroInstance_1_InputObject-N_Received_Notify_K2Node_MacroInstance_1_Is_Valid-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_1_InputObject LE-N_Received_Notify_K2Node_MacroInstance_1_Is_Valid" style="stroke-width: 0;fill:none;"/>
+        <path d="M2737.773,1295.0000727081306L2737.773,1350C2783.974,1350,2830.174,1350,2876.375,1342.698717810064C2881.375,1339.8073195188936,2886.375,1336.8151737233925,2891.375,1333.8889470902277C2898.896,1329.978127564096,2906.416,1325.2231323819049,2913.937,1322.25" id="L-N_Received_Notify_K2Node_MacroInstance_1_anchor_in-N_Received_Notify_K2Node_MacroInstance_1_Is_Valid-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_MacroInstance_1_anchor_in LE-N_Received_Notify_K2Node_MacroInstance_1_Is_Valid" style="stroke-width: 0;fill:none;"/>
+        <path d="M2764.171365859985,339C2799.28860663571,339,2845.082687305543,339,2876.375,339C2881.375,339,2886.375,339,2891.375,339C2927.375,339,2963.375,387.156,2999.375,435.312L2738.3748995208744,435.3120000000001" id="L-N_Received_Notify_K2Node_CallFunction_23_InText-N_Received_Notify_K2Node_CallFunction_23_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_23_InText LE-N_Received_Notify_K2Node_CallFunction_23_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M2768.328475601196,377C2801.454446772442,378.0823844868947,2844.964412772543,380.05200176191204,2876.375,381C2881.375,381,2886.375,381,2891.375,381C2927.375,381,2963.375,409.519,2999.375,438.039L2738.3748995208744,438.039" id="L-N_Received_Notify_K2Node_CallFunction_23_bPrintToScreen-N_Received_Notify_K2Node_CallFunction_23_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_23_bPrintToScreen LE-N_Received_Notify_K2Node_CallFunction_23_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M2764.171365859985,415C2799.4258114081995,417.290662200474,2845.58854370597,421.338934420948,2876.375,423C2881.375,423,2886.375,423,2891.375,423C2927.375,423,2963.375,431.883,2999.375,440.766L2859.374899520875,385.01592443084724" id="L-N_Received_Notify_K2Node_CallFunction_23_bPrintToLog-N_Received_Notify_K2Node_CallFunction_23_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_23_bPrintToLog LE-N_Received_Notify_K2Node_CallFunction_23_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M2861.375,453C2866.375,453.2902199074074,2871.375,454.0925925925926,2876.375,455.3046875C2881.375,456.8240740740741,2886.375,458.54832175925924,2891.375,460.375C2927.375,467.75,2963.375,455.711,2999.375,443.672L2859.374899520875,387.9219244308472" id="L-N_Received_Notify_K2Node_CallFunction_23_TextColor-N_Received_Notify_K2Node_CallFunction_23_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_23_TextColor LE-N_Received_Notify_K2Node_CallFunction_23_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M2764.171365859985,491C2800.0369526070576,496.36873953236096,2847.6678199679204,505.85687754909696,2876.375,509.75C2881.375,509.75,2886.375,509.75,2891.375,509.75C2927.375,509.75,2963.375,478.075,2999.375,446.399L2859.374899520875,390.6489244308473" id="L-N_Received_Notify_K2Node_CallFunction_23_Duration-N_Received_Notify_K2Node_CallFunction_23_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_23_Duration LE-N_Received_Notify_K2Node_CallFunction_23_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M2737.773,486.49992443084716L2737.773,542.25C2783.974,542.25,2830.174,542.25,2876.375,542.25C2881.375,542.25,2886.375,542.25,2891.375,542.25C2927.375,542.25,2963.375,495.38,2999.375,448.51L2859.374899520875,392.7599244308474" id="L-N_Received_Notify_K2Node_CallFunction_23_anchor_in-N_Received_Notify_K2Node_CallFunction_23_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_23_anchor_in LE-N_Received_Notify_K2Node_CallFunction_23_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M3421.688,1243.75C3456.458,1243.75,3491.229,1243.75,3526,1243.75C3531.156,1243.75,3536.313,1252,3541.469,1260.25L3392.15644255066,1258.7499950408937" id="L-N_Received_Notify_K2Node_VariableSet_0_Phys_Mat-N_Received_Notify_K2Node_VariableSet_0_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableSet_0_Phys_Mat LE-N_Received_Notify_K2Node_VariableSet_0_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M3346.6880000000006,1239.2499950408937L3346.688,1327.75C3406.458,1327.75,3466.229,1327.75,3526,1327.75C3532.563,1327.75,3539.125,1301.5,3545.688,1275.25L3396.3754425506595,1258.7499950408937" id="L-N_Received_Notify_K2Node_VariableSet_0_anchor_in-N_Received_Notify_K2Node_VariableSet_0_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableSet_0_anchor_in LE-N_Received_Notify_K2Node_VariableSet_0_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M2508.195,175C2523.521,175,2538.846,175,2554.172,175C2559.172,175,2564.172,175,2569.172,175C2574.172,175,2579.172,175,2584.172,175C2605.372,171.0567822614632,2626.573,164.8184692414118,2647.773,163.142" id="L-N_Received_Notify_K2Node_PromotableOperator_5_A-N_Received_Notify_K2Node_PromotableOperator_5_ReturnValue-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_PromotableOperator_5_A LE-N_Received_Notify_K2Node_PromotableOperator_5_ReturnValue" style="stroke-width: 0;fill:none;"/>
+        <path d="M2508.195,213C2523.521,213.64962584348237,2538.846,215.065089781687,2554.172,216.4466495785247C2559.172,216.75582576611728,2564.172,216.948463064821,2569.172,217C2574.172,217,2579.172,217,2584.172,217C2605.372,213.0567822614632,2626.573,197.6764692414118,2647.773,186.858" id="L-N_Received_Notify_K2Node_PromotableOperator_5_B-N_Received_Notify_K2Node_PromotableOperator_5_ReturnValue-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_PromotableOperator_5_B LE-N_Received_Notify_K2Node_PromotableOperator_5_ReturnValue" style="stroke-width: 0;fill:none;"/>
+        <path d="M3781,952.5C3786,952.5,3791,952.5,3796,952.5C3801,952.5,3806,957.333,3811,962.167L3750.999858703614,962.1670000000001" id="L-N_Received_Notify_K2Node_VariableSet_1_Up_vector-N_Received_Notify_K2Node_VariableSet_1_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableSet_1_Up_vector LE-N_Received_Notify_K2Node_VariableSet_1_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M3706,947.9999235916139L3706,1267.75C3736,1267.75,3766,1267.75,3796,1267.75C3803.313,1267.75,3810.626,1121.125,3817.939,974.5L3757.9388587036137,967.4999235916139" id="L-N_Received_Notify_K2Node_VariableSet_1_anchor_in-N_Received_Notify_K2Node_VariableSet_1_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableSet_1_anchor_in LE-N_Received_Notify_K2Node_VariableSet_1_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M3332.3755662994386,104C3422.3625390399648,104,3491.229,104,3526,104C3533.176,104,3540.352,187,3547.527,270L3487.5268762512214,270" id="L-N_Received_Notify_K2Node_CallFunction_19_LineStart-N_Received_Notify_K2Node_CallFunction_19_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_19_LineStart LE-N_Received_Notify_K2Node_CallFunction_19_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M3332.3755662994386,142C3456.458,191.15048387987497,3491.229,221.5,3526,221.5C3532.496,221.5,3538.991,245.75,3545.487,270L3485.4868762512206,270" id="L-N_Received_Notify_K2Node_CallFunction_19_LineEnd-N_Received_Notify_K2Node_CallFunction_19_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_19_LineEnd LE-N_Received_Notify_K2Node_CallFunction_19_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M3511,180C3516,197.7133480324259,3521,233.36647493192717,3526,260.72900490183923C3531,263.5,3536,268.167,3541,272.833L3480.9998762512214,271.0000329971315" id="L-N_Received_Notify_K2Node_CallFunction_19_LineColor-N_Received_Notify_K2Node_CallFunction_19_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_19_LineColor LE-N_Received_Notify_K2Node_CallFunction_19_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M3332.3755662994386,218C3456.458,272.09644452187496,3491.229,305.5,3526,305.5C3531.491,305.5,3536.982,295.25,3542.473,285L3482.4728762512214,271.0000329971315" id="L-N_Received_Notify_K2Node_CallFunction_19_Duration-N_Received_Notify_K2Node_CallFunction_19_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_19_Duration LE-N_Received_Notify_K2Node_CallFunction_19_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M3340.453655960083,256C3459.151,309.5483906284657,3492.576,347.5,3526,347.5C3532.696,347.5,3539.393,316.25,3546.089,285L3486.0888762512204,271.0000329971315" id="L-N_Received_Notify_K2Node_CallFunction_19_DepthPriority-N_Received_Notify_K2Node_CallFunction_19_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_19_DepthPriority LE-N_Received_Notify_K2Node_CallFunction_19_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M3346.6880000000006,251.50003299713148L3346.688,442C3406.458,442,3466.229,442,3526,442C3533.158,442,3540.316,363.5,3547.474,285L3487.473876251221,271.0000329971315" id="L-N_Received_Notify_K2Node_CallFunction_19_anchor_in-N_Received_Notify_K2Node_CallFunction_19_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_CallFunction_19_anchor_in LE-N_Received_Notify_K2Node_CallFunction_19_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M4051,602.25C4056,602.25,4061,602.25,4066,602.25C4073.075,602.25,4080.149,664.625,4087.224,727L4027.224156021119,617.2499551010133" id="L-N_Received_Notify_K2Node_VariableSet_3_Impact_Point-N_Received_Notify_K2Node_VariableSet_3_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableSet_3_Impact_Point LE-N_Received_Notify_K2Node_VariableSet_3_anchor_out" style="stroke-width: 0;fill:none;"/>
+        <path d="M3976.000000000001,597.7499551010135L3976,967C4006,967,4036,967,4066,967C4073.258,967,4080.516,854.5,4087.774,742L4027.774156021119,617.2499551010133" id="L-N_Received_Notify_K2Node_VariableSet_3_anchor_in-N_Received_Notify_K2Node_VariableSet_3_anchor_out-0" class="edge-thickness-thick edge-pattern-solid flowchart-link LS-N_Received_Notify_K2Node_VariableSet_3_anchor_in LE-N_Received_Notify_K2Node_VariableSet_3_anchor_out" style="stroke-width: 0;fill:none;"/>
+      </g>
+      <g class="edgeLabels">
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="edgeLabel">
+          <g class="label" transform="translate(0, 0)">
+            <foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject>
+          </g>
+        </g>
+      </g>
+      <g class="nodes">
+        <g class="node default pin_vector flowchart-label" id="flowchart-N_Received_Notify_K2Node_VariableSet_3_Impact_Point-68" data-node="true" data-id="N_Received_Notify_K2Node_VariableSet_3_Impact_Point" transform="translate(3968.5, 602.25)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● Impact Point</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_vector flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_19_LineStart-61" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_19_LineStart" transform="translate(3249.8750662994385, 104)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● Line Start</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_vector flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_19_LineEnd-62" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_19_LineEnd" transform="translate(3249.8750662994385, 142)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● Line End</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_other flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_19_LineColor-63" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_19_LineColor" transform="translate(3339.1875, 180)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-171.8125" y="-17" width="343.625" height="34"/>
+          <g class="label" style="" transform="translate(-164.3125, -9.5)">
+            <rect/>
+            <foreignObject width="328.625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left"><span style="border:1px solid currentColor;border-radius:3px;padding:0 5px">(R=1,G=0.008006,B=0.78577,A=1)</span> Line Color</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_float flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_19_Duration-64" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_19_Duration" transform="translate(3249.8750662994385, 218)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left"><span style="border:1px solid currentColor;border-radius:3px;padding:0 5px">0.5</span> Duration</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_other flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_19_DepthPriority-65" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_19_DepthPriority" transform="translate(3253.914155960083, 256)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-86.5390625" y="-17" width="173.078125" height="34"/>
+          <g class="label" style="" transform="translate(-79.0390625, -9.5)">
+            <rect/>
+            <foreignObject width="158.078125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left"><span style="border:1px solid currentColor;border-radius:3px;padding:0 5px">World</span> Depth Priority</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_vector flowchart-label" id="flowchart-N_Received_Notify_K2Node_VariableSet_1_Up_vector-58" data-node="true" data-id="N_Received_Notify_K2Node_VariableSet_1_Up_vector" transform="translate(3698.5, 952.5)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● Up vector</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_vector flowchart-label" id="flowchart-N_Received_Notify_K2Node_PromotableOperator_5_A-53" data-node="true" data-id="N_Received_Notify_K2Node_PromotableOperator_5_A" transform="translate(2425.6953125, 175)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● A</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_vector flowchart-label" id="flowchart-N_Received_Notify_K2Node_PromotableOperator_5_B-54" data-node="true" data-id="N_Received_Notify_K2Node_PromotableOperator_5_B" transform="translate(2425.6953125, 213)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left"><span style="border:1px solid currentColor;border-radius:3px;padding:0 5px">100,100,100</span> B</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_vector flowchart-label" id="flowchart-N_Received_Notify_K2Node_PromotableOperator_5_ReturnValue-55" data-node="true" data-id="N_Received_Notify_K2Node_PromotableOperator_5_ReturnValue" transform="translate(2730.2734375, 175)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:right">Return Value ●</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_object flowchart-label" id="flowchart-N_Received_Notify_K2Node_VariableSet_0_Phys_Mat-52" data-node="true" data-id="N_Received_Notify_K2Node_VariableSet_0_Phys_Mat" transform="translate(3339.1875, 1243.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● Phys Mat</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_text flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_23_InText-45" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_23_InText" transform="translate(2681.671803359985, 339)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● In Text</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_boolean flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_23_bPrintToScreen-46" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_23_bPrintToScreen" transform="translate(2683.749913101196, 377)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-84.578125" y="-17" width="169.15625" height="34"/>
+          <g class="label" style="" transform="translate(-77.078125, -9.5)">
+            <rect/>
+            <foreignObject width="154.15625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left"><span style="border:1px solid currentColor;border-radius:3px;padding:0 5px">true</span> Print To Screen</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_boolean flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_23_bPrintToLog-47" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_23_bPrintToLog" transform="translate(2681.671803359985, 415)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left"><span style="border:1px solid currentColor;border-radius:3px;padding:0 5px">true</span> Print To Log</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_other flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_23_TextColor-48" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_23_TextColor" transform="translate(2730.2734375, 453)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-131.1015625" y="-17" width="262.203125" height="34"/>
+          <g class="label" style="" transform="translate(-123.6015625, -9.5)">
+            <rect/>
+            <foreignObject width="247.203125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left"><span style="border:1px solid currentColor;border-radius:3px;padding:0 5px">(R=0,G=0.66,B=1,A=1)</span> Text Color</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_float flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_23_Duration-49" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_23_Duration" transform="translate(2681.671803359985, 491)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left"><span style="border:1px solid currentColor;border-radius:3px;padding:0 5px">2</span> Duration</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_object flowchart-label" id="flowchart-N_Received_Notify_K2Node_MacroInstance_1_InputObject-41" data-node="true" data-id="N_Received_Notify_K2Node_MacroInstance_1_InputObject" transform="translate(2730.2734375, 1303.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● Input Object</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_exec flowchart-label" id="flowchart-N_Received_Notify_K2Node_MacroInstance_1_Is_Valid-42" data-node="true" data-id="N_Received_Notify_K2Node_MacroInstance_1_Is_Valid" transform="translate(3006.875, 1303.75)">
+          <polygon points="-18,0 165,0 165,-36 -18,-36 0,-18" class="label-container" transform="translate(-82.5,18)" style=""/>
+          <g class="label" style="" transform="translate(-75, -10.5)">
+            <rect/>
+            <foreignObject width="150" height="21"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:right">Is Valid ▶</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_name flowchart-label" id="flowchart-N_Received_Notify_K2Node_FormatText_0_A-37" data-node="true" data-id="N_Received_Notify_K2Node_FormatText_0_A" transform="translate(2166.71875, 318)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● A</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_string flowchart-label" id="flowchart-N_Received_Notify_K2Node_FormatText_0_B-38" data-node="true" data-id="N_Received_Notify_K2Node_FormatText_0_B" transform="translate(2166.71875, 356)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● B</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_text flowchart-label" id="flowchart-N_Received_Notify_K2Node_FormatText_0_Result-39" data-node="true" data-id="N_Received_Notify_K2Node_FormatText_0_Result" transform="translate(2425.6953125, 318)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:right">Result ●</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_exec flowchart-label" id="flowchart-N_Received_Notify_K2Node_MacroInstance_0_Exec-29" data-node="true" data-id="N_Received_Notify_K2Node_MacroInstance_0_Exec" transform="translate(2166.71875, 582.25)">
+          <polygon points="-18,0 165,0 165,-36 -18,-36 0,-18" class="label-container" transform="translate(-82.5,18)" style=""/>
+          <g class="label" style="" transform="translate(-75, -10.5)">
+            <rect/>
+            <foreignObject width="150" height="21"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">▶ Exec</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_exec flowchart-label" id="flowchart-N_Received_Notify_K2Node_MacroInstance_0_Break-30" data-node="true" data-id="N_Received_Notify_K2Node_MacroInstance_0_Break" transform="translate(2166.71875, 542.25)">
+          <polygon points="-18,0 165,0 165,-36 -18,-36 0,-18" class="label-container" transform="translate(-82.5,18)" style=""/>
+          <g class="label" style="" transform="translate(-75, -10.5)">
+            <rect/>
+            <foreignObject width="150" height="21"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">▶ Break</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_other flowchart-label" id="flowchart-N_Received_Notify_K2Node_MacroInstance_0_Array-31" data-node="true" data-id="N_Received_Notify_K2Node_MacroInstance_0_Array" transform="translate(2148.718856124878, 622.25)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● Array</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_exec flowchart-label" id="flowchart-N_Received_Notify_K2Node_MacroInstance_0_LoopBody-32" data-node="true" data-id="N_Received_Notify_K2Node_MacroInstance_0_LoopBody" transform="translate(2456.6718996810914, 542.25)">
+          <polygon points="-18,0 165,0 165,-36 -18,-36 0,-18" class="label-container" transform="translate(-82.5,18)" style=""/>
+          <g class="label" style="" transform="translate(-75, -10.5)">
+            <rect/>
+            <foreignObject width="150" height="21"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:right">Loop Body ▶</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_exec flowchart-label" id="flowchart-N_Received_Notify_K2Node_MacroInstance_0_Completed-33" data-node="true" data-id="N_Received_Notify_K2Node_MacroInstance_0_Completed" transform="translate(2456.6718996810914, 582.25)">
+          <polygon points="-18,0 165,0 165,-36 -18,-36 0,-18" class="label-container" transform="translate(-82.5,18)" style=""/>
+          <g class="label" style="" transform="translate(-75, -10.5)">
+            <rect/>
+            <foreignObject width="150" height="21"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:right">Completed ▶</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_vector flowchart-label" id="flowchart-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_ImpactPoint-34" data-node="true" data-id="N_Received_Notify_K2Node_MacroInstance_0_Array_Element_ImpactPoint" transform="translate(2425.6953125, 622.25)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-113.4765625" y="-17" width="226.953125" height="34"/>
+          <g class="label" style="" transform="translate(-105.9765625, -9.5)">
+            <rect/>
+            <foreignObject width="211.953125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:right">Array Element Impact Point ●</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_vector flowchart-label" id="flowchart-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_Normal-35" data-node="true" data-id="N_Received_Notify_K2Node_MacroInstance_0_Array_Element_Normal" transform="translate(2445.257724494934, 662.25)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-93.9140625" y="-17" width="187.828125" height="34"/>
+          <g class="label" style="" transform="translate(-86.4140625, -9.5)">
+            <rect/>
+            <foreignObject width="172.828125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:right">Array Element Normal ●</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_object flowchart-label" id="flowchart-N_Received_Notify_K2Node_MacroInstance_0_Array_Element_PhysMat-36" data-node="true" data-id="N_Received_Notify_K2Node_MacroInstance_0_Array_Element_PhysMat" transform="translate(2439.867233772278, 702.25)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-99.3046875" y="-17" width="198.609375" height="34"/>
+          <g class="label" style="" transform="translate(-91.8046875, -9.5)">
+            <rect/>
+            <foreignObject width="183.609375" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:right">Array Element Phys Mat ●</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_vector flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_9_Start-18" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_9_Start" transform="translate(1645.7499518585205, 655.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● Start</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_vector flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_9_End-19" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_9_End" transform="translate(1645.7499518585205, 693.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● End</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_float flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_9_Radius-20" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_9_Radius" transform="translate(1645.7499518585205, 731.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● Radius</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_other flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_9_ObjectTypes-21" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_9_ObjectTypes" transform="translate(1645.7499518585205, 769.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● Object Types</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_boolean flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_9_bTraceComplex-22" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_9_bTraceComplex" transform="translate(1646.7499634552003, 807.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-83.5" y="-17" width="167" height="34"/>
+          <g class="label" style="" transform="translate(-76, -9.5)">
+            <rect/>
+            <foreignObject width="152" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left"><span style="border:1px solid currentColor;border-radius:3px;padding:0 5px">true</span> Trace Complex</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_other flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_9_DrawDebugType-23" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_9_DrawDebugType" transform="translate(1682.9218249893188, 845.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-119.671875" y="-17" width="239.34375" height="34"/>
+          <g class="label" style="" transform="translate(-112.171875, -9.5)">
+            <rect/>
+            <foreignObject width="224.34375" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left"><span style="border:1px solid currentColor;border-radius:3px;padding:0 5px">ForDuration</span> Draw Debug Type</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_boolean flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_9_bIgnoreSelf-24" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_9_bIgnoreSelf" transform="translate(1645.7499518585205, 883.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left"><span style="border:1px solid currentColor;border-radius:3px;padding:0 5px">true</span> Ignore Self</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_other flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_9_TraceColor-25" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_9_TraceColor" transform="translate(1687.234375, 921.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-123.984375" y="-17" width="247.96875" height="34"/>
+          <g class="label" style="" transform="translate(-116.484375, -9.5)">
+            <rect/>
+            <foreignObject width="232.96875" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left"><span style="border:1px solid currentColor;border-radius:3px;padding:0 5px">(R=1,G=0,B=0,A=1)</span> Trace Color</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_other flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_9_TraceHitColor-26" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_9_TraceHitColor" transform="translate(1645.7499518585205, 959.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● Trace Hit Color</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_float flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_9_DrawTime-27" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_9_DrawTime" transform="translate(1645.7499518585205, 997.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left"><span style="border:1px solid currentColor;border-radius:3px;padding:0 5px">0.5</span> Draw Time</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_other flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_9_OutHits-28" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_9_OutHits" transform="translate(1923.71875, 655.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:right">Out Hits ●</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_vector flowchart-label" id="flowchart-N_Received_Notify_K2Node_VariableSet_2_Up_vector-15" data-node="true" data-id="N_Received_Notify_K2Node_VariableSet_2_Up_vector" transform="translate(1174.3203125, 1151.5)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● Up vector</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_vector flowchart-label" id="flowchart-N_Received_Notify_K2Node_VariableSet_4_Impact_Point-12" data-node="true" data-id="N_Received_Notify_K2Node_VariableSet_4_Impact_Point" transform="translate(731, 1222.5)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● Impact Point</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_other flowchart-label" id="flowchart-N_Received_Notify_K2Node_MakeArray_1__0_-7" data-node="true" data-id="N_Received_Notify_K2Node_MakeArray_1__0_" transform="translate(1174.3203125, 842.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-92.140625" y="-17" width="184.28125" height="34"/>
+          <g class="label" style="" transform="translate(-84.640625, -9.5)">
+            <rect/>
+            <foreignObject width="169.28125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left"><span style="border:1px solid currentColor;border-radius:3px;padding:0 5px">ObjectTypeQuery1</span> [0]</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_other flowchart-label" id="flowchart-N_Received_Notify_K2Node_MakeArray_1__1_-8" data-node="true" data-id="N_Received_Notify_K2Node_MakeArray_1__1_" transform="translate(1174.3203125, 880.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-92.140625" y="-17" width="184.28125" height="34"/>
+          <g class="label" style="" transform="translate(-84.640625, -9.5)">
+            <rect/>
+            <foreignObject width="169.28125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left"><span style="border:1px solid currentColor;border-radius:3px;padding:0 5px">ObjectTypeQuery2</span> [1]</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_other flowchart-label" id="flowchart-N_Received_Notify_K2Node_MakeArray_1_Array-9" data-node="true" data-id="N_Received_Notify_K2Node_MakeArray_1_Array" transform="translate(1409.9765625, 842.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:right">Array ●</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_object_dim flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_1_self-3" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_1_self" transform="translate(1144.437488002777, 634.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● Target</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_name_dim flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_1_InSocketName-4" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_1_InSocketName" transform="translate(1144.437488002777, 672.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-82.5" y="-17" width="165" height="34"/>
+          <g class="label" style="" transform="translate(-75, -9.5)">
+            <rect/>
+            <foreignObject width="150" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left">● In Socket Name</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_other_dim flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_1_TransformSpace-5" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_1_TransformSpace" transform="translate(1174.3203125, 710.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-112.3828125" y="-17" width="224.765625" height="34"/>
+          <g class="label" style="" transform="translate(-104.8828125, -9.5)">
+            <rect/>
+            <foreignObject width="209.765625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:left"><span style="border:1px solid currentColor;border-radius:3px;padding:0 5px">RTS_World</span> Transform Space</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_vector_dim flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_1_ReturnValue_Location-6" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_1_ReturnValue_Location" transform="translate(1409.9765625, 634.75)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-93.2734375" y="-17" width="186.546875" height="34"/>
+          <g class="label" style="" transform="translate(-85.7734375, -9.5)">
+            <rect/>
+            <foreignObject width="171.546875" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:150px;text-align:right">Return Value Location ●</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default pin_object flowchart-label" id="flowchart-N_Received_Notify_K2Node_FunctionEntry_0_MeshComp-2" data-node="true" data-id="N_Received_Notify_K2Node_FunctionEntry_0_MeshComp" transform="translate(173.5, 936.25)">
+          <rect class="basic label-container" style="" rx="0" ry="0" x="-113.5" y="-17" width="227" height="34"/>
+          <g class="label" style="" transform="translate(-106, -9.5)">
+            <rect/>
+            <foreignObject width="212" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="nodeLabel"><span style="display:inline-block;min-width:212px;text-align:right">Mesh Comp ●</span></span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_15-70" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_15" transform="translate(378.046875, 1187)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-object);stroke-width:2px;rx:16px;ry:16px;" rx="0" ry="0" x="-46.046875" y="-17" width="92.09375" height="34"/>
+          <g class="label" style="color:var(--pin-object);" transform="translate(-38.546875, -9.5)">
+            <rect/>
+            <foreignObject width="77.09375" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-object); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-object);">Get Owner</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="flowchart-N_Received_Notify_K2Node_VariableGet_1-75" data-node="true" data-id="N_Received_Notify_K2Node_VariableGet_1" transform="translate(922.71875, 676.75)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-name-dim);stroke-width:2px;stroke-dasharray:5 5;rx:16px;ry:16px;" rx="0" ry="0" x="-69.25" y="-17" width="138.5" height="34"/>
+          <g class="label" style="color:var(--pin-name-dim);" transform="translate(-61.75, -9.5)">
+            <rect/>
+            <foreignObject width="123.5" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-name-dim); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-name-dim);">Get Socket Name</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_22-78" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_22" transform="translate(528.796875, 1222.5)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-vector);stroke-width:2px;rx:16px;ry:16px;" rx="0" ry="0" x="-74.703125" y="-17" width="149.40625" height="34"/>
+          <g class="label" style="color:var(--pin-vector);" transform="translate(-67.203125, -9.5)">
+            <rect/>
+            <foreignObject width="134.40625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-vector); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-vector);">Get Actor Location</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_16-80" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_16" transform="translate(922.71875, 1151.5)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-vector);stroke-width:2px;rx:16px;ry:16px;" rx="0" ry="0" x="-79.21875" y="-17" width="158.4375" height="34"/>
+          <g class="label" style="color:var(--pin-vector);" transform="translate(-71.71875, -9.5)">
+            <rect/>
+            <foreignObject width="143.4375" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-vector); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-vector);">Get Actor Up Vector</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="flowchart-N_Received_Notify_K2Node_VariableGet_2-95" data-node="true" data-id="N_Received_Notify_K2Node_VariableGet_2" transform="translate(1174.3203125, 1078.75)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-other-dim);stroke-width:2px;stroke-dasharray:5 5;rx:16px;ry:16px;" rx="0" ry="0" x="-65.859375" y="-17" width="131.71875" height="34"/>
+          <g class="label" style="color:var(--pin-other-dim);" transform="translate(-58.359375, -9.5)">
+            <rect/>
+            <foreignObject width="116.71875" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-other-dim); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-other-dim);">Get Notify Color</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_10-96" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_10" transform="translate(1409.9765625, 1078.75)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-other-dim);stroke-width:2px;stroke-dasharray:5 5;rx:16px;ry:16px;" rx="0" ry="0" x="-86.1953125" y="-17" width="172.390625" height="34"/>
+          <g class="label" style="color:var(--pin-other-dim);" transform="translate(-78.6953125, -9.5)">
+            <rect/>
+            <foreignObject width="157.390625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-other-dim); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-other-dim);">To LinearColor (Color)</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="flowchart-N_Received_Notify_K2Node_VariableGet_0-97" data-node="true" data-id="N_Received_Notify_K2Node_VariableGet_0" transform="translate(1409.9765625, 780.75)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-float);stroke-width:2px;rx:16px;ry:16px;" rx="0" ry="0" x="-72.984375" y="-17" width="145.96875" height="34"/>
+          <g class="label" style="color:var(--pin-float);" transform="translate(-65.484375, -9.5)">
+            <rect/>
+            <foreignObject width="130.96875" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-float); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-float);">Get Sphere Radius</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="flowchart-N_Received_Notify_K2Node_VariableGet_4-105" data-node="true" data-id="N_Received_Notify_K2Node_VariableGet_4" transform="translate(1687.234375, 360)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-object);stroke-width:2px;rx:16px;ry:16px;" rx="0" ry="0" x="-53.9609375" y="-17" width="107.921875" height="34"/>
+          <g class="label" style="color:var(--pin-object);" transform="translate(-46.4609375, -9.5)">
+            <rect/>
+            <foreignObject width="92.921875" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-object); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-object);">Get Phys Mat</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="flowchart-N_Received_Notify_K2Node_CallFunction_17-106" data-node="true" data-id="N_Received_Notify_K2Node_CallFunction_17" transform="translate(1923.71875, 360)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-string);stroke-width:2px;rx:16px;ry:16px;" rx="0" ry="0" x="-70.96875" y="-17" width="141.9375" height="34"/>
+          <g class="label" style="color:var(--pin-string);" transform="translate(-63.46875, -9.5)">
+            <rect/>
+            <foreignObject width="126.9375" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-string); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-string);">Get Display Name</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="flowchart-N_Received_Notify_K2Node_VariableGet_5-107" data-node="true" data-id="N_Received_Notify_K2Node_VariableGet_5" transform="translate(1923.71875, 318)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-name);stroke-width:2px;rx:16px;ry:16px;" rx="0" ry="0" x="-69.25" y="-17" width="138.5" height="34"/>
+          <g class="label" style="color:var(--pin-name);" transform="translate(-61.75, -9.5)">
+            <rect/>
+            <foreignObject width="123.5" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-name); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-name);">Get Socket Name</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="flowchart-N_Received_Notify_K2Node_VariableGet_7-127" data-node="true" data-id="N_Received_Notify_K2Node_VariableGet_7" transform="translate(2166.71875, 175)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-vector);stroke-width:2px;rx:16px;ry:16px;" rx="0" ry="0" x="-57.7265625" y="-17" width="115.453125" height="34"/>
+          <g class="label" style="color:var(--pin-vector);" transform="translate(-50.2265625, -9.5)">
+            <rect/>
+            <foreignObject width="100.453125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-vector); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-vector);">Get Up vector</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="flowchart-N_Received_Notify_K2Node_PromotableOperator_6-134" data-node="true" data-id="N_Received_Notify_K2Node_PromotableOperator_6" transform="translate(3006.875, 221.5)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-vector);stroke-width:2px;" rx="0" ry="0" x="-62.1484375" y="-17" width="124.296875" height="34"/>
+          <g class="label" style="color:var(--pin-vector);" transform="translate(-54.6484375, -9.5)">
+            <rect/>
+            <foreignObject width="109.296875" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-vector); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-vector);">vector + vector</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="flowchart-N_Received_Notify_K2Node_VariableGet_6-135" data-node="true" data-id="N_Received_Notify_K2Node_VariableGet_6" transform="translate(2730.2734375, 104)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--pin-vector);stroke-width:2px;rx:16px;ry:16px;" rx="0" ry="0" x="-68.1328125" y="-17" width="136.265625" height="34"/>
+          <g class="label" style="color:var(--pin-vector);" transform="translate(-60.6328125, -9.5)">
+            <rect/>
+            <foreignObject width="121.265625" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--pin-vector); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--pin-vector);">Get Impact Point</span></div></foreignObject>
+          </g>
+        </g>
+        <g class="node default default flowchart-label" id="flowchart-N_Received_Notify_K2Node_FunctionResult_0-144" data-node="true" data-id="N_Received_Notify_K2Node_FunctionResult_0" transform="translate(3698.5, 277.5)">
+          <rect class="basic label-container" style="fill:var(--node-body);stroke:var(--border-function-dim);stroke-width:2px;stroke-dasharray:5 5;" rx="0" ry="0" x="-51.8515625" y="-17" width="103.703125" height="34"/>
+          <g class="label" style="color:var(--text-dim);" transform="translate(-44.3515625, -9.5)">
+            <rect/>
+            <foreignObject width="88.703125" height="19"><div xmlns="http://www.w3.org/1999/xhtml" style="color: var(--text-dim); display: inline-block; white-space: nowrap;"><span class="nodeLabel" style="color:var(--text-dim);">Return Node</span></div></foreignObject>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <rect style="fill: none; stroke: var(--border-setter); stroke-width: 3px; pointer-events: none;" rx="0" ry="0" x="3886.0001317596434" y="558.2500174140929" width="165.00002426147512" height="60.99993768692036" transform="matrix(1,0,0,1,0,0)"/>
+  <rect style="fill: none; stroke: var(--border-call); stroke-width: 2px; pointer-events: none;" rx="0" ry="0" x="3167.374984588623" y="60.00001094818106" width="343.6248916625973" height="213.00002204895043" transform="matrix(1,0,0,1,0,0)"/>
+  <rect style="fill: none; stroke: var(--border-setter); stroke-width: 3px; pointer-events: none;" rx="0" ry="0" x="3616.0001493072514" y="908.4999319839474" width="164.99970939636205" height="60.999991607666516" transform="matrix(1,0,0,1,0,0)"/>
+  <rect style="fill: none; stroke: var(--pin-vector); stroke-width: 2px; pointer-events: none;" rx="0" ry="0" x="2343.1952443313603" y="130.99997474670408" width="469.57833591461167" height="99.0000318908692" transform="matrix(1,0,0,1,0,0)"/>
+  <rect style="fill: none; stroke: var(--border-setter); stroke-width: 3px; pointer-events: none;" rx="0" ry="0" x="3256.6874182891843" y="1199.7500179672243" width="165.00002426147512" height="60.99997707366947" transform="matrix(1,0,0,1,0,0)"/>
+  <rect style="fill: none; stroke: var(--border-call); stroke-width: 2px; pointer-events: none;" rx="0" ry="0" x="2599.1719218444823" y="294.9999620819092" width="262.20297767639204" height="212.99996234893797" transform="matrix(1,0,0,1,0,0)"/>
+  <rect style="fill: none; stroke: var(--border-function); stroke-width: 2px; pointer-events: none;" rx="0" ry="0" x="2647.773555984497" y="1258.7499402999874" width="441.60146865844763" height="63.00013240814269" transform="matrix(1,0,0,1,0,0)"/>
+  <rect style="fill: none; stroke: var(--border-function); stroke-width: 2px; pointer-events: none;" rx="0" ry="0" x="2084.218689460754" y="273.9999694633484" width="423.9765791320806" height="99.00004245758055" transform="matrix(1,0,0,1,0,0)"/>
+  <rect style="fill: none; stroke: var(--border-function); stroke-width: 2px; pointer-events: none;" rx="0" ry="0" x="2066.2187955856325" y="497.2499985313416" width="472.9530601882934" height="222.0000142097474" transform="matrix(1,0,0,1,0,0)"/>
+  <rect style="fill: none; stroke: var(--border-call); stroke-width: 2px; pointer-events: none;" rx="0" ry="0" x="1563.2499591064454" y="611.7500679397581" width="442.96877040863046" height="402.9999081039432" transform="matrix(1,0,0,1,0,0)"/>
+  <rect style="fill: none; stroke: var(--border-setter); stroke-width: 3px; pointer-events: none;" rx="0" ry="0" x="1091.82029504776" y="1107.4999857330322" width="165.00002426147466" height="61.000041542053395" transform="matrix(1,0,0,1,0,0)"/>
+  <rect style="fill: none; stroke: var(--border-setter); stroke-width: 3px; pointer-events: none;" rx="0" ry="0" x="648.5000170993806" y="1178.4999495315549" width="164.99998490333564" height="61.00011394500757" transform="matrix(1,0,0,1,0,0)"/>
+  <rect style="fill: none; stroke: var(--border-function); stroke-width: 2px; pointer-events: none;" rx="0" ry="0" x="1082.1796763229372" y="798.7500513839723" width="410.29694946289055" height="98.99998474121094" transform="matrix(1,0,0,1,0,0)"/>
+  <rect style="fill: none; stroke: var(--border-call-dim); stroke-width: 2px; stroke-dasharray: 5, 5; pointer-events: none;" rx="0" ry="0" x="1061.937470550537" y="590.7499958801268" width="441.3125799179079" height="136.99995800018337" transform="matrix(1,0,0,1,0,0)"/>
+  <rect style="fill: none; stroke: var(--border-function); stroke-width: 2px; pointer-events: none;" rx="0" ry="0" x="60.00000141143801" y="892.2500287628172" width="226.99999545097353" height="61.00002124786397" transform="matrix(1,0,0,1,0,0)"/>
+</svg>
