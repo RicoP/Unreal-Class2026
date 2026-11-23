@@ -338,6 +338,23 @@ namespace
 		return Result;
 	}
 
+	/** A function's local variables: (local "Name" (type "Float") (default "1.0")) ... */
+	FString LocalsExpr(const UK2Node_FunctionEntry* Entry)
+	{
+		FString Result;
+		if (Entry)
+		{
+			for (const FBPVariableDescription& Local : Entry->LocalVariables)
+			{
+				Result += FString::Printf(TEXT(" (local %s (type %s) (default %s))"),
+					*Quote(Local.VarName.ToString()),
+					*Quote(UEdGraphSchema_K2::TypeToText(Local.VarType).ToString()),
+					*Quote(Local.DefaultValue));
+			}
+		}
+		return Result;
+	}
+
 	/**
 	 * The functions in the My Blueprint panel, by name, as the function's Details panel describes
 	 * them: whether it overrides a function of the parent class (then the rest is given), Pure,
@@ -371,7 +388,7 @@ namespace
 			const int32 Flags = Entry->GetExtraFlags();
 			const TCHAR* Access = (Flags & FUNC_Private) ? TEXT("Private") : ((Flags & FUNC_Protected) ? TEXT("Protected") : TEXT("Public"));
 			const FString Name = Graph->GetName();
-			Result.Add(Name, FString::Printf(TEXT("%s (override %s) (pure %s) (const %s) (access %s) (category %s) (inputs%s) (outputs%s)"),
+			Result.Add(Name, FString::Printf(TEXT("%s (override %s) (pure %s) (const %s) (access %s) (category %s) (inputs%s) (outputs%s) (locals%s)"),
 				*Quote(Name),
 				bOverride ? TEXT("true") : TEXT("false"),
 				(Flags & FUNC_BlueprintPure) ? TEXT("true") : TEXT("false"),
@@ -379,7 +396,8 @@ namespace
 				*Quote(Access),
 				*Quote(Entry->MetaData.Category.ToString()),
 				*ParamsExpr(Entry),
-				*ParamsExpr(ResultNode)));
+				*ParamsExpr(ResultNode),
+				*LocalsExpr(Entry)));
 			if (OutOrder)
 			{
 				OutOrder->Add(Name);

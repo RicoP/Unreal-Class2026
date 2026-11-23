@@ -515,7 +515,7 @@ def component_hierarchy(diff, diff_path):
 
 
 # Starting values a new variable has anyway; listing them adds nothing.
-TYPE_DEFAULTS = {"", "False", "0", "0.0", "0.000000", "None", "()"}
+TYPE_DEFAULTS = {"", "False", "0", "0.0", "0.000000", "None", "()", "0,0,0", "0.0,0.0,0.0", "0.000000,0.000000,0.000000", "0, 0, 0"}
 
 
 def variable_type(text):
@@ -577,6 +577,34 @@ def function_fields(entry):
     }
 
 
+def local_variables(entry):
+    """A function's local variables, in order: name -> (type, default value)."""
+    result = {}
+    for local in (first(entry, "locals") or ["locals"])[1:]:
+        if isinstance(local, list) and local[0] == "local":
+            result[local[1]] = (variable_type(first(local, "type")[1]), (first(local, "default") or ["default", ""])[1])
+    return result
+
+
+def local_rows(function, old, new):
+    """Rows for the local variables of a function (My Blueprint > the function > Local Variables):
+    added, removed and changed ones, like the variables of the Blueprint."""
+    rows = []
+    for name, (kind, default) in new.items():
+        if name not in old:
+            rows.append((f"{function} › Add Local Variable", None, f"{name} ({kind})"))
+            if default not in TYPE_DEFAULTS:
+                rows.append((f"{function} › Local Variable {name} › Default Value", None, default))
+        else:
+            old_kind, old_default = old[name]
+            if old_kind != kind:
+                rows.append((f"{function} › Local Variable {name} › Variable Type", old_kind, kind))
+            if old_default != default:
+                rows.append((f"{function} › Local Variable {name} › Default Value", old_default or "—", default or "—"))
+    rows += [(f"{function} › Remove Local Variable", name, None) for name in old if name not in new]
+    return rows
+
+
 # What a function is like right after "Add Function"; only what differs gets a row.
 NEW_FUNCTION = {"Inputs": "", "Outputs": "", "Pure": "False", "Const": "False", "Access Specifier": "Public"}
 
@@ -591,6 +619,7 @@ def function_rows(functions):
         overrides = (first(first(entry, "new") if entry[0] == "changed" else entry, "override") or [0, "false"])[1] == "true"
         if entry[0] == "added" and overrides:
             rows.append(("Override Function", None, words(name.replace("_", " "))))
+            rows += local_rows(name, {}, local_variables(entry))
         elif entry[0] == "added":
             rows.append(("Add Function", None, f"`{name}`"))  # as typed, not read as an enum value
             fields = function_fields(entry)
@@ -603,13 +632,16 @@ def function_rows(functions):
                     rows += [(f"{name} › Add {field[:-1]}", None, param) for param in value.split(", ") if param]
                 elif value != NEW_FUNCTION[field]:
                     rows.append((f"{name} › {field}", None, value))
+            rows += local_rows(name, {}, local_variables(entry))
         elif entry[0] == "removed":
             rows.append(("Remove Function", f"`{entry[1]}`", None))
         elif entry[0] == "renamed":
             rows.append(("Rename Function", f"`{entry[1]}`", f"`{entry[2]}`"))
-        elif entry[0] == "changed" and not overrides:
-            old, new = function_fields(first(entry, "old")), function_fields(first(entry, "new"))
-            rows += [(f"Function {name} › {field}", old[field], new[field]) for field in old if old[field] != new[field]]
+        elif entry[0] == "changed":
+            if not overrides:
+                old, new = function_fields(first(entry, "old")), function_fields(first(entry, "new"))
+                rows += [(f"Function {name} › {field}", old[field], new[field]) for field in old if old[field] != new[field]]
+            rows += local_rows(f"Function {name}", local_variables(first(entry, "old")), local_variables(first(entry, "new")))
     return rows
 
 

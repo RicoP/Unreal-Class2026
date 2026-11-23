@@ -363,6 +363,33 @@ namespace
 		ExportChanged({TEXT("/Game")});
 	}
 
+	/** Delete everything in Doc/commits/Transient (diffs, references, graphs, tables, doc.html), after asking. */
+	void ClearTransient()
+	{
+		const FString TransientFolder = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Doc/commits/Transient")));
+		IFileManager& FileManager = IFileManager::Get();
+		if (!FileManager.DirectoryExists(*TransientFolder))
+		{
+			Notify(LOCTEXT("NoTransient", "There is no Transient folder to clear."), true, FString());
+			return;
+		}
+		const FText Question = FText::Format(
+			LOCTEXT("ClearTransientQuestion", "Delete ALL files in\n\n{0}\n\nThis removes every exported diff, reference, diagram, table and the doc.html of the step in progress. It can't be undone."),
+			FText::FromString(TransientFolder));
+		if (FMessageDialog::Open(EAppMsgType::YesNo, EAppReturnType::No, Question, LOCTEXT("ClearTransientTitle", "Clear all transient files")) != EAppReturnType::Yes)
+		{
+			return;
+		}
+		if (FileManager.DeleteDirectory(*TransientFolder, false, true))
+		{
+			Notify(LOCTEXT("ClearedTransient", "Cleared Doc/commits/Transient."), true, FString());
+		}
+		else
+		{
+			Notify(LOCTEXT("ClearTransientFailed", "Could not delete everything in Doc/commits/Transient: a file may be open in another program."), false, FString());
+		}
+	}
+
 	/** Right-click on a folder in the Content Browser: the changed assets in it and below it. */
 	void ExportChangedInFolders(const FToolMenuContext& MenuContext)
 	{
@@ -438,6 +465,12 @@ private:
 			LOCTEXT("ExportChangedTooltip", "Export a diff (and full reference) of every project asset that revision control reports as new or modified. Levels are skipped."),
 			FSlateIcon(),
 			FUIAction(FExecuteAction::CreateStatic(&ExportChangedProject)));
+		ToolsSection.AddMenuEntry(
+			"ClearTransient",
+			LOCTEXT("ClearTransientLabel", "Clear ALL Transient files"),
+			LOCTEXT("ClearTransientTooltip", "Delete everything in Doc/commits/Transient, the documentation of the step in progress, after asking."),
+			FSlateIcon(),
+			FUIAction(FExecuteAction::CreateStatic(&ClearTransient)));
 		ToolsSection.AddMenuEntry(
 			"SaveLevelScreenshot",
 			LOCTEXT("SaveScreenshotLabel", "Save Level Screenshot"),

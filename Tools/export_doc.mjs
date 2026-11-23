@@ -283,7 +283,7 @@ function linkAssets(text) {
  * to their source.
  */
 function cellHtml(text, links = true) {
-  const cell = withColorSquares(html(text).replace(/`([^`]+)`/g, "<code>$1</code>"));
+  const cell = withColorSquares(withObjectTypeNames(html(text)).replace(/`([^`]+)`/g, "<code>$1</code>"));
   return links ? linkAssets(cell) : cell;
 }
 
@@ -381,7 +381,7 @@ function tableHtml({ title, tree, rows }) {
   const typeColumns = header.map((name) => /(^|\s)Type$/.test(name));
   const cells = (row, tag) => {
     // Rows that name types: a variable's type, and variables, inputs and outputs being added.
-    const typeRow = /(Variable Type|^Add (Variable|Input|Output)|› Add (Input|Output)|Inputs|Outputs)$/.test(row[0]);
+    const typeRow = /(Variable Type|^Add (Variable|Input|Output)|› Add (Input|Output|Local Variable)|Inputs|Outputs)$/.test(row[0]);
     return row
       .map((value, column) => {
         if (value === "—") {
@@ -628,6 +628,14 @@ function withoutIdleDefaultEvents(oldText, newText) {
   return [strip(oldText, before, dropOld), strip(newText, after, dropNew)];
 }
 
+// The engine's object types, as the editor's dropdowns name them: the enum value `ObjectTypeQuery1`
+// is "WorldStatic" there. Channels a project adds itself (ObjectTypeQuery7 and up) keep their value.
+const OBJECT_TYPES = ["WorldStatic", "WorldDynamic", "Pawn", "PhysicsBody", "Vehicle", "Destructible"];
+
+function withObjectTypeNames(text) {
+  return text.replace(/\bObjectTypeQuery(\d+)\b/g, (match, n) => OBJECT_TYPES[Number(n) - 1] ?? match);
+}
+
 function editorView(folder, svgFile) {
   const base = path.join(folder, "graph", "native", svgFile.replace(/\.svg$/i, ""));
   if (!existsSync(`${base}.txt`)) {
@@ -637,6 +645,8 @@ function editorView(folder, svgFile) {
   let current = readFileSync(`${base}.txt`, "utf8");
   let before = existsSync(`${base}.old.txt`) ? readFileSync(`${base}.old.txt`, "utf8") : null;
   [before, current] = withoutIdleDefaultEvents(before, current);
+  current = withObjectTypeNames(current);
+  before = before === null ? null : withObjectTypeNames(before);
   const previous = before !== null ? [area("previous", before)] : [];
   return [
     `      <div class="editor-view">`,
