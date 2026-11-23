@@ -116,3 +116,7 @@ body.step { padding: 24px 16px; }
 /* Asset names link to where the asset was downloaded (Doc/asset_sources.json). */
 .table a, .step .assets a { color: #7cc4ff; text-decoration: none; border-bottom: 1px dotted currentColor; }
 .table a:hover, .step .assets a:hover { border-bottom-style: solid; }
+
+/* A screen recording (animated WebP) at the top of a step. */
+.step .recording { margin: 0 0 16px; }
+.step .recording img { max-width: 100%; height: auto; border: 1px solid var(--border-neutral); }
