@@ -481,7 +481,7 @@ to rebuild it themselves.
   `export_doc.mjs` rewrites the four
   generated root files on every run (`--site` writes only them): `index.html` lists the
   finished steps in order, oldest first, as `Step 1`, `Step 2`, ... (the folder
-  dates only give the order and aren't shown) with their section headings;
+  dates only give the order and aren't shown) with their section headings, each linking to its place in the step (the section's id, when the page has one; older steps have none), under a `Contents` row of jump markers (`#step-N`) at the top;
   `doc.js` and `doc.css` are not generated; `palettes.css` is the colour
   palettes from `palette.json` (`body[data-palette=...]` variable rules for the
   page and its SVGs), which `doc.css` imports (`@import`), so every page and

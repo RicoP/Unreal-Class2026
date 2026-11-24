@@ -975,17 +975,33 @@ function writeSite() {
     text.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&amp;/g, "&");
   const entries = steps.map((folder, index) => {
     const page = readFileSync(path.join(commitsDir, folder, "doc.html"), "utf8");
-    const items = [...page.matchAll(/<h2>([\s\S]*?)<\/h2>/g)]
-      .map((m) => `          <li>${html(unescape(m[1].trim()))}</li>`)
+    // Each section links to its place in the step's page (the section's id, when the page has one).
+    const items = [...page.matchAll(/(?:<section(?: id="([^"]*)")?>\s*)?<h2>([\s\S]*?)<\/h2>/g)]
+      .map((m) => {
+        const text = html(unescape(m[2].trim()));
+        return `          <li>${m[1] ? `<a href="commits/${folder}/doc.html#${m[1]}">${text}</a>` : text}</li>`;
+      })
       .join("\n");
     const wip = folder === path.basename(transient) ? " (work in progress)" : "";
     return [
-      "      <article>",
+      `      <article id="step-${index + 1}">`,
       `        <h2><a href="commits/${folder}/doc.html">Step ${index + 1}</a>${wip}</h2>`,
       `        <ul>\n${items}\n        </ul>`,
       "      </article>",
     ].join("\n");
   });
+  // The contents list: a jump marker to every step.
+  const contents = [
+    '      <nav class="toc">',
+    "        <p>Contents</p>",
+    "        <ol>",
+    ...steps.map((folder, index) => {
+      const wip = folder === path.basename(transient) ? " (work in progress)" : "";
+      return `          <li><a href="#step-${index + 1}">Step ${index + 1}</a>${wip}</li>`;
+    }),
+    "        </ol>",
+    "      </nav>",
+  ].join("\n");
   const index = `<!doctype html>
 <html lang="en">
   <head>
@@ -997,6 +1013,7 @@ function writeSite() {
   <body class="index">
     <main>
       <h1>Unreal Class 2026</h1>
+${contents}
 ${entries.join("\n")}
     </main>
   </body>
