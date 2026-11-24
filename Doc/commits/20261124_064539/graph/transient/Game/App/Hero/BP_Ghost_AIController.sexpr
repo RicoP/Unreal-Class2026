@@ -1,0 +1,11 @@
+(blueprint-diff "/Game/App/Hero/BP_Ghost_AIController"
+  (old (revision "71f9f8de") (date "2026-11-16T08:09:37.000Z") (description "Doc tables: leave out unchanged and duplicate rows\n\n- A class default that reads the same before and after (the engine\n  reports some as removed, e.g. Hidden True -> True) gets no row.\n- A sub-object setting the property diff lists as \"Senses Config[0] ...\"\n  is dropped when the readable \"Senses Config > AI Sight config > ...\"\n  row exists.\n\nCo-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>"))
+  (new working-copy)
+  (parent "/Script/AIModule.AIController")
+  (defaults
+    (removed "bHidden" (old "True") (new "True") (display "Actor Hidden In Game"))
+    (removed "bRelevantForLevelBounds" (old "True") (new "True") (display "Relevant for Level Bounds"))
+    (removed "bGenerateOverlapEventsDuringLevelStreaming" (old "False") (new "False") (display "Generate Overlap Events During Level Streaming"))
+    (removed "UpdateOverlapsMethodDuringLevelStreaming" (old "UseConfigDefault") (new "UseConfigDefault") (display "Update Overlaps Method During Level Streaming"))
+    (removed "DefaultUpdateOverlapsMethodDuringLevelStreaming" (old "OnlyUpdateMovable") (new "OnlyUpdateMovable") (display "Default Update Overlaps Method During Level Streaming"))
+    (removed "SpriteScale" (old "1.000000") (new "1.000000") (display "Editor Billboard Scale"))))
