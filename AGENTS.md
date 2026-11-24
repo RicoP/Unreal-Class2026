@@ -305,7 +305,9 @@ to rebuild it themselves.
   (`graph/transient/<label package path>.sexpr`: folder, label, url, `(file "<name>" "<class>")`),
   and changed (not new) whitelisted files get their usual diff. `sexpr_to_table.py`
   (`origin_markdown`) makes `<label>.md` from it: heading `Import <N files | the file> from
-  <URL>`, a `Source` link row and one row per asset class with the names compacted
+  <URL>`, a `Source` link row, a `Move To` row (`All/Content/Extern_Assets/`: the folder above the
+  label's folder, since a pack lands in Content when added; left out when the label's
+  folder is directly in Content) and one row per asset class with the names compacted
   (`27 in all: a, b, …, z`, `short_list`). In `doc.html` these steps come first, with the
   import steps (`kind="origin"` in `assetMetadata`). A cell that is only a web address becomes
   a link. Exporting a single asset from its context menu ignores labels. Every run of

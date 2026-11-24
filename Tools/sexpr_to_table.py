@@ -900,7 +900,11 @@ def origin_markdown(diff):
     for name, asset_class in files:
         created.setdefault(asset_class or "Asset", []).append(name)
     where = f" from {url}" if url else ""  # a label without a URL still lists its files
-    rows = ([("Source", url)] if url else []) + [(asset_class, short_list(names)) for asset_class, names in sorted(created.items())]
+    # A pack lands in Content when it is added to the project; where its folder is now says where
+    # to move it: "Move To  All/Content/Extern_Assets/" (nothing for a folder at the top of Content).
+    parent = folder.rsplit("/", 1)[0]
+    move_to = [("Move To", "All/Content/" + parent[len("/Game/"):] + "/")] if parent.startswith("/Game/") else []
+    rows = ([("Source", url)] if url else []) + move_to + [(asset_class, short_list(names)) for asset_class, names in sorted(created.items())]
     return "\n".join([
         f'<!-- origin: folder="{folder}" url="{url}" count="{len(files)}" file="{files[0][0]}" -->',
         f"### Import {what}{where}",
