@@ -1714,4 +1714,19 @@ bool ExportDiff(UBlueprint* Blueprint, FString& OutPath, FString& OutError)
 	return WriteLines(Lines, OutPath, OutError)
 		&& WriteLines(ReferenceLines(Blueprint), OutputPathFor(PackageName, TEXT("Doc/commits/Transient/graph/reference")), OutError);
 }
+
+bool ExportOriginImport(const FString& LabelPackage, const FString& Url, const TArray<TTuple<FString, FString, FString>>& Files, FString& OutPath, FString& OutError)
+{
+	OutPath = OutputPathFor(LabelPackage, TEXT("Doc/commits/Transient/graph/transient"));
+	TArray<FString> Lines;
+	Lines.Add(FString::Printf(TEXT("(asset-origin %s"), *Quote(FPackageName::GetLongPackagePath(LabelPackage))));
+	Lines.Add(Indent(1) + FString::Printf(TEXT("(label %s)"), *Quote(FPackageName::GetShortName(LabelPackage))));
+	Lines.Add(Indent(1) + FString::Printf(TEXT("(url %s)"), *Quote(Url)));
+	for (const TTuple<FString, FString, FString>& File : Files)
+	{
+		Lines.Add(Indent(1) + FString::Printf(TEXT("(file %s %s %s)"), *Quote(File.Get<0>()), *Quote(File.Get<1>()), *Quote(File.Get<2>())));
+	}
+	Lines.Last() += TEXT(")");
+	return WriteLines(Lines, OutPath, OutError);
+}
 }

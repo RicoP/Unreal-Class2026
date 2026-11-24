@@ -27,4 +27,11 @@ namespace BlueprintDiffExport
 	 * version to Doc/commits/Transient/graph/reference/<level package path>/<actor label>.sexpr.
 	 */
 	bool ExportActorDiff(AActor* Actor, FString& OutPath, FString& OutError);
+
+	/**
+	 * The new files of a folder that has an Asset Origin Label, as one step: writes
+	 * <ProjectDir>/Doc/commits/Transient/graph/transient/<label package path>.sexpr, an `asset-origin` with
+	 * the folder, the URL and every file (name, class and package path).
+	 */
+	bool ExportOriginImport(const FString& LabelPackage, const FString& Url, const TArray<TTuple<FString, FString, FString>>& Files, FString& OutPath, FString& OutError);
 }

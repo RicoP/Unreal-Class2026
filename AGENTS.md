@@ -295,6 +295,25 @@ to rebuild it themselves.
   `... Interface Reference`, `... Structure` (`pin-struct`, deep blue). Other
   names get no dot. The class, struct and interface colours are the editor's
   `GraphEditorSettings`, converted to sRGB; the other palettes keep them.
+- Third-party packs (Fab, itch.io) get an **Asset Origin Label**
+  (`UAssetOriginLabel`, a `UPrimaryAssetLabel` in the BlueprintDiffExport plugin; Content Browser:
+  Add > Miscellaneous > Data Asset) in their folder, with `URL` (where the folder's files come
+  from) and `Whitelist` (asset classes; empty: all). The bulk export (Tools menu or folder
+  menu) then handles that folder and its sub-folders (the deepest label counts) differently:
+  files of a class that isn't whitelisted are left out entirely, the label itself isn't
+  documented, new files aren't exported one by one but written as one `asset-origin` diff
+  (`graph/transient/<label package path>.sexpr`: folder, label, url, `(file "<name>" "<class>")`),
+  and changed (not new) whitelisted files get their usual diff. `sexpr_to_table.py`
+  (`origin_markdown`) makes `<label>.md` from it: heading `Import <N files | the file> from
+  <URL>`, a `Source` link row and one row per asset class with the names compacted
+  (`27 in all: a, b, …, z`, `short_list`). In `doc.html` these steps come first, with the
+  import steps (`kind="origin"` in `assetMetadata`). A cell that is only a web address becomes
+  a link. Exporting a single asset from its context menu ignores labels. Every run of
+  `export_doc.mjs` adds the files of an `asset-origin` diff (`(file "<name>" "<class>"
+  "<package path>")`) that `Doc/asset_sources.json` doesn't list yet, with the label's URL
+  (`updateAssetSourcesFromLabels`): existing entries are never changed, a label without a
+  URL adds nothing, and diffs exported before the plugin wrote package paths are skipped. After changing the
+  plugin, close the editor and build.
 - Assets with a `Retarget Source Asset` set (retargeted animations) aren't
   documented one by one, and not as imports even though they keep their
   source's import data: `retarget_tables` in `sexpr_to_table.py` writes one
@@ -484,6 +503,8 @@ to rebuild it themselves.
   open in a new tab: in table values and captions and in a merged section's
   asset list, not in the Setting column or component trees (setting and
   component names could share a word with an asset, e.g. Kenney's `Group`).
+  Each link has a `title` with the asset's path as the Content Browser shows it (`All/Content/Extern_Assets/...`,
+  from its key in the file; several, comma separated, if two assets share the name).
   A name claimed by two different sources gets no link; a source file named
   after the asset (`sword_B.fbx`, also `.obj`, `.gltf`, `.glb`) is linked
   whole. Steps 5 (`20261110_121316`, regenerated) and 4 (`20261109_105725`,

@@ -1,3 +1,4 @@
+#include "AssetOriginLabel.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "BlueprintDiffWriter.h"
 #include "ContentBrowserMenuContexts.h"
@@ -17,10 +18,13 @@
 #include "HAL/PlatformProcess.h"
 #include "ISourceControlModule.h"
 #include "ISourceControlProvider.h"
+#include "Blueprint/BlueprintSupport.h"
 #include "Misc/MessageDialog.h"
+#include "Misc/PackageName.h"
 #include "Misc/Paths.h"
 #include "Misc/ScopedSlowTask.h"
 #include "Modules/ModuleManager.h"
+#include "UObject/StrongObjectPtr.h"
 #include "SourceControlHelpers.h"
 #include "SourceControlOperations.h"
 #include "ToolMenus.h"
@@ -46,6 +50,44 @@ namespace
 		{
 			Item->SetCompletionState(bSuccess ? SNotificationItem::CS_Success : SNotificationItem::CS_Fail);
 		}
+	}
+
+	/**
+	 * The Asset Origin Label an asset is, or null: a data asset of the class, or a Blueprint that
+	 * derives from it (its class defaults hold URL and Whitelist). `OutKeepAlive` holds the loaded
+	 * asset, which could be collected during a long export.
+	 */
+	UAssetOriginLabel* LoadOriginLabel(const FAssetData& Asset, TStrongObjectPtr<UObject>& OutKeepAlive)
+	{
+		const UClass* AssetClass = Asset.GetClass();
+		if (!AssetClass)
+		{
+			return nullptr;
+		}
+		if (AssetClass->IsChildOf(UAssetOriginLabel::StaticClass()))
+		{
+			UAssetOriginLabel* Label = Cast<UAssetOriginLabel>(Asset.GetAsset());
+			OutKeepAlive.Reset(Label);
+			return Label;
+		}
+		if (AssetClass->IsChildOf(UBlueprint::StaticClass()))
+		{
+			FString NativeParent;
+			if (!Asset.GetTagValue(FBlueprintTags::NativeParentClassPath, NativeParent))
+			{
+				return nullptr;
+			}
+			const UClass* Parent = FindObject<UClass>(nullptr, *FPackageName::ExportTextPathToObjectPath(NativeParent));
+			if (Parent && Parent->IsChildOf(UAssetOriginLabel::StaticClass()))
+			{
+				if (UBlueprint* Blueprint = Cast<UBlueprint>(Asset.GetAsset()))
+				{
+					OutKeepAlive.Reset(Blueprint);
+					return Blueprint->GeneratedClass ? Blueprint->GeneratedClass->GetDefaultObject<UAssetOriginLabel>() : nullptr;
+				}
+			}
+		}
+		return nullptr;
 	}
 
 	/** Export one asset: Blueprints get a graph diff, other assets a property diff. Levels aren't supported. */
@@ -283,6 +325,30 @@ namespace
 		AssetsByFile.GetKeys(Files);
 		Provider.Execute(ISourceControlOperation::Create<FUpdateStatus>(), Files);
 
+		// Folders with an Asset Origin Label: their new files are one import step, not one table each.
+		struct FOriginFolder
+		{
+			FString LabelPackage;
+			TStrongObjectPtr<UObject> KeepAlive; // loaded assets can be collected during a long export
+			UAssetOriginLabel* Label = nullptr;
+			TArray<TTuple<FString, FString, FString>> NewFiles;
+		};
+		TMap<FString, FOriginFolder> OriginFolders;
+		TSet<FName> LabelPackages;
+		for (const TPair<FString, FAssetData>& Pair : AssetsByFile)
+		{
+			TStrongObjectPtr<UObject> KeepAlive;
+			if (UAssetOriginLabel* Label = LoadOriginLabel(Pair.Value, KeepAlive))
+			{
+				FOriginFolder& Folder = OriginFolders.FindOrAdd(FPackageName::GetLongPackagePath(Pair.Value.PackageName.ToString()));
+				Folder.LabelPackage = Pair.Value.PackageName.ToString();
+				Folder.KeepAlive = MoveTemp(KeepAlive);
+				Folder.Label = Label;
+				LabelPackages.Add(Pair.Value.PackageName);
+			}
+		}
+
+		TSet<FName> NewPackages;
 		TArray<FAssetData> Changed;
 		for (const TPair<FString, FAssetData>& Pair : AssetsByFile)
 		{
@@ -295,6 +361,10 @@ namespace
 			if (State->IsModified() || State->IsAdded() || !State->IsSourceControlled())
 			{
 				Changed.Add(Pair.Value);
+				if (State->IsAdded() || !State->IsSourceControlled())
+				{
+					NewPackages.Add(Pair.Value.PackageName);
+				}
 			}
 		}
 		Changed.Sort([](const FAssetData& A, const FAssetData& B) { return A.PackageName.LexicalLess(B.PackageName); });
@@ -309,12 +379,45 @@ namespace
 		TArray<FString> Failures;
 		// A changed level is no failure: its actors are exported one by one, from the Outliner.
 		TArray<FString> SkippedLevels;
+		int32 IgnoredByLabels = 0;
 		{
 			FScopedSlowTask Progress(Changed.Num(), LOCTEXT("Exporting", "Exporting diffs of changed assets"));
 			Progress.MakeDialog();
 			for (const FAssetData& AssetData : Changed)
 			{
 				Progress.EnterProgressFrame(1, FText::FromName(AssetData.PackageName));
+
+				// The deepest folder with a label that contains this asset decides.
+				const FString PackageString = AssetData.PackageName.ToString();
+				FOriginFolder* Origin = nullptr;
+				int32 OriginDepth = -1;
+				for (TPair<FString, FOriginFolder>& Folder : OriginFolders)
+				{
+					if (PackageString.StartsWith(Folder.Key + TEXT("/")) && Folder.Key.Len() > OriginDepth)
+					{
+						Origin = &Folder.Value;
+						OriginDepth = Folder.Key.Len();
+					}
+				}
+				if (Origin)
+				{
+					const UClass* AssetClass = AssetData.GetClass();
+					if (LabelPackages.Contains(AssetData.PackageName))
+					{
+						continue; // the label itself is the marker, not a file of the pack
+					}
+					if (!Origin->Label->AllowsClass(AssetClass))
+					{
+						++IgnoredByLabels;
+						continue;
+					}
+					if (NewPackages.Contains(AssetData.PackageName))
+					{
+						Origin->NewFiles.Emplace(AssetData.AssetName.ToString(), AssetClass ? AssetClass->GetName() : FString(), PackageString);
+						continue;
+					}
+				}
+
 				FString OutputPath;
 				FString Error;
 				UObject* Asset = AssetData.GetAsset();
@@ -337,6 +440,28 @@ namespace
 			}
 		}
 
+		// One step per labeled folder: its new files, from the label's URL.
+		int32 ListedFiles = 0;
+		for (TPair<FString, FOriginFolder>& Folder : OriginFolders)
+		{
+			FOriginFolder& Origin = Folder.Value;
+			if (Origin.NewFiles.IsEmpty())
+			{
+				continue;
+			}
+			Origin.NewFiles.Sort([](const TTuple<FString, FString, FString>& A, const TTuple<FString, FString, FString>& B) { return A.Get<0>().Compare(B.Get<0>(), ESearchCase::IgnoreCase) < 0; });
+			FString OutputPath;
+			FString Error;
+			if (BlueprintDiffExport::ExportOriginImport(Origin.LabelPackage, Origin.Label->URL, Origin.NewFiles, OutputPath, Error))
+			{
+				ListedFiles += Origin.NewFiles.Num();
+			}
+			else
+			{
+				Failures.Add(FString::Printf(TEXT("%s: %s"), *Origin.LabelPackage, *Error));
+			}
+		}
+
 		for (const FString& Failure : Failures)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("BlueprintDiffExport: %s"), *Failure);
@@ -346,6 +471,11 @@ namespace
 			? FText::Format(LOCTEXT("ExportedChanged", "Exported diffs of {0} changed assets."), Exported)
 			: FText::Format(LOCTEXT("ExportedChangedWithFailures", "Exported diffs of {0} changed assets; {1} failed (see the Output Log): {2}"),
 				Exported, Failures.Num(), FText::FromString(FString::Join(Failures, TEXT("; "))));
+		if (ListedFiles > 0 || IgnoredByLabels > 0)
+		{
+			Message = FText::Format(LOCTEXT("OriginFiles", "{0} {1} new files listed as imports from their label's URL, {2} left out by a whitelist."),
+				Message, ListedFiles, IgnoredByLabels);
+		}
 		if (!SkippedLevels.IsEmpty())
 		{
 			UE_LOG(LogTemp, Display, TEXT("BlueprintDiffExport: changed levels left out: %s"), *FString::Join(SkippedLevels, TEXT(", ")));

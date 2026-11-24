@@ -131,6 +131,9 @@ function headingFor(meta, shownPath, hasSettings) {
     const what = files.length === 1 ? files[0] : `${files.length} files`;
     return `Import ${what} into ${shownPath}`;
   }
+  if (meta.kind === "origin") {
+    return `Import ${Number(meta.count) === 1 ? meta.file : `${meta.count} files`}${meta.url ? ` from ${meta.url}` : ` into ${shownPath}`}`;
+  }
   if (meta.kind === "retarget") {
     return `Retarget ${meta.count} ${meta.type} ${Number(meta.count) === 1 ? "asset" : "assets"} in ${shownPath}`;
   }
@@ -249,6 +252,7 @@ function bueCss() {
  * ("Content/itch-assets/StaticMeshes/sword_B.uasset") to a page; tables name assets by their
  * name ("sword_B"). A name that two sources claim gets no link.
  */
+const assetPackages = new Map(); // asset name -> package paths, for the title of its link
 function loadAssetSources() {
   const file = path.join(siteDir, "asset_sources.json");
   const sources = new Map();
@@ -256,11 +260,62 @@ function loadAssetSources() {
     return sources;
   }
   for (const [asset, url] of Object.entries(JSON.parse(readFileSync(file, "utf8")))) {
-    const name = path.posix.basename(asset).replace(/\.uasset$/i, "");
+    const name = path.posix.basename(asset).replace(/\.(uasset|umap)$/i, "");
     sources.set(name, sources.has(name) && sources.get(name) !== url ? null : url);
+    // The package path, as the link's tooltip: "Content/A/B.uasset" -> "/Game/A/B".
+    if (asset.startsWith("Content/")) {
+      const packagePath = "/Game/" + asset.slice("Content/".length).replace(/\.(uasset|umap)$/i, "");
+      assetPackages.set(name, [...(assetPackages.get(name) ?? []), packagePath]);
+    }
   }
   return sources;
 }
+/**
+ * Every file an Asset Origin Label lists (graph/transient/**.sexpr, `asset-origin`) that
+ * Doc/asset_sources.json doesn't have yet is added with the label's URL, so the docs link the
+ * asset names to where they come from. An entry that exists is never changed, and a label
+ * without a URL adds nothing. Diffs from before the plugin wrote package paths are skipped.
+ */
+function updateAssetSourcesFromLabels() {
+  const file = path.join(siteDir, "asset_sources.json");
+  const found = [];
+  const walk = (dir) => {
+    for (const entry of existsSync(dir) ? readdirSync(dir, { withFileTypes: true }) : []) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walk(full);
+      } else if (entry.name.endsWith(".sexpr")) {
+        const text = readFileSync(full, "utf8");
+        if (!/^\s*\(asset-origin\b/.test(text)) {
+          continue;
+        }
+        const url = /\(url "([^"]+)"\)/.exec(text)?.[1];
+        if (url) {
+          for (const match of text.matchAll(/\(file "([^"]*)" "([^"]*)" "(\/Game\/[^"]*)"\)/g)) {
+            found.push([`Content/${match[3].slice("/Game/".length)}${match[2] === "World" ? ".umap" : ".uasset"}`, url]);
+          }
+        }
+      }
+    }
+  };
+  walk(path.join(transient, "graph", "transient"));
+  if (found.length === 0) {
+    return;
+  }
+  const raw = existsSync(file) ? readFileSync(file, "utf8") : "{}";
+  const sources = JSON.parse(raw);
+  const before = Object.keys(sources).length;
+  for (const [asset, url] of found) {
+    sources[asset] ??= url;
+  }
+  const added = Object.keys(sources).length - before;
+  if (added > 0) {
+    const text = JSON.stringify(sources, null, 2) + (raw.endsWith("\n") ? "\n" : "");
+    writeFileSync(file, raw.includes("\r\n") ? text.replace(/\n/g, "\r\n") : text, "utf8");
+    console.log(`Added ${added} asset(s) to ${path.relative(process.cwd(), file)}`);
+  }
+}
+updateAssetSourcesFromLabels();
 const assetSources = loadAssetSources();
 const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 // Whole asset names only: "sword_B" in "sword_B, sword_C", not in "sword_B_old". Longest first.
@@ -271,9 +326,15 @@ const assetPattern = assetNames.length
   : null;
 
 /** Asset names in HTML text as links to where the asset came from, opened in a new tab. */
+/** ` title="All/Content/..."` for an asset's link: its path as the Content Browser shows it (browserPath) (several, if two assets share the name). */
+function assetTitle(name) {
+  const packages = assetPackages.get(name);
+  return packages ? ` title="${html(packages.map(browserPath).join(", "))}"` : "";
+}
+
 function linkAssets(text) {
   return assetPattern
-    ? text.replace(assetPattern, (match, name) => `<a href="${html(assetSources.get(name))}" target="_blank" rel="noopener">${match}</a>`)
+    ? text.replace(assetPattern, (match, name) => `<a href="${html(assetSources.get(name))}"${assetTitle(name)} target="_blank" rel="noopener">${match}</a>`)
     : text;
 }
 
@@ -283,6 +344,10 @@ function linkAssets(text) {
  * to their source.
  */
 function cellHtml(text, links = true) {
+  // A cell that is only a web address (an import's Source) is a link, and no asset name inside it is linked again.
+  if (/^https?:\/\/\S+$/.test(text)) {
+    return `<a href="${html(text)}" target="_blank" rel="noopener">${html(text)}</a>`;
+  }
   const cell = withColorSquares(withObjectTypeNames(html(text)).replace(/`([^`]+)`/g, "<code>$1</code>"));
   return links ? linkAssets(cell) : cell;
 }
@@ -680,10 +745,10 @@ function writeDoc(folder) {
   // Import steps come first: everything else may use what they bring in.
   // The rest in dependency order: what an asset refers to comes before it.
   const files = [
-    ...allFiles.filter((file) => metas.get(file).kind === "import"),
+    ...allFiles.filter((file) => ["import", "origin"].includes(metas.get(file).kind)),
     // Retargets work on what the imports bring in; the rest may use the retargeted animations.
     ...allFiles.filter((file) => metas.get(file).kind === "retarget"),
-    ...dependencyOrder(allFiles.filter((file) => !["import", "retarget"].includes(metas.get(file).kind)), metas, folder),
+    ...dependencyOrder(allFiles.filter((file) => !["import", "origin", "retarget"].includes(metas.get(file).kind)), metas, folder),
   ];
   const withSettings = new Set([...metas.values()].filter((meta) => meta.part === "settings").map((meta) => meta.package));
 

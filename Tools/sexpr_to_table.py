@@ -887,6 +887,32 @@ def import_tables(paths):
     return covered
 
 
+def origin_markdown(diff):
+    """The new files of a folder with an Asset Origin Label (`asset-origin`) as one import step:
+    "Import 141 files from <URL>", the files compacted by class like an import step."""
+    folder = diff[1]
+    url = (first(diff, "url") or ["url", ""])[1]
+    files = [(entry[1], words(entry[2])) for entry in diff[2:] if isinstance(entry, list) and entry[0] == "file"]
+    if not files:
+        return None
+    what = f"`{files[0][0]}`" if len(files) == 1 else f"{len(files)} files"
+    created = {}
+    for name, asset_class in files:
+        created.setdefault(asset_class or "Asset", []).append(name)
+    where = f" from {url}" if url else ""  # a label without a URL still lists its files
+    rows = ([("Source", url)] if url else []) + [(asset_class, short_list(names)) for asset_class, names in sorted(created.items())]
+    return "\n".join([
+        f'<!-- origin: folder="{folder}" url="{url}" count="{len(files)}" file="{files[0][0]}" -->',
+        f"### Import {what}{where}",
+        "",
+        f"Import {what}{where} into `{folder}`:",
+        "",
+        "| Setting | Value |",
+        "|---|---|",
+        *[f"| {setting} | {value} |" for setting, value in rows],
+    ]) + "\n"
+
+
 def retarget_tables(paths):
     """
     One table per folder, asset type, skeleton and Retarget Source Asset for the assets that have
@@ -967,7 +993,9 @@ def main():
                 output.write_text(markdown, encoding="utf-8", newline="\n")
                 print(f"Wrote {output}")
             continue
-        if isinstance(diff, list) and diff[0] == "actor-diff":
+        if isinstance(diff, list) and diff[0] == "asset-origin":
+            markdown = origin_markdown(diff)
+        elif isinstance(diff, list) and diff[0] == "actor-diff":
             markdown = actor_to_markdown(diff)
         elif isinstance(diff, list) and diff[0] == "asset-diff":
             markdown = to_markdown(diff)

@@ -47,9 +47,21 @@ export function assetMetadata(sourceFile, root = process.cwd()) {
     return null;
   }
   const diff = readFileSync(diffFile, "utf8");
-  const kind = /^\s*\((asset-diff|blueprint-diff|actor-diff)\b/.exec(diff)?.[1];
+  const kind = /^\s*\((asset-diff|blueprint-diff|actor-diff|asset-origin)\b/.exec(diff)?.[1];
   if (!kind) {
     return null;
+  }
+  if (kind === "asset-origin") {
+    // The new files of a folder with an Asset Origin Label, one import step (sexpr_to_table.py).
+    const files = [...diff.matchAll(/\(file "([^"]*)"/g)].map((match) => match[1]);
+    return {
+      kind: "origin",
+      package: /^\s*\(\S+ "([^"]+)"/.exec(diff)?.[1] ?? "",
+      url: /\(url "([^"]*)"\)/.exec(diff)?.[1] ?? "",
+      count: String(files.length),
+      file: files[0] ?? "",
+      source: sourcePath(diffFile, root),
+    };
   }
   // "AnimSequence" -> "Anim Sequence"; "Texture2D" and runs of capitals stay together.
   const words = (name) => name.replace(/(?<=[a-z])(?=[A-Z])|(?<=[A-Z0-9])(?=[A-Z][a-z])/g, " ");
