@@ -1,0 +1,7 @@
+(asset "/Game/Extern_Assets/Materials_TreeBark/Materials/Base/M_MasterBase"
+  (class "Material")
+  (revision working-copy)
+  (properties
+    (set "PhysMaterial" "/Script/PhysicsCore.PhysicalMaterial'/Game/App/World/PM_Wood.PM_Wood'" (display "Phys Material"))
+    (set "UsedShadingModels" "Default Lit" (display "Used Shading Models"))
+    (set "PixelDepthOffsetMode" "PDOM_Legacy" (display "Pixel Depth Offset Mode"))))

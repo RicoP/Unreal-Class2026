@@ -1,0 +1,6 @@
+(asset-diff "/Game/Extern_Assets/Materials_StylizedStone/Materials/Base/M_MasterBase"
+  (class "Material")
+  (old (revision "e73dbfd2") (date "2026-11-24T05:45:40.000Z") (description "Doc step 18: the Fab material packs as one import step each, and the ghost AI controller\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"))
+  (new working-copy)
+  (properties
+    (changed "PhysMaterial" (old "None") (new "/Script/PhysicsCore.PhysicalMaterial'/Game/App/World/PM_Stone.PM_Stone'") (display "Phys Material"))))
