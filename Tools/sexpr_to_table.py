@@ -723,6 +723,28 @@ def function_rows(functions):
     return rows
 
 
+def macro_rows(diff):
+    """Rows for the macros a Macro Library gets: `Add Macro`, then one row per input and output, as
+    the macro's Details panel lists them. A macro has no signature of its own: the pins of the
+    Inputs tunnel (its outputs inside the graph) are its inputs, those of the Outputs tunnel its outputs."""
+    rows = []
+    for graph in lists(diff, "graph"):
+        if len(graph) < 3 or graph[2] != "added":
+            continue
+        pins = {"Inputs": [], "Outputs": []}
+        for entry in graph:
+            node = first(entry, "node") if isinstance(entry, list) and entry[0] == "node-added" else None
+            if node and node[2] in pins:
+                pins[node[2]] = [(pin[2], variable_type(pin[3])) for pin in entry if isinstance(pin, list) and pin[0] == "pin"]
+        if not any(pins.values()):
+            continue
+        name = graph[1]
+        rows.append(("Add Macro", None, f"`{name}`"))
+        for kind, label in (("Inputs", "Input"), ("Outputs", "Output")):
+            rows += [(f"{name} › Add {label}", None, f"{pin} ({kind_})") for pin, kind_ in pins[kind]]
+    return rows
+
+
 def blueprint_settings_markdown(diff, diff_path):
     """Class defaults and components of a Blueprint diff, or None if it has neither and isn't new."""
     package = diff[1]
@@ -748,6 +770,8 @@ def blueprint_settings_markdown(diff, diff_path):
     added_names = {entry[1] for entry in variables if entry[0] == "added"}
     rows += variable_rows(variables, added_defaults)
     rows += function_rows(functions)
+    if blueprint_type == "MacroLibrary":
+        rows += macro_rows(diff)
     # A removed variable's value goes with it: no row for its class default either.
     removed_names = {entry[1] for entry in variables if entry[0] == "removed"}
     defaults = [entry for entry in defaults if entry[1] not in added_names | removed_names]

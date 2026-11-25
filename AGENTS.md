@@ -699,6 +699,7 @@ what they see on screen.
   matched by name only. A diagram is only redrawn when its own diff changes:
   after a function's Pure setting changes, run `--force` so its callers
   follow.
+- A new Macro Library's table lists its macros like functions (`macro_rows` in `sexpr_to_table.py`): `Add Macro | `Name``, then one `<name> › Add Input` / `Add Output` row per pin, read from the graph's `Inputs` and `Outputs` tunnel nodes (a macro has no signature of its own), with exec pins as `(Exec)`.
 - A macro of one of the project's own Macro Libraries is marked the same way, `Name (macro)`:
   the nodes using it, its graph box and its section title (`Play Sound For Surface (macro)`).
   `macro_graphs` in `sexpr_to_mermaid.py` takes the names from the graphs of the reference
