@@ -93,6 +93,11 @@ export function assetMetadata(sourceFile, root = process.cwd()) {
   };
   if (isBlueprint) {
     fields.parent = /\(parent "([^"]*)"\)/.exec(diff)?.[1] ?? "";
+    // Macro Library, Function Library, Interface or Level Blueprint (a normal one writes nothing).
+    const blueprintType = /\(blueprint-type "([^"]*)"\)/.exec(diff)?.[1];
+    if (blueprintType) {
+      fields.blueprinttype = blueprintType;
+    }
     // A Blueprint can have two parts: its class defaults and components (table), and its graph.
     fields.part = /\.settings\.md$/i.test(sourceFile) ? "settings" : "graph";
     // A diagram of one graph says which: "%% graph EventGraph" (sexpr_to_mermaid.py).

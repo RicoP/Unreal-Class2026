@@ -117,6 +117,10 @@ function browserPath(packagePath) {
  * with the name BP_Enemy_Variant1" (children are assumed to sit in their parent's folder).
  */
 function createBlueprintHeading(meta, shownPath) {
+  if (meta.blueprinttype) {
+    // "MacroLibrary" -> "Create Blueprint Macro Library at <path>"
+    return `Create Blueprint ${meta.blueprinttype.replace(/([a-z])([A-Z])/g, "$1 $2")} at ${shownPath}`;
+  }
   const parentPath = meta.parent ?? "";
   const parent = parentPath.split(/[./]/).pop().replace(/_C$/, "") || "Actor";
   if (parentPath.startsWith("/Game/")) {
@@ -704,6 +708,20 @@ function withObjectTypeNames(text) {
   return text.replace(/\bObjectTypeQuery(\d+)\b/g, (match, n) => OBJECT_TYPES[Number(n) - 1] ?? match);
 }
 
+/**
+ * The renderer titles a macro node by its name only when the MacroGraph path starts with
+ * EdGraph' (or names a StandardMacros macro); the full /Script/Engine.EdGraph'/Game/...:Name'
+ * that Unreal copies for a macro of another Blueprint would be shown whole. Shorten it to the
+ * macro's name, in the form the renderer reads (EdGraph'Name').
+ */
+function withShortMacroNames(text) {
+  return text.replace(
+    /MacroGraph="\/Script\/Engine\.EdGraph'(?![^']*StandardMacros:)([^':]*):([^']*)'"/g,
+    // The project's own macros say so, like its pure functions: "Play Sound For Surface (macro)".
+    (match, owner, name) => `MacroGraph="EdGraph'${name}${owner.startsWith("/Game/") ? " (macro)" : ""}'"`,
+  );
+}
+
 function editorView(folder, svgFile) {
   const base = path.join(folder, "graph", "native", svgFile.replace(/\.svg$/i, ""));
   if (!existsSync(`${base}.txt`)) {
@@ -713,8 +731,8 @@ function editorView(folder, svgFile) {
   let current = readFileSync(`${base}.txt`, "utf8");
   let before = existsSync(`${base}.old.txt`) ? readFileSync(`${base}.old.txt`, "utf8") : null;
   [before, current] = withoutIdleDefaultEvents(before, current);
-  current = withObjectTypeNames(current);
-  before = before === null ? null : withObjectTypeNames(before);
+  current = withShortMacroNames(withObjectTypeNames(current));
+  before = before === null ? null : withShortMacroNames(withObjectTypeNames(before));
   const previous = before !== null ? [area("previous", before)] : [];
   return [
     `      <div class="editor-view">`,

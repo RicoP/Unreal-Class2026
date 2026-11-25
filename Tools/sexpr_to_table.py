@@ -737,6 +737,9 @@ def blueprint_settings_markdown(diff, diff_path):
         return None
 
     rows = []  # (setting, old, new)
+    # Add > Blueprint > Blueprint Macro Library (and Function Library, Interface, Level Blueprint) is
+    # picked in the menu; a macro library still asks for a parent class (it decides where its macros work).
+    blueprint_type = (first(diff, "blueprint-type") or ["blueprint-type", ""])[1]
     if is_new:
         parent = (first(diff, "parent") or ["parent", ""])[1].rsplit(".", 1)[-1].removesuffix("_C") or "Actor"
         rows.append(("Parent Class", None, parent))
@@ -796,7 +799,11 @@ def blueprint_settings_markdown(diff, diff_path):
     hierarchy = component_hierarchy(diff, diff_path) if is_new or any(first(c, "new") for c in components) else []
     if hierarchy:
         lines += ["Components:", "", *hierarchy, ""]
-    if is_new:
+    if is_new and blueprint_type:
+        kind = words(blueprint_type)
+        lines += [f"Create a new Blueprint {kind} named `{name}` in `{package.rsplit('/', 1)[0]}` (Add > Blueprint > Blueprint {kind}), then set:", "", "| Setting | Value |", "|---|---|"]
+        lines += [f"| {setting} | {value_cell(new)} |" for setting, _, new in rows]
+    elif is_new:
         lines += [
             f"Create a new Blueprint Class named `{name}` in `{package.rsplit('/', 1)[0]}`, then set:",
             "",

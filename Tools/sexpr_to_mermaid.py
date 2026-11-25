@@ -222,29 +222,55 @@ PURE_VARIANT_CLASSES = ("K2Node_DynamicCast", "K2Node_ClassDynamicCast")
 FUNCTION_ENTRY = re.compile(r'\(function "([^"]+)" \(override (true|false)\) \(pure (true|false)\)')
 
 
+def reference_exports(diff_path):
+    """(package, text) of every full export (graph/reference) of this step and every earlier one,
+    oldest first, so a later export of the same Blueprint replaces an earlier one."""
+    parts = list(Path(diff_path).resolve().parts)
+    if "graph" not in parts:
+        return
+    graph_index = len(parts) - 1 - parts[::-1].index("graph")
+    if graph_index < 2:
+        return
+    step, commits = parts[graph_index - 1], Path(*parts[: graph_index - 1])
+    # Dated folders sort by time; Transient, the work in progress, comes after all of them.
+    order = lambda name: (not re.fullmatch(r"\d{8}_\d{6}", name), name)
+    steps = sorted((d.name for d in commits.iterdir() if d.is_dir() and order(d.name) <= order(step)), key=order)
+    for name in steps:
+        for file in sorted((commits / name / "graph" / "reference").rglob("*.sexpr")):
+            text = file.read_text(encoding="utf-8")
+            package = re.match(r'\(blueprint "([^"]+)"', text)
+            if package:
+                yield package.group(1), text
+
+
 def pure_functions(diff_path):
     """Names of the pure functions the project's Blueprints define themselves (not overrides),
     read from the full exports (graph/reference) of this step and every earlier one, so a call
     is recognised even when the function's Blueprint wasn't exported again. Per Blueprint the
     latest export counts: a function that stopped being pure no longer is."""
-    parts = list(Path(diff_path).resolve().parts)
-    if "graph" not in parts:
-        return set()
-    graph_index = len(parts) - 1 - parts[::-1].index("graph")
-    if graph_index < 2:
-        return set()
-    step, commits = parts[graph_index - 1], Path(*parts[: graph_index - 1])
-    # Dated folders sort by time; Transient, the work in progress, comes after all of them.
-    order = lambda name: (not re.fullmatch(r"\d{8}_\d{6}", name), name)
-    steps = sorted((d.name for d in commits.iterdir() if d.is_dir() and order(d.name) <= order(step)), key=order)
     by_blueprint = {}
-    for name in steps:
-        for file in sorted((commits / name / "graph" / "reference").rglob("*.sexpr")):
-            text = file.read_text(encoding="utf-8")
-            package = re.match(r'\(blueprint "([^"]+)"', text)
-            if package and "(functions" in text:
-                by_blueprint[package.group(1)] = {
-                    m.group(1) for m in FUNCTION_ENTRY.finditer(text) if m.group(2) == "false" and m.group(3) == "true"}
+    for package, text in reference_exports(diff_path):
+        if "(functions" in text:
+            by_blueprint[package] = {
+                m.group(1) for m in FUNCTION_ENTRY.finditer(text) if m.group(2) == "false" and m.group(3) == "true"}
+    return set().union(*by_blueprint.values()) if by_blueprint else set()
+
+
+# Lower-cased names of the macros of this project's own Macro Libraries (see macro_graphs); the
+# nodes that use one and its graph say so in their title: "Play Sound For Surface (macro)".
+MACROS = set()
+
+
+def macro_graphs(diff_path):
+    """Lower-cased names of the macros the project's Macro Libraries define (every graph of a
+    Blueprint with (blueprint-type "MacroLibrary")), from the same exports as pure_functions.
+    Lower-cased because a macro node's title writes small words in lower case ("for")."""
+    by_blueprint = {}
+    for package, text in reference_exports(diff_path):
+        if '(blueprint-type "MacroLibrary")' in text:
+            by_blueprint[package] = {m.group(1).lower() for m in re.finditer(r'^  \(graph "([^"]+)"', text, re.M)}
+        else:
+            by_blueprint.pop(package, None)
     return set().union(*by_blueprint.values()) if by_blueprint else set()
 
 
@@ -285,6 +311,8 @@ class Node:
             title += " (override)"
         elif self.raw_title in PURE_FUNCTIONS and self.name.startswith(PURE_NODE_CLASSES):
             title += " (pure)"
+        elif self.raw_title.lower() in MACROS and self.name.startswith("K2Node_MacroInstance"):
+            title += " (macro)"
         elif self.name.startswith(PURE_VARIANT_CLASSES) and self.pins and not any(
                 pin_kind(pin_type) == "exec" for _, pin_type in self.pins.values()):
             title += " (pure)"
@@ -825,12 +853,17 @@ def has_function_entry(expr):
     return any(has_function_entry(item) for item in expr)
 
 
+def is_macro_graph(graph_name, diff, reference):
+    """A graph of a Macro Library (its Blueprint has (blueprint-type "MacroLibrary"))."""
+    return any(expr and first(expr, "blueprint-type") == ["blueprint-type", "MacroLibrary"] for expr in (diff, reference))
+
+
 def graph_title(graph_name, diff, reference):
     """What a graph's section is called: "EventGraph", or for a function's graph
     "Function GetWeaponHitBoxPoint (pure)", "Function Received_Notify (override)"."""
     graphs = [g for expr in (diff, reference) if expr for g in lists(expr, "graph") if g[1] == graph_name]
     if not any(has_function_entry(g) for g in graphs):
-        return graph_name
+        return f"{graph_name} (macro)" if is_macro_graph(graph_name, diff, reference) else graph_name
     if graph_name == "UserConstructionScript":
         return "Construction Script"
     mark = " (override)" if graph_name in OVERRIDES else " (pure)" if graph_name in PURE_FUNCTIONS else ""
@@ -902,6 +935,8 @@ def to_mermaid(diff, warnings, reference=None, only=None):
             group_id = ident("G", graph_name)
             # The graph of one of the project's own pure functions says so, like the nodes calling it.
             shown = f"{graph_name} (pure)" if graph_name in PURE_FUNCTIONS else graph_name
+            if is_macro_graph(graph_name, diff, reference):
+                shown = f"{graph_name} (macro)"
             if graph_name in OVERRIDES:
                 shown = f"{graph_name} (override)"
             lines.append(f"    subgraph {group_id}[{label(shown)}]")
@@ -977,6 +1012,8 @@ def main():
         warnings = []
         PURE_FUNCTIONS.clear()
         PURE_FUNCTIONS.update(pure_functions(path))
+        MACROS.clear()
+        MACROS.update(macro_graphs(path))
         # The matching reference file holds the full current Blueprint.
         parts = list(path.parts)
         reference = None

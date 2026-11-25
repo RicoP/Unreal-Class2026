@@ -1089,6 +1089,24 @@ namespace
 		Lines.Last() += TEXT(")");
 	}
 
+	/** "(blueprint-type "MacroLibrary")" for every Blueprint type but a normal one (Add > Blueprint > Blueprint Macro Library, ...). */
+	void AddBlueprintType(const UBlueprint* Blueprint, TArray<FString>& Lines)
+	{
+		const TCHAR* TypeName = nullptr;
+		switch (Blueprint->BlueprintType)
+		{
+		case BPTYPE_MacroLibrary: TypeName = TEXT("MacroLibrary"); break;
+		case BPTYPE_FunctionLibrary: TypeName = TEXT("FunctionLibrary"); break;
+		case BPTYPE_Interface: TypeName = TEXT("Interface"); break;
+		case BPTYPE_LevelScript: TypeName = TEXT("LevelScript"); break;
+		default: break;
+		}
+		if (TypeName)
+		{
+			Lines.Add(Indent(1) + TEXT("(blueprint-type ") + Quote(TypeName) + TEXT(")"));
+		}
+	}
+
 	/** The whole Blueprint as it is in the editor: variables and every graph. */
 	TArray<FString> ReferenceLines(const UBlueprint* Blueprint)
 	{
@@ -1096,6 +1114,7 @@ namespace
 		Lines.Add(TEXT("(blueprint ") + Quote(Blueprint->GetOutermost()->GetName()));
 		Lines.Add(Indent(1) + TEXT("(revision working-copy)"));
 		Lines.Add(Indent(1) + TEXT("(parent ") + Quote(Blueprint->ParentClass ? Blueprint->ParentClass->GetPathName() : FString()) + TEXT(")"));
+		AddBlueprintType(Blueprint, Lines);
 
 		Lines.Add(Indent(1) + TEXT("(variables"));
 		for (const FBPVariableDescription& Variable : Blueprint->NewVariables)
@@ -1671,6 +1690,7 @@ bool ExportDiff(UBlueprint* Blueprint, FString& OutPath, FString& OutError)
 	Lines.Add(Indent(1) + RevisionLine);
 	Lines.Add(Indent(1) + TEXT("(new working-copy)"));
 	Lines.Add(Indent(1) + TEXT("(parent ") + Quote(Blueprint->ParentClass ? Blueprint->ParentClass->GetPathName() : FString()) + TEXT(")"));
+	AddBlueprintType(Blueprint, Lines);
 
 	AddVariableDiffs(OldBlueprint, Blueprint, Lines);
 	const TMap<FString, FString> Renames = FunctionRenames(OldBlueprint, Blueprint);

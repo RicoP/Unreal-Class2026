@@ -99,6 +99,10 @@ to rebuild it themselves.
   then components without a place in it (e.g. Rotating Movement).
   A new Blueprint's heading is `Create New <parent class> Blueprint at <path>`
   (e.g. `Create New Character Blueprint at All/Content/App/Enemy/BP_Enemy_Base`),
+  or, for a Blueprint that isn't a normal class (`(blueprint-type "MacroLibrary")`, also
+  `FunctionLibrary`, `Interface`, `LevelScript`; written by `AddBlueprintType`, nothing for a
+  normal one), `Create Blueprint Macro Library at <path>`; its table keeps the Parent Class row (the
+  dialog asks for it, and it decides where the macros work; `meta.blueprinttype`),
   or, when the parent is a Blueprint of this project (`/Game/...`),
   `Create Child Blueprint of <parent> with the name <name>` (no folder: children
   are assumed to sit in their parent's folder). `doc.html` has no page heading,
@@ -695,6 +699,14 @@ what they see on screen.
   matched by name only. A diagram is only redrawn when its own diff changes:
   after a function's Pure setting changes, run `--force` so its callers
   follow.
+- A macro of one of the project's own Macro Libraries is marked the same way, `Name (macro)`:
+  the nodes using it, its graph box and its section title (`Play Sound For Surface (macro)`).
+  `macro_graphs` in `sexpr_to_mermaid.py` takes the names from the graphs of the reference
+  files with `(blueprint-type "MacroLibrary")` (this step and earlier ones), matched ignoring
+  case because a node writes small words in lower case. The editor view does the same:
+  `withShortMacroNames` in `export_doc.mjs` rewrites a `/Game/...` macro's `MacroGraph`
+  to `EdGraph'<name> (macro)'`, which also gives the renderer a short title (it shows the
+  whole path otherwise). The engine's own macros (`StandardMacros`: For Each Loop, ...) aren't marked.
 - A function that overrides one of the parent class (Functions → Override)
   is marked on its entry node and its graph box: `Received_Notify
   (override)`. The names come from the `(override true)` function entries of
