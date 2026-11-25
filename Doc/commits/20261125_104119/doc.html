@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Documentation export 20261125_104119</title>
+    <!-- Shared stylesheet, written by hand: Doc/doc.css (it imports the palettes, Doc/palettes.css) -->
+    <link rel="stylesheet" href="../../doc.css">
+    <!-- The editor views: blueprintUE's renderer, kept as it is in Doc/bue-render, then the palettes for it -->
+    <link rel="stylesheet" href="../../bue-render/render.css">
+    <link rel="stylesheet" href="../../bue-render/diff.css">
+    <link rel="stylesheet" href="../../bue-palettes.css">
+  </head>
+  <body class="step" data-palette="default">
+    <header>
+      <label>Colours <select id="palette"><option value="default">Unreal editor</option><option value="red-green-safe">Red-green safe (protanopia, deuteranopia)</option><option value="blue-yellow-safe">Blue-yellow safe (tritanopia)</option><option value="high-contrast">High contrast</option><option value="greyscale">Greyscale (achromatopsia, print)</option></select></label>
+    </header>
+    <nav class="toc">
+      <p>Contents</p>
+      <ol>
+        <li><a href="#import-90-files-from-https-mgw-sound-design-itch-io-footsteps-mini-sound-pack">Import 90 files from https://mgw-sound-design.itch.io/footsteps-mini-sound-pack</a></li>
+        <li><a href="#create-meta-sound-source-at-all-content-app-world-surfaces-ms-surfacebase">Create Meta Sound Source at All/Content/App/World/Surfaces/MS_SurfaceBase</a></li>
+        <li><a href="#create-preset-of-ms-surfacebase-with-the-name-ms-metal">Create Preset of MS_SurfaceBase with the name MS_Metal</a></li>
+        <li><a href="#create-preset-of-ms-surfacebase-with-the-name-ms-stone">Create Preset of MS_SurfaceBase with the name MS_Stone</a></li>
+        <li><a href="#create-preset-of-ms-surfacebase-with-the-name-ms-wood">Create Preset of MS_SurfaceBase with the name MS_Wood</a></li>
+      </ol>
+    </nav>
+    <section id="import-90-files-from-https-mgw-sound-design-itch-io-footsteps-mini-sound-pack">
+      <h2>Import 90 files from https://mgw-sound-design.itch.io/footsteps-mini-sound-pack</h2>
+      <div class="table">
+        <table>
+          <caption>Import 90 files from https://mgw-sound-design.itch.io/footsteps-mini-sound-pack</caption>
+          <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Source</td><td><a href="https://mgw-sound-design.itch.io/footsteps-mini-sound-pack" target="_blank" rel="noopener">https://mgw-sound-design.itch.io/footsteps-mini-sound-pack</a></td></tr>
+            <tr><td>Move To</td><td>All/Content/Extern_Assets/</td></tr>
+            <tr><td>Sound Wave</td><td>90 in all: <a href="https://mgw-sound-design.itch.io/footsteps-mini-sound-pack" title="All/Content/Extern_Assets/Footsteps_Mini_Sound_Pack/BootsLinoleum_01" target="_blank" rel="noopener">BootsLinoleum_01</a>, <a href="https://mgw-sound-design.itch.io/footsteps-mini-sound-pack" title="All/Content/Extern_Assets/Footsteps_Mini_Sound_Pack/BootsLinoleum_02" target="_blank" rel="noopener">BootsLinoleum_02</a>, …, <a href="https://mgw-sound-design.itch.io/footsteps-mini-sound-pack" title="All/Content/Extern_Assets/Footsteps_Mini_Sound_Pack/Wet_Snow_Mono_05" target="_blank" rel="noopener">Wet_Snow_Mono_05</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section id="create-meta-sound-source-at-all-content-app-world-surfaces-ms-surfacebase">
+      <h2>Create Meta Sound Source at All/Content/App/World/Surfaces/MS_SurfaceBase</h2>
+      <div class="table">
+        <table>
+          <caption>MS_SurfaceBase (Meta Sound Source)</caption>
+          <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Access Flags</td><td>Referenceable</td></tr>
+            <tr><td>Output Format</td><td>Mono</td></tr>
+            <tr><td>Add Input</td><td>Sounds (Array of Wave Asset)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="editor-view">
+        <p>The graph to build</p>
+        <p class="hint">Move: hold the left mouse button and drag. Zoom: hold Ctrl and scroll the wheel. Reset and Fullscreen are in the top bar. Touch screen: drag with one finger, pinch with two.</p>
+        <div class="bue-graph"></div>
+        <textarea class="bue-current" hidden>Begin Object Class=/Script/BlueprintGraph.K2Node_CustomEvent Name=&quot;K2Node_CustomEvent_0&quot;
+   CustomFunctionName=&quot;Input&quot;
+   NodePosX=-312
+   NodePosY=80
+   NodeGuid=D07B8474225A4E436507F0DBA5E36917
+   CustomProperties Pin (PinId=3C8710B499B2471B8841D90BEA0177DE,PinName=&quot;On Play (UE.Source)&quot;,Direction=&quot;EGPD_Output&quot;,PinType.PinCategory=&quot;exec&quot;,PinType.PinSubCategory=&quot;&quot;,PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_CallFunction_3 4DBADA454E0A6EB511B5A1A6CAC2C1D8,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+End Object
+Begin Object Class=/Script/BlueprintGraph.K2Node_CallFunction Name=&quot;K2Node_CallFunction_1&quot;
+   FunctionReference=(MemberName=&quot;Output&quot;)
+   NodePosX=1056
+   NodePosY=110
+   NodeGuid=762DAECCA43D00EE4002BD5A8E0166DF
+   CustomProperties Pin (PinId=8DC6AED3EE4B76A959E369E8DBD3E226,PinName=&quot;On Finished (UE.Source.OneShot)&quot;,PinType.PinCategory=&quot;exec&quot;,PinType.PinSubCategory=&quot;&quot;,PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_CallFunction_5 30EBF548B31CCD582DC41B7C44775946,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+End Object
+Begin Object Class=/Script/BlueprintGraph.K2Node_CallFunction Name=&quot;K2Node_CallFunction_2&quot;
+   FunctionReference=(MemberName=&quot;Output&quot;)
+   NodePosX=1056
+   NodePosY=203
+   NodeGuid=A49798B9C9FCBCB446A80D6AE0020C27
+   CustomProperties Pin (PinId=8C574EFC22D09B7C0A77BF1BB25CAAD8,PinName=&quot;Audio (UE.OutputFormat.Mono)&quot;,PinType.PinCategory=&quot;struct&quot;,PinType.PinSubCategory=&quot;&quot;,PinType.PinSubCategoryObject=&quot;/Script/CoreUObject.ScriptStruct'/Script/CoreUObject.Transform'&quot;,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_CallFunction_5 06B919832E2B5FD75D3B588C83D7C8A7,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+End Object
+Begin Object Class=/Script/BlueprintGraph.K2Node_CallFunction Name=&quot;K2Node_CallFunction_3&quot;
+   FunctionReference=(MemberName=&quot;Random Get (WaveAsset:Array)&quot;)
+   NodePosX=-32
+   NodePosY=80
+   NodeGuid=9C487A599073F5CC4EEC7138D9B5D433
+   CustomProperties Pin (PinId=4DBADA454E0A6EB511B5A1A6CAC2C1D8,PinName=&quot;Next&quot;,PinType.PinCategory=&quot;exec&quot;,PinType.PinSubCategory=&quot;&quot;,PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_CustomEvent_0 3C8710B499B2471B8841D90BEA0177DE,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=F415AD7C299C6139877AFE517428ECC0,PinName=&quot;In Array&quot;,PinType.PinCategory=&quot;object&quot;,PinType.PinSubCategory=&quot;&quot;,PinType.PinSubCategoryObject=&quot;/Script/CoreUObject.Class'/Script/Engine.SoundWave'&quot;,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=Array,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_CustomEvent_4 4F942F93C3BF8CC36DC07E3990BC48FC,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=8A927ADF1102197DFA67905A602B8387,PinName=&quot;On Next&quot;,Direction=&quot;EGPD_Output&quot;,PinType.PinCategory=&quot;exec&quot;,PinType.PinSubCategory=&quot;&quot;,PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_CallFunction_6 AA4C659D636B822CA27B4406C8D153EF,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=0A47FD1DD9CB07871E25545B02997212,PinName=&quot;Value&quot;,Direction=&quot;EGPD_Output&quot;,PinType.PinCategory=&quot;object&quot;,PinType.PinSubCategory=&quot;&quot;,PinType.PinSubCategoryObject=&quot;/Script/CoreUObject.Class'/Script/Engine.SoundWave'&quot;,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_Knot_7 6B02C441CB230973EF78DAF4EF4C6C0E,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+End Object
+Begin Object Class=/Script/BlueprintGraph.K2Node_CustomEvent Name=&quot;K2Node_CustomEvent_4&quot;
+   CustomFunctionName=&quot;Input&quot;
+   NodePosX=-312
+   NodePosY=190
+   NodeGuid=B8C536F9C12B5A24E5F9197644CB06E3
+   CustomProperties Pin (PinId=4F942F93C3BF8CC36DC07E3990BC48FC,PinName=&quot;Sounds&quot;,Direction=&quot;EGPD_Output&quot;,PinType.PinCategory=&quot;object&quot;,PinType.PinSubCategory=&quot;&quot;,PinType.PinSubCategoryObject=&quot;/Script/CoreUObject.Class'/Script/Engine.SoundWave'&quot;,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=Array,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_CallFunction_3 F415AD7C299C6139877AFE517428ECC0,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+End Object
+Begin Object Class=/Script/BlueprintGraph.K2Node_CallFunction Name=&quot;K2Node_CallFunction_5&quot;
+   FunctionReference=(MemberName=&quot;Wave Player (Mono)&quot;)
+   NodePosX=640
+   NodePosY=80
+   NodeGuid=78F5A77C75F07A3FCF1F163202D31236
+   CustomProperties Pin (PinId=034BDA9F98741B7C5DB338BBAB307327,PinName=&quot;Play&quot;,PinType.PinCategory=&quot;exec&quot;,PinType.PinSubCategory=&quot;&quot;,PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_CallFunction_6 34735B73B0B24AFB826779C34CCF9507,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=3DE126E778E1731920FC964D56B57687,PinName=&quot;Wave Asset&quot;,PinType.PinCategory=&quot;object&quot;,PinType.PinSubCategory=&quot;&quot;,PinType.PinSubCategoryObject=&quot;/Script/CoreUObject.Class'/Script/Engine.SoundWave'&quot;,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_Knot_8 BD95C144979481206212455C19A9D249,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=2B8B772BEF7285F81487DAC2EABBCC0A,PinName=&quot;Pitch Shift&quot;,PinType.PinCategory=&quot;real&quot;,PinType.PinSubCategory=&quot;double&quot;,PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_CallFunction_6 E532223D3FB3C5630BEFBE3FE2482CC6,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=30EBF548B31CCD582DC41B7C44775946,PinName=&quot;On Finished&quot;,Direction=&quot;EGPD_Output&quot;,PinType.PinCategory=&quot;exec&quot;,PinType.PinSubCategory=&quot;&quot;,PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_CallFunction_1 8DC6AED3EE4B76A959E369E8DBD3E226,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=06B919832E2B5FD75D3B588C83D7C8A7,PinName=&quot;Out Mono&quot;,Direction=&quot;EGPD_Output&quot;,PinType.PinCategory=&quot;struct&quot;,PinType.PinSubCategory=&quot;&quot;,PinType.PinSubCategoryObject=&quot;/Script/CoreUObject.ScriptStruct'/Script/CoreUObject.Transform'&quot;,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_CallFunction_2 8C574EFC22D09B7C0A77BF1BB25CAAD8,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+End Object
+Begin Object Class=/Script/BlueprintGraph.K2Node_CallFunction Name=&quot;K2Node_CallFunction_6&quot;
+   FunctionReference=(MemberName=&quot;Random Float&quot;)
+   NodePosX=352
+   NodePosY=80
+   NodeGuid=08929BEE2456A63EF17D10BACD5C90F1
+   CustomProperties Pin (PinId=AA4C659D636B822CA27B4406C8D153EF,PinName=&quot;Next&quot;,PinType.PinCategory=&quot;exec&quot;,PinType.PinSubCategory=&quot;&quot;,PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_CallFunction_3 8A927ADF1102197DFA67905A602B8387,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=027FD961DE58AE0902D8FAA5A40A7DE3,PinName=&quot;Min&quot;,PinType.PinCategory=&quot;real&quot;,PinType.PinSubCategory=&quot;double&quot;,PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,DefaultValue=&quot;-0.500000&quot;,PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=AF64E30A998CC79FCA3DB1CA52906C83,PinName=&quot;Max&quot;,PinType.PinCategory=&quot;real&quot;,PinType.PinSubCategory=&quot;double&quot;,PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,DefaultValue=&quot;0.500000&quot;,PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=34735B73B0B24AFB826779C34CCF9507,PinName=&quot;On Next&quot;,Direction=&quot;EGPD_Output&quot;,PinType.PinCategory=&quot;exec&quot;,PinType.PinSubCategory=&quot;&quot;,PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_CallFunction_5 034BDA9F98741B7C5DB338BBAB307327,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=E532223D3FB3C5630BEFBE3FE2482CC6,PinName=&quot;Value&quot;,Direction=&quot;EGPD_Output&quot;,PinType.PinCategory=&quot;real&quot;,PinType.PinSubCategory=&quot;double&quot;,PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_CallFunction_5 2B8B772BEF7285F81487DAC2EABBCC0A,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+End Object
+Begin Object Class=/Script/BlueprintGraph.K2Node_Knot Name=&quot;K2Node_Knot_7&quot;
+   NodePosX=352
+   NodePosY=336
+   NodeGuid=94CC1448E48A8CCF6A523C080919DA71
+   CustomProperties Pin (PinId=6B02C441CB230973EF78DAF4EF4C6C0E,PinName=&quot;InputPin&quot;,PinType.PinCategory=&quot;object&quot;,PinType.PinSubCategory=&quot;&quot;,PinType.PinSubCategoryObject=&quot;/Script/CoreUObject.Class'/Script/Engine.SoundWave'&quot;,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_CallFunction_3 0A47FD1DD9CB07871E25545B02997212,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=4F16DA53DA61C2FA533A6821870651CC,PinName=&quot;OutputPin&quot;,Direction=&quot;EGPD_Output&quot;,PinType.PinCategory=&quot;object&quot;,PinType.PinSubCategory=&quot;&quot;,PinType.PinSubCategoryObject=&quot;/Script/CoreUObject.Class'/Script/Engine.SoundWave'&quot;,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_Knot_8 ED0D839433D7C7DAC365F339B9F21F25,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+End Object
+Begin Object Class=/Script/BlueprintGraph.K2Node_Knot Name=&quot;K2Node_Knot_8&quot;
+   NodePosX=528
+   NodePosY=336
+   NodeGuid=17780274A1A66384080DF4D3B17C159F
+   CustomProperties Pin (PinId=ED0D839433D7C7DAC365F339B9F21F25,PinName=&quot;InputPin&quot;,PinType.PinCategory=&quot;object&quot;,PinType.PinSubCategory=&quot;&quot;,PinType.PinSubCategoryObject=&quot;/Script/CoreUObject.Class'/Script/Engine.SoundWave'&quot;,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_Knot_7 4F16DA53DA61C2FA533A6821870651CC,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=BD95C144979481206212455C19A9D249,PinName=&quot;OutputPin&quot;,Direction=&quot;EGPD_Output&quot;,PinType.PinCategory=&quot;object&quot;,PinType.PinSubCategory=&quot;&quot;,PinType.PinSubCategoryObject=&quot;/Script/CoreUObject.Class'/Script/Engine.SoundWave'&quot;,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(K2Node_CallFunction_5 3DE126E778E1731920FC964D56B57687,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+End Object
+</textarea>
+      </div>
+    </section>
+    <section id="create-preset-of-ms-surfacebase-with-the-name-ms-metal">
+      <h2>Create Preset of MS_SurfaceBase with the name MS_Metal</h2>
+      <div class="table">
+        <table>
+          <caption>MS_Metal (Meta Sound Source)</caption>
+          <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Sounds</td><td>5 in all: <a href="https://mgw-sound-design.itch.io/footsteps-mini-sound-pack" title="All/Content/Extern_Assets/Footsteps_Mini_Sound_Pack/MetalSteps_05" target="_blank" rel="noopener">MetalSteps_05</a>, <a href="https://mgw-sound-design.itch.io/footsteps-mini-sound-pack" title="All/Content/Extern_Assets/Footsteps_Mini_Sound_Pack/MetalSteps_04" target="_blank" rel="noopener">MetalSteps_04</a>, …, <a href="https://mgw-sound-design.itch.io/footsteps-mini-sound-pack" title="All/Content/Extern_Assets/Footsteps_Mini_Sound_Pack/MetalSteps_01" target="_blank" rel="noopener">MetalSteps_01</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section id="create-preset-of-ms-surfacebase-with-the-name-ms-stone">
+      <h2>Create Preset of MS_SurfaceBase with the name MS_Stone</h2>
+      <div class="table">
+        <table>
+          <caption>MS_Stone (Meta Sound Source)</caption>
+          <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Sounds</td><td>5 in all: <a href="https://mgw-sound-design.itch.io/footsteps-mini-sound-pack" title="All/Content/Extern_Assets/Footsteps_Mini_Sound_Pack/PavementTiles_Mono_05" target="_blank" rel="noopener">PavementTiles_Mono_05</a>, <a href="https://mgw-sound-design.itch.io/footsteps-mini-sound-pack" title="All/Content/Extern_Assets/Footsteps_Mini_Sound_Pack/PavementTiles_Mono_04" target="_blank" rel="noopener">PavementTiles_Mono_04</a>, …, <a href="https://mgw-sound-design.itch.io/footsteps-mini-sound-pack" title="All/Content/Extern_Assets/Footsteps_Mini_Sound_Pack/PavementTiles_Mono_01" target="_blank" rel="noopener">PavementTiles_Mono_01</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section id="create-preset-of-ms-surfacebase-with-the-name-ms-wood">
+      <h2>Create Preset of MS_SurfaceBase with the name MS_Wood</h2>
+      <div class="table">
+        <table>
+          <caption>MS_Wood (Meta Sound Source)</caption>
+          <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Sounds</td><td>5 in all: <a href="https://mgw-sound-design.itch.io/footsteps-mini-sound-pack" title="All/Content/Extern_Assets/Footsteps_Mini_Sound_Pack/Linoleum_Mono_01" target="_blank" rel="noopener">Linoleum_Mono_01</a>, <a href="https://mgw-sound-design.itch.io/footsteps-mini-sound-pack" title="All/Content/Extern_Assets/Footsteps_Mini_Sound_Pack/Linoleum_Mono_02" target="_blank" rel="noopener">Linoleum_Mono_02</a>, …, <a href="https://mgw-sound-design.itch.io/footsteps-mini-sound-pack" title="All/Content/Extern_Assets/Footsteps_Mini_Sound_Pack/Linoleum_Mono_05" target="_blank" rel="noopener">Linoleum_Mono_05</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <script src="../../bue-render/render.js"></script>
+    <script src="../../bue-render/diff.js"></script>
+    <!-- Palette switch and step navigation: Doc/doc.js -->
+    <script src="../../doc.js"></script>
+  </body>
+</html>
