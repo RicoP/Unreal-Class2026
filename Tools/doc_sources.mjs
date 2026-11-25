@@ -102,6 +102,11 @@ export function assetMetadata(sourceFile, root = process.cwd()) {
     }
   }
   // A Data Table says what its rows are: "(row-struct "S_WeaponRow")" (sexpr_to_table.py shows the rows).
+  // A MetaSound preset says which MetaSound it is a child of (its Template property).
+  const presetOf = /PresetTemplate\(Parent=\w+'[^']*\.(\w+)'/.exec(diff)?.[1];
+  if (presetOf) {
+    fields.preset = presetOf;
+  }
   const rowType = /\(row-struct "([^"]+)"\)/.exec(diff)?.[1];
   if (rowType) {
     fields.rowtype = rowType;

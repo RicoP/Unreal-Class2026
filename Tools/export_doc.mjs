@@ -155,6 +155,9 @@ function headingFor(meta, shownPath, hasSettings) {
     const named = meta.label && meta.label.replace(/\s/g, "") !== meta.type.replace(/\s/g, "") ? ` named ${meta.label}` : "";
     return meta.new === "true" ? `Place ${meta.type}${named} in ${shownPath}` : `Change ${meta.label || meta.type} in ${shownPath}`;
   }
+  if (meta.preset && meta.new === "true") {
+    return `Create Preset of ${meta.preset} with the name ${meta.package.split("/").pop()}`;
+  }
   const rowType = meta.rowtype ? ` (of rowtype ${meta.rowtype})` : "";
   return meta.new === "true" ? `Create ${meta.type} at ${shownPath}${rowType}` : shownPath;
 }
@@ -803,7 +806,9 @@ function writeDoc(folder) {
     const shownPath = browserPath(meta.package || "/" + file.replace(/\.svg$/i, ""));
     const heading = headingFor(meta, shownPath, withSettings.has(meta.package));
     if (tables.has(file)) {
-      return ["    <section>", `      <h2>${html(heading)}</h2>`, tableHtml(parseTable(readFileSync(tables.get(file), "utf8"))), "    </section>"].join("\n");
+      // A MetaSound's graph is shown in the editor view (metasound_to_native.py), after its table.
+      const graph = String(meta.class ?? "").startsWith("MetaSound") ? editorView(folder, file.replace(/\.svg$/i, ".graph.MetaSound.svg")) : [];
+      return ["    <section>", `      <h2>${html(heading)}</h2>`, tableHtml(parseTable(readFileSync(tables.get(file), "utf8"))), ...graph, "    </section>"].join("\n");
     }
     // A graph with an editor view shows only that: its before-and-after comparison already
     // says what changed, so our own diagram of the same change would repeat it. The diagram
@@ -949,6 +954,11 @@ function build(force) {
   // assets are grouped into one table per import step, which needs to see every diff.
   for (const batch of outdated.length ? batches(outdated) : [[]]) {
     run(python, [path.join(toolsDir, "sexpr_to_table.py"), ...batch, "--all-in", path.join(transient, "graph", "transient")]);
+  }
+  // A MetaSound's graph, as the text the editor views are drawn from (graph/native).
+  const metasounds = diffs.filter((file) => /\(class "MetaSound/.test(readFileSync(file, "utf8")));
+  for (const batch of batches(metasounds)) {
+    run(python, [path.join(toolsDir, "metasound_to_native.py"), ...batch]);
   }
   run(process.execPath, [path.join(toolsDir, "export_svg.mjs"), ...(force ? ["--force"] : [])]);
   writeDoc(transient);

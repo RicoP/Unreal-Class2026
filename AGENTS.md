@@ -316,6 +316,32 @@ to rebuild it themselves.
   (`updateAssetSourcesFromLabels`): existing entries are never changed, a label without a
   URL adds nothing, and diffs exported before the plugin wrote package paths are skipped. After changing the
   plugin, close the editor and build.
+- A MetaSound (Source or Patch; an `asset-diff` with class `MetaSound...`) keeps its graph in the
+  property `RootMetasoundDocument RootGraph PagedGraphs` (nodes with pins, positions and typed-in
+  values, and the connections). `Tools/metasound_to_native.py` (run by `export_doc.mjs` on every
+  such diff) turns it into the text the Blueprint editor views read:
+  `graph/native/<package path>.graph.MetaSound.txt`, and `.old.txt` when the diff replaces an
+  earlier graph. The nodes become Blueprint nodes: a trigger is an exec pin, the nodes of the
+  graph's interface (On Play, a graph input) are red events titled `Input`, the outputs function
+  calls titled `Output`, a Reroute a knot, every other node a function call, and only pins that
+  are connected or have a value typed in are written; the nodes that start a branch sit in a
+  column left of the rest (the document doesn't hold their place). Titles and pin labels come only from the export, no lookup of known names: the node's class
+  (`Dependencies`: Type=Input/Output; External with a Variant: `Random Get (WaveAsset:Array)`,
+  `Wave Player (Mono)`) and, for an interface pin, its interface (`On Play (UE.Source)`). The
+  editor adds more (`Random Float (Float)`, `Wave Player (1.0, Mono)`, `Out Mono`): that isn't in
+  the export and is left out on purpose, the graph is close enough to rebuild. The `Input`
+  template node (a dependency with Type=Template) isn't drawn by the editor and is joined through. The pin colours are the
+  Blueprint ones for a similar type (Audio is drawn as a struct, WaveAsset as an object), not the
+  MetaSound editor's. `sexpr_to_table.py` (`metasound_properties`) replaces the document
+  properties (hundreds of lines) with `Access Flags | Referenceable` (for a new MetaSound that has the
+  flag: a new one starts without it, but the class default has it, so the diff against the class
+  defaults never lists it; the editor needs it for `Create Preset`; `metasound_properties`),
+  `Output Format` and one `Add Input | <name> (<type>)` row per graph input, and the section shows the editor view after its table.
+  A MetaSound preset (its `RootMetasoundDocument Template` is a
+  `MetaSoundFrontendPresetTemplate(Parent=...)`) isn't a graph: its own graph is only the parent in
+  a box. Its section reads `Create Preset of <parent> with the name <name>`, with one row per input
+  it overrides (the template's `bOverrideInheritedDefault`; wave arrays compacted like an import
+  step), and it has no editor view.
 - Assets with a `Retarget Source Asset` set (retargeted animations) aren't
   documented one by one, and not as imports even though they keep their
   source's import data: `retarget_tables` in `sexpr_to_table.py` writes one

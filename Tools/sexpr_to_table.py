@@ -233,6 +233,73 @@ BASIC_TYPES = {"IntProperty": "Integer", "Int64Property": "Integer64", "FloatPro
                "StrProperty": "String", "TextProperty": "Text", "ByteProperty": "Byte"}
 
 
+def metasound_type(type_name):
+    """A MetaSound type as the editor says it: 'WaveAsset:Array' -> 'Array of Wave Asset'."""
+    base, _, rest = type_name.partition(":")
+    readable = words(base)
+    return f"Array of {readable}" if rest == "Array" else readable
+
+
+# A new MetaSound starts with no access flags (0), while the class default is Referenceable (2), the
+# one flag that matters here: the editor only offers "Create Preset" for a MetaSound that has it. The
+# export compares a new asset with the class defaults, so a student who ticks Referenceable changes
+# nothing in the diff, and the flag is not listed. Referenceable is bit 2 (EMetasoundFrontendClassAccessFlags).
+FRESH_METASOUND_REFERENCEABLE = False
+REFERENCEABLE_FLAG = 2
+CLASS_DEFAULT_ACCESS_FLAGS = REFERENCEABLE_FLAG
+
+
+def metasound_properties(properties, is_new=False):
+    """A MetaSound's document properties (its graph, metadata, dependencies: hundreds of lines of
+    text) are replaced by what a student sets: the output format and the graph's inputs. The graph
+    itself is shown as nodes (metasound_to_native.py)."""
+    def new_value(name):
+        entry = next((e for e in properties if e[1] == name), None)
+        return (first(entry, "new") or [0, ""])[1] if entry else ""
+    rest = [entry for entry in properties if not entry[1].startswith("RootMetasoundDocument")]
+    summary = []
+    if is_new:
+        flags = new_value("RootMetasoundDocument RootGraph Metadata AccessFlags")
+        flags = int(flags) if flags.isdigit() else CLASS_DEFAULT_ACCESS_FLAGS  # not listed: the class default
+        if bool(flags & REFERENCEABLE_FLAG) != FRESH_METASOUND_REFERENCEABLE:
+            summary.append(("Access_Flags", "Referenceable"))
+    interfaces = new_value("RootMetasoundDocument Interfaces")
+    output = re.search(r"UE\.OutputFormat\.(\w+)", interfaces)
+    if output:
+        summary.append(("Output_Format", output.group(1)))
+    for name, type_name in re.findall(r'Name="([^"]*)",TypeName="([^"]*)"', new_value("RootMetasoundDocument RootGraph Interface Inputs")):
+        if not name.startswith("UE."):
+            summary.append(("Add_Input", f"{name} ({metasound_type(type_name)})"))
+    return [["changed", name, ["old", ""], ["new", value]] for name, value in summary] + rest
+
+
+def metasound_preset(properties):
+    """A MetaSound preset (its Template is a MetaSoundFrontendPresetTemplate) as (parent name, [(input,
+    default)]): the inputs it overrides, with their values. None for any other asset. The preset's own
+    graph is only the parent in a box, so the overrides are everything a student sets."""
+    def new_value(name):
+        entry = next((e for e in properties if e[1] == name), None)
+        return (first(entry, "new") or [0, ""])[1] if entry else ""
+    template = new_value("RootMetasoundDocument Template")
+    parent = re.search(r"PresetTemplate\(Parent=\w+'[^']*\.(\w+)'", template)
+    if not parent:
+        return None
+    overridden = set(re.findall(r"\(([0-9A-F]{32}), [^()]*\(bOverrideInheritedDefault=True\)", template))
+    overrides = []
+    for chunk in re.split(r"(?=\(Defaults=)", new_value("RootMetasoundDocument RootGraph Interface Inputs")):
+        head = re.search(r'NodeID=([0-9A-F]{32}).*?Name="([^"]*)"', chunk)
+        if not head or head.group(1) not in overridden:
+            continue
+        objects = re.search(r"AsUObject=\(([^)]*)\)", chunk)
+        if objects:
+            names = [shorten(item).strip('"') for item in split_top_level(objects.group(1))]
+            overrides.append((head.group(2), short_list(names)))
+        else:
+            literal = re.search(r"As\w+=\(([^)]*)\)", chunk)
+            overrides.append((head.group(2), literal.group(1).strip('"') if literal else ""))
+    return parent.group(1), overrides
+
+
 def to_markdown(diff):
     package = diff[1]
     name = package.rsplit("/", 1)[-1]
@@ -243,6 +310,17 @@ def to_markdown(diff):
     # transient part) is no change to make.
     properties = [entry for entry in properties if is_new or
                   cell((first(entry, "old") or [0, None])[1]) != cell((first(entry, "new") or [0, None])[1])]
+    if first(diff, "class")[1].startswith("MetaSound"):
+        preset = metasound_preset(properties)
+        if preset and is_new:
+            parent, overrides = preset
+            return "\n".join([
+                f"### {name} ({asset_class})", "",
+                f"Create a preset of `{parent}` named `{name}` in `{package.rsplit('/', 1)[0]}`, then set:", "",
+                "| Setting | Value |", "|---|---|",
+                *[f"| {setting} | {cell(value)} |" for setting, value in overrides],
+            ]) + "\n"
+        properties = metasound_properties(properties, is_new)
     describers = {}  # setting -> (describe new item, describe old item)
     if first(diff, "class")[1] == "BlendSpace1D":
         new_max, old_max = blend_axis_max(properties, "new"), blend_axis_max(properties, "old")
