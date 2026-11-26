@@ -325,7 +325,10 @@ to rebuild it themselves.
   values, and the connections). `Tools/metasound_to_native.py` (run by `export_doc.mjs` on every
   such diff) turns it into the text the Blueprint editor views read:
   `graph/native/<package path>.graph.MetaSound.txt`, and `.old.txt` when the diff replaces an
-  earlier graph. The nodes become Blueprint nodes: a trigger is an exec pin, the nodes of the
+  earlier graph. When the diff only lists single changed values (`Nodes[8] InputLiterals[0]`, no
+  whole `PagedGraphs`), the new graph is the one in the asset's full export (`graph/reference`) and
+  the old one is that with the old values put back (`reference_graph`, `old_graph`), so a changed
+  MetaSound also gets its Before/After view. The nodes become Blueprint nodes: a trigger is an exec pin, the nodes of the
   graph's interface (On Play, a graph input) are red events titled `Input`, the outputs function
   calls titled `Output`, a Reroute a knot, every other node a function call, and only pins that
   are connected or have a value typed in are written; the nodes that start a branch sit in a
@@ -340,7 +343,10 @@ to rebuild it themselves.
   properties (hundreds of lines) with `Access Flags | Referenceable` (for a new MetaSound that has the
   flag: a new one starts without it, but the class default has it, so the diff against the class
   defaults never lists it; the editor needs it for `Create Preset`; `metasound_properties`),
-  `Output Format` and one `Add Input | <name> (<type>)` row per graph input, and the section shows the editor view after its table.
+  `Output Format` and one `Add Input | <name> (<type>)` row per graph input, and the section shows the editor view after its table. A MetaSound that
+  already existed gets one row per value typed into a node that changed (`Random Float › Min |
+  -0.5 | -15`): the diff names it by position (`Nodes[8] InputLiterals[0]`), so
+  `metasound_value_changes` in `sexpr_to_table.py` finds the node and its pin in the full export.
   A MetaSound preset (its `RootMetasoundDocument Template` is a
   `MetaSoundFrontendPresetTemplate(Parent=...)`) isn't a graph: its own graph is only the parent in
   a box. Its section reads `Create Preset of <parent> with the name <name>`, with one row per input
@@ -363,7 +369,7 @@ to rebuild it themselves.
   the notify that casts to it, a parent before its child, a Blueprint before
   the actor placed from it). Assets without such a link keep their order by
   path, and an asset's sections (settings, graph) stay together. References
-  are read from the asset's full export (`graph/reference`, else its diff):
+  are read from the asset's full export (`graph/reference`, else its diff) and the editor texts of its graphs (`graph/native`, which hold what the export leaves out: an object pin's value such as a macro's `Attenuation Settings`, and the macro library a node uses):
   another documented asset's name as a whole word (`Cast To BP_Hero`,
   `.../BP_Hero.BP_Hero_C`) or as the editor spells it in pin and variable
   types (`BP Hit Box Base Class Reference`); comment boxes and commit
@@ -378,6 +384,10 @@ to rebuild it themselves.
   "Create ..."), the asset names in a `<p class="assets">`, then the table
   once. Anything that differs, even one row, keeps its own section; it doesn't
   split a group that sorts around it.
+- A Sound Attenuation whose Attenuation Shape is Sphere (the default; read from the diff, else its
+  reference export, else assumed) shows `Attenuation Shape Extents` as `Attenuation › Inner Radius`
+  with only the X value as one number (`100`), as the editor does
+  (`sound_attenuation_properties` in `sexpr_to_table.py`). Other shapes keep the full extents.
 - Non-Blueprint assets have no graph, so the lesson shows them as tables.
   Generate one with `python Tools/sexpr_to_table.py <file>.sexpr`; it writes a
   `.md` file next to the diff.
@@ -704,10 +714,11 @@ what they see on screen.
   the nodes using it, its graph box and its section title (`Play Sound For Surface (macro)`).
   `macro_graphs` in `sexpr_to_mermaid.py` takes the names from the graphs of the reference
   files with `(blueprint-type "MacroLibrary")` (this step and earlier ones), matched ignoring
-  case because a node writes small words in lower case. The editor view does the same:
-  `withShortMacroNames` in `export_doc.mjs` rewrites a `/Game/...` macro's `MacroGraph`
-  to `EdGraph'<name> (macro)'`, which also gives the renderer a short title (it shows the
-  whole path otherwise). The engine's own macros (`StandardMacros`: For Each Loop, ...) aren't marked.
+  case because a node writes small words in lower case. Tables name macros the same way
+  (`Add Macro | Name (macro)`, `Name (macro) › Add Input`), but the editor view shows what the
+  editor shows, without the mark: `withShortMacroNames` in `export_doc.mjs` only shortens a
+  macro's `MacroGraph` to `EdGraph'<name>'` (also for a macro of the Blueprint itself, whose path
+  is just `/Script/Engine.EdGraph'<name>'`), because the renderer shows the whole path otherwise. The engine's own macros (`StandardMacros`: For Each Loop, ...) aren't marked.
 - A function that overrides one of the parent class (Functions → Override)
   is marked on its entry node and its graph box: `Received_Notify
   (override)`. The names come from the `(override true)` function entries of

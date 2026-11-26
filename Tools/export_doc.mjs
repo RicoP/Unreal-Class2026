@@ -533,10 +533,19 @@ function dependencyOrder(files, metas, folder) {
     const diff = path.join(folder, meta.source);
     const reference = path.join(folder, meta.source.replace(/^graph\/transient\//, "graph/reference/"));
     const file = existsSync(reference) ? reference : diff;
-    return existsSync(file)
-      ? readFileSync(file, "utf8")
-          .replace(new RegExp(String.raw`\((?:comment|description) ${quoted}`, "g"), "")
-      : "";
+    // The editor texts of the asset's graphs (graph/native) hold what the export leaves out: an object
+    // pin's value (a macro's Attenuation Settings) and the macro a node uses, as full paths.
+    const packagePath = meta.package ?? "";
+    const nativeFolder = path.join(folder, "graph", "native", path.dirname(packagePath.replace(/^\//, "")));
+    const nativePrefix = `${packagePath.split("/").pop()}.graph.`;
+    const native = existsSync(nativeFolder)
+      ? readdirSync(nativeFolder)
+          .filter((name) => name.startsWith(nativePrefix) && name.endsWith(".txt") && !name.endsWith(".old.txt"))
+          .map((name) => readFileSync(path.join(nativeFolder, name), "utf8"))
+      : [];
+    return (existsSync(file) ? readFileSync(file, "utf8") : "")
+      .concat("\n", native.join("\n"))
+      .replace(new RegExp(String.raw`\((?:comment|description) ${quoted}`, "g"), "");
   };
   // What other assets can refer to: Blueprints and assets, by name (actors provide nothing).
   const providers = [...units.values()]
@@ -712,13 +721,14 @@ function withObjectTypeNames(text) {
  * The renderer titles a macro node by its name only when the MacroGraph path starts with
  * EdGraph' (or names a StandardMacros macro); the full /Script/Engine.EdGraph'/Game/...:Name'
  * that Unreal copies for a macro of another Blueprint would be shown whole. Shorten it to the
- * macro's name, in the form the renderer reads (EdGraph'Name').
+ * macro's name, in the form the renderer reads (EdGraph'Name'). A macro of the Blueprint
+ * itself has no package path (EdGraph'Name' after /Script/Engine.), and is shortened the same way.
  */
 function withShortMacroNames(text) {
   return text.replace(
-    /MacroGraph="\/Script\/Engine\.EdGraph'(?![^']*StandardMacros:)([^':]*):([^']*)'"/g,
-    // The project's own macros say so, like its pure functions: "Play Sound For Surface (macro)".
-    (match, owner, name) => `MacroGraph="EdGraph'${name}${owner.startsWith("/Game/") ? " (macro)" : ""}'"`,
+    /MacroGraph="\/Script\/Engine\.EdGraph'(?![^']*StandardMacros:)(?:([^':]*):)?([^']*)'"/g,
+    // Only the name: the editor view shows what the editor shows, "(macro)" is for tables and headings.
+    (match, owner, name) => `MacroGraph="EdGraph'${name}'"`,
   );
 }
 

@@ -249,7 +249,7 @@ REFERENCEABLE_FLAG = 2
 CLASS_DEFAULT_ACCESS_FLAGS = REFERENCEABLE_FLAG
 
 
-def metasound_properties(properties, is_new=False):
+def metasound_properties(properties, is_new=False, diff=None, diff_path=None):
     """A MetaSound's document properties (its graph, metadata, dependencies: hundreds of lines of
     text) are replaced by what a student sets: the output format and the graph's inputs. The graph
     itself is shown as nodes (metasound_to_native.py)."""
@@ -270,7 +270,40 @@ def metasound_properties(properties, is_new=False):
     for name, type_name in re.findall(r'Name="([^"]*)",TypeName="([^"]*)"', new_value("RootMetasoundDocument RootGraph Interface Inputs")):
         if not name.startswith("UE."):
             summary.append(("Add_Input", f"{name} ({metasound_type(type_name)})"))
-    return [["changed", name, ["old", ""], ["new", value]] for name, value in summary] + rest
+    changed = [] if is_new else metasound_value_changes(properties, diff, diff_path)
+    return [["changed", name, ["old", ""], ["new", value]] for name, value in summary] + changed + rest
+
+
+def metasound_value_changes(properties, diff, diff_path):
+    """The values typed into a node of a MetaSound's graph that changed (Random Float's Min and Max):
+    "<node> › <pin>" with the old and new value. The diff names them by position (`Nodes[8]
+    InputLiterals[0]`), so the node and its pin come from the full export of the MetaSound."""
+    pattern = re.compile(r"RootMetasoundDocument RootGraph PagedGraphs\[0\] Nodes\[(\d+)\] InputLiterals\[(\d+)\] Value As\w+\[0\]$")
+    hits = [(entry, pattern.search(entry[1])) for entry in properties]
+    hits = [(entry, match) for entry, match in hits if match]
+    reference = reference_of(Path(diff_path), diff[1]) if diff_path and diff else None
+    if not hits or reference is None:
+        return []
+    from metasound_to_native import class_infos, node_title, paged_graph, property_value  # noqa: E402
+    value = next((e for e in (first(reference, "properties") or ["properties"])[1:] if isinstance(e, list) and e[1] == "RootMetasoundDocument RootGraph PagedGraphs"), None)
+    dependencies = next((e for e in (first(reference, "properties") or ["properties"])[1:] if isinstance(e, list) and e[1] == "RootMetasoundDocument Dependencies"), None)
+    if not value:
+        return []
+    nodes, _ = paged_graph(first(value, "set")[1] if first(value, "set") else value[2])
+    infos = class_infos(dependencies[2] if dependencies else "")
+    rows = []
+    for entry, match in hits:
+        index, literal = int(match.group(1)), int(match.group(2))
+        if index >= len(nodes):
+            continue
+        node = nodes[index]
+        vertex = list(node["literals"])[literal] if literal < len(node["literals"]) else None
+        pin = next((name for name, _, vertex_id in node["inputs"] if vertex_id == vertex), None)
+        if pin is None:
+            continue
+        rows.append(["changed", f"{node_title(node, infos.get(node['class'])).replace(' ', '_')} {pin.replace(' ', '_')}",
+                     first(entry, "old"), first(entry, "new")])
+    return rows
 
 
 def metasound_preset(properties):
@@ -300,7 +333,38 @@ def metasound_preset(properties):
     return parent.group(1), overrides
 
 
-def to_markdown(diff):
+SHAPE_EXTENTS = "Attenuation AttenuationShapeExtents"
+
+
+def sound_attenuation_properties(properties, diff, diff_path):
+    """A Sound Attenuation with a Sphere shape (the default) has its Attenuation Shape Extents
+    as one number, the editor's Inner Radius: only X is used. The shape is the diff's, else the
+    reference export's, else the default (Sphere)."""
+    def shape_in(expr):
+        for entry in ((first(expr, "properties") or ["properties"])[1:] if expr else []):
+            if isinstance(entry, list) and entry[1] == "Attenuation AttenuationShape":
+                value = first(entry, "new")
+                return value[1] if value else None
+        return None
+    reference = reference_of(Path(diff_path), diff[1]) if diff_path else None
+    shape = shape_in(diff) or shape_in(reference) or "Sphere"
+    if shape.split("::")[-1].strip('"') != "Sphere":
+        return properties
+    x_of = lambda text: (re.search(r"X=(-?[\d.]+)", text) or [None, None])[1]
+    result = []
+    for entry in properties:
+        if entry[1] == SHAPE_EXTENTS:
+            rebuilt = [entry[0], entry[1]]
+            for part in entry[2:]:
+                if isinstance(part, list) and part[0] in ("old", "new") and x_of(str(part[1])):
+                    part = [part[0], x_of(str(part[1]))]
+                rebuilt.append(["display", "Inner Radius"] if isinstance(part, list) and part[0] == "display" else part)
+            entry = rebuilt
+        result.append(entry)
+    return result
+
+
+def to_markdown(diff, diff_path=None):
     package = diff[1]
     name = package.rsplit("/", 1)[-1]
     asset_class = words(first(diff, "class")[1])
@@ -310,6 +374,8 @@ def to_markdown(diff):
     # transient part) is no change to make.
     properties = [entry for entry in properties if is_new or
                   cell((first(entry, "old") or [0, None])[1]) != cell((first(entry, "new") or [0, None])[1])]
+    if first(diff, "class")[1] == "SoundAttenuation":
+        properties = sound_attenuation_properties(properties, diff, diff_path)
     if first(diff, "class")[1].startswith("MetaSound"):
         preset = metasound_preset(properties)
         if preset and is_new:
@@ -320,7 +386,7 @@ def to_markdown(diff):
                 "| Setting | Value |", "|---|---|",
                 *[f"| {setting} | {cell(value)} |" for setting, value in overrides],
             ]) + "\n"
-        properties = metasound_properties(properties, is_new)
+        properties = metasound_properties(properties, is_new, diff, diff_path)
     describers = {}  # setting -> (describe new item, describe old item)
     if first(diff, "class")[1] == "BlendSpace1D":
         new_max, old_max = blend_axis_max(properties, "new"), blend_axis_max(properties, "old")
@@ -739,9 +805,9 @@ def macro_rows(diff):
         if not any(pins.values()):
             continue
         name = graph[1]
-        rows.append(("Add Macro", None, f"`{name}`"))
+        rows.append(("Add Macro", None, f"{name} (macro)"))
         for kind, label in (("Inputs", "Input"), ("Outputs", "Output")):
-            rows += [(f"{name} › Add {label}", None, f"{pin} ({kind_})") for pin, kind_ in pins[kind]]
+            rows += [(f"{name} (macro) › Add {label}", None, f"{pin.strip() or '(no name)'} ({kind_})") for pin, kind_ in pins[kind]]
     return rows
 
 
@@ -755,13 +821,14 @@ def blueprint_settings_markdown(diff, diff_path):
     components = (first(diff, "components") or ["components"])[1:]
     variables = [entry for entry in (first(diff, "variables") or ["variables"])[1:] if isinstance(entry, list)]
     functions = [entry for entry in (first(diff, "functions") or ["functions"])[1:] if isinstance(entry, list)]
-    if not (is_new or defaults or components or variables or functions):
+    blueprint_type = (first(diff, "blueprint-type") or ["blueprint-type", ""])[1]
+    macros = macro_rows(diff) if blueprint_type == "MacroLibrary" else []
+    if not (is_new or defaults or components or variables or functions or macros):
         return None
 
     rows = []  # (setting, old, new)
     # Add > Blueprint > Blueprint Macro Library (and Function Library, Interface, Level Blueprint) is
     # picked in the menu; a macro library still asks for a parent class (it decides where its macros work).
-    blueprint_type = (first(diff, "blueprint-type") or ["blueprint-type", ""])[1]
     if is_new:
         parent = (first(diff, "parent") or ["parent", ""])[1].rsplit(".", 1)[-1].removesuffix("_C") or "Actor"
         rows.append(("Parent Class", None, parent))
@@ -770,8 +837,7 @@ def blueprint_settings_markdown(diff, diff_path):
     added_names = {entry[1] for entry in variables if entry[0] == "added"}
     rows += variable_rows(variables, added_defaults)
     rows += function_rows(functions)
-    if blueprint_type == "MacroLibrary":
-        rows += macro_rows(diff)
+    rows += macros
     # A removed variable's value goes with it: no row for its class default either.
     removed_names = {entry[1] for entry in variables if entry[0] == "removed"}
     defaults = [entry for entry in defaults if entry[1] not in added_names | removed_names]
@@ -837,7 +903,7 @@ def blueprint_settings_markdown(diff, diff_path):
         lines += [f"| {setting} | {value_cell(new)} |" for setting, _, new in rows]
     else:
         lines += [
-            f"Open `{name}` and change its {'variables, ' if variables else ''}{'functions, ' if functions else ''}class defaults and components:",
+            f"Open `{name}` and change its {'variables, ' if variables else ''}{'functions, ' if functions else ''}{'macros, ' if macros else ''}class defaults and components:",
             "",
             "| Setting | Before | After |",
             "|---|---|---|",
@@ -1111,7 +1177,7 @@ def main():
         elif isinstance(diff, list) and diff[0] == "actor-diff":
             markdown = actor_to_markdown(diff)
         elif isinstance(diff, list) and diff[0] == "asset-diff":
-            markdown = to_markdown(diff)
+            markdown = to_markdown(diff, path)
         else:
             print(f"{path}: skipped, not an asset or actor diff (use sexpr_to_mermaid.py for Blueprints)", file=sys.stderr)
             continue

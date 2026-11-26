@@ -240,6 +240,37 @@ def property_value(diff, name, which):
     return None
 
 
+LITERAL_CHANGE = re.compile(r"RootMetasoundDocument RootGraph PagedGraphs\[0\] Nodes\[(\d+)\] InputLiterals\[(\d+)\] Value As\w+\[0\]$")
+
+
+def reference_graph(graph_root, diff):
+    """(PagedGraphs value, Dependencies value) of the MetaSound's full export (graph/reference), or None."""
+    file = graph_root / "reference" / (diff[1].lstrip("/") + ".sexpr")
+    if not file.exists():
+        return None
+    properties = (first(parse(file.read_text(encoding="utf-8")), "properties") or ["properties"])[1:]
+    value = lambda name: next((e[2] for e in properties if isinstance(e, list) and len(e) > 2 and e[1] == name), None)
+    graph = value("RootMetasoundDocument RootGraph PagedGraphs")
+    return (graph, value("RootMetasoundDocument Dependencies") or "") if graph else None
+
+
+def old_graph(value, diff):
+    """The PagedGraphs value before the diff's single-value changes: the new values replaced by the old ones."""
+    nodes, _ = paged_graph(value)
+    for entry in (first(diff, "properties") or ["properties"])[1:]:
+        match = isinstance(entry, list) and len(entry) > 1 and LITERAL_CHANGE.search(entry[1])
+        old, new = (first(entry, "old"), first(entry, "new")) if match else (None, None)
+        if not (match and old and new and int(match.group(1)) < len(nodes)):
+            continue
+        node = nodes[int(match.group(1))]
+        vertices = list(node["literals"])
+        if int(match.group(2)) >= len(vertices):
+            continue
+        pattern = re.compile(rf"(\(VertexID={vertices[int(match.group(2))]},Value=\(Type=\w+,As\w+=\(){re.escape(new[1])}(\)\)\))")
+        value = pattern.sub(lambda m: m.group(1) + old[1] + m.group(2), value, count=1)
+    return value
+
+
 def write_native(diff_path):
     """Write graph/native/<package path>.graph.MetaSound(.old).txt for a MetaSound diff; the files written."""
     diff = parse(diff_path.read_text(encoding="utf-8"))
@@ -253,9 +284,16 @@ def write_native(diff_path):
     target = graph_root / "native" / (package + ".graph.MetaSound")
     target.parent.mkdir(parents=True, exist_ok=True)
     written = []
+    from_reference = None
+    if property_value(diff, "RootMetasoundDocument RootGraph PagedGraphs", "new") is None and not preset:
+        # Only single values changed (a node's typed-in number): the diff names them by position, so the
+        # new graph is the one in the full export, and the old one is that with the values put back.
+        from_reference = reference_graph(graph_root, diff)
     for which, suffix in (("new", ".txt"), ("old", ".old.txt")):
         value = property_value(diff, "RootMetasoundDocument RootGraph PagedGraphs", which)
         dependencies = property_value(diff, "RootMetasoundDocument Dependencies", which) or property_value(diff, "RootMetasoundDocument Dependencies", "new")
+        if from_reference:
+            value, dependencies = from_reference[0] if which == "new" else old_graph(from_reference[0], diff), from_reference[1]
         text = native_text(value, dependencies) if value and not preset else None  # a preset's graph is its parent in a box
         path = target.parent / (target.name + suffix)
         if text:
