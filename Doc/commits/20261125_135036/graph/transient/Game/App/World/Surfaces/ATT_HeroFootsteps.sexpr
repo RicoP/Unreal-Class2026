@@ -1,0 +1,8 @@
+(asset-diff "/Game/App/World/Surfaces/ATT_HeroFootsteps"
+  (class "SoundAttenuation")
+  (old none)
+  (baseline class-default)
+  (new working-copy)
+  (properties
+    (changed "Attenuation AttenuationShapeExtents" (old "(X=400.000000,Y=0.000000,Z=0.000000)") (new "(X=100.000000,Y=0.000000,Z=0.000000)") (display "Attenuation Shape Extents"))
+    (changed "Attenuation FalloffDistance" (old "3600.000000") (new "1500.000000") (display "Falloff Distance"))))
