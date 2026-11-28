@@ -30,10 +30,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           lfs: false
-      # The documentation tools live in the plugin's own repository (gitignored here).
+      # The documentation tools live in the plugin's own repository (gitignored here). It is
+      # private, so it is read with a deploy key: add the public key under that repository's
+      # Settings > Deploy keys (read-only) and the private key as the secret
+      # BLUEPRINT_DIFF_EXPORT_DEPLOY_KEY here.
       - uses: actions/checkout@v4
         with:
           repository: RicoP/BlueprintDiffExport
+          ssh-key: ${{ secrets.BLUEPRINT_DIFF_EXPORT_DEPLOY_KEY }}
           path: Plugins/BlueprintDiffExport
           lfs: false
       # Only the documentation's images, not the Unreal assets.
