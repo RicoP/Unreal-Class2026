@@ -1,5 +1,5 @@
 # Publish Doc/ on GitHub Pages. Doc/ is the documentation website: index.html, palettes.css,
-# bue-palettes.css and steps.js as Tools/export_doc.mjs writes them, doc.css, doc.js and
+# bue-palettes.css and steps.js as Plugins/BlueprintDiffExport/Tools/export_doc.mjs writes them, doc.css, doc.js and
 # bue-render as they are kept there, and the steps in Doc/commits/<YYYYMMDD_HHmmss>/.
 # Left out: the work in progress (commits/Transient), the source data (graph/) and the separate
 # SVG files, which every doc.html already embeds.
@@ -30,6 +30,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           lfs: false
+      # The documentation tools live in the plugin's own repository (gitignored here).
+      - uses: actions/checkout@v4
+        with:
+          repository: RicoP/BlueprintDiffExport
+          path: Plugins/BlueprintDiffExport
+          lfs: false
       # Only the documentation's images, not the Unreal assets.
       - name: Fetch documentation images from Git LFS
         run: git lfs pull --include="Doc/**"
@@ -40,7 +46,7 @@ jobs:
       # index.html and steps.js may list the work in progress (commits/Transient) as the last
       # step; write them again from the steps that are published.
       - name: Write the step list
-        run: node Tools/export_doc.mjs --site --commits _site/commits
+        run: node Plugins/BlueprintDiffExport/Tools/export_doc.mjs --site --commits _site/commits
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

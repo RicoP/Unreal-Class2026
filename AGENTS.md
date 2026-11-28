@@ -11,10 +11,10 @@ to rebuild it themselves.
 - Don't write lesson documentation until the user says documentation has
   started. Until then, diffs and diagrams are experiments.
 - "Commit and push" also means finishing the transient doc: rebuild
-  (`node Tools/export_doc.mjs`), finish (`--finish`), and commit the dated
+  (`node Plugins/BlueprintDiffExport/Tools/export_doc.mjs`), finish (`--finish`), and commit the dated
   step folder with the assets it documents, then push. The website only
   publishes finished steps, so an unfinished Transient never shows up there.
-- Open decision: `Tools/update_graph.py` is an earlier approach that wrote a
+- Open decision: `Plugins/BlueprintDiffExport/Tools/update_graph.py` is an earlier approach that wrote a
   snapshot of the whole project (`Doc/graph.sexpr`, now deleted). The
   `BlueprintDiffExport` plugin replaced it for Blueprints, so don't run it on
   commit, and ask the user before removing or reusing the script. Never read
@@ -33,12 +33,12 @@ to rebuild it themselves.
 - Workflow: all documentation work in progress lives in `Doc/commits/Transient/`
   (ignored by git). The editor plugin writes diffs to
   `Transient/graph/transient/` and full versions to `Transient/graph/reference/`;
-  `node Tools/export_doc.mjs` generates diagrams, tables, SVGs and `doc.html`
+  `node Plugins/BlueprintDiffExport/Tools/export_doc.mjs` generates diagrams, tables, SVGs and `doc.html`
   inside `Transient`. When the user says the step is done,
-  `node Tools/export_doc.mjs --finish` renames `Transient` to
+  `node Plugins/BlueprintDiffExport/Tools/export_doc.mjs --finish` renames `Transient` to
   `Doc/commits/<YYYYMMDD_HHmmss>`, which gets committed; the next step starts
   with a new `Transient`. "Commit the doc" means exactly that: build
-  (`node Tools/export_doc.mjs`), finish (`--finish`), and commit the dated folder
+  (`node Plugins/BlueprintDiffExport/Tools/export_doc.mjs`), finish (`--finish`), and commit the dated folder
   together with the assets it documents.
 - Right-click a Blueprint in the Content Browser and choose
   **Export Diff Against Depot**. The `BlueprintDiffExport` plugin
@@ -231,7 +231,7 @@ to rebuild it themselves.
   `Textures`, ...). Long lists read `18 in all: a, b, …, z`. Import steps come
   first in `doc.html`, before everything that may use them. Its first line is an
   `<!-- import: folder="..." files="..." -->` comment that `assetMetadata`
-  (`Tools/doc_sources.mjs`) turns into metadata (`kind="import"`); the heading reads "Import <file or
+  (`Plugins/BlueprintDiffExport/Tools/doc_sources.mjs`) turns into metadata (`kind="import"`); the heading reads "Import <file or
   N files> into <folder>". `export_doc.mjs` passes the whole
   `Transient/graph/transient` folder (`--all-in`) so groups see every diff.
 - **Tools → Save Level Screenshot** (same "Documentation" section) captures
@@ -284,7 +284,7 @@ to rebuild it themselves.
   The headings stay plain `<h2>` without attributes, because the site index
   reads them. Finished steps get the list when they are regenerated.
 - `Plugins/ColorBlindFriendlyBlueprints` (editor plugin, C++) switches the Blueprint editor's pin
-  and node title colours between the documentation's palettes (`Tools/palette.json`, hard-coded
+  and node title colours between the documentation's palettes (`Plugins/BlueprintDiffExport/Tools/palette.json`, hard-coded
   in a table at the top of `Source/ColorBlindFriendlyBlueprintsSettings.cpp`; change both together): a dropdown
   (`EColorBlindPalette`) in Editor Preferences > Plugins > Color Blind Friendly Blueprints. It sets the colours of `UGraphEditorSettings`
   (`ApplyPalette`; the colour mapping is `Mappings()`) and redraws; a palette's `pin-*` and
@@ -322,7 +322,7 @@ to rebuild it themselves.
   plugin, close the editor and build.
 - A MetaSound (Source or Patch; an `asset-diff` with class `MetaSound...`) keeps its graph in the
   property `RootMetasoundDocument RootGraph PagedGraphs` (nodes with pins, positions and typed-in
-  values, and the connections). `Tools/metasound_to_native.py` (run by `export_doc.mjs` on every
+  values, and the connections). `Plugins/BlueprintDiffExport/Tools/metasound_to_native.py` (run by `export_doc.mjs` on every
   such diff) turns it into the text the Blueprint editor views read:
   `graph/native/<package path>.graph.MetaSound.txt`, and `.old.txt` when the diff replaces an
   earlier graph. When the diff only lists single changed values (`Nodes[8] InputLiterals[0]`, no
@@ -389,7 +389,7 @@ to rebuild it themselves.
   with only the X value as one number (`100`), as the editor does
   (`sound_attenuation_properties` in `sexpr_to_table.py`). Other shapes keep the full extents.
 - Non-Blueprint assets have no graph, so the lesson shows them as tables.
-  Generate one with `python Tools/sexpr_to_table.py <file>.sexpr`; it writes a
+  Generate one with `python Plugins/BlueprintDiffExport/Tools/sexpr_to_table.py <file>.sexpr`; it writes a
   `.md` file next to the diff.
 - Editor views: a graph's section in `doc.html` shows the graph as the
   Blueprint editor draws it, instead of our own diagram (user decision: the
@@ -453,9 +453,9 @@ to rebuild it themselves.
   with nothing to draw gets no file, and files of an earlier run that aren't
   written again are removed, also the single `<name>.mmd` of steps from before
   the split (those steps keep working as they are). Generate them with
-  `python Tools/sexpr_to_mermaid.py <file>.sexpr` instead of writing them by
+  `python Plugins/BlueprintDiffExport/Tools/sexpr_to_mermaid.py <file>.sexpr` instead of writing them by
   hand. The script applies the style rules below and takes its colours from
-  the default palette in `Tools/palette.json`. When a style rule changes, update
+  the default palette in `Plugins/BlueprintDiffExport/Tools/palette.json`. When a style rule changes, update
   the script too.
 - The script merges the diff with the matching reference file
   (`Doc/commits/Transient/graph/transient/...` -> `Doc/commits/Transient/graph/reference/...`), the full current
@@ -463,12 +463,12 @@ to rebuild it themselves.
   rules). Without a reference file it falls back to added nodes and their
   direct neighbours. Changes it can't draw (such as removed nodes) are printed
   on stderr.
-- `node Tools/export_svg.mjs` renders every `.mmd` diagram under
+- `node Plugins/BlueprintDiffExport/Tools/export_svg.mjs` renders every `.mmd` diagram under
   `Doc/commits/Transient/graph/transient/` to
   `Doc/commits/Transient/<package path>.svg`. An SVG newer than its source,
   its diff, `export_svg.mjs`, `doc_sources.mjs` and `palette.json` is skipped
   (`--force` renders all), and SVGs whose source is gone are removed. With file
-  arguments (`node Tools/export_svg.mjs a.mmd b.mmd`) it renders exactly those
+  arguments (`node Plugins/BlueprintDiffExport/Tools/export_svg.mjs a.mmd b.mmd`) it renders exactly those
   files instead and writes each SVG next to its source.
   Tables (`.md`) aren't rendered to SVG: `export_doc.mjs` writes them into
   `doc.html` as HTML tables, styled by `doc.css` in the same dark look as the
@@ -478,11 +478,11 @@ to rebuild it themselves.
   SVGs are pretty-printed. In every exported SVG, palette colours are CSS
   variables (`var(--pin-float)`), and the SVG carries the default palette at
   zero specificity (`:where(svg)`), so it looks the same on its own and a page
-  can restyle it. It needs `npm install` in `Tools/` once. It uses the Mermaid
-  CLI pinned in `Tools/package.json` (10.9.1, the last version that supports
-  Node 16) and the Chrome set in `Tools/puppeteer.json` instead of downloading
+  can restyle it. It needs `npm install` in `Plugins/BlueprintDiffExport/Tools/` once. It uses the Mermaid
+  CLI pinned in `Plugins/BlueprintDiffExport/Tools/package.json` (10.9.1, the last version that supports
+  Node 16) and the Chrome set in `Plugins/BlueprintDiffExport/Tools/puppeteer.json` instead of downloading
   Chromium.
-- Doc export: `node Tools/export_doc.mjs` builds everything in
+- Doc export: `node Plugins/BlueprintDiffExport/Tools/export_doc.mjs` builds everything in
   `Doc/commits/Transient`: it runs `sexpr_to_mermaid.py` on every
   `blueprint-diff` and `sexpr_to_table.py` on every other diff in
   `Transient/graph/transient`, then `export_svg.mjs`, and writes
@@ -490,7 +490,7 @@ to rebuild it themselves.
   `.mmd` or `.md` only when its diff (or reference) is newer or it doesn't
   exist yet, so diagrams and tables the user edited by hand survive until the
   asset is exported again. Generator script changes don't count; after a style
-  rule changes, run `node Tools/export_doc.mjs --force` (regenerates and
+  rule changes, run `node Plugins/BlueprintDiffExport/Tools/export_doc.mjs --force` (regenerates and
   re-renders everything, overwriting hand edits; ask the user first if they
   edited files). `doc.html` is always rewritten. It is a dark page that embeds every
   SVG inline and every table as HTML, each under a heading with its path. The SVG files stay next to it,
@@ -503,21 +503,25 @@ to rebuild it themselves.
   `All/Content/Input/Actions/IA_Zoom`. For a new asset (no previous revision)
   the heading is `Create <asset type> at <path>`, for example
   `Create Input Action at All/Content/Input/Actions/IA_Zoom`.
-  `node Tools/export_doc.mjs --finish` renames `Transient` to
+  `node Plugins/BlueprintDiffExport/Tools/export_doc.mjs --finish` renames `Transient` to
   `Doc/commits/<YYYYMMDD_HHmmss>` (current local date and time) and rewrites
   its `doc.html` title; run it only when the user says the step is done. The
   dated folder keeps its `graph/` source data, in case its documents need
   regenerating. `--regenerate <export folder>` rewrites `doc.html` of an
   existing export and removes an outdated `doc.md` from before the switch to
   HTML.
-- Layout: `Tools/` holds every documentation tool (Python and Node scripts,
-  `doc_sources.mjs`, `palette.json`, `package.json`, `node_modules`);
+- Layout: `Plugins/BlueprintDiffExport/Tools/` holds every documentation tool (Python and Node scripts,
+  `doc_sources.mjs`, `palette.json`, `package.json`, `node_modules`). It is part of the
+  plugin, which has its own repository (`git@github.com:RicoP/BlueprintDiffExport.git`,
+  gitignored here: commit and push tool changes from inside `Plugins/BlueprintDiffExport`).
+  The tools find the project by walking up to the `.uproject` (`findProjectRoot`), so
+  run them from anywhere; the Pages workflow checks the plugin out next to the project;
   `Doc/` is the documentation website itself and contains generated files:
   `Doc/index.html`, `Doc/palettes.css`, `Doc/bue-palettes.css`,
   `Doc/steps.js` and the steps in `Doc/commits/<YYYYMMDD_HHmmss>/` (plus
   `Doc/commits/Transient`, ignored by git), and the hand-maintained
   things (`Doc/doc.css`, `Doc/doc.js`, `Doc/asset_sources.json`,
-  `Doc/bue-render`; edit those in place, there is no copy in `Tools/`).
+  `Doc/bue-render`; edit those in place, there is no copy in `Plugins/BlueprintDiffExport/Tools/`).
   `export_doc.mjs` rewrites the four
   generated root files on every run (`--site` writes only them): `index.html` lists the
   finished steps in order, oldest first, as `Step 1`, `Step 2`, ... (the folder
@@ -532,7 +536,7 @@ to rebuild it themselves.
   it is listed as the last step ("Step N (work in progress)") in `index.html`
   and `steps.js`, so its layout and step navigation can be checked with the
   rest of the website. The Pages workflow publishes without it: after
-  collecting the site it runs `node Tools/export_doc.mjs --site --commits
+  collecting the site it runs `node Plugins/BlueprintDiffExport/Tools/export_doc.mjs --site --commits
   _site/commits`, which writes the step list from the published steps only.
 - `Doc/asset_sources.json` is the one hand-maintained data file in `Doc/`
   (next to the vendored `Doc/bue-render`, see the editor views above): a lookup
@@ -582,7 +586,7 @@ to rebuild it themselves.
   without `commits/Transient`, `graph/` folders and separate SVG files (the
   pages embed them). It fetches only `Doc/**` from Git LFS. The repository's
   Pages source must be "GitHub Actions" (Settings → Pages).
-- Asset metadata comes from `assetMetadata` in `Tools/doc_sources.mjs`, which
+- Asset metadata comes from `assetMetadata` in `Plugins/BlueprintDiffExport/Tools/doc_sources.mjs`, which
   reads the diff next to a diagram or table: `package`, `kind` (`blueprint`,
   `asset`, `actor` or `import`), `class`, `type` (display name such as
   `Input Action`; Blueprints are `Blueprint Class`), `new`, `revision`,
@@ -615,7 +619,7 @@ what they see on screen.
   whole chain): it lays that out on its own with a fixed 50 px ("Todo: set
   proper spacing" in its source). `export_svg.mjs`
   (`useDiagramSpacingInSubgraphs`) therefore patches the installed
-  `Tools/node_modules/mermaid/dist/mermaid.js` before every export so such
+  `Plugins/BlueprintDiffExport/Tools/node_modules/mermaid/dist/mermaid.js` before every export so such
   subgraphs take the spacing of the drawing around them. The patch is marked
   in that file, is applied again by itself after a fresh `npm install`, and
   prints a warning if another Mermaid version doesn't have the spot.
@@ -627,10 +631,10 @@ what they see on screen.
   and the viewBox grows).
 - Re-rendering a finished step's diagrams after a style rule changed (ask the
   user first; done for `20261115_084649` when the spacing changed): run
-  `python Tools/sexpr_to_mermaid.py` on the `blueprint-diff` files in
-  `<step>/graph/transient`, `node Tools/export_svg.mjs` on its `.mmd` files
+  `python Plugins/BlueprintDiffExport/Tools/sexpr_to_mermaid.py` on the `blueprint-diff` files in
+  `<step>/graph/transient`, `node Plugins/BlueprintDiffExport/Tools/export_svg.mjs` on its `.mmd` files
   (with file arguments each SVG lands next to its source), move those SVGs to
-  `<step>/<package path>.svg`, then `node Tools/export_doc.mjs --regenerate
+  `<step>/<package path>.svg`, then `node Plugins/BlueprintDiffExport/Tools/export_doc.mjs --regenerate
   <step>`. This redraws with all current rules, not only the changed one.
 - Don't give the diagram a title.
 - No drop shadows: the front matter sets `look: classic` and a `themeCSS`
@@ -806,7 +810,7 @@ what they see on screen.
 
 ### Colours
 
-All colours live in `Tools/palette.json`, the one place to change them
+All colours live in `Plugins/BlueprintDiffExport/Tools/palette.json`, the one place to change them
 (`export_doc.mjs` turns it into `Doc/palettes.css` and `Doc/bue-palettes.css`).
 Its `bue` section says which palette colour stands for which pin types, wire
 colours (blueprintUE's script sets them as `stroke` attributes, so they are
@@ -829,7 +833,7 @@ blindness doesn't matter for `.mmd` files:
 | `high-contrast` | low vision | Black node body, all key colours at least 7:1 contrast; function calls `#a8c8e8` |
 | `greyscale` | achromatopsia, print | 4 brightness levels: exec, float, object, boolean; rarer types share them; function calls `#b8b8b8` |
 
-Check palette changes with `node Tools/check_palette.mjs`, which simulates each
+Check palette changes with `node Plugins/BlueprintDiffExport/Tools/check_palette.mjs`, which simulates each
 colour blindness (Machado 2009) and prints the closest pairs of key colours
 (aim for 25+ for exec, float, object and boolean in the palette's target
 vision), and visually with Chrome's vision deficiency emulation.
