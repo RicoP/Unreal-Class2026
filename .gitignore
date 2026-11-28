@@ -45,3 +45,6 @@ __pycache__/
 
 # The Color Blind Friendly Blueprints plugin has its own repository (git@github.com:RicoP/ColorBlindFriendlyBlueprints.git)
 /Plugins/ColorBlindFriendlyBlueprints/
+
+# The Blueprint Diff Export plugin has its own repository (git@github.com:RicoP/BlueprintDiffExport.git)
+/Plugins/BlueprintDiffExport/
